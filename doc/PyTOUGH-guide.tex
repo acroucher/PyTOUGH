@@ -1,0 +1,39 @@
+\documentclass[a4paper,10pt]{report}
+
+% PyTOUGH user's guide
+
+\usepackage[authoryear,round]{natbib}   % for references
+\usepackage[hmargin=3.5cm]{geometry} % change margin
+\usepackage{rotating} % for sideways tables
+\usepackage[a4paper=true]{hyperref}
+
+\hypersetup{pdftitle=PyTOUGH User's Guide,pdfauthor=Adrian Croucher}
+
+%------------------------------------------------------------------------
+\begin{document}
+
+\include{titlepage}
+
+%------------------------------------------------------------------------
+\tableofcontents
+%\listoffigures
+\listoftables
+
+%------------------------------------------------------------------------
+\include{introduction}
+\include{mulgrids}
+\include{t2grids}
+\include{t2data}
+\include{t2incons}
+\include{t2listing}
+\include{t2thermo}
+\include{IAPWS97}
+%------------------------------------------------------------------------
+\renewcommand\bibname{References} % rather than 'Bibliography'
+\bibliographystyle{PyTOUGH}
+\addcontentsline{toc}{chapter}{References} % adds to table of contents
+\bibliography{PyTOUGH}
+
+%------------------------------------------------------------------------
+
+\end{document}

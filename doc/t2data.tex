@@ -1,0 +1,647 @@
+\chapter{TOUGH2 data files}
+\label{datafiles}
+
+\section{Introduction}
+The \texttt{t2data} library in PyTOUGH contains classes and routines for creating, editing and saving TOUGH2 or AUTOUGH2 data files.  It can be imported using the command:
+
+\begin{verbatim}
+   from t2data import *
+\end{verbatim}
+
+\section{\texttt{t2data} objects}
+
+The \texttt{t2data} library defines a \texttt{t2data} class, used for representing TOUGH2 data files.
+
+\textbf{Example:}
+
+\begin{verbatim}
+dat=t2data()
+\end{verbatim}
+
+creates an empty \texttt{t2data} object called \texttt{dat}.
+
+\begin{verbatim}
+dat=t2data(filename)
+\end{verbatim}
+
+creates a \texttt{t2data} object called \texttt{dat} and reads its contents from file \texttt{filename}.
+
+Because a \texttt{t2data} object contains a large number of different parameters, it is usually easier to load one from an existing TOUGH2 data file and edit it, rather than creating a new one from scratch. 
+
+\subsection{Properties}
+
+The main properties of a \texttt{t2data} object are listed in Table \ref{tb:t2data_properties}.  In general, each of these properties corresponds to an input block in a TOUGH2 data file.  Most of these input blocks contain a number of different parameters, so that the \texttt{t2data} property corresponding to each input block is usually in the form of a dictionary, containing a number of keys representing sub-properties.
+
+For example, the maximum number of time steps for the simulation is controlled by \texttt{max\_timesteps} key in the \texttt{parameter} property, which for a \texttt{t2data} object called \texttt{dat} would be accessed by \texttt{dat.parameter[`max\_timesteps']}.
+
+The details of all the \texttt{t2data} properties are given below.
+
+\begin{sidewaystable}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description} & \textbf{Input block}\\
+      \hline
+      \texttt{capillarity} & dictionary & capillarity function & RELP\\
+      \texttt{diffusion} & list & diffusion coefficients & DIFFU\\
+      \texttt{end\_keyword} & string & keyword to end file & ENDCY or ENDFI\\
+      \texttt{filename} & string & file name on disk & --\\
+      \texttt{generator} & dictionary & generators (by block name and generator name) & GENER\\
+      \texttt{generatorlist} & list & generators (by index) & GENER\\
+      \texttt{grid} & \texttt{t2grid} & model grid & ELEME, CONNE\\
+      \texttt{history\_block} & list & history blocks (TOUGH2 only) & FOFT\\
+      \texttt{history\_connection} & list & history connections (TOUGH2 only) & COFT\\
+      \texttt{history\_generator} & list & history generators (TOUGH2 only) & GOFT\\
+      \texttt{incon} & dictionary & initial conditions & INCON\\
+      \texttt{indom} & dictionary & rocktype-specific initial conditions & INDOM\\
+      \texttt{lineq} & dictionary & linear equation solver options (AUTOUGH2 only) & LINEQ\\
+      \texttt{meshmaker} & list & mesh generation options & MESHM\\
+      \texttt{multi} & dictionary & EOS configuration & MULTI\\
+      \texttt{noversion} & Boolean & suppressing printing of version summary & NOVER\\
+      \texttt{num\_generators} & integer & number of generators & --\\
+      \texttt{output\_times} & dictionary & times to write output & TIMES\\
+      \texttt{parameter} & dictionary & run-time parameters & PARAM\\
+      \texttt{relative\_permeability} & dictionary & relative permeability function & RELP\\
+      \texttt{selection} & dictionary & selection parameters & SELEC\\
+      \texttt{short\_output} & dictionary & short output (AUTOUGH2 only) & SHORT\\
+      \texttt{simulator} & string & simulator name (AUTOUGH2 only) & SIMUL\\
+      \texttt{solver} & dictionary & linear equation solver options (TOUGH2 only) & SOLVR\\
+      \texttt{start} & Boolean & run initialisation option & START\\
+      \texttt{title} & string & simulation title & TITLE\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{t2data} object}
+    \label{tb:t2data_properties}
+  \end{center}
+\end{sidewaystable}
+
+\subsubsection{\texttt{capillarity} property}
+
+A dictionary property specifying the capillarity function used, corresponding to the second line of the \textbf{RPCAP} input block in the TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:capillarity}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{parameters} & array (7) of float & function parameters & CP\\
+      \texttt{type} & integer & type of capillarity function & ICP\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{capillarity} property keys}
+    \label{tb:capillarity}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{diffusion} property}
+
+A list property specifying diffusion coefficients for each mass component simulated, corresponding to the \textbf{DIFFU} input block in the TOUGH2 data file.  The list has length \texttt{multi[`num\_components']} (i.e. NK in TOUGH2 terminology), and each element is a list of the diffusion coefficients for each component (with length \texttt{multi[`num\_phases']}, or NPH).
+
+\subsubsection{\texttt{filename} property}
+
+A string property containing the name of the TOUGH2 data file on disk.  (This does not correspond to any parameter in the TOUGH2 data file.)
+
+\subsubsection{\texttt{generator} property}
+
+A dictionary property containing the generators for the simulation, accessed by tuples of block name and generator name.  Each generator is an object of type \texttt{t2generator}, which is described in section \ref{t2generator}.
+
+\subsubsection{\texttt{generatorlist} property}
+
+A list property containing the generators for the simulation, accessed by index.
+
+\subsubsection{\texttt{grid} property}
+
+A \texttt{t2grid} object (see chapter \ref{t2grids}) representing the simulation grid, corresponding to the \textbf{ELEME} and \textbf{CONNE} input blocks in a TOUGH2 data file.
+
+\subsubsection{\texttt{history\_block} property}
+
+A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.
+
+\subsubsection{\texttt{history\_connection} property}
+
+A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.
+
+\subsubsection{\texttt{history\_generator} property}
+
+A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.
+
+\subsubsection{\texttt{incon} property}
+
+A dictionary property representing the initial conditions for the simulation, accessed by block name, corresponding to the \textbf{INCON} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the porosity of the block followed by the specified initial primary thermodynamic variables in the block.
+
+For example, to specify porosity 0.1 and initial conditions (101.3E3, 20.0) in block \texttt{`AB105'} of a \texttt{t2data} object called \texttt{dat}, set \texttt{dat.incon[`AB105'] = [0.1, 101.3e3, 20.0]}.
+
+\subsubsection{\texttt{indom} property}
+
+A dictionary property representing the initial conditions for the simulation, accessed by rocktype name, corresponding to the \textbf{INDOM} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the specified initial primary thermodynamic variables for the rocktype.
+
+\subsubsection{\texttt{lineq} property}
+
+A dictionary property representing linear equation solver options, corresponding to the \textbf{LINEQ} input block in an AUTOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:lineq}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{AUTOUGH2 parameter}\\
+      \hline
+      \texttt{epsilon} & float & solver tolerance & EPN\\
+      \texttt{gauss} & integer & Gauss elimination parameter & IGAUSS\\
+      \texttt{max\_iterations} & integer & max. number of iterations & MAXIT\\
+      \texttt{num\_orthog} & integer & number of orthogonalisations & NORTH\\
+      \texttt{type} & integer & type of solver (1 or 2) & ISOLVR\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{lineq} property keys}
+    \label{tb:lineq}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{meshmaker} property}
+
+A list property representing mesh generation options, corresponding to the \textbf{MESHM} input block in a TOUGH2 data file.  For more detail on the use of \textbf{MESHM} data, consult the TOUGH2 users' guide \citep{tough2}.
+
+The \textbf{MESHM} data may contain multiple sections (e.g. creation of a rectilinear XYZ grid followed by MINC processing), so the \texttt{meshmaker} property is structured as a list of two-element tuples, each containing the type of section (\texttt{rz2d}, \texttt{xyz} or \texttt{minc}) followed by the section data itself.
+
+The form of the section data varies depending on the section type.  For the \texttt{rz2d} type it is also structured as a list, as these types may contain variable numbers of sub-sections.  (For example, data for the \texttt{rz2d} type may contain multiple \texttt{logar} sub-sections for different logarithmic radial parts of the mesh.)  Each sub-section is again a two-element tuple, consisting of the sub-section type (a string) followed by a dictionary containing the data for the sub-section.
+
+Data for the \texttt{xyz} type are also structured as a list, with the first element containing the stand-alone \texttt{deg} parameter (a float), followed by the other sub-sections, corresponding to the \textbf{NX}, \textbf{NY} and \textbf{NZ} sub-sections in the TOUGH2 data file.  The \texttt{minc} type does not have sub-sections so MINC data are not structured as a list but simply a dictionary.
+
+Possible sub-section types for \texttt{rz2d} data are \texttt{radii}, \texttt{equid}, \texttt{logar} and \texttt{layer}, corresponding to their (uppercase) keyword counterparts in the TOUGH2 data file.  Data keys for these types are given in Table \ref{tb:rz2d}.  Data keys for the \texttt{xyz} and \texttt{minc} data are given in Tables \ref{tb:xyz} and \ref{tb:minc}.
+
+\textbf{Example}: The easiest way to understand how the \texttt{meshmaker} property works is to read some example input data into a \texttt{t2data} object and examine the result.  The \textbf{MESHM} data for the standard TOUGH2 test problem `rhbc' (`Production from a geothermal reservoir with hypersaline brine') is represented as a \texttt{t2data} \texttt{meshmaker} property as follows:
+
+\begin{verbatim}
+[(`rz2d',[
+ (`radii', {`radii': [5.0]}),
+ (`equid', {`dr': 2.0, `nequ': 1}),
+ (`logar', {`rlog': 100.0, `nlog': 50}),
+ (`logar', {`rlog': 1000.0, `nlog': 20}),
+ (`equid', {`dr': 0.0, `nequ': 1}),
+ (`layer', {`layer': [500.0]})
+ ])
+]
+\end{verbatim}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \multicolumn{4}{|c|}{\textbf{radii} sub-section keys}\\
+      \hline
+      \texttt{radii} & list & specified mesh radii & RC\\
+      \hline
+      \multicolumn{4}{|c|}{\textbf{equid} sub-section keys}\\
+      \hline
+      \texttt{dr} & float & radial increment & DR\\
+      \texttt{nequ} & integer & number of equidistant radii & NEQU\\
+      \hline
+      \multicolumn{4}{|c|}{\textbf{logar} sub-section keys}\\
+      \hline
+      \texttt{dr} & float & reference radial increment & DR\\
+      \texttt{nlog} & integer & number of logarithmic radii & NLOG\\
+      \texttt{rlog} & float & largest radius & RLOG\\
+      \hline
+      \multicolumn{4}{|c|}{\textbf{layer} sub-section keys}\\
+      \hline
+      \texttt{layer} & list & layer thicknesses & H\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{rz2d} data keys}
+    \label{tb:rz2d}
+  \end{center}
+\end{table}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \multicolumn{4}{|c|}{\texttt{deg} parameter}\\
+      \hline
+      \texttt{deg} & float & angle between y-axis and horizontal & DEG\\
+      \hline
+      \multicolumn{4}{|c|}{NX, NY and NZ keys}\\
+      \hline
+      \texttt{del} & float & constant grid increment & DEL\\
+      \texttt{deli} & list & variable grid increments & DEL\\
+      \texttt{no} & integer & number of grid increments & DR\\
+      \texttt{ntype} & string & axis direction (`NX', `NY' or `NZ') & NTYPE\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{xyz} data keys}
+    \label{tb:xyz}
+  \end{center}
+\end{table}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{dual} & string & treatment of global matrix-matrix flow & DUAL\\
+      \texttt{num\_continua} & integer & number of interacting continua & J\\
+      \texttt{spacing} & string & direction of volume fraction specification & PAR\\
+      \texttt{type} & string & proximity function type & TYPE\\
+      \texttt{vol} & list & volume fractions & VOL\\
+      \texttt{where} & string & direction of volume fraction specification & WHERE\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{minc} data keys}
+    \label{tb:minc}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{multi} property}
+
+A dictionary property selecting the equation of state (EOS) module used and setting associated parameters, corresponding to the \textbf{MULTI} input block in a TOUGH2 or AUTOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:multi}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{37mm}|p{23mm}|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{eos} & string & EOS name (AUTOUGH2 only) & NAMEOS\\
+      \texttt{num\_components} & integer & number of components & NK\\
+      \texttt{num\_equations} & integer & number of equations & NEQ\\
+      \texttt{num\_inc} & integer & number of mass components in INCON data (TOUGH2 only) & NKIN\\
+      \texttt{num\_phases} & integer & number of phases & NPH\\
+      \texttt{num\_secondary\_parameters} & integer & number of secondary parameters & NB\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{multi} property keys}
+    \label{tb:multi}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{noversion} property}
+
+A Boolean property specifying whether to suppress printing of version and date information, corresponding to the \textbf{NOVER} input block in a TOUGH2 data file.
+
+\subsubsection{\texttt{num\_generators} property}
+
+A read-only integer property returning the number of generators.
+
+\subsubsection{\texttt{output\_times} property}
+
+A dictionary property specifying the times at which model output is required, corresponding to the \textbf{TIMES} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:outputtimes}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|p{20mm}|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{max\_timestep} & float & maximum time step & DELAF\\
+      \texttt{num\_times\_specified} & integer & number of times specified & ITI\\
+      \texttt{num\_times} & integer & total number of times & ITE\\
+      \texttt{time\_increment} & float & time increment after specified times & TINTER\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{output\_times} property keys}
+    \label{tb:outputtimes}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{parameter} property}
+
+A dictionary property specifying run-time parameters, corresponding to the \textbf{PARAM} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:parameter}.
+
+The \texttt{option} parameter (MOP array in TOUGH2) is an array of 24 integers, and has a 1-based index so that its indices are the same as those in the TOUGH2 documentation.  (In fact it is really zero-based, like all other Python arrays, but has an extra unused zero$^{th}$ element).
+
+\begin{sidewaystable}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{absolute\_error} & float & absolute convergence tolerance & RE2\\
+      \texttt{be} & float & enhanced vapour diffusion & BE\\
+      \texttt{const\_timestep} & float & time step length & DELTEN\\
+      \texttt{derivative\_increment} & float & numerical derivate increment factor & DFAC\\
+      \texttt{diff0} & float & diffusive vapour flux (AUTOUGH2 only) & DIFF0\\
+      \texttt{gravity} & float & gravitational acceleration & GF\\
+      \texttt{max\_duration} & integer & maximum simulation duration (machine seconds) & MSEC\\
+      \texttt{max\_iterations} & integer & maximum number of iterations per time step & NOITE\\
+      \texttt{max\_timesteps} & integer & maximum number of time steps & MCYC\\
+      \texttt{max\_timestep} & float & maximum time step size & DELTMX\\
+      \texttt{newton\_weight} & float & Newton-Raphson weighting factor & WNR\\
+      \texttt{option} & array(24) of integer & simulation options & MOP\\
+      \texttt{pivot} & float & pivoting parameter for linear solver & U\\
+      \texttt{print\_block} & string & block name for short printout & ELST\\
+      \texttt{print\_interval} & integer & time step interval for printing & MCYPR\\
+      \texttt{print\_level} & integer & amount of printout & KDATA\\
+      \texttt{relative\_error} & float & relative convergence tolerance & RE1\\
+      \texttt{scale} & float & grid scale factor & SCALE\\
+      \texttt{texp} & float & binary diffusion temperature parameter & TEXP\\
+      \texttt{timestep\_reduction} & float & time step reduction factor & REDLT\\
+      \texttt{timestep} & list of float & specified time step sizes & DLT\\
+      \texttt{tstart} & float & start time (seconds) & TSTART\\
+      \texttt{tstop} & float & stop time & TIMAX\\
+      \texttt{upstream\_weight} & float & upstream weighting factor & WUP\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{parameter} property keys}
+    \label{tb:parameter}
+  \end{center}
+\end{sidewaystable}
+
+\subsubsection{\texttt{relative\_permeability} property}
+
+A dictionary property specifying the relative permeability function used, corresponding to the first line of the \textbf{RPCAP} input block in the TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:relativepermeability}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|p{20mm}|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{parameters} & array (7) of float & function parameters & RP\\
+      \texttt{type} & integer & type of relative permeability function & IRP\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{relative\_permeability} property keys}
+    \label{tb:relativepermeability}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{selection} property}
+
+A dictionary property representing selection parameters for the simulation (only used by some EOS modules, e.g. EOS7, EOS7R, EWASG), corresponding to the \textbf{SELEC} block in the TOUGH2 data file.
+
+The dictionary contains two keys: `integer' and `float', the first of which accesses a list of the integer selection parameters (the first line of the \textbf{SELEC} block), while the second accesses a list of the float selection parameters (the remaining lines of the \textbf{SELEC} block).
+
+\subsubsection{\texttt{short\_output} property}
+
+A dictionary property representing blocks, connections and generators for which short output is required, corresponding to the \textbf{SHORT} input block in an AUTOUGH2 data file.
+
+The dictionary contains four keys: `frequency', `block', `connection' and `generator'. The last three of these access lists of blocks, connections and generators respectively for short output.  (Note that each of these lists contains \texttt{t2block}, \texttt{t2connection} or \texttt{t2generator} objects, rather than names.)  The `frequency' key accesses the time step frequency (an integer) for which short output is required.
+
+\subsubsection{\texttt{simulator} property}
+
+A string property specifying the type of simulator, corresponding to the \textbf{SIMUL} input block in an AUTOUGH2 data file.
+
+\subsubsection{\texttt{solver} property}
+
+A dictionary property representing linear equation solver options, corresponding to the \textbf{SOLVR} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:solver}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      \textbf{Key} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{closure} & float & convergence criterion & CLOSUR\\
+      \texttt{relative\_max\_iterations} & float & relative max. number of iterations & RITMAX\\
+      \texttt{type} & integer & solver type & MATSLV\\
+      \texttt{o\_precond} & string & O-preconditioning type & OPROCS\\
+      \texttt{z\_precond} & string & Z-preconditioning type & ZPROCS\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{solver} property keys}
+    \label{tb:solver}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{start} property}
+
+A Boolean property specifying whether the flexible start option is used, corresponding to the \textbf{START} input block in a TOUGH2 data file.
+
+\subsubsection{\texttt{title} property}
+
+A string property containing the simulation title, corresponding to the \textbf{TITLE} input block in a TOUGH2 data file.
+
+\subsection{Methods}
+
+The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_methods}.  Details of these methods are given below.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{65mm}|}
+      \hline
+      \textbf{Method} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{add\_generator} & -- & adds a generator\\
+      \texttt{clear\_generators} & -- & deletes all generators\\
+      \texttt{convert\_to\_TOUGH2} & -- & converts from AUTOUGH2 input to TOUGH2\\
+      \texttt{delete\_generator} & -- & deletes a generator\\
+      \texttt{delete\_orphan\_generators} & -- & deletes orphaned generators\\
+      \texttt{generator\_index} & integer & returns index of generator with specified name and block name\\
+      \texttt{read} & \texttt{t2data} & reads data file from disk\\
+      \texttt{run} & -- & runs a TOUGH2 simulation\\
+      \texttt{specific\_generation} & \texttt{np.array} & generation per unit volume in each block\\
+      \texttt{total\_generation} & \texttt{np.array} & total generation in each block\\
+      \texttt{transfer\_from} & -- & transfers data from another \texttt{t2data} object\\
+      \texttt{write} & -- & writes to data file on disk\\
+      \hline
+    \end{tabular}
+    \caption{Methods of a \texttt{t2data} object}
+    \label{tb:t2data_methods}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{add\_generator(\emph{generator})}}
+
+Adds a generator to the data file object.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{generator}: \texttt{t2generator}\\
+  Generator to be added to the data file object.
+\end{itemize}
+
+\subsubsection{\texttt{convert\_to\_TOUGH2(\emph{warn}=True, \emph{MP}=False)}}
+
+Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators such as TOUGH2\_MP).  Various parameter options are altered to try to make the TOUGH2 simulation give similar results to the original AUTOUGH2 simulation.  This particularly affects AUTOUGH2 options related to backward compatibility with MULKOM.  In particular, if these are used then the heat conductivities in the ROCKS block have to be altered to give the same results.  Data blocks specific to AUTOUGH2 (e.g. SIMULATOR, LINEQ, and SHORT) are removed, and AUTOUGH2-specific generator types are converted to their TOUGH2 equivalents if possible, or otherwise deleted.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{warn}: Boolean\\
+  If \texttt{True}, warnings will be printed regarding AUTOUGH2 options used in the original data file which are not supported in TOUGH2.
+\item \textbf{MP}: Boolean\\
+  if \texttt{True}, converts to a TOUGH2\_MP data file, which treats some of the parameters differently (e.g. MOP(20)).
+\end{itemize}
+
+\subsubsection{\texttt{clear\_generators()}}
+
+Deletes all generators from the data file object.
+
+\subsubsection{\texttt{delete\_generator(\emph{blocksourcenames})}}
+
+Deletes the generator with the specified block and generator (source) name, if it exists.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{blocksourcenames}: tuple\\
+  Tuple of block name and generator name (both strings) of the generator to be deleted.
+\end{itemize}
+
+\subsubsection{\texttt{delete\_orphan\_generators()}}
+
+Deletes all generators with block names that are not in the grid.
+
+\subsubsection{\texttt{generator\_index(\emph{blocksourcenames})}}
+
+Returns the index (in the \texttt{generatorlist} list) of the generator with the specified block and generator name.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{blocksourcenames}: tuple\\
+  Tuple of block name and generator name (both strings) of the generator.
+\end{itemize}
+
+\subsubsection{\texttt{read(\emph{filename})}}
+
+Reads a \texttt{t2data} object from a TOUGH2 data file on disk.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Name of the TOUGH2 data file to be read.
+\end{itemize}
+
+\subsubsection{\texttt{run(\emph{save\_filename}=`', \emph{incon\_filename}=`', \emph{simulator}=`AUTOUGH2\_2')}}
+
+Runs an AUTOUGH2 or TOUGH2 (but not TOUGH2\_MP) simulation using the data file corresponding to a \texttt{t2data} object.  The contents of the \texttt{t2data} object must first have been written to disk using the \texttt{write} function.  If the file names for the save file or initial conditions file are not specified, they are constructed by changing the file extension of the data file name.  The name of the TOUGH2 executable can be specified.
+
+For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable must be specified via the \texttt{simulator} parameter.  However, the \texttt{save\_filename} and \texttt{incon\_filename} parameters do not need to be specified.  Initial conditions will be read from the file INCON and final results written to SAVE.  The listing file name will be the same as the data file name, but with the extension changed to *.listing.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{save\_filename}: string\\
+  Name of the save file to be written to disk during the simulation.  Default is \emph{base.save} where the AUTOUGH2 data file name is \emph{base.dat}.
+\item \textbf{incon\_filename}: string\\
+  Name of the initial conditions file for the simulation.  Default is \emph{base.incon} where the AUTOUGH2 data file name is \emph{base.dat}.
+\item \textbf{simulator}: string\\
+  Name of the AUTOUGH2 or TOUGH2 executable.  Default is `AUTOUGH2\_2'.
+\end{itemize}
+
+\subsubsection{\texttt{specific\_generation(\emph{type}=`MASS', \emph{name}=`')}}
+
+Returns an \texttt{np.array} containing the total specific generation rate in each block (i.e. generation rate per unit volume) for the specified generator type and name.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{type}: string\\
+  Generation type (`HEAT', `MASS' etc.)- default is `MASS'.
+\item \textbf{name}: string\\
+  Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
+\end{itemize}
+
+\subsubsection{\texttt{transfer\_from(\emph{source}, \emph{sourcegeo}, \emph{geo}, \emph{top\_generator}=[], \emph{bottom\_generator}=[],\\
+    \emph{sourceinconfilename}=`', \emph{inconfilename}=`', \emph{rename\_generators}=False)}}
+
+Transfers data from another \texttt{t2data} object, and its associated \texttt{mulgrid} object.  Parameters, rock types and rock type assignments, and optionally initial conditions files are transferred.  In general the data for a given block in the geometry is found by identifying the nearest block in the source geometry and transferring data from that block.  There are, however, exceptions, such as for generators that need to remain on the surface or bottom of the model.  The \texttt{top\_generator} and \texttt{bottom\_generator} lists specify the `layer' part of the generator name for generators that should remain on the top or bottom of the model, respectively.
+
+For generator types in which the \texttt{gx} and \texttt{rate} properties represent generation rates (as opposed to other types for which these properties are used to represent other things, e.g. productivity index for wells on deliverability), the values of \texttt{gx} and \texttt{rate} are scaled to account for the different volume of the block the generator has been mapped into.  If a generator with generation rate $G$ is mapped into $n$ blocks with volumes $V_1, V_2,\ldots, V_n$ then the generation rate for the new generator in block $i$ is $G V_i/\sum_{k=1}^{n}{V_k}$.  This should preserve the total generation rate over the model.  (For generator types matching the \texttt{bottom\_generator} or \texttt{top\_generator} specifications, the column area instead of the block volume is used to determine the appropriate scaling.)  The generator types for which this scaling is carried out are: ` AIR', `COM1', `COM2', `COM3', `COM4', `COM5', `HEAT', `MASS', `NACL', `TRAC'  and ` VOL'.
+
+If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a new initial conditions file with filename \texttt{inconfilename} is written to disk, with initial conditions transferred from the file \texttt{sourceinconfilename}.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{source}: \texttt{t2data}\\
+  The \texttt{t2data} object to transfer data from.
+\item \textbf{sourcegeo}: \texttt{mulgrid}\\
+  The \texttt{mulgrid} object corresponding to \texttt{source}.
+\item \textbf{geo}: \texttt{mulgrid}\\
+  The \texttt{mulgrid} object corresponding to the destination \texttt{t2data} object.
+\item \textbf{top\_generator}: list\\
+  A list of generator `layer' identifier strings for generators that need to be kept at the top of the model (e.g. rain generators).
+\item \textbf{bottom\_generator}: list\\
+  A list of generator `layer' identifier strings for generators that need to be kept at the bottom of the model (e.g. basement heat and mass inputs).
+\item \textbf{sourceinconfilename}: string\\
+  Name of the (optional) initial conditions file to transfer initial conditions data from (corresponding to \texttt{source}).
+\item \textbf{inconfilename}: string\\
+  Name of the (optional) initial conditions file to write, corresponding to the destination \texttt{t2data} object.
+\item \textbf{rename\_generators}: Boolean\\
+  If \texttt{False}, generators other than those at the top and bottom of the model retain their original names.  Otherwise, they will be renamed according to their column names in the new grid.
+\end{itemize}
+
+\subsubsection{\texttt{total\_generation(\emph{type}=`MASS', \emph{name}=`')}}
+
+Returns an \texttt{np.array} containing the total generation rate in each block for the specified generator type and name.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{type}: string\\
+  Generation type (`HEAT', `MASS' etc.)- default is `MASS'.
+\item \textbf{name}: string\\
+  Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
+\end{itemize}
+
+\subsubsection{\texttt{write(\emph{filename}=`')}}
+
+Writes a \texttt{t2data} object to a TOUGH2 data file on disk.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Name of the TOUGH2 data file to be written.  If no file name is specified, the object's own \texttt{filename} property is used.
+\end{itemize}
+
+\section{\texttt{t2generator} objects}
+\label{t2generator}
+
+A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e. an item in the generation table).  The properties of a \texttt{t2generator} object are given in Table \ref{tb:t2generator_properties}.  These correspond closely to the parameters specified in the TOUGH2 \textbf{GENER} input block.  A \texttt{t2generator} object has no methods.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{60mm}|p{20mm}|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
+      \hline
+      \texttt{block} & string & name of block containing the generator & SL, NS\\
+      \texttt{enthalpy} & list of float & generation enthalpies ($|$ltab$|>$1, itab$<>$`')& F1\\
+      \texttt{ex} & float & enthalpy for injection & EX\\
+      \texttt{gx} & float & generation rate (or productivity index for deliverability) & GX\\
+      \texttt{hg} & float & layer thickness for deliverability & HG\\
+      \texttt{fg} & float & separator pressure/ injectivity etc. & FG\\
+      \texttt{itab} & string & blank unless table of specific enthalpies specified & ITAB\\
+      \texttt{ltab} & integer & number of generation times (or open layers for deliverability) & LTAB\\
+      \texttt{nadd} & integer & successive block increment & NADD\\
+      \texttt{nads} & integer & successive generator increment & NADS\\
+      \texttt{name} & string & generator name & EL, NE\\
+      \texttt{nseq} & integer & number of additional generators & NSEQ\\
+      \texttt{rate} & list of float & generation rates ($|$ltab$|>$1)& F2\\
+      \texttt{time} & list of float & generation times ($|$ltab$|>$1)& F1\\
+      \texttt{type} & string & generator type (default `MASS') & TYPE\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{t2generator} object}
+    \label{tb:t2generator_properties}
+  \end{center}
+\end{table}
+
+\section{Example}
+
+The following piece of Python script opens a MULgraph geometry file and TOUGH2 data file, changes some TOUGH2 run-time parameters and assigns heat generators to the blocks in the bottom layer inside a defined area, with the specified total heat divided uniformly amongst the generators.
+
+\begin{verbatim}
+geo=mulgrid(`gmodel.dat')
+dat=t2data(`model.dat')
+
+dat.parameter[`max_timesteps']=300
+dat.parameter[`print_interval']=dat.parameter[`max_timesteps']/10
+dat.parameter[`option'][16]=5 # time step control
+
+dat.clear_generators()
+totalheat=10.e6
+layer=geo.layerlist[-1]  # bottom layer
+cols=[col for col in geo.columnlist if 10.e3<=col.centre[0]<=20.e3]
+totalarea=sum([col.area for col in cols])
+q=totalheat/totalarea
+
+for col in cols:
+    blockname=geo.block_name(layer.name,col.name)
+    gen=t2generator(name=` q'+col.name,block=blockname,type=`HEAT',gx=q*col.area)
+    dat.add_generator(gen)
+
+dat.write()
+
+\end{verbatim}

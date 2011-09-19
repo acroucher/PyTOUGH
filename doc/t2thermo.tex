@@ -1,0 +1,142 @@
+\chapter{TOUGH2 thermodynamics}
+\label{t2thermo}
+
+\section{Introduction}
+The \texttt{t2thermo} library in PyTOUGH contains a Python implementation of the thermodynamic routines used in TOUGH2.  These can be used to calculate the thermodynamic properties of water and steam under a range of conditions.  They are based on a subset of the IFC-67 thermodynamic formulation.
+
+The \texttt{t2thermo} library can be imported using the command:
+
+\begin{verbatim} 
+   from t2thermo import *
+\end{verbatim}
+
+The functions available through the \texttt{t2thermo} library are listed in Table \ref{tb:t2thermo_functions} and described below.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{65mm}|}
+      \hline
+      \textbf{Function} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{cowat} & tuple & density and internal energy of liquid water\\
+      \texttt{sat} & float & saturation pressure as a function of temperature\\
+      \texttt{supst} & tuple & density and internal energy of dry steam\\
+      \texttt{tsat} & float & saturation temperature as a function of pressure\\
+      \texttt{visw} & float & dynamic viscosity of water\\
+      \texttt{viss} & float & dynamic viscosity of steam\\
+      \hline
+    \end{tabular}
+    \caption{\texttt{t2thermo} functions}
+    \label{tb:t2thermo_functions}
+  \end{center}
+\end{table}
+
+\section{Thermodynamic functions}
+
+The thermodynamic routines used in TOUGH2 provide functions for liquid water and dry steam.  These functions calculate secondary parameters from the primary thermodynamic variables.
+
+\subsection{Liquid water: \texttt{cowat(\emph{t,p})}}
+
+The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of liquid water as a function of temperature \texttt{t} ($^{\circ}$C) and pressure \texttt{p} (Pa).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{t}: float\\
+  Temperature ($^{\circ}$C)
+\item \textbf{p}: float\\
+  Pressure (Pa)
+\end{itemize}
+
+\subsection{Dry steam: \texttt{supst(\emph{t,p})}}
+
+The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of dry steam as a function of temperature \texttt{t} ($^{\circ}$C) and pressure \texttt{p} (Pa).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{t}: float\\
+  Temperature ($^{\circ}$C)
+\item \textbf{p}: float\\
+  Pressure (Pa)
+\end{itemize}
+
+\section{Viscosity}
+
+\subsection{Liquid water: \texttt{visw(\emph{t,p,ps})}}
+
+The \texttt{visw} function returns the dynamic viscosity (Pa.s) of liquid water as a function of temperature \texttt{t} ($^{\circ}$C), pressure (Pa) and saturation pressure (Pa).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{t}: float\\
+  Temperature ($^{\circ}$C)
+\item \textbf{p}: float\\
+  Pressure (Pa)
+\item \textbf{ps}: float\\
+  Saturation pressure (Pa), calculated for example using the \texttt{sat} function.
+\end{itemize}
+
+\subsection{Dry steam: \texttt{viss(\emph{t,d})}}
+
+The \texttt{viss} function returns the dynamic viscosity (Pa.s) of dry steam as a function of temperature \texttt{t} ($^{\circ}$C) and density \texttt{d} (kg/m$^3$).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{t}: float\\
+  Temperature ($^{\circ}$C)
+\item \textbf{d}: float\\
+  Density (kg/m$^3$)
+\end{itemize}
+
+\section{Saturation line: \texttt{sat(\emph{t})} and \texttt{tsat(\emph{p})}}
+
+\subsection{\texttt{sat(\emph{t})}}
+
+The \texttt{sat} function returns the saturation pressure (Pa) at a given temperature \texttt{t} ($^{\circ}$C), for temperatures below the critical temperature.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{t}: float\\
+  Temperature ($^{\circ}$C)
+\end{itemize}
+
+\subsection{\texttt{tsat(\emph{p})}}
+
+The \texttt{tsat} function returns the saturation temperature ($^{\circ}$C) at a given pressure \texttt{p} (Pa), for pressures below the critical pressure.
+
+Note that the IFC-67 formulation did not include an explicit formula for calculating saturation temperature as a function of pressure, so here (as in TOUGH2) this is calculated using an iterative root-finding process on the \texttt{sat} function.  The root-finding function is from the \texttt{scipy} library, so this library must be installed before the \texttt{tsat} function will work.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{p}: float\\
+  Pressure (Pa)
+\end{itemize}
+
+\section{Example}
+
+The following script reads in a geometry file and writes an initial conditions file with approximate hydrostatic conditions corresponding to a specified vertical temperature gradient.  In this case, the model has a simple flat surface, so that each column has the same number of layers.  The \texttt{cowat} function is used to calculate the fluid density at each layer, and hence the approximate vertical pressure distribution.
+
+\begin{verbatim}
+from mulgrids import *
+from t2thermo import *
+
+geo=mulgrid(`gmodel.dat')
+
+patm,tatm=101.325e3,15.0
+pblk,tblk=np.zeros(geo.num_blocks)+patm,np.zeros(geo.num_blocks)+tatm
+g=9.8
+p,t=patm,tatm
+thick=0.0
+tgradient=30 # deg C/km
+for lay in geo.layerlist[1:]:
+    d=cowat(t,p)[0]
+    thisthick=lay.top-lay.bottom
+    h=0.5*(thick+thisthick)
+    p+=d*g*h
+    t+=tgradient/1.e3*h
+    thick=thisthick
+    for col in geo.columnlist:
+        blkname=geo.block_name(lay.name,col.name)
+        iblk=geo.block_name_index[blkname]
+        pblk[iblk],tblk[iblk]=p,t
+geo.write_incons(`model.incon',[pblk,tblk])
+\end{verbatim}

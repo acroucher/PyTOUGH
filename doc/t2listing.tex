@@ -1,0 +1,292 @@
+\chapter{TOUGH2 listing files}
+\label{listingfiles}
+
+\section{Introduction}
+The \texttt{t2listing} library in PyTOUGH contains classes and routines for reading TOUGH2 listing files.  It can be imported using the command:
+
+\begin{verbatim}
+   from t2listing import *
+\end{verbatim}
+
+Listing files produced by AUTOUGH2, TOUGH2 and TOUGH2\_MP have different formats but are all supported.
+
+\section{\texttt{t2listing} objects}
+
+The \texttt{t2listing} library defines a \texttt{t2listing} class, used for representing TOUGH2 listing files.
+
+\textbf{Example:}
+
+\begin{verbatim}
+lst=t2listing()
+\end{verbatim}
+
+creates an empty \texttt{t2listing} object called \texttt{lst}.
+
+\begin{verbatim}
+lst=t2listing(filename)
+\end{verbatim}
+
+creates a \texttt{t2listing} object called \texttt{lst} and reads its contents from file \texttt{filename}.
+
+\subsection{Properties}
+
+The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t2listing_properties}.
+
+\subsubsection{Element, connection and generation tables}
+
+There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \texttt{listingtable} (see section \ref{listingtable}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.
+
+For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element[`AR210'][`Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120][`Pressure']} gives the pressure at the block with (zero-based) index 120.
+
+These tables can also be accessed to give all results for a given block, or for a given column in the table.  For example, \texttt{lst.element[`AR210']} returns a dictionary containing all results at block `AR210', referred to by the name of each table column.  \texttt{lst.element[`Temperature']} returns an \texttt{np.array} containing the temperatures at all blocks in the model.  (Hence, \texttt{lst.element[`Pressure'][120]} gives the same result as \texttt{lst.element[120][`Pressure']}.)
+
+The connection and generation tables work very similarly to the element table, except that connections are referred to by tuples of block names (rather than single block names), and generators are referred to by tuples of block names and generator names.  So for example, the mass flow rate between blocks `AB300' and `AC300' might be given by \texttt{lst.connection[`AB300',`AC300'][`Mass flow']}.
+
+The names of the columns for each table are read directly from the listing file, and will depend on the TOUGH2 equation of state (EOS) being used.
+
+\subsubsection{Full and short output}
+
+AUTOUGH2 allows the use of `short' output, in which a specified selection of block, connection or generator properties are printed at time steps between normal full output.  A \texttt{t2listing} object will read short output results, if they are present, when producing time histories using the \texttt{history()} method.  However it is not possible to navigate to short output results or access them via the \texttt{t2listing} table properties above.
+
+TOUGH2 does not support short output.
+
+\subsubsection{Navigating in time using \texttt{time}, \texttt{index} and \texttt{step}}
+
+The \texttt{time} property returns the time (in seconds) corresponding to the current set of results.  It is also possible to set the \texttt{time} property to navigate to a specific set of full results.  For example, \texttt{lst.time=1.e9} navigates to the first set of full results for which \texttt{lst.time} is at least $10^9$s.
+
+The \texttt{index} property gives the index of the current set of results, and can take any value between 0 and \texttt{num\_fulltimes}-1.  The value of \texttt{index} can also be set to change to a different set of results in the listing file (e.g. \texttt{lst.index=12}).  It can be incremented and decremented like any other Python integer variable, e.g. \texttt{lst.index+=1} or \texttt{lst.index-=2} to go to the next set of results, or the second to last set respectively.
+
+The \texttt{step} property gives the time step number for the current set of results.  This is the number of time steps carried out in the simulation up to the current set of results (recall that results are not necessarily written to the listing file at every time step).  Again, its value can be set to navigate through the results, e.g. \texttt{lst.step=100} navigates to the first set of full results at which the time step number is at least 100.
+
+The \texttt{times} property returns an \texttt{np.array} of all times at which results (including short output) are given in the listing file.  It has length equal to \texttt{num\_times}.  The \texttt{fulltimes} property returns an \texttt{np.array} of times at which full results are given (not including short output), and has length equal to \texttt{num\_fulltimes}.
+
+A \texttt{t2listing} object also has methods (as well as properties) for navigating through time (see section \ref{t2listingmethods}).
+
+\subsubsection{Listing diagnostics}
+
+\texttt{t2listing} objects have two properties that provide diagnostics on the results of the TOUGH2 run.
+
+The \texttt{convergence} property is a dictionary of the maximum absolute differences in the element table between the second to last and last sets of results in the listing file.  This can be used to check convergence of steady-state simulations.  For example:
+
+\begin{verbatim}
+lst.convergence[`Temperature']
+\end{verbatim}
+
+gives the largest absolute temperature change between the second to last and last sets of results.
+
+The \texttt{reductions} property is a list of tuples of time step indices at which the time step size was reduced during the simulation, and the block name at which the maximum residual occurred prior to each reduction.  This gives an indication of problematic times and blocks which caused time step reductions.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{70mm}|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{connection} & \texttt{listingtable} & connection table for current set of results\\
+      \texttt{convergence} & dictionary & maximum differences in element table between second to last and last sets of results\\
+      \texttt{element} & \texttt{listingtable} & element table for current set of results\\
+      \texttt{fullsteps} & \texttt{np.array} & array of time step numbers (integer) for full results\\
+      \texttt{fulltimes} & \texttt{np.array} & array of times (float) for full results\\
+      \texttt{generation} & \texttt{listingtable} & generation table for current set of results\\
+      \texttt{index} & integer & index of current set of results\\
+      \texttt{num\_fulltimes} & integer & number of sets of full results\\
+      \texttt{num\_times} & integer & number of sets of all results (full and short)\\
+      \texttt{primary} & \texttt{listingtable} & primary variable table for current set of results (TOUGH2 only)\\
+      \texttt{reductions} & list & time step indices at which time step was reduced during the simulation\\
+      \texttt{short\_types} & list of string & types of short output present\\
+      \texttt{step} & integer & time step number of current set of results\\
+      \texttt{steps} & \texttt{np.array} & array of time step numbers (integer) for all results (full and short)\\
+      \texttt{time} & float & time of current set of results\\
+      \texttt{times} & \texttt{np.array} & array of times (float) for all results (full and short)\\
+      \texttt{title} & string & simulation title\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{t2listing} object}
+    \label{tb:t2listing_properties}
+  \end{center}
+\end{table}
+
+\subsection{Methods}
+\label{t2listingmethods}
+
+The main methods of a \texttt{t2listing} object are listed in Table \ref{tb:t2listing_methods}.  Details of these methods are given below.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{80mm}|}
+      \hline
+      \textbf{Method} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{add\_side\_recharge} & -- & adds side recharge generators to a \texttt{t2data} object\\
+      \texttt{first} & -- & navigates to the first set of full results\\
+      \texttt{history} & list or tuple & time history for a selection of locations and table columns\\
+      \texttt{last} & -- & navigates to the last set of full results\\
+      \texttt{next} & Boolean & navigates to the next set of full results\\
+      \texttt{prev} & Boolean & navigates to the previous set of full results\\
+      \texttt{write\_vtk} & -- & writes results to VTK file\\
+      \hline
+    \end{tabular}
+    \caption{Methods of a \texttt{t2listing} object}
+    \label{tb:t2listing_methods}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{add\_side\_recharge(\emph{geo}, \emph{dat})}}
+
+Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a production run, calculated according to the final results in the listing.  These generators represent side inflows due to pressure changes in the blocks on the model's horizontal boundaries.  Recharge generators are given the names of their blocks- any existing generators with the same names will be overwritten.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \texttt{mulgrid}\\
+  Geometry object associated with the listing.
+\item \textbf{dat}: \texttt{t2data}\\
+  TOUGH2 data object for the side recharge generators to be added to.
+\end{itemize}
+\subsubsection{\texttt{first()}}
+
+Navigates to the first set of full results in the listing file.
+
+\subsubsection{\texttt{history(\emph{selection})}}
+
+Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{selection}: list of tuples\\
+  Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing table type (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the block/ connection/ generator name and the table column name.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)
+\end{itemize}
+
+\textbf{Example:}
+
+\begin{verbatim}
+[(tt,temp),(tq,q),(tg,g)] = lst.history([(`e',`AR210',`Temperature'),
+(`c',(`AB300',`AC300'),`Mass flow'),(`g',(`BO110',`BH110'),`Generation rate')])
+\end{verbatim}
+
+returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \texttt{(tq,q)} and \texttt{(tg,g)}, giving the times and values of temperature at block `AR210', mass flow at the connection between blocks `AB300' and `AC300', and generation rate in the generator `BH110' in block `BO110' respectively.
+
+\subsubsection{\texttt{last()}}
+
+Navigates to the last set of full results in the listing file.
+
+\subsubsection{\texttt{next()}}
+
+Navigates to the next set of full results in the listing file.  Returns \texttt{False} if already at the last set of results (and \texttt{True} otherwise).
+
+\subsubsection{\texttt{prev()}}
+
+Navigates to the previous set of full results in the listing file.  Returns \texttt{False} if already at the first set of results (and \texttt{True} otherwise).
+
+\subsubsection{\texttt{write\_vtk(\emph{geo},\emph{filename},\emph{grid}=None,\emph{indices}=None,\emph{flows}=False,\emph{wells}=False,\\
+\emph{start\_time}=0,\emph{time\_unit}=`s')}}
+
+Writes a \texttt{t2listing} object to a set of VTK files on disk, for visualisation with VTK, Paraview, Mayavi etc.  The results in the listing object are written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written correspond to the variables given in the columns of the element table of the \texttt{t2listing} object.  In addition, data arrays from an associated \texttt{mulgrid} and (optionally) \texttt{t2grid} objects can be included.
+
+If \texttt{flows} is \texttt{True} (and a \texttt{grid} is specified and the listing contains connection data), approximate block-average flux vectors at the centre of each block are also written, for all variables in the connection table with names ending in `flow'.
+
+One *.vtu file is produced for each time step in the \texttt{t2listing} object at which full results are present, and a *.pvd file is also written.  This is usually the file that should actually be opened in Paraview or other software as it contains time information associated with each *.vtu file.
+
+Optionally, only a subset of the time indices present in the \texttt{t2listing} can be written, according to the \texttt{indices} parameter.  A start time and time unit for the output can optionally be specified.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \texttt{mulgrid}\\
+  The \texttt{mulgrid} geometry object associated with the results.  For flexibility, this geometry need not be fully compatible with the results- for example, it may contain only a subset of the blocks for which results are present, or the blocks may be in a different order.  However, if it is not fully compatible, the writing process will be slower, and flux vectors will not be written (even if \texttt{flows} is set to \texttt{True}).
+\item \textbf{filename}: string\\
+  Name of the *.pvd file to be written.  Names of the individual *.vtu files for each time step are similar but with a time index appended and the file extension changed.
+\item \textbf{grid}: \texttt{t2grid}\\
+  Name of optional \texttt{t2grid} object associated with the results.
+\item \textbf{indices}: list or tuple\\
+  Optional specification of time indices to include in the output.  If set to \texttt{None} (the default), all time indices will be included.
+\item \textbf{flows}: Boolean\\
+  Set to \texttt{True} if approximate block-centred flux vectors are to be calculated and written, for visualising flows.  Default is \texttt{False}.
+\item \textbf{wells}: Boolean\\
+  Set to \texttt{True} if a separate VTK file for the wells in the \texttt{mulgrid} object is to be written.  Default is \texttt{False}.
+\item \textbf{start\_time}: float\\
+  Optional start time of the simulation, i.e. time associated with the first set of results.  Default is zero.
+\item \textbf{time\_unit}: string\\
+  Optional time unit for the output.  TOUGH2 results are given at times in seconds, but this option allows them to be converted to other units.  Options are: `s', `h', `d' and `y', for seconds, hours, days and years respectively.  Default is `s'.
+\end{itemize}
+
+\section{\texttt{listingtable} objects}
+\label{listingtable}
+
+A \texttt{listingtable} object represents a table of results in a TOUGH2 listing file (whether it is an element, connection or generation table).  The column headings of the table are taken directly from the corresponding table in the listing file.  The rows of the table may be accessed either by index (zero-based) or by the name of the block, connection or generator (in the case of connection tables, tuples of block names, and for generation tables, tuples of block names and generator names).
+
+Hence, the value in the element table for a given block and column can be accessed by \texttt{lst.element[\emph{blockname}][\emph{columnname}]}, or by \texttt{lst.element[\emph{blockindex}][\emph{columnname}]} (for a \texttt{t2listing} object \texttt{lst}).
+
+The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[\emph{blockname}]} gives the row in the table for a specified block, with the values arranged in a dictionary whose keys are the columns of the table.  Conversely, \texttt{lst.element[\emph{columnname}]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid).
+
+The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.
+
+\section{Examples}
+
+\subsection{Slice plot of drawdown}
+
+This script shows a vertical slice plot along the model's \emph{x}-axis of the difference in pressure (i.e. drawdown) between the start and end of a simulation.
+
+\begin{verbatim}
+from mulgrids import *
+from t2listing import *
+from copy import copy
+
+geo=mulgrid(`gmodel.dat')
+results=t2listing(`model.listing')
+
+results.first()
+p0=copy(results.element[`Pressure'])
+results.last()
+p1=results.element[`Pressure']
+
+geo.slice_plot(`x',(p1-p0)/1.e5,`Pressure\ difference',`bar')
+\end{verbatim}
+
+(Note: the \texttt{copy} command is needed, otherwise the arrays \texttt{p0} and \texttt{p1} would both contain the final values of pressure after the \texttt{results.last()} command.)
+
+\subsection{Pressure-temperature diagram}
+
+This script plots model results from a specified block on a pressure-temperature diagram.
+
+\begin{verbatim}
+from t2listing import *
+import matplotlib.pyplot as plt
+
+lst=t2listing(`model.listing')
+blk=` n 60'
+[(tp,p),(tt,t)]=lst.history([(`e',blk,`Pressure'),(`e',blk,`Temperature')])
+
+plt.plot(t,p/1.e5,`o-')
+plt.xlabel(`T ($^o$C)')
+plt.ylabel(`P (bar)')
+plt.show()
+\end{verbatim}
+
+\subsection{Comparing results of two models}
+\label{comparison_example}
+
+This script reads grids and results for two different models, a coarse model and a fine one, and produces a comparison plot of the time history of temperature for both models at a given point.
+
+\begin{verbatim}
+from mulgrids import *
+from t2listing import *
+import matplotlib.pyplot as plt
+
+geoc,geof=mulgrid(`gcoarse.dat'),mulgrid(`gfine.dat')
+coarse,fine=t2listing(`coarse.listing'),t2listing(`fine.listing')
+
+p=[47.e3,0.0,-7000.0]
+blkc=geoc.block_name_containing_point(p)
+blkf=geof.block_name_containing_point(p)
+
+tc,tempc=coarse.history((`e',blkc,`Temperature'))
+tf,temp=fine.history((`e',blkf,`Temperature'))
+
+plt.plot(tc,tempc,`o-',label=`coarse model')
+plt.plot(tf,tempf,`s-',label=`fine model')
+plt.xlabel(`time (s)')
+plt.ylabel(`Temperature ($^o$C)')
+plt.legend()
+
+plt.show()
+\end{verbatim}
+

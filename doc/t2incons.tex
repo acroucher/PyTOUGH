@@ -1,0 +1,215 @@
+\chapter{TOUGH2 initial conditions}
+\label{incons}
+
+\section{Introduction}
+The \texttt{t2incons} library in PyTOUGH contains classes and routines for reading, editing and writing TOUGH2 initial conditions and files.  It can be imported using the command:
+
+\begin{verbatim}
+   from t2incons import *
+\end{verbatim}
+
+The initial conditions files used by TOUGH2 and AUTOUGH2 have the same format.
+
+\section{\texttt{t2incon} objects}
+
+The \texttt{t2incons} library defines a \texttt{t2incon} class, used for representing TOUGH2 initial conditions.
+
+\textbf{Example:}
+
+\begin{verbatim}
+inc=t2incon()
+\end{verbatim}
+
+creates an empty \texttt{t2incon} object called \texttt{inc}.
+
+\begin{verbatim}
+inc=t2incon(filename)
+\end{verbatim}
+
+creates a \texttt{t2incon} object called \texttt{inc} and reads its contents from file \texttt{filename}.
+
+\subsection{Properties}
+
+The main properties of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_properties}.  Once a set of initial conditions is loaded into a \texttt{t2incon} object, conditions for individual blocks can be accessed by block name or index.  For example, for a \texttt{t2incon} object \texttt{inc}, the initial conditions in block \emph{blockname} are given simply by \texttt{inc[\emph{blockname}]}.  This returns a \texttt{t2blockincon} object (see section \ref{t2blockincons}).  Similarly, \texttt{inc[\emph{i}]} returns the initial conditions at the block with (zero-based) index \texttt{\emph{i}}.
+
+Each column in the initial conditions file can be accessed by adding an integer (zero-based) index after the \texttt{t2blockincon} object, so for example:
+
+\begin{verbatim}
+t=inc['aa 20'][1]
+\end{verbatim}
+
+assigns the variable \texttt{t} the value of the second primary thermodynamic variable (index 1) in block \texttt{`AA 20'}.  Initial conditions can be edited in a similar way, for example:
+
+\begin{verbatim}
+inc['aa 20'][0]=p
+\end{verbatim}
+
+assigns the value of \texttt{p} to the first primary variable (usually pressure) in block \texttt{`AA 20'}.  For convenience, initial conditions for a given block can also be specified as a simple list or tuple of values, for example:
+
+\begin{verbatim}
+inc['ab 25']=(101.3e5,25.0)
+\end{verbatim}
+
+sets the initial conditions at block \texttt{`ab 25'} to the specified values.  This will work even if no initial conditions have been previously specified for the given block.
+
+An \texttt{np.array} of the values of the variables at all blocks can be found from the \texttt{variable} property.  For example:
+
+\begin{verbatim}
+inc.variable[:,2]
+\end{verbatim}
+
+returns an \texttt{np.array} of the third variable (index 2) in each block.  The \texttt{variable} property can also be set to a given array.  Note, however, that the whole array must be set, not just part of it.  For example, adding an offset \texttt{P0} to all pressures (variable 0) in the initial conditions could be done by:
+
+\begin{verbatim}
+v=inc.variable
+v[:,0]+=P0
+inc.variable=v
+\end{verbatim}
+
+The \texttt{porosity} property may be set to assign values of porosity to all blocks.  The assigned value may be an \texttt{np.array} with a value for each block, or a scalar float (in which case the same value is assigned to all blocks), or \texttt{None} which assigns the value in each block to \texttt{None}.
+
+The \texttt{timing} property of a \texttt{t2incon} object contains the optional timing information at the end of the file.  This is a dictionary property with keys \texttt{`kcyc'}, \texttt{`iter'}, \texttt{`nm'}, \texttt{`tstart'} and \texttt{`sumtim'}, corresponding to the values stored on this line.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{75mm}|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{blocklist} & list & ordered list of block names in the initial conditions file\\
+      \texttt{num\_blocks} & integer & number of blocks at which conditions are specified \\
+      \texttt{num\_variables} & integer & number of thermodynamic variables specified at each block\\
+      \texttt{porosity} & \texttt{np.array} & array of porosity values specified at each block\\
+      \texttt{timing} & dictionary & additional timing information for restarting\\
+      \texttt{variable} & \texttt{np.array} & two-dimensional array of thermodynamic variable values at each block\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{t2incon} object}
+    \label{tb:t2incon_properties}
+  \end{center}
+\end{table}
+
+\subsection{Methods}
+
+The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_methods}.  Details of these methods are given below.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{65mm}|}
+      \hline
+      \textbf{Method} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{add\_incon} & -- & adds a set of initial conditions for one block\\
+      \texttt{delete\_incon} & -- & deletes the initial conditions for one block\\
+      \texttt{empty} & -- & deletes all initial conditions from the object\\
+      \texttt{read} & -- & reads initial conditions from file\\
+      \texttt{transfer\_from} & -- & transfers initial conditions from one grid to another\\
+      \texttt{write} & -- & writes initial conditions to file\\
+      \hline
+    \end{tabular}
+    \caption{Methods of a \texttt{t2incon} object}
+    \label{tb:t2incon_methods}
+  \end{center}
+\end{table}
+
+\subsubsection{\texttt{add\_incon(\emph{incon})}}
+
+Adds a set of initial conditions for a single block.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{incon}: \texttt{t2blockincon}\\
+  Initial conditions for the block.
+\end{itemize}
+
+\subsubsection{\texttt{delete\_incon(\emph{blockname})}}
+
+Deletes a set of initial conditions for a single block.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{blockname}: string\\
+  Name of the block at which initial conditions are to be deleted.
+\end{itemize}
+
+\subsubsection{\texttt{empty()}}
+
+Deletes initial conditions for all blocks.
+
+\subsubsection{\texttt{read(\emph{filename})}}
+
+Reads initial conditions from file.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Name of the initial conditions file to be read.
+\end{itemize}
+
+\subsubsection{\texttt{transfer\_from(\emph{sourceinc}, \emph{sourcegeo}, \emph{geo}, \emph{mapping=\{\}},\
+    \emph{colmapping=\{\}})}}
+
+Transfers initial conditions from another \texttt{t2incon} object \texttt{sourceinc}, using the two corresponding \texttt{mulgrid} geometry objects \texttt{sourcegeo} and \texttt{geo}, and optionally the block and column mappings between the two grids (which are created if not specified).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{sourceinc}: \texttt{t2incon}\\
+  Source initial conditions object.
+\item \textbf{sourcegeo}: \texttt{mulgrid}\\
+  Geometry object corresponding to the source initial conditions.
+\item \textbf{geo}: \texttt{mulgrid}\\
+  Geometry object for the grid to be transferred to.
+\item \textbf{mapping}: dictionary\\
+  Dictionary mapping block names from \texttt{geo} to \texttt{sourcegeo}.
+\item \textbf{colmapping}: dictionary\\
+  Dictionary mapping column names from \texttt{geo} to \texttt{sourcegeo}.
+\end{itemize}
+
+\subsubsection{\texttt{write(\emph{filename}, \emph{reset}=True)}}
+
+Writes initial conditions to file.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Name of the initial conditions file to be written.
+\item \textbf{reset}: Boolean\\
+  Set to \texttt{False} if timing information is not to be reset- e.g. if restarting a transient simulation.
+\end{itemize}
+
+\section{\texttt{t2blockincon} objects}
+\label{t2blockincons}
+
+A \texttt{t2blockincon} object represents the initial conditions for a particular block.  A \texttt{t2blockincon} object has no methods, and three properties: \texttt{variable}, \texttt{block} and \texttt{porosity}.  These are respectively list, string and float properties which hold the variable values, the block name and the (optional) porosity value for each block.  If no value is given for porosity, its value is \texttt{None}.
+
+The \texttt{variable} property of a \texttt{t2blockincon} can be more easily accessed simply by adding the required (zero-based) variable index after the object.  For example, for a \texttt{t2blockincon} object \texttt{b}, the value of the second variable is given simply by \texttt{b[1]}.
+
+\section{Reading *.save files and converting to initial conditions}
+
+TOUGH2 writes a *.save file at the end of the simulation, which has a format almost the same as that of an initial conditions file and can be used to start a subsequent run.  A *.save file generally has some extra timing information at the end which can be used to restart a simulation at a particular time.  However, in many cases, e.g when running natural state simulations, we want to restart at the original start time and this timing information must be discarded.
+
+PyTOUGH will read a *.save file into a \texttt{t2incon} object.  This can then be written to file, providing a simple way to convert *.save files into *.incon files.  By default, the timing information is discarded when writing (it can be retained by setting the \texttt{reset} parameter of the \texttt{write} method to \texttt{False}).  For example:
+
+\begin{verbatim}
+t2incon('model1.save').write('model2.incon')
+\end{verbatim}
+
+will read the save file \texttt{`model1.save'}, convert it to initial conditions, and write it to the initial conditions file \texttt{`model2.incon'}.
+
+\section{Example}
+
+The following piece of Python script reads in a *.save file and prints out a table of block names and temperatures for the first 10 blocks.  It then adds an extra variable to each initial condition and gives it a constant value (giving a new column in the initial conditions file), and finally writes out the edited initial conditions to a new file.
+
+Adding a new variable to each initial condition can be useful when e.g. changing from one TOUGH2 equation of state (EOS) module to another, as different EOS modules may have different numbers of primary thermodynamic variables.
+
+\begin{verbatim}
+from t2incons import *
+inc=t2incon('model1.save')
+for blk in inc[0:10]:
+    print 'Block %5s: temperature = %5.1f' % (blk.block,blk[1])
+patm=101.3e3
+for blk in inc: blk.variable.append(patm)
+inc.write('model2.incon')
+
+\end{verbatim}
+

@@ -1,0 +1,156 @@
+\chapter{Introduction}
+
+\section{What is PyTOUGH?}
+
+PyTOUGH (\textbf{Py}thon \textbf{TOUGH}) is a set of Python software routines for making it easier to use the TOUGH2 geothermal reservoir simulator. Using PyTOUGH, it is possible to automate the creation and editing of TOUGH2 model grids and data files, and the analysis and display of model simulation results.
+
+\section{What are TOUGH2 and AUTOUGH2?}
+
+TOUGH2 \citep{tough2} is a general-purpose simulator for modelling subsurface fluid and heat flow, often used for simulating geothermal reservoirs.  TOUGH2\_MP \citep{tough2mp} is a multi-processor version of TOUGH2.
+
+AUTOUGH2 is the University of Auckland version of TOUGH2.  The main differences between AUTOUGH2 and TOUGH2 are:
+
+\begin{itemize}
+  \item \textbf{EOS handling}: AUTOUGH2 includes all different equations of state (EOSes) in a single executable program, whereas TOUGH2 uses different executables for each EOS.  As a result, the main input data file for an AUTOUGH2 simulation also includes extra data blocks to specify which EOS is to be used.
+  \item \textbf{Generator types}: AUTOUGH2 includes a variety of extra generator types developed for geothermal reservoir simulation (e.g. makeup and reinjection wells).
+\end{itemize}
+
+\subsection{TOUGH2 data files}
+
+TOUGH2 takes its main input from a \textbf{data file}, which contains information about the model grid, simulation parameters, time stepping, sources of heat and mass etc.  The data file formats for TOUGH2 and AUTOUGH2 are almost identical, with minor differences.  TOUGH2\_MP can read TOUGH2 data files, but also supports some extensions (e.g. for 8-character instead of 5-character block names) to this format.  PyTOUGH does not currently support the TOUGH2\_MP extensions.
+
+Because TOUGH2 uses a finite volume formulation, the only model grid data it needs are the volumes of the grid blocks and the distances and areas associated with the connections between blocks.  Hence, the TOUGH2 data file need not contain any information about the specific locations of the blocks in space, and it contains no information about the locations of the vertices or edges of the blocks.  This makes it easy to use TOUGH2 to simulate one-, two- or three-dimensional models, all with the same format of data file.  However, this lack of reference to any coordinate system also makes it more difficult to generate model grids, and to visualise simulation results in space.
+
+\subsection{MULgraph geometry files}
+
+For this reason, a separate \textbf{geometry file} can be used to create grids for TOUGH2 simulations and visualise simulation results.  The geometry file contains information about the locations of the grid block vertices.  The geometry file can be used to visualise results using the \textbf{MULgraph} graphical post-processor for TOUGH2 and AUTOUGH2 \citep{mulgraph}, developed at the University of Auckland in the 1990s.
+
+The MULgraph geometry file assumes the grid has a layered structure, with blocks arranged in layers and columns, and the same arrangement of columns on each layer.  (At the top of the model grid, blocks in some columns may be missing, to allow the grid to follow the surface topography.)
+
+\subsection{TOUGH2 listing files}
+
+The output from TOUGH2 is written to a \textbf{listing file}, which is a text file containing tables of results for each time step (or only selected time steps, if preferred).  At each time step there is an `element table', containing results for block properties (e.g. pressure, temperature etc.).  There may also be a `connection table', containing results for flows between blocks, and a `generation table', containing results (e.g. flow rates) at the generators in the model (e.g. wells).
+
+The formats of the listing files produced by TOUGH2, AUTOUGH2 and TOUGH2\_MP are all slightly different, and also vary depending on the EOS used.  However, PyTOUGH attempts to detect and read all of these formats.
+
+\section{What is Python?}
+
+Python is a general-purpose programming language.  It is free and open-source, and runs on many different computer operating systems (Linux, Windows, Mac OS X and others).  Python can be downloaded from the Python website (\texttt{http://www.python.org}), which also contains detailed reference material about the Python language.  If you are using Linux you probably already have Python, as it is included in most Linux distributions.
+
+PyTOUGH should run on Python version 2.4 or newer (though version 2.5 or newer is recommended).
+
+If you are unfamiliar with Python, one of the easiest ways to learn it is by doing some of the many Python tutorials available online, e.g.
+
+\begin{itemize}
+  \item \texttt{http://docs.python.org/tutorial/}
+  \item \texttt{http://diveintopython.org/}
+\end{itemize}
+
+\subsection{Python basics}
+
+\subsubsection{Objects}
+
+Python is what is known as an \textbf{object-oriented} language, which means that it is possible to create special customised data types, or `classes', to encapsulate all the properties and behaviour of the things (objects) we are dealing with in a program.  This is a very useful way of simplifying complex programs.  (In fact, in Python, everything is treated as an object, even simple things like integers and strings.)
+
+For example, in a TOUGH2 model grid we have collections of grid blocks, and we need to store the names of these blocks and their volumes and rock types.  In a non-object-oriented language, these could be stored in three separate arrays: a string array for the names, a real (or `float') array for the volumes and another string array for the rock types.  In an object-oriented language like Python, we can define a new data type (or `class') for blocks, which holds the name, volume and rock type of the block.  If we declare an object called \texttt{blk} of this block class, we can access or edit its volume by referring to \texttt{blk.volume}.  In this way, we can store our blocks in one single array of block objects.  When we add or delete blocks from our grid, we can just add or delete block objects from the array, rather than having to keep track of three separate arrays.
+
+In general, an object not only has \textbf{properties} (like \texttt{blk.volume}) but also \textbf{methods}, which are functions the object can carry out.  For example, if we wanted to rotate a MULgraph geometry file by $30^{\circ}$, we could do this in PyTOUGH by declaring a MULgraph geometry file object called \texttt{geo}, and calling its \texttt{rotate} method: \texttt{geo.rotate(30)}.  The methods of an object are accessed in the same way that its properties are accessed: by adding a dot (.) after the object's name and then adding the name of the property or method.  Any arguments of the method (e.g. the angle in the \texttt{rotate} function above) are added in parentheses afterwards.
+
+\subsubsection{Lists, dictionaries, tuples and sets}
+
+Most programming languages have simple data types built in, e.g. float, double precision or integer numbers, strings, and arrays of these.  Python has some other data types which are very useful and are used a lot.
+
+The first of these is the \textbf{list}.  A list can contain any ordered collection of objects, of any type, or even of different types, and is delimited by square brackets.  So for example we can declare a list \texttt{things = [1,`two',3.0]} containing an integer, a string and a float.  We can access the list's elements in much the same way as we access the elements of an array, for example \texttt{things[1]} would return the value \texttt{`two'} (note that in Python, as in most other languages besides Fortran, the indices of arrays and lists start at 0, not 1).  Additional elements can be added to a list at any time, without having to re-declare the size of the list: for example, \texttt{things.append(`IV')} would add an extra element to the end of the list, giving it the value \texttt{[1,`two',3.0,`IV']}.  It is also possible to remove elements from a list, e.g. \texttt{things.remove(3.0)}, which would give our list the value \texttt{[1,`two',`IV']}.
+
+Another useful Python data type is the \textbf{dictionary}.  Dictionaries are mainly used to store collections of objects (again, of any type or of different types) that are referenced by name rather than by index (as in an array or list).  A dictionary is delimited by curly brackets.  So for example we can declare a dictionary \texttt{phone=\{`Eric':8155,`Fred':2350,`Wilma':4667\}} and then find Fred's phone number from \texttt{phone[`Fred']}, which would return \texttt{2350}.  For TOUGH2 models, blocks, generators, rock types and other objects are often referred to by name rather than index, so dictionaries are an appropriate way to store them.
+
+A third Python data type, similar to a list, is the \textbf{tuple}.  A tuple is essentially a list that cannot be changed, and is often used just for grouping objects together.  A tuple is delimited by parentheses.  For example, \texttt{things=(1,`two',3.0)} declares a tuple with three elements.  We can still refer to the elements of a tuple using e.g. \texttt{a[1]}, but we cannot assign new values to these elements or add or remove elements from the tuple once it has been declared.
+
+Python also has a \textbf{set} data type, which represents a mathematical set- an unordered collection of objects.  One of the useful aspects of sets is that they cannot contain duplicate items.  As a result, for example, duplicate items can be removed from a list \texttt{x} simply by converting it to a set, and then back to a list: \texttt{x=list(set(x))}.
+
+\subsection{How to run Python}
+
+Python can be run either interactively or via scripts.
+
+\subsubsection{Running Python interactively}
+\label{python_interactive}
+
+The simplest way to run Python interactively is just by typing \texttt{python} at the command line.  (On Windows the directory that Python was installed into may have to be added to your \texttt{PATH} environment variable first.) The command line then becomes an interactive Python environment in which you can type Python commands at the Python command prompt \texttt{>>>}, e.g. in Windows:
+
+\begin{verbatim}
+C:\>python
+Python 2.6.4 (r264:75708, Oct 26 2009, 08:23:19) [MSC v.1500 32 bit (Intel)]
+on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> things = [1,`two',3.0]
+>>> print things[1]
+two
+>>> exit()
+
+C:\>
+\end{verbatim}
+
+In the interactive Python environment, you can view help on the properties and methods of any Python object by typing \texttt{help(\emph{objectname})}, where \texttt{\emph{objectname}} is the name of an object that has been declared.  This will list the properties and methods of the object and a description of each one.
+
+You can exit the interactive Python environment by typing \texttt{exit()} or \texttt{Ctrl-Z} on Windows, or \texttt{Ctrl-D} on Linux.
+
+\subsubsection{Python scripts}
+
+The real power of Python, however, lies in using it to write \textbf{scripts} to automate repetitive or complex tasks.  You can just type Python commands into a text file, save it with the file extension \texttt{.py}, and execute it by typing \texttt{python \emph{filename.py}}, where \texttt{\emph{filename.py}} is the name of the file.  (Once again, on Windows the directory that Python was installed into may have to be added to your \texttt{PATH} environment variable first.)
+
+You can also debug a Python script using the `pdb' command-line debugger.  Typing \texttt{python -m pdb \emph{filename.py}} will start debugging the script \emph{filename.py}.
+
+It is also possible to run a Python script from within the interactive Python environment.  From the Python environment command line, typing \texttt{execfile(\emph{`filename.py'})} will execute the script \emph{filename.py}.
+
+\subsection{Python libraries}
+\label{pylibraries}
+
+Python comes with a large number of features already built in, but for specialised tasks, additional \textbf{libraries} of Python software can be imported into Python as you need them.  PyTOUGH itself is a set of such libraries, and it in turn makes use of some other Python libraries.
+
+\subsubsection{Numerical Python}
+
+The most important of these is Numerical Python (`numpy'), which you will need to have installed on your computer before you can use PyTOUGH at all \footnote{PyTOUGH will run using Numeric, a now-obsolete predecessor of Numerical Python, though the PyTOUGH plotting functions will not work.  In general it is recommended to use Numerical Python if possible.}.  Numerical Python adds a special \texttt{numpy.array} class for fast multi-dimensional arrays, which PyTOUGH makes heavy use of, and a whole range of other features, e.g. linear algebra routines, Fourier transforms and statistics.
+
+Numerical Python can be freely downloaded from \texttt{http://numpy.scipy.org/} (or simply installed via your package manager on Linux).
+
+\subsubsection{Other libraries}
+
+Some parts of PyTOUGH use other Python libraries.  You do not need these libraries unless you are using the parts of PyTOUGH that depend on them.
+
+\begin{itemize}
+\item \textbf{matplotlib} (\texttt{http://matplotlib.sourceforge.net/}), a library of graphical plotting routines
+\item \textbf{Scientific Python} (\texttt{http://www.scipy.org/}), a library of advanced mathematical functions (e.g. interpolation, calculus, optimisation)
+\item \textbf{VTK} (\texttt{http://www.vtk.org/}), the Visualization Tool Kit (a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.) and \textbf{VTK Python}, the Python interface for VTK.
+\end{itemize}
+
+On Linux systems you can download and install these libraries via your package manager (e.g. on Debian, \texttt{python-matplotlib}, \texttt{python-scipy}, \texttt{libvtk5.4} and \texttt{python-vtk}).  On Windows you will need to download them from the internet (see links above) or elsewhere.  For Windows there does not appear to be an official version of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) here: \texttt{http://cpbotha.net/software/latest-vtk-windows-binaries/}.
+
+Alternatively, there are third-party repackaged distributions of Python which come bundled with some or all of these additional libraries (see \texttt{http://www.python.org/download/}).
+
+\subsubsection{Importing libraries}
+
+To use any Python library, you just need to \textbf{import} it first.  For example, once you have installed Numerical Python, you can make it available (in the interactive Python environment or in a Python script) by typing the command \texttt{import numpy}, or alternatively \texttt{from numpy import *}.  This imports all classes and commands from Numerical Python and makes them available for use.  (You can also import only parts of a library rather than the whole thing, e.g. \texttt{from numpy import linalg} just imports the linear algebra routines from Numerical Python.)
+
+When you import a library, you can also change its name.  For example, PyTOUGH imports Numerical Python using the command \texttt{import numpy as np}, which renames \texttt{numpy} as the abbreviated \texttt{np}.  This means it can, for example, access the Numerical Python \texttt{numpy.array} data type as \texttt{np.array}.  It also means you have access to Numerical Python as \texttt{np} in your own scripts and in the interactive Python environment, without having to import it yourself.
+
+\section{Installing and accessing PyTOUGH}
+
+First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.
+
+PyTOUGH is a set of Python libraries (see section \ref{pylibraries}), each of which is contained in a Python script file (\texttt{*.py}).  You can save these script files to any directory on your computer-- it is usually best to create a special one just for PyTOUGH.
+
+Then you need to tell Python where to find the directory containing PyTOUGH.  To do this, you need to add the directory to the PYTHONPATH environment variable in your system.  How you do this depends on which operating system you are using.  For example:
+
+\begin{itemize}
+
+\item \textbf{Linux}: add the command \texttt{PYTHONPATH=\emph{path}} to your \texttt{\textasciitilde.bash\_profile} or \texttt{\textasciitilde.bashrc}file, where \texttt{\emph{path}} is the location of the PyTOUGH scripts.  Add another statement \texttt{export PYTHONPATH}, save the file and restart your command prompt.  Now PyTOUGH should always be available from any directory on your system.
+
+\item \textbf{Windows XP}: go to \texttt{Control Panel > System > Advanced}, click the `Environment variables' button, and add a new variable called PYTHONPATH (if it doesn't already exist).  Add the PyTOUGH directory location to this variable.  Save the changes and restart your command prompt.
+
+\end{itemize}
+
+You should now be able to import the PyTOUGH libraries into the Python interactive environment or your Python scripts, from any directory on your computer.  For example, you can import the MULgraph geometry library using \texttt{from mulgrids import *} (see chapter \ref{mulgrids}).
+
+\section{Licensing}
+
+PyTOUGH is free software, distributed under the GNU General Public License (GPL).  For more information, see \texttt{http://www.gnu.org/licenses/}.
