@@ -231,7 +231,10 @@ def tsat(p):
     def f(t): return sat(t)-p
     from math import log
     t0=max(4606.0/(24.02-log(p))-273.15,5.0) # starting estimate
-    return fsolve(f,t0)
+    t=fsolve(f,t0)
+    import collections # need to check this as some versions of SciPy return an array from fsolve
+    if isinstance(t,collections.Iterable): return t[0]
+    else: return t
 
 def visw(t,p,ps):
     """Viscosity of liquid water as a function of temperature (deg C) and pressure and saturation pressure (Pa)."""
