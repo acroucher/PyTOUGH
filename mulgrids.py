@@ -980,7 +980,9 @@ class mulgrid(object):
     def translate(self,shift):
         """Translates a grid by specified shift."""
         for node in self.nodelist: node.pos+=shift[0:2]
-        for col in self.columnlist: col.centre+=shift[0:2]
+        for col in self.columnlist:
+            col.centre+=shift[0:2]
+            if col.surface<>None: col.surface+=shift[2]
         for layer in self.layerlist: layer.translate(shift[2])
         for well in self.welllist:
             for pos in well.pos: pos+=shift
