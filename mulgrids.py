@@ -23,8 +23,11 @@ def LettersToInt(st):
     """Converts a string into a number equivalent- the inverse of IntToLetters."""
     lst=st.lower()
     ord0=ord('a')-1
+    def myord(s):
+        if s==' ': return 0
+        else: return ord(s)-ord0
     n=len(st)
-    return sum([(ord(s)-ord0)*(26**(n-i-1)) for i,s in enumerate(lst)])
+    return sum([myord(s)*(26**(n-i-1)) for i,s in enumerate(lst)])
 
 def fix_blockname(name):
     """Fixes blanks in 4th column of block names, caused by TOUGH2 treating names as (a3,i2)"""
