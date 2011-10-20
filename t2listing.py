@@ -70,8 +70,10 @@ class t2listing(file):
         else:
             self.setup_short()
             self.setup_pos()
-            self.setup_tables()
-            self.first()
+            if self.num_fulltimes>0:
+                self.setup_tables()
+                self.first()
+            else: print 'No full results found in listing file.'
 
     def __repr__(self): return self.title
 
@@ -138,15 +140,13 @@ class t2listing(file):
         else: keywords=[keyword]
         while not any([line[start:].startswith(kw) for kw in keywords]):
             line=self.readline()
-            lenline=len(line)
-            if lenline==0: break
-        if lenline==0: return False
-        else: return [kw for kw in keywords if line[start:].startswith(kw)][0]
+            if line=='': return False
+        return [kw for kw in keywords if line[start:].startswith(kw)][0]
 
     def detect_simulator(self):
         """Detects whether the listing has been produced by AUTOUGH2 or TOUGH2/TOUGH2_MP."""
         self.seek(0)
-        simulator={'EEEEE':'AUTOUGH2','@@@@@':'TOUGH2'}
+        simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','@@@@@':'TOUGH2'}
         tableword=self.skipto(simulator.keys())
         if tableword: self.simulator=simulator[tableword]
         else: self.simulator=None
@@ -163,6 +163,7 @@ class t2listing(file):
         """Sets up short_types and short_indices, for handling short output."""
         self.short_types=[]
         self.short_indices={}
+        self.seek(0)
         if self.simulator=='AUTOUGH2':
             done=False
             while not done:
