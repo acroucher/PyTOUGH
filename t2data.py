@@ -1063,7 +1063,6 @@ class t2data(object):
         the TOUGH2 simulation give similar results to AUTOUGH2 where possible.  AUTOUGH2-specific input blocks are removed
         and some generator types changed.  If MP is True, the conversion is done to a TOUGH2_MP data file, which treats a 
         few of the parameters differently."""
-        self.type=['TOUGH2','TOUGH2_MP'][MP]
         if MP: self.filename='INFILE'
         # remove AUTOUGH2-specific input blocks:
         self.simulator=''
