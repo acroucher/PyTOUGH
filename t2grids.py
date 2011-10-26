@@ -230,12 +230,12 @@ class t2grid(object):
         self.add_connections(geo)
         return self
 
-    def add_blocks(self,geo=mulgrid()):
+    def add_blocks(self,geo):
         """Adds blocks to grid from MULgraph geometry file"""
         self.add_atmosphereblocks(geo)
         self.add_underground_blocks(geo)
 
-    def add_atmosphereblocks(self,geo=mulgrid()):
+    def add_atmosphereblocks(self,geo):
         """Adds atmosphere blocks from geometry"""
         atmosrocktype=self.rocktypelist[0]
         if geo.atmosphere_type==0: # one atmosphere block
@@ -248,7 +248,7 @@ class t2grid(object):
                 centre=geo.block_centre(geo.layerlist[0],col)
                 self.add_block(t2block(atmblockname,geo.atmosphere_volume,atmosrocktype,centre=centre,atmosphere=True))
 
-    def add_underground_blocks(self,geo=mulgrid()):
+    def add_underground_blocks(self,geo):
         """Add underground blocks from geometry"""
         for lay in geo.layerlist[1:]:
             for col in [col for col in geo.columnlist if col.surface>lay.bottom]:
@@ -256,18 +256,18 @@ class t2grid(object):
                 centre=geo.block_centre(lay,col)
                 self.add_block(t2block(name,geo.block_volume(lay,col),self.rocktypelist[0],centre=centre))
 
-    def add_connections(self,geo=mulgrid()):
+    def add_connections(self,geo):
         """Add connections from geometry"""
-        for thislayer in geo.layerlist[1:]:
-            layercols=[col for col in geo.columnlist if col.surface>thislayer.bottom]
-            self.add_vertical_layer_connections(geo,thislayer,layercols)
-            self.add_horizontal_layer_connections(geo,thislayer,layercols)
+        for lay in geo.layerlist[1:]:
+            layercols=[col for col in geo.columnlist if col.surface>lay.bottom]
+            self.add_vertical_layer_connections(geo,lay,layercols)
+            self.add_horizontal_layer_connections(geo,lay,layercols)
 
-    def add_vertical_layer_connections(self,geo=mulgrid(),thislayer=layer(),layercols=[]):
+    def add_vertical_layer_connections(self,geo,lay,layercols=[]):
         """Add vertical connections in layer"""
         for col in layercols:
-            thisblk=self.block[geo.block_name(thislayer.name,col.name)]
-            if (geo.layerlist.index(thislayer)==1) or (col.surface<=thislayer.top): # connection to atmosphere
+            thisblk=self.block[geo.block_name(lay.name,col.name)]
+            if (geo.layerlist.index(lay)==1) or (col.surface<=lay.top): # connection to atmosphere
                 abovelayer=geo.layerlist[0]
                 abovedist=geo.atmosphere_connection
                 belowdist=col.surface-thisblk.centre[2]
@@ -278,15 +278,15 @@ class t2grid(object):
                 else: # no atmosphere blocks
                     continue
             else:
-                ilayer=geo.layerlist.index(thislayer)
+                ilayer=geo.layerlist.index(lay)
                 abovelayer=geo.layerlist[ilayer-1]
                 aboveblk=self.block[geo.block_name(abovelayer.name,col.name)]
                 abovedist=aboveblk.centre[2]-abovelayer.bottom
-                belowdist=thislayer.top-thislayer.centre
+                belowdist=lay.top-lay.centre
             con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],col.area,-1.0)
             self.add_connection(con)
 
-    def add_horizontal_layer_connections(self,geo=mulgrid(),thislayer=layer(),layercols=[]):
+    def add_horizontal_layer_connections(self,geo,lay,layercols=[]):
         """Add horizontal connections in layer"""
         from math import cos,sin
         layercolset=set(layercols)
@@ -294,8 +294,8 @@ class t2grid(object):
         c,s=cos(anglerad),sin(anglerad)
         rotation=np.array([[c,s],[-s,c]])
         for con in [con for con in geo.connectionlist if set(con.column).issubset(layercolset)]:
-            conblocks=[self.block[geo.block_name(thislayer.name,concol.name)] for concol in con.column]
-            [dist,area]=geo.connection_params(con,thislayer)
+            conblocks=[self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
+            [dist,area]=geo.connection_params(con,lay)
             d=conblocks[1].centre-conblocks[0].centre
             d2=np.dot(rotation,d[0:2])
             direction=np.argmax(abs(d2))+1
