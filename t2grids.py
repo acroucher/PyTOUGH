@@ -437,3 +437,70 @@ class t2grid(object):
                     A[3*iblk+i,icon]=-sgn*ni/(ncons*self.connection[conname].area)
         return A
 
+    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.],justify='r',case='l'):
+        """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
+        The arguments are arrays of the block sizes in each dimension (r,z).
+        Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
+        (r,z) coordinates, so origin[0] is the starting radius of the grid.  (The origin can also be specified
+        with three components, in which case the second one is ignored.)
+        The optional justify and case parameters specify the format of the character part of the block names
+        (whether they are right or left justified, and lower or upper case)."""
+        if isinstance(rblocks,list): rblocks=np.array(rblocks)
+        if isinstance(zblocks,list): zblocks=np.array(zblocks)
+        if isinstance(origin,list): origin=np.array(origin)
+        if len(origin)>2: origin=origin[0:3:2]
+
+        from string import ljust,rjust,lowercase,uppercase
+        justfn=[rjust,ljust][justify=='l']
+        casefn=[uppercase,lowercase][case=='l']
+
+        grid=t2grid()
+        grid.add_rocktype(rocktype()) # add default rock type
+        r=np.array([0.]+np.cumsum(rblocks).tolist())[:-1]+origin[0] # inner radius of each block
+        rc=r+0.5*rblocks # centre radius
+        A=np.pi*(2.*r+rblocks)*rblocks # top area
+        c=2*np.pi*(r+rblocks) # outer circumference
+        ncols=len(rblocks)
+
+        # dummy geometry for creating block names etc:
+        geo=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
+        for ir,dr in enumerate(rblocks):
+            colname=geo.column_name_from_number(ir+1,justfn,casefn)
+            geo.add_column(column(colname,[],centre=np.array([rc[ir],0.])))
+        geo.add_layers(zblocks,origin[1],justify,case)
+        grid.add_atmosphereblocks(geo)
+
+        for lay in geo.layerlist[1:]: # add blocks
+            V=A*lay.thickness
+            for col,rcentre,vol in zip(geo.columnlist,rc,V):
+                name=geo.block_name(lay.name,col.name)
+                centre=np.array([rcentre,0.,lay.centre])
+                grid.add_block(t2block(name,vol,grid.rocktypelist[0],centre=centre))
+
+        for ilay,lay in enumerate(geo.layerlist[1:]): # add connections
+            Ar=c*lay.thickness
+            for icol,col in enumerate(geo.columnlist):
+                top_area=A[icol]
+                blkindex=ilay*ncols+icol+geo.num_atmosphere_blocks
+                thisblk=grid.blocklist[blkindex]
+                if ilay==0: # atmosphere connections
+                    abovedist=geo.atmosphere_connection
+                    belowdist=0.5*geo.layerlist[1].thickness
+                    if atmos_type==0: aboveblk=grid.blocklist[0]
+                    elif atmos_type==1: aboveblk=grid.blocklist[icol]
+                    else: continue
+                else:
+                    abovelayer=geo.layerlist[ilay]
+                    aboveblk=grid.blocklist[blkindex-ncols]
+                    abovedist=aboveblk.centre[2]-abovelayer.bottom
+                    belowdist=lay.top-lay.centre
+                con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],top_area,-1.0)
+                grid.add_connection(con)
+            for icol,col in enumerate(geo.columnlist[:-1]): # horizontal connections
+                nextcol=geo.columnlist[icol+1]
+                conblocks=[grid.block[geo.block_name(lay.name,acol.name)] for acol in [col,nextcol]]
+                dist,area=[0.5*rblocks[icol],0.5*rblocks[icol+1]],Ar[icol]
+                direction,dircos=1,0.0
+                grid.add_connection(t2connection(conblocks,direction,dist,area,dircos))
+
+        return grid

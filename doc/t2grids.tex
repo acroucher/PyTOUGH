@@ -80,6 +80,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \texttt{delete\_rocktype} & -- & deletes a rock type from the grid\\
       \texttt{empty} & -- & empties contents of grid\\
       \texttt{fromgeo} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
+      \texttt{radial} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
       \texttt{rocktype\_frequency} & integer & frequency of use of a particular rock type\\
       \texttt{sort\_rocktypes} & -- & sorts rock type list into alphabetical order by name\\
       \texttt{write\_vtk} & -- & writes grid to VTK file\\
@@ -232,6 +233,27 @@ Constructs a grid from a \texttt{mulgrid} geometry object.  (Any previous conten
 \begin{itemize}
 \item \textbf{geo}: \texttt{mulgrid}\\
   The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
+\end{itemize}
+
+\subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
+    \emph{origin}=[0,0,0], \emph{justify}=`r', \emph{case}=`l')}}
+
+Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.  Grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \emph{justify} and \emph{case} parameters control the formatting of the character part of the block names.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{rblocks}, \textbf{zblocks}: list (or \texttt{np.array})\\
+  Lists (or arrays) of block sizes in the \emph{r} and \emph{z} directions.
+\item \textbf{convention}: integer\\
+  Naming convention for grid columns and layers- same as the naming convention for a \texttt{mulgrid} object.
+\item \textbf{atmos\_type}: integer\\
+  Type of atmosphere- also the same as the atmosphere type for a \texttt{mulgrid} object.
+\item \textbf{origin}: list (or \texttt{np.array})\\
+  Origin of the grid (of length 2 or 3).  The first entry is the radial origin, i.e. the starting radius of the grid.  The last entry is the vertical origin, i.e. the vertical position of the top of the grid.  If of length 3, the middle entry is ignored.
+\item \textbf{justify}: string\\
+  Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
+\item \textbf{case}: string\\
+  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.
 \end{itemize}
 
 \subsubsection{\texttt{rocktype\_frequency(\emph{rockname})}}
