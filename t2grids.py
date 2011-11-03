@@ -15,7 +15,7 @@ from mulgrids import *
 
 class rocktype(object):
     """Rock type"""
-    def __init__(self,name="dfalt",nad=0,density=2600.0,porosity=0.1,permeability=np.array([1.0e-15,1.0e-15,1.0e-15]),conductivity=1.5,specific_heat=900.0):
+    def __init__(self,name="dfalt",nad=0,density=2600.0,porosity=0.1,permeability=1.0e-15*np.ones(3),conductivity=1.5,specific_heat=900.0):
         self.name=name
         self.nad=nad
         self.density=density
@@ -437,7 +437,7 @@ class t2grid(object):
                     A[3*iblk+i,icon]=-sgn*ni/(ncons*self.connection[conname].area)
         return A
 
-    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.],justify='r',case='l',dimension=2):
+    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=np.array([0.,0.]),justify='r',case='l',dimension=2):
         """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
         The arguments are arrays of the block sizes in each dimension (r,z).
         Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
@@ -453,7 +453,7 @@ class t2grid(object):
         if isinstance(rblocks,list): rblocks=np.array(rblocks)
         if isinstance(zblocks,list): zblocks=np.array(zblocks)
         if isinstance(origin,list): origin=np.array(origin)
-        if len(origin)>2: origin=origin[0:3:2]
+        if len(origin)>2: origin=origin[[0,2]]
 
         from string import ljust,rjust,lowercase,uppercase
         justfn=[rjust,ljust][justify=='l']
