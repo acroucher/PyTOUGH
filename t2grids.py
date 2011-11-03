@@ -437,14 +437,19 @@ class t2grid(object):
                     A[3*iblk+i,icon]=-sgn*ni/(ncons*self.connection[conname].area)
         return A
 
-    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.],justify='r',case='l'):
+    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.],justify='r',case='l',dimension=2):
         """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
         The arguments are arrays of the block sizes in each dimension (r,z).
         Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
         (r,z) coordinates, so origin[0] is the starting radius of the grid.  (The origin can also be specified
         with three components, in which case the second one is ignored.)
         The optional justify and case parameters specify the format of the character part of the block names
-        (whether they are right or left justified, and lower or upper case)."""
+        (whether they are right or left justified, and lower or upper case).
+        Specifying dimension<>2 (between 1 and 3) simulates flow in fractured rock using the
+        "generalized radial flow" concept of Barker, J.A. (1988), "A generalized radial flow model for hydraulic
+        tests in fractured rock", Water Resources Research 24(10), 1796-1804.  In this case it probably doesn't
+        make much sense to have more than one block in the z direction. """
+
         if isinstance(rblocks,list): rblocks=np.array(rblocks)
         if isinstance(zblocks,list): zblocks=np.array(zblocks)
         if isinstance(origin,list): origin=np.array(origin)
@@ -454,13 +459,27 @@ class t2grid(object):
         justfn=[rjust,ljust][justify=='l']
         casefn=[uppercase,lowercase][case=='l']
 
+        n2=0.5*dimension
+        if dimension<>2: # need gamma function
+            try:
+                from math import gamma # included for Python 2.7 or later
+            except ImportError:
+                from scipy.special import gamma
+            gamman2=gamma(n2)
+        else: gamman2=1.0
+        alpha=2./gamman2*np.pi**n2
+
+        b=np.sum(zblocks) # total thickness
+        b2n=b**(2-dimension)
+        r=origin[0]+np.concatenate((np.zeros(1),np.cumsum(rblocks)))
+        rin,rout=r[:-1],r[1:] # inner and outer radii
+        rc=0.5*(rin+rout) # centre radius
+        A=alpha*b2n/dimension*np.diff(r**dimension) # "top area"
+        c=alpha*b2n*rout**(dimension-1) # "outer circumference"
+        ncols=len(rblocks)
+
         grid=t2grid()
         grid.add_rocktype(rocktype()) # add default rock type
-        r=np.array([0.]+np.cumsum(rblocks).tolist())[:-1]+origin[0] # inner radius of each block
-        rc=r+0.5*rblocks # centre radius
-        A=np.pi*(2.*r+rblocks)*rblocks # top area
-        c=2*np.pi*(r+rblocks) # outer circumference
-        ncols=len(rblocks)
 
         # dummy geometry for creating block names etc:
         geo=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
@@ -477,9 +496,9 @@ class t2grid(object):
                 centre=np.array([rcentre,0.,lay.centre])
                 grid.add_block(t2block(name,vol,grid.rocktypelist[0],centre=centre))
 
-        for ilay,lay in enumerate(geo.layerlist[1:]): # add connections
+        for ilay,lay in enumerate(geo.layerlist[1:]):
             Ar=c*lay.thickness
-            for icol,col in enumerate(geo.columnlist):
+            for icol,col in enumerate(geo.columnlist): # vertical connections
                 top_area=A[icol]
                 blkindex=ilay*ncols+icol+geo.num_atmosphere_blocks
                 thisblk=grid.blocklist[blkindex]
@@ -496,7 +515,7 @@ class t2grid(object):
                     belowdist=lay.top-lay.centre
                 con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],top_area,-1.0)
                 grid.add_connection(con)
-            for icol,col in enumerate(geo.columnlist[:-1]): # horizontal connections
+            for icol,col in enumerate(geo.columnlist[:-1]): # radial connections
                 nextcol=geo.columnlist[icol+1]
                 conblocks=[grid.block[geo.block_name(lay.name,acol.name)] for acol in [col,nextcol]]
                 dist,area=[0.5*rblocks[icol],0.5*rblocks[icol+1]],Ar[icol]
