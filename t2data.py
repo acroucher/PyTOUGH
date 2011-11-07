@@ -43,7 +43,8 @@ class t2datafile(file):
         'output_times2':[['time']*8,['10.4e']*8],
         'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
         'capillarity':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
-        'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['10.4e']*6],
+        'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['10.4e']*3+
+                  ['10.3e']*3],
         'connections':[['block1','block2','nseq','nad1','nad2','direction','distance1','distance2','area','dircos','sigma'],
                        ['5s']*2+['5d']*4+['10.4e']*3+['10.7f','10.4e']],
         'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
@@ -365,9 +366,9 @@ class t2data(object):
     def read_rpcap(self,infile):
         """Reads relative permeability and capillarity parameters"""
         vals=infile.read_values('relative_permeability')
-        self.relative_permeability['type'],self.relative_permeability['parameters']=vals[0],vals[2:-1]
+        self.relative_permeability['type'],self.relative_permeability['parameters']=vals[0],vals[2:]
         vals=infile.read_values('capillarity')
-        self.capillarity['type'],self.capillarity['parameters']=vals[0],vals[2:-1]
+        self.capillarity['type'],self.capillarity['parameters']=vals[0],vals[2:]
 
     def write_rpcap(self,outfile):
         if self.relative_permeability:
@@ -418,7 +419,11 @@ class t2data(object):
             for blk in self.grid.blocklist:
                 blkw=copy(blk.__dict__)
                 blkw['name']=unfix_blockname(blkw['name'])
-                outfile.write_value_line(blkw,'blocks')
+                if blk.centre==None: outfile.write_value_line(blkw,'blocks')
+                else:
+                    vals=[blkw['name'],blk.nseq,blk.nadd,blk.rocktype.name,blk.volume,
+                          blk.ahtx,blk.pmx]+list(blk.centre)
+                    outfile.write_values(vals,'blocks')
             outfile.write('\n')
 
     def read_connections(self,infile):
