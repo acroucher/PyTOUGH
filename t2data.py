@@ -142,7 +142,7 @@ class t2generator(object):
     def __repr__(self): return self.block+':'+self.name
 
 default_parameters={'max_iterations':None, 'print_level':None, 'max_timesteps':None, 'max_duration':None, 'print_interval':None, 
-                    '_option_str':'0'*24,'option':np.zeros(24,int8), 'diff0':None, 'texp':None, 'tstart':0.0, 'tstop':None,
+                    '_option_str':'0'*24,'option':np.zeros(25,int8), 'diff0':None, 'texp':None, 'tstart':0.0, 'tstop':None,
                     'const_timestep':0.0,'timestep':[], 'max_timestep':None, 'print_block':None, 'gravity':0.0,
                     'timestep_reduction':None, 'scale':None, 'relative_error':None, 'absolute_error':None, 'pivot':None,
                     'upstream_weight':None, 'newton_weight':None, 'derivative_increment':None, 'default_incons':[]}
