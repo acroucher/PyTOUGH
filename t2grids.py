@@ -56,7 +56,7 @@ class t2block(object):
 
 class t2connection(object):
     """Connection between two blocks"""
-    def __init__(self,blocks=[t2block(),t2block()],direction=0,distance=[0.0,0.0],area=1.0,dircos=0.0,sigma=None):
+    def __init__(self,blocks=[t2block(),t2block()],direction=1,distance=[0.0,0.0],area=1.0,dircos=0.0,sigma=None):
         self.block=blocks
         self.nseq,self.nad1,self.nad2=None,None,None
         self.direction=direction # permeability direction
@@ -144,6 +144,24 @@ class t2grid(object):
             for rt in grid.rocktypelist: result.add_rocktype(rt)
             for blk in grid.blocklist: result.add_block(blk)
             for con in grid.connectionlist: result.add_connection(con)
+        return result
+
+    def embed(self,subgrid,connection):
+        """Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids
+        are to be connected: the blocks to be connected and the connection distances, area etc. between them.  The first 
+        block should be the host block, the second the connecting block in the subgrid."""
+        result=None
+        subvol=sum([blk.volume for blk in subgrid.blocklist])
+        hostblock=connection.block[0]
+        if subvol<hostblock.volume:
+            dupblks=set([blk.name for blk in self.blocklist]) & set([blk.name for blk in subgrid.blocklist])
+            if len(dupblks)==0:
+                result=self+subgrid
+                connection.block=[result.block[blk.name] for blk in connection.block]
+                result.add_connection(connection)
+                result.block[hostblock.name].volume-=subvol # remove subgrid volume from host block
+            else: print 'Grid embedding error: the following blocks are in both grids:',dupblks
+        else: print 'Grid embedding error: the host block is not big enough to contain the subgrid.'
         return result
 
     def empty(self):

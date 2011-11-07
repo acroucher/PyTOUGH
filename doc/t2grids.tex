@@ -78,6 +78,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \texttt{delete\_block} & -- & deletes a block from the grid\\
       \texttt{delete\_connection} & -- & deletes a connection from the grid\\
       \texttt{delete\_rocktype} & -- & deletes a rock type from the grid\\
+      \texttt{embed} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
       \texttt{empty} & -- & empties contents of grid\\
       \texttt{fromgeo} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
       \texttt{radial} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
@@ -219,6 +220,18 @@ Deletes a rock type from the grid.
 \begin{itemize}
 \item \textbf{rocktypename}: string\\
   Name of the rock type to be deleted from the grid.
+\end{itemize}
+
+\subsubsection{\texttt{embed(\emph{subgrid}, \emph{connection})}}
+
+Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids are to be connected: the blocks to be connected and the connection distances, area etc. between them.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{subgrid}: \texttt{t2grid}\\
+  Subgrid to be embedded.
+\item \textbf{connection}: \texttt{t2connection}\\
+  Connection specifying how the subgrid is to be embedded, including the connection distances and area.  The first block should be the host block, the second the connecting block in the subgrid.
 \end{itemize}
 
 \subsubsection{\texttt{empty}()}
