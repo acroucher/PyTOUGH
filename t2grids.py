@@ -12,6 +12,7 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
 from mulgrids import *
+from t2incons import *
 
 class rocktype(object):
     """Rock type"""
@@ -541,3 +542,15 @@ class t2grid(object):
                 grid.add_connection(t2connection(conblocks,direction,dist,area,dircos))
 
         return grid
+
+    def incons(self,values=(101.3e3,20.)):
+        """Creates a t2incon initial condtions object corresponding to the grid from the given values.  If initial
+        conditions are given for one block only, these are applied to all blocks."""
+        inc=t2incon()
+        values=np.array(values)
+        if len(np.shape(values))==1:
+            from copy import copy
+            for blk in self.blocklist: inc[blk.name]=copy(tuple(values))
+        else:
+            for blk,val in zip(self.blocklist,values): inc[blk.name]=tuple(val)
+        return inc

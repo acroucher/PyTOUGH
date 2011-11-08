@@ -81,6 +81,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \texttt{embed} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
       \texttt{empty} & -- & empties contents of grid\\
       \texttt{fromgeo} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
+      \texttt{incons} & \texttt{t2incon} & constructs initial conditions for the grid\\
       \texttt{radial} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
       \texttt{rocktype\_frequency} & integer & frequency of use of a particular rock type\\
       \texttt{sort\_rocktypes} & -- & sorts rock type list into alphabetical order by name\\
@@ -240,12 +241,22 @@ Empties the grid of all its blocks, rock types and connections.
 
 \subsubsection{\texttt{fromgeo(\emph{geo})}}
 
-Constructs a grid from a \texttt{mulgrid} geometry object.  (Any previous contents of the grid are first emptied.)
+Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previous contents of the grid are first emptied.)
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{geo}: \texttt{mulgrid}\\
   The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
+\end{itemize}
+
+\subsubsection{\texttt{incons(\emph{values}=(101.3e3,20.))}}
+
+Returns a \texttt{t2incon} set of initial conditions for the grid, using the supplied values.  Initial conditions can be specified for only one block, in which case they will be applied to all blocks, or for each block, in an array.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{values}: \texttt{tuple} or \texttt{np.array}\\
+  Initial conditions values, either a \texttt{tuple} of values for one block, or an \texttt{np.array} with each row containing a set of values for one block. 
 \end{itemize}
 
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
