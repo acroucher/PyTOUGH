@@ -749,11 +749,15 @@ class mulgrid(object):
             if self.atmosphere_type==1: return lay.top # atmosphere block
             else: return None
         else:
-            if col.surface<lay.top:
-                if lay.bottom<col.surface: return col.surface # surface layer with surface below layer top
-                else: return None # outside grid
-            elif col.surface>self.layerlist[0].top: return col.surface # surface layer with surface above layer top
-            else: return lay.top # subsurface layer
+            if col.surface==None: return lay.top
+            else:
+                if col.surface<lay.top:
+                    if lay.bottom<col.surface: return col.surface # surface layer with surface below layer top
+                    else: return None # outside grid
+                elif col.surface>self.layerlist[0].top:
+                    if lay.name==self.layerlist[1].name: return col.surface # surface layer with surface above layer top
+                    else: return lay.top
+                else: return lay.top # subsurface layer
 
     def block_volume(self,lay,col):
         """Returns volume of block at specified layer and column"""
