@@ -588,14 +588,22 @@ class t2listing(file):
         return rl
     reductions=property(get_reductions)
 
-    def get_convergence(self):
+    def get_convergence(self,indexa=None,indexb=None):
         """Returns dictionary of maximum differences, and locations of difference, of all element table properties
-        between the penultimate and final sets of results- used to check convergence of steady state simulations."""
+        between the penultimate and final sets of results- used to check convergence of steady state simulations.
+        If both indexa and indexb are provided, the returned is difference between these two result indices. 
+        If only one index is given, the returned is difference between the given index and the one before that."""
         from copy import deepcopy
         keyword='EEEEE'
-        self.last()
+        if indexa == None:
+            self.last()
+        else:
+            self.set_index(indexa)
         results2=deepcopy(self._table[keyword])
-        self.prev()
+        if indexb == None:
+            self.prev()
+        else:
+            self.set_index(indexb)
         results1=self._table[keyword]
         cvg={}
         for name in results1.column_name:
