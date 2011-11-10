@@ -632,19 +632,23 @@ class mulgrid(object):
         def getval(i1,i2,fn):
             valstr=header[i1:i2].replace('\n',' ')
             if valstr.strip(): return fn(valstr)
-            else:
-                if fn==str: return ''
-                else: return fn('0')
-        self.convention=getval(5,6,int)
-        self.atmosphere_type=getval(6,7,int)
-        self.atmosphere_volume=getval(7,17,float)
-        self.atmosphere_connection=getval(17,27,float)
-        self.unit_type=getval(27,32,str)
+            else: return None
+        convention=getval(5,6,int)
+        if convention<>None: self.convention=convention
+        atmosphere_type=getval(6,7,int)
+        if atmosphere_type<>None: self.atmosphere_type=atmosphere_type
+        volume=getval(7,17,float)
+        if volume<>None: self.atmosphere_volume=volume
+        atmosdist=getval(17,27,float)
+        if atmosdist<>None: self.atmosphere_connection=atmosdist
+        unit=getval(27,32,str)
+        if unit<>None: self.unit_type=unit
         gdcx,gdcy=getval(32,42,float),getval(42,52,float)
-        if gdcx<>0.0 or gdcy<>0.0: print 'GDCX,GDCY options not supported.'
+        if gdcx<>None or gdcy<>None: print 'GDCX,GDCY options not supported.'
         cntype=getval(52,53,int)
-        if cntype<>0: print 'CNTYPE option not supported.'
-        self.permeability_angle=getval(53,63,float)
+        if cntype<>None: print 'CNTYPE option not supported.'
+        permangle=getval(53,63,float)
+        if permangle<>None: self.permeability_angle=permangle
 
     def read_nodes(self,geo):
         """Reads grid nodes from file geo"""
@@ -749,11 +753,15 @@ class mulgrid(object):
             if self.atmosphere_type==1: return lay.top # atmosphere block
             else: return None
         else:
-            if col.surface<lay.top:
-                if lay.bottom<col.surface: return col.surface # surface layer with surface below layer top
-                else: return None # outside grid
-            elif col.surface>self.layerlist[0].top: return col.surface # surface layer with surface above layer top
-            else: return lay.top # subsurface layer
+            if col.surface==None: return lay.top
+            else:
+                if col.surface<lay.top:
+                    if lay.bottom<col.surface: return col.surface # surface layer with surface below layer top
+                    else: return None # outside grid
+                elif col.surface>self.layerlist[0].top:
+                    if lay.name==self.layerlist[1].name: return col.surface # surface layer with surface above layer top
+                    else: return lay.top
+                else: return lay.top # subsurface layer
 
     def block_volume(self,lay,col):
         """Returns volume of block at specified layer and column"""

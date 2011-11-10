@@ -78,8 +78,11 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \texttt{delete\_block} & -- & deletes a block from the grid\\
       \texttt{delete\_connection} & -- & deletes a connection from the grid\\
       \texttt{delete\_rocktype} & -- & deletes a rock type from the grid\\
+      \texttt{embed} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
       \texttt{empty} & -- & empties contents of grid\\
       \texttt{fromgeo} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
+      \texttt{incons} & \texttt{t2incon} & constructs initial conditions for the grid\\
+      \texttt{radial} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
       \texttt{rocktype\_frequency} & integer & frequency of use of a particular rock type\\
       \texttt{sort\_rocktypes} & -- & sorts rock type list into alphabetical order by name\\
       \texttt{write\_vtk} & -- & writes grid to VTK file\\
@@ -220,18 +223,65 @@ Deletes a rock type from the grid.
   Name of the rock type to be deleted from the grid.
 \end{itemize}
 
+\subsubsection{\texttt{embed(\emph{subgrid}, \emph{connection})}}
+
+Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids are to be connected: the blocks to be connected and the connection distances, area etc. between them.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{subgrid}: \texttt{t2grid}\\
+  Subgrid to be embedded.
+\item \textbf{connection}: \texttt{t2connection}\\
+  Connection specifying how the subgrid is to be embedded, including the connection distances and area.  The first block should be the host block, the second the connecting block in the subgrid.
+\end{itemize}
+
 \subsubsection{\texttt{empty}()}
 
 Empties the grid of all its blocks, rock types and connections.
 
 \subsubsection{\texttt{fromgeo(\emph{geo})}}
 
-Constructs a grid from a \texttt{mulgrid} geometry object.  (Any previous contents of the grid are first emptied.)
+Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previous contents of the grid are first emptied.)
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{geo}: \texttt{mulgrid}\\
   The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
+\end{itemize}
+
+\subsubsection{\texttt{incons(\emph{values}=(101.3e3,20.))}}
+
+Returns a \texttt{t2incon} set of initial conditions for the grid, using the supplied values.  Initial conditions can be specified for only one block, in which case they will be applied to all blocks, or for each block, in an array.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{values}: \texttt{tuple} or \texttt{np.array}\\
+  Initial conditions values, either a \texttt{tuple} of values for one block, or an \texttt{np.array} with each row containing a set of values for one block. 
+\end{itemize}
+
+\subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
+    \emph{justify}=`r', \emph{case}=`l', \emph{dimension}=2)}}
+
+Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.  Grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \emph{justify} and \emph{case} parameters control the formatting of the character part of the block names.
+
+The \emph{dimension} parameter sets the flow dimension for `generalized radial flow', which can represent flow in fractured rocks and modifies the block volumes and areas (see \cite{barker_1988}).  The default \emph{dimension} = 2 corresponds to standard radial flow.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{rblocks}, \textbf{zblocks}: list (or \texttt{np.array})\\
+  Lists (or arrays) of block sizes in the \emph{r} and \emph{z} directions.
+\item \textbf{convention}: integer\\
+  Naming convention for grid columns and layers- same as the naming convention for a \texttt{mulgrid} object.
+\item \textbf{atmos\_type}: integer\\
+  Type of atmosphere- also the same as the atmosphere type for a \texttt{mulgrid} object.
+\item \textbf{origin}: list (or \texttt{np.array})\\
+  Origin of the grid (of length 2 or 3).  The first entry is the radial origin, i.e. the starting radius of the grid.  The last entry is the vertical origin, i.e. the vertical position of the top of the grid.  If of length 3, the middle entry is ignored.
+\item \textbf{justify}: string\\
+  Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
+\item \textbf{case}: string\\
+  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.
+\item \textbf{dimension}: float\\
+  Dimension for `generalized radial flow', which can take any (possibly non-integer) value between 1 and 3.  Dimension 1 corresponds to flow in a linear `pipe', dimension 2 corresponds to standard radial flow in a disc-shaped reservoir and dimension 3 corresponds to flow in a spherically symmetric reservoir.
 \end{itemize}
 
 \subsubsection{\texttt{rocktype\_frequency(\emph{rockname})}}

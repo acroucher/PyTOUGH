@@ -12,10 +12,11 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
 from mulgrids import *
+from t2incons import *
 
 class rocktype(object):
     """Rock type"""
-    def __init__(self,name="dfalt",nad=0,density=2600.0,porosity=0.1,permeability=np.array([1.0e-15,1.0e-15,1.0e-15]),conductivity=1.5,specific_heat=900.0):
+    def __init__(self,name="dfalt",nad=0,density=2600.0,porosity=0.1,permeability=1.0e-15*np.ones(3),conductivity=1.5,specific_heat=900.0):
         self.name=name
         self.nad=nad
         self.density=density
@@ -56,7 +57,7 @@ class t2block(object):
 
 class t2connection(object):
     """Connection between two blocks"""
-    def __init__(self,blocks=[t2block(),t2block()],direction=0,distance=[0.0,0.0],area=1.0,dircos=0.0,sigma=None):
+    def __init__(self,blocks=[t2block(),t2block()],direction=1,distance=[0.0,0.0],area=1.0,dircos=0.0,sigma=None):
         self.block=blocks
         self.nseq,self.nad1,self.nad2=None,None,None
         self.direction=direction # permeability direction
@@ -146,6 +147,24 @@ class t2grid(object):
             for con in grid.connectionlist: result.add_connection(con)
         return result
 
+    def embed(self,subgrid,connection):
+        """Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids
+        are to be connected: the blocks to be connected and the connection distances, area etc. between them.  The first 
+        block should be the host block, the second the connecting block in the subgrid."""
+        result=None
+        subvol=sum([blk.volume for blk in subgrid.blocklist])
+        hostblock=connection.block[0]
+        if subvol<hostblock.volume:
+            dupblks=set([blk.name for blk in self.blocklist]) & set([blk.name for blk in subgrid.blocklist])
+            if len(dupblks)==0:
+                result=self+subgrid
+                connection.block=[result.block[blk.name] for blk in connection.block]
+                result.add_connection(connection)
+                result.block[hostblock.name].volume-=subvol # remove subgrid volume from host block
+            else: print 'Grid embedding error: the following blocks are in both grids:',dupblks
+        else: print 'Grid embedding error: the host block is not big enough to contain the subgrid.'
+        return result
+
     def empty(self):
         """Empties a TOUGH2 grid"""
         self.rocktypelist=[]
@@ -230,12 +249,12 @@ class t2grid(object):
         self.add_connections(geo)
         return self
 
-    def add_blocks(self,geo=mulgrid()):
+    def add_blocks(self,geo):
         """Adds blocks to grid from MULgraph geometry file"""
         self.add_atmosphereblocks(geo)
         self.add_underground_blocks(geo)
 
-    def add_atmosphereblocks(self,geo=mulgrid()):
+    def add_atmosphereblocks(self,geo):
         """Adds atmosphere blocks from geometry"""
         atmosrocktype=self.rocktypelist[0]
         if geo.atmosphere_type==0: # one atmosphere block
@@ -248,7 +267,7 @@ class t2grid(object):
                 centre=geo.block_centre(geo.layerlist[0],col)
                 self.add_block(t2block(atmblockname,geo.atmosphere_volume,atmosrocktype,centre=centre,atmosphere=True))
 
-    def add_underground_blocks(self,geo=mulgrid()):
+    def add_underground_blocks(self,geo):
         """Add underground blocks from geometry"""
         for lay in geo.layerlist[1:]:
             for col in [col for col in geo.columnlist if col.surface>lay.bottom]:
@@ -256,18 +275,18 @@ class t2grid(object):
                 centre=geo.block_centre(lay,col)
                 self.add_block(t2block(name,geo.block_volume(lay,col),self.rocktypelist[0],centre=centre))
 
-    def add_connections(self,geo=mulgrid()):
+    def add_connections(self,geo):
         """Add connections from geometry"""
-        for thislayer in geo.layerlist[1:]:
-            layercols=[col for col in geo.columnlist if col.surface>thislayer.bottom]
-            self.add_vertical_layer_connections(geo,thislayer,layercols)
-            self.add_horizontal_layer_connections(geo,thislayer,layercols)
+        for lay in geo.layerlist[1:]:
+            layercols=[col for col in geo.columnlist if col.surface>lay.bottom]
+            self.add_vertical_layer_connections(geo,lay,layercols)
+            self.add_horizontal_layer_connections(geo,lay,layercols)
 
-    def add_vertical_layer_connections(self,geo=mulgrid(),thislayer=layer(),layercols=[]):
+    def add_vertical_layer_connections(self,geo,lay,layercols=[]):
         """Add vertical connections in layer"""
         for col in layercols:
-            thisblk=self.block[geo.block_name(thislayer.name,col.name)]
-            if (geo.layerlist.index(thislayer)==1) or (col.surface<=thislayer.top): # connection to atmosphere
+            thisblk=self.block[geo.block_name(lay.name,col.name)]
+            if (geo.layerlist.index(lay)==1) or (col.surface<=lay.top): # connection to atmosphere
                 abovelayer=geo.layerlist[0]
                 abovedist=geo.atmosphere_connection
                 belowdist=col.surface-thisblk.centre[2]
@@ -278,15 +297,15 @@ class t2grid(object):
                 else: # no atmosphere blocks
                     continue
             else:
-                ilayer=geo.layerlist.index(thislayer)
+                ilayer=geo.layerlist.index(lay)
                 abovelayer=geo.layerlist[ilayer-1]
                 aboveblk=self.block[geo.block_name(abovelayer.name,col.name)]
                 abovedist=aboveblk.centre[2]-abovelayer.bottom
-                belowdist=thislayer.top-thislayer.centre
+                belowdist=lay.top-lay.centre
             con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],col.area,-1.0)
             self.add_connection(con)
 
-    def add_horizontal_layer_connections(self,geo=mulgrid(),thislayer=layer(),layercols=[]):
+    def add_horizontal_layer_connections(self,geo,lay,layercols=[]):
         """Add horizontal connections in layer"""
         from math import cos,sin
         layercolset=set(layercols)
@@ -294,8 +313,8 @@ class t2grid(object):
         c,s=cos(anglerad),sin(anglerad)
         rotation=np.array([[c,s],[-s,c]])
         for con in [con for con in geo.connectionlist if set(con.column).issubset(layercolset)]:
-            conblocks=[self.block[geo.block_name(thislayer.name,concol.name)] for concol in con.column]
-            [dist,area]=geo.connection_params(con,thislayer)
+            conblocks=[self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
+            [dist,area]=geo.connection_params(con,lay)
             d=conblocks[1].centre-conblocks[0].centre
             d2=np.dot(rotation,d[0:2])
             direction=np.argmax(abs(d2))+1
@@ -437,3 +456,101 @@ class t2grid(object):
                     A[3*iblk+i,icon]=-sgn*ni/(ncons*self.connection[conname].area)
         return A
 
+    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=np.array([0.,0.]),justify='r',case='l',dimension=2):
+        """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
+        The arguments are arrays of the block sizes in each dimension (r,z).
+        Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
+        (r,z) coordinates, so origin[0] is the starting radius of the grid.  (The origin can also be specified
+        with three components, in which case the second one is ignored.)
+        The optional justify and case parameters specify the format of the character part of the block names
+        (whether they are right or left justified, and lower or upper case).
+        Specifying dimension<>2 (between 1 and 3) simulates flow in fractured rock using the
+        "generalized radial flow" concept of Barker, J.A. (1988), "A generalized radial flow model for hydraulic
+        tests in fractured rock", Water Resources Research 24(10), 1796-1804.  In this case it probably doesn't
+        make much sense to have more than one block in the z direction. """
+
+        if isinstance(rblocks,list): rblocks=np.array(rblocks)
+        if isinstance(zblocks,list): zblocks=np.array(zblocks)
+        if isinstance(origin,list): origin=np.array(origin)
+        if len(origin)>2: origin=origin[[0,2]]
+
+        from string import ljust,rjust,lowercase,uppercase
+        justfn=[rjust,ljust][justify=='l']
+        casefn=[uppercase,lowercase][case=='l']
+
+        n2=0.5*dimension
+        if dimension<>2: # need gamma function
+            try:
+                from math import gamma # included for Python 2.7 or later
+            except ImportError:
+                from scipy.special import gamma
+            gamman2=gamma(n2)
+        else: gamman2=1.0
+        alpha=2./gamman2*np.pi**n2
+
+        b=np.sum(zblocks) # total thickness
+        b2n=b**(2-dimension)
+        r=origin[0]+np.concatenate((np.zeros(1),np.cumsum(rblocks)))
+        rin,rout=r[:-1],r[1:] # inner and outer radii
+        rc=0.5*(rin+rout) # centre radius
+        A=alpha*b2n/dimension*np.diff(r**dimension) # "top area"
+        c=alpha*b2n*rout**(dimension-1) # "outer circumference"
+        ncols=len(rblocks)
+
+        grid=t2grid()
+        grid.add_rocktype(rocktype()) # add default rock type
+
+        # dummy geometry for creating block names etc:
+        geo=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
+        for ir,dr in enumerate(rblocks):
+            colname=geo.column_name_from_number(ir+1,justfn,casefn)
+            geo.add_column(column(colname,[],centre=np.array([rc[ir],0.])))
+        geo.add_layers(zblocks,origin[1],justify,case)
+        grid.add_atmosphereblocks(geo)
+
+        for lay in geo.layerlist[1:]: # add blocks
+            V=A*lay.thickness
+            for col,rcentre,vol in zip(geo.columnlist,rc,V):
+                name=geo.block_name(lay.name,col.name)
+                centre=np.array([rcentre,0.,lay.centre])
+                grid.add_block(t2block(name,vol,grid.rocktypelist[0],centre=centre))
+
+        for ilay,lay in enumerate(geo.layerlist[1:]):
+            Ar=c*lay.thickness
+            for icol,col in enumerate(geo.columnlist): # vertical connections
+                top_area=A[icol]
+                blkindex=ilay*ncols+icol+geo.num_atmosphere_blocks
+                thisblk=grid.blocklist[blkindex]
+                if ilay==0: # atmosphere connections
+                    abovedist=geo.atmosphere_connection
+                    belowdist=0.5*geo.layerlist[1].thickness
+                    if atmos_type==0: aboveblk=grid.blocklist[0]
+                    elif atmos_type==1: aboveblk=grid.blocklist[icol]
+                    else: continue
+                else:
+                    abovelayer=geo.layerlist[ilay]
+                    aboveblk=grid.blocklist[blkindex-ncols]
+                    abovedist=aboveblk.centre[2]-abovelayer.bottom
+                    belowdist=lay.top-lay.centre
+                con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],top_area,-1.0)
+                grid.add_connection(con)
+            for icol,col in enumerate(geo.columnlist[:-1]): # radial connections
+                nextcol=geo.columnlist[icol+1]
+                conblocks=[grid.block[geo.block_name(lay.name,acol.name)] for acol in [col,nextcol]]
+                dist,area=[0.5*rblocks[icol],0.5*rblocks[icol+1]],Ar[icol]
+                direction,dircos=1,0.0
+                grid.add_connection(t2connection(conblocks,direction,dist,area,dircos))
+
+        return grid
+
+    def incons(self,values=(101.3e3,20.)):
+        """Creates a t2incon initial condtions object corresponding to the grid from the given values.  If initial
+        conditions are given for one block only, these are applied to all blocks."""
+        inc=t2incon()
+        values=np.array(values)
+        if len(np.shape(values))==1:
+            from copy import copy
+            for blk in self.blocklist: inc[blk.name]=copy(tuple(values))
+        else:
+            for blk,val in zip(self.blocklist,values): inc[blk.name]=tuple(val)
+        return inc
