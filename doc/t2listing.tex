@@ -119,6 +119,7 @@ The main methods of a \texttt{t2listing} object are listed in Table \ref{tb:t2li
       \hline
       \texttt{add\_side\_recharge} & -- & adds side recharge generators to a \texttt{t2data} object\\
       \texttt{first} & -- & navigates to the first set of full results\\
+      \texttt{get\_difference} & dictionary & maximum differences in element table between two sets of results\\
       \texttt{history} & list or tuple & time history for a selection of locations and table columns\\
       \texttt{last} & -- & navigates to the last set of full results\\
       \texttt{next} & Boolean & navigates to the next set of full results\\
@@ -142,9 +143,20 @@ Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a pro
 \item \textbf{dat}: \texttt{t2data}\\
   TOUGH2 data object for the side recharge generators to be added to.
 \end{itemize}
+
 \subsubsection{\texttt{first()}}
 
 Navigates to the first set of full results in the listing file.
+
+\subsubsection{\texttt{get\_difference(\emph{indexa}, \emph{indexb})}}
+
+Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.  If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the result is the difference between the given index and the one before that.  If neither are given, the result is the difference between the last and penultimate sets of results.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{indexa}, \textbf{indexb}: integer or None\\
+  Indices of results between which the maximum differences are to be calculated.
+\end{itemize}
 
 \subsubsection{\texttt{history(\emph{selection})}}
 
