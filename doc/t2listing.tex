@@ -148,14 +148,14 @@ Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a pro
 
 Navigates to the first set of full results in the listing file.
 
-\subsubsection{\texttt{get\_difference(\emph{indexa}, \emph{indexb})}}
+\subsubsection{\texttt{get\_difference(\emph{indexa}=None, \emph{indexb}=None)}}
 
-Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.  If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the result is the difference between the given index and the one before that.  If neither are given, the result is the difference between the last and penultimate sets of results.
+Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{indexa}, \textbf{indexb}: integer or None\\
-  Indices of results between which the maximum differences are to be calculated.
+\item \textbf{indexa}, \textbf{indexb}: integer or \texttt{None}\\
+  Indices of results between which the maximum differences are to be calculated.  If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the result is the difference between the given index and the one before that.  If neither are given, the result is the difference between the last and penultimate sets of results.
 \end{itemize}
 
 \subsubsection{\texttt{history(\emph{selection})}}
