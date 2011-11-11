@@ -588,7 +588,7 @@ class t2listing(file):
         return rl
     reductions=property(get_reductions)
 
-    def get_convergence(self,indexa=None,indexb=None):
+    def get_difference(self,indexa=None,indexb=None):
         """Returns dictionary of maximum differences, and locations of difference, of all element table properties
         between the penultimate and final sets of results- used to check convergence of steady state simulations.
         If both indexa and indexb are provided, the returned is difference between these two result indices. 
@@ -612,7 +612,7 @@ class t2listing(file):
             diff=results2[name][iblk]-results1[name][iblk]
             cvg[name]=(diff,blkname)
         return cvg
-    convergence=property(get_convergence)
+    convergence=property(get_difference)
 
     def get_vtk_data(self,geo,grid=None,flows=False,flux_matrix=None,geo_matches=True):
         """Returns dictionary of VTK data arrays from listing file at current time.  If flows is True, average flux vectors
