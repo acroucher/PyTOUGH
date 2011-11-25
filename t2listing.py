@@ -18,7 +18,7 @@ try:
 except ImportError: # try importing Numeric on old installs
     import Numeric as np
     from Numeric import Float64 as float64
-from mulgrids import fix_blockname, fortran_float
+from mulgrids import fix_blockname, valid_blockname, fortran_float
 
 class listingtable(object):
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
@@ -293,10 +293,7 @@ class t2listing(file):
 
     def valid_spaced_blockname(self,name):
         """Tests if a 7-character string is a valid blockname with spaces around it.  Used to detect positions of table keys."""
-        from string import ascii_letters,digits
-        digitspace=digits+' '
-        letter_space_digits=ascii_letters+digitspace
-        return (name[0]==name[6]==' ') and all([s in letter_space_digits for s in name[1:4]]) and (name[4] in digitspace) and (name[5] in digits)
+        return (name[0]==name[6]==' ') and valid_blockname(name[1:6])
 
     def setup_table_AUTOUGH2(self,keyword):
         """Sets up table from AUTOUGH2 listing file."""
