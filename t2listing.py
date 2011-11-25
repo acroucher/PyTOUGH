@@ -359,7 +359,7 @@ class t2listing(file):
         # determine row names:
         longest_line=line
         rowdict={}
-        count,index=0,0
+        count,index=0,-1
         while line.strip():
             keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
             if len(keyval)>1: keyval=tuple(keyval)
