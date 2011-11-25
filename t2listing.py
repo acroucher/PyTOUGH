@@ -291,6 +291,13 @@ class t2listing(file):
                 else: keyword=''
             else: keyword=''
 
+    def valid_spaced_blockname(self,name):
+        """Tests if a 7-character string is a valid blockname with spaces around it.  Used to detect positions of table keys."""
+        from string import ascii_letters,digits
+        digitspace=digits+' '
+        letter_space_digits=ascii_letters+digitspace
+        return (name[0]==name[6]==' ') and all([s in letter_space_digits for s in name[1:4]]) and (name[4] in digitspace) and (name[5] in digits)
+
     def setup_table_AUTOUGH2(self,keyword):
         """Sets up table from AUTOUGH2 listing file."""
         self.skiplines(3)
@@ -302,7 +309,6 @@ class t2listing(file):
         for s in strs[nkeys+1:]:
             if s[0]==s[0].upper(): cols.append(s)
             else: cols[-1]+=' '+s
-        # Read row names:
         self.readline()
         line=self.readline()
         # Double-check number of columns:
@@ -310,15 +316,12 @@ class t2listing(file):
         nvalues=len([s for s in line[start:].strip().split()])
         if (len(cols)==nvalues):
             # work out positions of keys in line:
-            keys=strs[0:nkeys]
             keypos=[]
-            endpos=0
-            for k in keys:
-                pos=headline.index(k,endpos)
-                endpos=pos+len(k)
-                keypos.append(endpos-5)
-            if keyword=='GGGGG':
-                keypos[1]-=1 # adjust source name position (source is left-aligned with column name)
+            pos=0
+            for k in xrange(nkeys):
+                while not self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
+                while self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
+                keypos.append(pos)
             # determine row names:
             while line[1:6]<>keyword:
                 keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
@@ -346,16 +349,9 @@ class t2listing(file):
         # work out positions of keys in line:
         keypos=[]
         pos=0
-        def valid_blockname(name):
-            """Tests if a 7-character string is a valid blockname with spaces around it."""
-            from string import ascii_letters as lett
-            num=''.join([str(i) for i in xrange(10)])
-            nums=num+' '
-            lns=lett+nums
-            return (name[0]==name[6]==' ') and all([s in lns for s in name[1:4]]) and (name[4] in nums) and (name[5] in num)
         for k in xrange(nkeys):
-            while not valid_blockname(line[pos:pos+8]): pos+=1
-            while valid_blockname(line[pos:pos+7]): pos+=1
+            while not self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
+            while self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
             keypos.append(pos)
         # work out position of index:
         index_pos=[keypos[-1]+5]
