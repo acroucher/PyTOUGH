@@ -1222,7 +1222,7 @@ class mulgrid(object):
         sortindex=np.argsort([norm(t[1]-line[0]) for t in track])
         return [track[i] for i in sortindex]
 
-    def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100)):
+    def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100)):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth and aspect ratio specified.
@@ -1286,7 +1286,7 @@ class mulgrid(object):
             import matplotlib.collections as collections
             if variable<>None: facecolors=None
             else: facecolors=[]
-            col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors)
+            col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
             if variable<>None: col.set_array(np.array(vals))
             ax.add_collection(col)
             ax.autoscale_view()
@@ -1314,7 +1314,7 @@ class mulgrid(object):
             plt.title(title)
             if loneplot: plt.show()
 
-    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,aspect='auto',plt=None,subplot=111,title='',xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100)):
+    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='auto',plt=None,subplot=111,title='',xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100)):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth and aspect ratio specified.
@@ -1399,7 +1399,7 @@ class mulgrid(object):
             import matplotlib.collections as collections
             if variable<>None: facecolors=None
             else: facecolors=[]
-            col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors)
+            col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
             if variable<>None: col.set_array(np.array(vals))
             ax.add_collection(col)
             ax.autoscale_view()

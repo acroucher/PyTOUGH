@@ -409,8 +409,8 @@ Gives the name of the layer corresponding to the specified block name, according
 
 \subsubsection{\texttt{layer\_plot(\emph{layer}, \emph{variable}=None, \emph{variable\_name}=None, \emph{unit}=None,\\
     \emph{column\_names}=None, \emph{node\_names}=None, \emph{column\_centres}=None, \emph{nodes}=None,\\
-    \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{aspect}=`equal', \emph{plt}=None, \emph{subplot}=111,\\ 
-    \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
+    \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`equal', \emph{plt}=None,\\
+    \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100))}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name, index or as an elevation (in which case the routine will find the corresponding layer).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
@@ -441,6 +441,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
   Name of \texttt{matplotlib} colour map to use for shading the variable.
 \item \textbf{linewidth}: float\\
   Line width to use for drawing the grid.
+\item \textbf{linecolour}: string\\
+  Line colour to use for drawing the grid.
 \item \textbf{aspect}: string\\
   Aspect ratio to use for drawing the grid (default is `equal' (i.e. 1:1).
 \item \textbf{plt}: \texttt{matplotlib.pyplot} instance\\
@@ -669,9 +671,9 @@ geo.rotate(30)
 rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the horizontal plane.
 
 \subsubsection{\texttt{slice\_plot(\emph{line}=None, \emph{variable}=None, \emph{variable\_name}=None, \emph{unit}=None,\\
-    \emph{block\_names}=None, \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{aspect}=`auto', \emph{plt}=None,\\
-    \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`', \emph{ylabel}=`elevation (m)', \emph{contours}=False,\\
-    \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100))}}
+    \emph{block\_names}=None, \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`auto',\\
+    \emph{plt}=None, \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`', \emph{ylabel}=`elevation (m)',\\
+    \emph{contours}=False, \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100))}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
@@ -697,6 +699,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
   Name of \texttt{matplotlib} colour map to use for shading the variable.
 \item \textbf{linewidth}: float\\
   Line width to use for drawing the grid.
+\item \textbf{linecolour}: string\\
+  Line colour to use for drawing the grid.
 \item \textbf{aspect}: string\\
   Aspect ratio to use for drawing the grid (default is `auto').
 \item \textbf{plt}: \texttt{matplotlib.pyplot} instance\\
