@@ -963,13 +963,16 @@ class t2data(object):
         from copy import deepcopy
         tablegens=[' AIR','COM1','COM2','COM3','COM4','COM5','HEAT','MASS','NACL','TRAC',' VOL']
         if (colmapping=={}) or (mapping=={}): mapping,colmapping=sourcegeo.block_mapping(geo,True)
+        bbox=sourcegeo.bounds
+        qt=quadtree(bbox,sourcegeo.columnlist)
+        incols=[col for col in geo.columnlist if sourcegeo.column_containing_point(col.centre,qtree=qt)<>None]
         self.clear_generators()
         col_generator=top_generator+bottom_generator
         for sourcegen in source.generatorlist:
             sourcecategory=sourcegeo.layer_name(sourcegen.name)
             sourcecolname=sourcegeo.column_name(sourcegen.block)
             if sourcecategory in col_generator:
-                mappedcols=[col for col in geo.columnlist if colmapping[col.name]==sourcecolname]
+                mappedcols=[col for col in incols if colmapping[col.name]==sourcecolname]
                 mappedcolarea=sum([col.area for col in mappedcols])
                 for col in mappedcols:
                     gen=deepcopy(sourcegen)
