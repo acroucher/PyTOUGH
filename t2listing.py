@@ -412,7 +412,9 @@ class t2listing(file):
         vals=self.readline().split()
         self._time=fortran_float(vals[0])
         self._step=int(vals[1])
-        self.skiplines(3)
+        self.skipto('@@@@@')
+        while not self.readline().strip(): pos=self.tell()
+        self.seek(pos)
 
     def read_tables_AUTOUGH2(self):
         keyword='EEEEE'
