@@ -147,13 +147,19 @@ class t2listing(file):
         """Detects whether the listing has been produced by AUTOUGH2 or TOUGH2/TOUGH2_MP."""
         self.seek(0)
         simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2','@@@@@':'TOUGH2','=====':'TOUGH+'}
-        tableword=self.skipto(simulator.keys())
-        if tableword: self.simulator=simulator[tableword]
-        else: self.simulator=None
+        line=' '
+        while not ('output data after' in line or 'output after' in line or line==''): line=self.readline().lower()
+        if line=='': self.simulator=None
+        else:
+            self.readline()
+            line=self.readline()
+            linechars=line[1:6]
+            if linechars in simulator.keys(): self.simulator=simulator[linechars]
+            else: self.simulator=None
         if self.simulator=='AUTOUGH2':
             self.setup_pos=self.setup_pos_AUTOUGH2
             self.read_tables=self.read_tables_AUTOUGH2
-        if self.simulator=='TOUGH2':
+        elif self.simulator=='TOUGH2':
             self.setup_pos=self.setup_pos_TOUGH2
             self.read_tables=self.read_tables_TOUGH2
             self.table_keymap={('ELEM.','INDEX','P'):'EEEEE',('ELEM1','ELEM2','INDEX'):'CCCCC',
