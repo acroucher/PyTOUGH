@@ -146,7 +146,7 @@ class t2listing(file):
     def detect_simulator(self):
         """Detects whether the listing has been produced by AUTOUGH2 or TOUGH2/TOUGH2_MP."""
         self.seek(0)
-        simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','@@@@@':'TOUGH2'}
+        simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2','@@@@@':'TOUGH2','=====':'TOUGH+'}
         tableword=self.skipto(simulator.keys())
         if tableword: self.simulator=simulator[tableword]
         else: self.simulator=None
