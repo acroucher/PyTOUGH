@@ -144,7 +144,7 @@ class t2listing(file):
         return [kw for kw in keywords if line[start:].startswith(kw)][0]
 
     def detect_simulator(self):
-        """Detects whether the listing has been produced by AUTOUGH2 or TOUGH2/TOUGH2_MP."""
+        """Detects whether the listing has been produced by AUTOUGH2, TOUGH2/TOUGH2_MP or TOUGH+."""
         self.seek(0)
         simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2','@@@@@':'TOUGH2','=====':'TOUGH+'}
         line=' '
@@ -164,6 +164,12 @@ class t2listing(file):
             self.read_tables=self.read_tables_TOUGH2
             self.table_keymap={('ELEM.','INDEX','P'):'EEEEE',('ELEM1','ELEM2','INDEX'):'CCCCC',
                                ('ELEMENT','SOURCE','INDEX'):'GGGGG',('ELEM.','INDEX','X1'):'PPPPP'}
+        elif self.simulator=='TOUGH+':
+            self.read_title_TOUGHplus()
+            self.setup_pos=self.setup_pos_TOUGHplus
+            self.read_tables=self.read_tables_TOUGHplus
+            self.table_keymap={('ELEM','INDEX','P'):'EEEEE',('ELEM1','ELEM2','INDEX'):'CCCCC',
+                               ('ELEMENT','SOURCE','INDEX'):'GGGGG',('ELEM','INDEX','X1'):'PPPPP'}
 
     def setup_short(self):
         """Sets up short_types and short_indices, for handling short output."""
@@ -191,7 +197,7 @@ class t2listing(file):
                             index=int(line[indexpos:indexpos+5])-1
                             self.short_indices[shortkw][index]=lineindex
                         lineindex+=1
-        # (no SHORT output for TOUGH2)
+        # (no SHORT output for TOUGH2 or TOUGH+)
 
     def setup_pos_AUTOUGH2(self):
         """Sets up _pos list for AUTOUGH2 listings, containing file position at the start of each set of results.
@@ -254,11 +260,39 @@ class t2listing(file):
         self.fullsteps=np.array(s)
         self._short=[False for p in self._pos]
 
+    def setup_pos_TOUGHplus(self):
+        """Sets up _pos list for TOUGH+ listings, containing file position at the start of each set of results.
+        Also sets up the times and steps arrays."""
+        self.seek(0)
+        # set up pos,times, steps and short arrays:
+        self._fullpos,self._pos=[],[]
+        t,s=[],[]
+        endfile=False
+        while not endfile:
+            line=' '
+            while not (line.lstrip().startswith('Output data after') or line==''): line=self.readline()
+            if line<>'':
+                self.skipto('TOTAL TIME',2)
+                pos=self.tell()
+                self._pos.append(pos)
+                self._fullpos.append(pos)
+                self.read_header_TOUGHplus()
+                t.append(self.time)
+                s.append(self.step)
+                self.skipto('@@@@@')
+            else: endfile=True
+        self.times=np.array(t)
+        self.steps=np.array(s)
+        self.fulltimes=np.array(t)
+        self.fullsteps=np.array(s)
+        self._short=[False for p in self._pos]
+
     def setup_tables(self):
         self.tablename={'EEEEE':'element','CCCCC':'connection','GGGGG':'generation','PPPPP':'primary'}
         self._table={}
         if self.simulator=='AUTOUGH2':self.setup_tables_AUTOUGH2()
-        else: self.setup_tables_TOUGH2()
+        elif self.simulator=='TOUGH2': self.setup_tables_TOUGH2()
+        elif self.simulator=='TOUGH+': self.setup_tables_TOUGHplus()
         if 'EEEEE' in self._table: self.element=self._table['EEEEE']
         else: self.element=None
         if 'CCCCC' in self._table: self.connection=self._table['CCCCC']
@@ -291,6 +325,23 @@ class t2listing(file):
                 if (self.num_times==1) or ((self.num_times>1) and (pos<self._fullpos[1])):
                     self.skiplines(3)
                     headerpos=self.tell()
+                    headers=tuple(self.readline().strip().split()[0:3])
+                    keyword=self.table_keymap[headers]
+                    self.seek(headerpos)
+                else: keyword=''
+            else: keyword=''
+
+    def setup_tables_TOUGHplus(self):
+        """Sets up configuration of element, connection and generation tables for TOUGH+ listings."""
+        keyword='EEEEE'
+        self.seek(self._fullpos[0])
+        self.read_header_TOUGHplus()
+        while keyword in self.tablename:
+            self.setup_table_TOUGH2(keyword)
+            if self.skipto('_____',0):
+                self.readline()
+                headerpos=self.tell()
+                if (self.num_times==1) or ((self.num_times>1) and (headerpos<self._fullpos[1])):
                     headers=tuple(self.readline().strip().split()[0:3])
                     keyword=self.table_keymap[headers]
                     self.seek(headerpos)
@@ -338,16 +389,18 @@ class t2listing(file):
             print 'Error parsing '+self.tablename[keyword]+' table columns: table not created.'
 
     def setup_table_TOUGH2(self,keyword):
-        """Sets up table from TOUGH2 listing file."""
-        # Read column names (joining 'RATE' items to previous names):
+        """Sets up table from TOUGH2 (or TOUGH+) listing file."""
+        # Read column names (joining flow items to previous names):
+        if self.simulator=='TOUGH2': flow_headers=['RATE']
+        else: flow_headers=['Flow','Veloc']
         headline=self.readline()
         strs=headline.strip().split()
         nkeys=strs.index('INDEX')
         while self.readline().strip(): pass
         rows,cols=[],[]
         for s in strs[nkeys+1:]:
-            if s<>'RATE': cols.append(s)
-            else: cols[-1]+=' '+s
+            if s in flow_headers: cols[-1]+=' '+s
+            else: cols.append(s)
         line=self.readline()
         # work out positions of keys in line:
         keypos=[]
@@ -422,6 +475,26 @@ class t2listing(file):
         while not self.readline().strip(): pos=self.tell()
         self.seek(pos)
 
+    def read_header_TOUGHplus(self):
+        """Reads header info (time data) for one set of TOUGH+ listing results."""
+        line=self.readline()
+        strs=line.split()
+        self._time,self._step=float(strs[0]),int(strs[1])
+        self.skipto('=====')
+        while not self.readline().strip(): pos=self.tell()
+        self.seek(pos)
+
+    def read_title_TOUGHplus(self):
+        """Reads simulation title for TOUGH+ listings, at top of file."""
+        self.seek(0)
+        line=' '
+        while not (line.lstrip().startswith('PROBLEM TITLE:') or line==''): line=self.readline()
+        if line=='': self.title=''
+        else:
+            colonpos=line.find(':')
+            if colonpos>=0: self.title=line[colonpos+1:].strip()
+            else: self.title=''
+
     def read_tables_AUTOUGH2(self):
         keyword='EEEEE'
         while keyword in self.tablename:
@@ -445,6 +518,9 @@ class t2listing(file):
                     headers=tuple(self.readline().strip().split()[0:3])
                     keyword=self.table_keymap[headers]
                 else: keyword=''
+
+    def read_tables_TOUGHplus(self):
+        pass
 
     def read_table_AUTOUGH2(self,keyword):
         self.skiplines(3)
