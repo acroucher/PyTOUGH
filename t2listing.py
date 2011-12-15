@@ -173,33 +173,39 @@ class t2listing(file):
             linechars=line[1:6]
             if linechars in simulator.keys(): self.simulator=simulator[linechars]
             else: self.simulator=None
-        if self.simulator=='AUTOUGH2':
-            self.setup_pos=self.setup_pos_AUTOUGH2
-            self.table_type=self.table_type_AUTOUGH2
-            self.setup_table=self.setup_table_AUTOUGH2
-            self.setup_tables=self.setup_tables_AUTOUGH2
-            self.read_header=self.read_header_AUTOUGH2
-            self.read_table=self.read_table_AUTOUGH2
-            self.next_table=self.next_table_AUTOUGH2
-            self.read_tables=self.read_tables_AUTOUGH2
-        elif self.simulator=='TOUGH2':
-            self.setup_pos=self.setup_pos_TOUGH2
-            self.table_type=self.table_type_TOUGH2
-            self.setup_table=self.setup_table_TOUGH2
-            self.setup_tables=self.setup_tables_TOUGH2
-            self.read_header=self.read_header_TOUGH2
-            self.read_table=self.read_table_TOUGH2
-            self.next_table=self.next_table_TOUGH2
-            self.read_tables=self.read_tables_TOUGH2
-        elif self.simulator=='TOUGH+':
-            self.setup_pos=self.setup_pos_TOUGHplus
-            self.table_type=self.table_type_TOUGHplus
-            self.setup_table=self.setup_table_TOUGH2
-            self.setup_tables=self.setup_tables_TOUGHplus
-            self.read_header=self.read_header_TOUGHplus
-            self.read_table=self.read_table_TOUGH2
-            self.next_table=self.next_table_TOUGHplus
-            self.read_tables=self.read_tables_TOUGHplus
+            simname=self.simulator.replace('+','plus')
+            for fname in ['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table','read_tables']:
+                fname_sim=fname+'_'+simname
+                if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
+                setattr(self,fname,getattr(self,fname_sim))
+
+#           if self.simulator=='AUTOUGH2':
+#               self.setup_pos=self.setup_pos_AUTOUGH2
+#               self.table_type=self.table_type_AUTOUGH2
+#               self.setup_table=self.setup_table_AUTOUGH2
+#               self.setup_tables=self.setup_tables_AUTOUGH2
+#               self.read_header=self.read_header_AUTOUGH2
+#               self.read_table=self.read_table_AUTOUGH2
+#               self.next_table=self.next_table_AUTOUGH2
+#               self.read_tables=self.read_tables_AUTOUGH2
+#           elif self.simulator=='TOUGH2':
+#               self.setup_pos=self.setup_pos_TOUGH2
+#               self.table_type=self.table_type_TOUGH2
+#               self.setup_table=self.setup_table_TOUGH2
+#               self.setup_tables=self.setup_tables_TOUGH2
+#               self.read_header=self.read_header_TOUGH2
+#               self.read_table=self.read_table_TOUGH2
+#               self.next_table=self.next_table_TOUGH2
+#               self.read_tables=self.read_tables_TOUGH2
+#           elif self.simulator=='TOUGH+':
+#               self.setup_pos=self.setup_pos_TOUGHplus
+#               self.table_type=self.table_type_TOUGHplus
+#               self.setup_table=self.setup_table_TOUGH2
+#               self.setup_tables=self.setup_tables_TOUGHplus
+#               self.read_header=self.read_header_TOUGHplus
+#               self.read_table=self.read_table_TOUGH2
+#               self.next_table=self.next_table_TOUGHplus
+#               self.read_tables=self.read_tables_TOUGHplus
 
     def table_type_AUTOUGH2(self,keyword):
         """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
@@ -367,6 +373,7 @@ class t2listing(file):
             tablename=self.next_table()
 
     def setup_tables_TOUGHplus(self):
+        self.read_title_TOUGHplus()
         self._table={}
         tablename='element'
         self.seek(self._fullpos[0])
