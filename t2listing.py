@@ -71,6 +71,7 @@ class t2listing(file):
             self.setup_short()
             self.setup_pos()
             if self.num_fulltimes>0:
+                self._index=0
                 self.setup_tables()
                 self.set_table_attributes()
                 self.first()
@@ -194,11 +195,11 @@ class t2listing(file):
             self.setup_pos=self.setup_pos_TOUGHplus
             self.table_type=self.table_type_TOUGHplus
             self.setup_table=self.setup_table_TOUGH2
-            self.setup_tables=self.setup_tables_TOUGH2
+            self.setup_tables=self.setup_tables_TOUGHplus
             self.read_header=self.read_header_TOUGHplus
             self.read_table=self.read_table_TOUGH2
             self.next_table=self.next_table_TOUGHplus
-            self.read_tables=self.read_tables_TOUGH2
+            self.read_tables=self.read_tables_TOUGHplus
 
     def table_type_AUTOUGH2(self,keyword):
         """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
@@ -219,11 +220,8 @@ class t2listing(file):
     def table_type_TOUGHplus(self,headers):
         """Returns TOUGH+ table name based on a tuple of the first three column headings."""
         if headers[0:2]==('ELEM','INDEX'):
-            if headers[2]=='Pressure': return 'element'
-            elif headers[2]=='X1': return 'primary'
-            else: # additional element tables- name 'element1', 'element2' etc.
-                neltables=len([key for key in self._table.keys() if key.startswith('element')])
-                return 'element'+str(neltables)
+            if headers[2]=='X1': return 'primary'
+            else: return 'element'
         else:
             keytable={('ELEM1','ELEM2','INDEX'):'connection',('ELEMENT','SOURCE','INDEX'):'generation'}
             if headers in keytable: return keytable[headers]
@@ -367,6 +365,19 @@ class t2listing(file):
         while tablename:
             self.setup_table(tablename)
             tablename=self.next_table()
+
+    def setup_tables_TOUGHplus(self):
+        self._table={}
+        tablename='element'
+        self.seek(self._fullpos[0])
+        self.read_header() # only one header at each time
+        nelt_tables=0
+        while tablename:
+            self.setup_table(tablename)
+            tablename=self.next_table()
+            if tablename=='element':
+                nelt_tables+=1
+                tablename+=str(nelt_tables)
 
     def next_table_AUTOUGH2(self):
         """Goes to start of next table at current time and returns its type- or None if there are no more."""
@@ -559,6 +570,17 @@ class t2listing(file):
         while tablename:
             self.read_table(tablename)
             tablename=self.next_table()
+
+    def read_tables_TOUGHplus(self):
+        tablename='element'
+        self.read_header() # only one header at each time
+        nelt_tables=0
+        while tablename:
+            self.read_table(tablename)
+            tablename=self.next_table()
+            if tablename=='element':
+                nelt_tables+=1
+                tablename+=str(nelt_tables)
 
     def read_table_AUTOUGH2(self,tablename):
         keyword=tablename[0].upper()*5
