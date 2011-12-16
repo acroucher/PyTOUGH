@@ -391,9 +391,28 @@ class t2listing(file):
             else: return None
         else: return None
 
-    def valid_spaced_blockname(self,name):
-        """Tests if a 7-character string is a valid blockname with spaces around it.  Used to detect positions of table keys."""
-        return (name[0]==name[6]==' ') and valid_blockname(name[1:6])
+    def keysearch_startpos(self,headline,key_headers):
+        """Returns start point for searching for keys, based on key header positions."""
+        keylength=5
+        half_keylength=int(keylength/2.)
+        headmid=[]
+        for header in key_headers:
+            header_startpos=headline.find(header)
+            header_endpos=header_startpos+len(header)-1
+            headmid.append(int((header_startpos+header_endpos)/2.))
+        startpos=[max(mid-half_keylength-1,0) for mid in headmid]
+        return startpos
+
+    def key_positions(self,line,nkeys,startpos):
+        """Returns detected positions of keys in a table line."""
+        def valid_spaced_blockname(name): return (name[0]==name[6]==' ') and valid_blockname(name[1:6])
+        keypos=[]
+        for k in xrange(nkeys):
+            pos=startpos[k]
+            while not valid_spaced_blockname(line[pos:pos+7]): pos+=1
+            while valid_spaced_blockname(line[pos:pos+7]): pos+=1
+            keypos.append(pos)
+        return keypos
 
     def setup_table_AUTOUGH2(self,tablename):
         """Sets up table from AUTOUGH2 listing file."""
@@ -413,13 +432,8 @@ class t2listing(file):
         start=headline.index('INDEX')+5
         nvalues=len([s for s in line[start:].strip().split()])
         if (len(cols)==nvalues):
-            # work out positions of keys in line:
-            keypos=[]
-            pos=0
-            for k in xrange(nkeys):
-                while not self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-                while self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-                keypos.append(pos)
+            startpos=self.keysearch_startpos(headline,strs[0:nkeys])
+            keypos=self.key_positions(line,nkeys,startpos)
             # determine row names:
             while line[1:6]<>keyword:
                 keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
@@ -446,13 +460,8 @@ class t2listing(file):
             if s in flow_headers: cols[-1]+=' '+s
             else: cols.append(s)
         line=self.readline()
-        # work out positions of keys in line:
-        keypos=[]
-        pos=0
-        for k in xrange(nkeys):
-            while not self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-            while self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-            keypos.append(pos)
+        startpos=self.keysearch_startpos(headline,strs[0:nkeys])
+        keypos=self.key_positions(line,nkeys,startpos)
         # work out position of index:
         index_pos=[keypos[-1]+5]
         pos=line.find('.')
@@ -738,11 +747,16 @@ class t2listing(file):
         natm=geo.num_atmosphere_blocks
         nele=geo.num_underground_blocks
         arrays={'Block':{},'Node':{}}
-        for name in self.element.column_name: arrays['Block'][name]=vtkFloatArray()
+        elt_tablenames=[key for key in self._table.keys() if key.startswith('element')]
+        for tablename in elt_tablenames:
+            for name in self._table[tablename].column_name: arrays['Block'][name]=vtkFloatArray()
         flownames=[]
+        def is_flowname(name):
+            name=name.lower()
+            return name.startswith('flo') or name.endswith('flo') or name.endswith('flow') or name.endswith('veloc')
         if flows:
             if flux_matrix==None: flux_matrix=grid.flux_matrix(geo)
-            flownames=[name for name in self.connection.column_name if (name.endswith('flow') or name.startswith('FLO'))]
+            flownames=[name for name in self.connection.column_name if is_flowname(name)]
             for name in flownames: arrays['Block'][name]=vtkFloatArray()
         array_length={'Block':nele,'Node':0}
         array_data={'Block':{},'Node':{}}
@@ -757,8 +771,10 @@ class t2listing(file):
                     array.SetName(name)
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
-                    if geo_matches: array_data[array_type][name]=self.element[name][natm:] # faster
-                    else: array_data[array_type][name]=np.array([self.element[blk][name] for blk in geo.block_name_list[natm:]]) # more flexible
+                    for tablename in elt_tablenames:
+                        if geo_matches: array_data[array_type][name]=self._table[tablename][name][natm:] # faster
+                        else:  # more flexible
+                            array_data[array_type][name]=np.array([self._table[tablename][blk][name] for blk in geo.block_name_list[natm:]])
         for array_type,data_dict in array_data.items():
             for name,data in data_dict.items():
                 if name in flownames:
