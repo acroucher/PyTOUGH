@@ -147,11 +147,13 @@ class t2listing(file):
 
     def skip_to_nonblank(self):
         """Skips to start of next non-blank line."""
+        pos=self.tell()
         while not self.readline().strip(): pos=self.tell()
         self.seek(pos)
 
     def skip_to_blank(self):
         """Skips to start of next blank line."""
+        pos=self.tell()
         while self.readline().strip(): pos=self.tell()
         self.seek(pos)
         
@@ -175,7 +177,9 @@ class t2listing(file):
             else: self.simulator=None
             # Set internal methods according to simulator type:
             simname=self.simulator.replace('+','plus')
-            for fname in ['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table','read_tables']:
+            internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
+                          'read_tables','skip_to_table']
+            for fname in internal_fns:
                 fname_sim=fname+'_'+simname
                 if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
                 setattr(self,fname,getattr(self,fname_sim))
@@ -351,7 +355,7 @@ class t2listing(file):
         tablename='element'
         self.seek(self._fullpos[0])
         self.read_header() # only one header at each time
-        nelt_tables=0
+        nelt_tables=0 # can have multiple element tables
         while tablename:
             self.setup_table(tablename)
             tablename=self.next_table()
@@ -383,13 +387,48 @@ class t2listing(file):
         if self.skipto('_____',0):
             self.readline()
             pos=self.tell()
-            if (self.num_times==1) or ((self.num_times>1) and (pos<self._fullpos[self.index+1])):
-                headpos=self.tell()
-                headers=tuple(self.readline().strip().split()[0:3])
-                self.seek(headpos)
-                return self.table_type(headers)
-            else: return None
+            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
+                if pos>=self._fullpos[self.index+1]: return None
+            headpos=self.tell()
+            headers=tuple(self.readline().strip().split()[0:3])
+            self.seek(headpos)
+            return self.table_type(headers)
         else: return None
+
+    def skip_to_table_AUTOUGH2(self,tablename,last_tablename,nelt_tables):
+        """Skips forwards to headers of table with specified name at the current time."""
+        if self._short[self._index]: keyword=tablename[0].upper()+'SHORT'
+        else: keyword=tablename[0].upper()*5
+        self.skipto(keyword)
+        if tablename<>'element': self.skipto(keyword)
+        self.skip_to_blank()
+        self.skip_to_nonblank()
+
+    def skip_to_table_TOUGH2(self,tablename,last_tablename,nelt_tables):
+        if last_tablename==None:
+            for i in xrange(2): self.skipto('@@@@@')
+            self.skip_to_nonblank()
+            tname='element'
+        else: tname=last_tablename
+        while tname<>tablename:
+            self.skipto('@@@@@')
+            tname=self.next_table_TOUGH2()
+
+    def skip_to_table_TOUGHplus(self,tablename,last_tablename,nelt_tables):
+        if last_tablename==None:
+            self.skipto('=====',0)
+            self.skip_to_nonblank()
+            tname='element'
+            nelt_tables=0
+        else: tname=last_tablename
+        while tname<>tablename:
+            if tname=='primary': keyword='_____'
+            else: keyword='@@@@@'
+            self.skipto(keyword,0)
+            tname=self.next_table_TOUGHplus()
+            if tname=='element':
+                nelt_tables+=1
+                tname+=str(nelt_tables)
 
     def keysearch_startpos(self,headline,key_headers):
         """Returns start point for searching for keys, based on key header positions."""
@@ -608,81 +647,88 @@ class t2listing(file):
     def history(self,selection):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
            Table type is specified as 'e','c','g' or 'p' (upper or lower case) for element table,
-           connection table, generation table or primary table respectively."""
+           connection table, generation table or primary table respectively.  For TOUGH+ results, additional
+           element tables may be specified as 'e1' or 'e2'."""
+
         # This can obviously be done much more simply using next(), and accessing self._table,
         # but that is too slow for large listing files.  This method reads only the required data lines
         # in each table.
-        if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
-        hist=[[] for s in selection]
-        sel=[]
-        for (tt,key,h) in selection:  # convert keys to indices as necessary
-            keyword=tt.upper()*5
-            if isinstance(key,int): index=key
-            else: index=self._table[keyword]._row[key]
-            if self._table[keyword].row_line: index=self._table[keyword].row_line[index] # find line index if needed
-            sel.append((tt,index,h))
-        tables=list(set([tt for (tt,i,h) in sel]))
-        tablelist=[t for t in ['e','c','p','g'] if t in tables]  # need to retain e,c,g,p order
-        tagselection=[(tt,i,h,sindex) for sindex,(tt,i,h) in enumerate(sel)]
-        tableselection={}
-        shortindex={}
-        for table in tablelist:
-            tableselection[table]=[(i,h,sindex) for (tt,i,h,sindex) in tagselection if tt==table]
-            #  work out where (if at all) the items are in short output:
-            for (i,h,sindex) in tableselection[table]:
-                shortkw=table.upper()+'SHORT'
-                if shortkw in self.short_types:
-                    if i in self.short_indices[shortkw]: shortindex[sindex]=self.short_indices[shortkw][i]
-                    else: shortindex[sindex]=None
-                else: shortindex[sindex]=None
-            tableselection[table].sort()
-        self.rewind()   
 
-        AUTOUGH2=(self.simulator=='AUTOUGH2')
+        def tablename_from_specification(tabletype): # expand table specification to table name:
+            from string import digits
+            namemap={'e':'element','c':'connection','g':'generation','p':'primary'}
+            type0=tabletype[0].lower()
+            if type0 in namemap:
+                name=namemap[type0]
+                if tabletype[-1] in digits: name+=tabletype[-1] # additional TOUGH+ element tables
+                return name
+            else: return None
+
+        def ordered_selection(selection,tables,short_types,short_indices):
+            """Given the initial history selection, returns a list of tuples of table name and table selection.  The tables
+            are in the same order as they appear in the listing file.  The table selection is a list of tuples of 
+            (row index, column name, selection index, short row index) for each table, ordered by row index.  This ordering
+            means all data can be read sequentially to make it more efficient.""" 
+            converted_selection=[]
+            for (tspec,key,h) in selection:  # convert keys to indices as necessary, and expand table names
+                tablename=tablename_from_specification(tspec)
+                if isinstance(key,int): index=key
+                else: index=tables[tablename]._row[key]
+                if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
+                ishort=None
+                short_keyword=tspec[0].upper()+'SHORT'
+                if short_keyword in short_types:
+                    if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
+                converted_selection.append((tablename,index,ishort,h))
+            tables=list(set([sel[0] for sel in converted_selection]))
+            # need to retain table order as in the file:
+            tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
+            tagselection=[(tname,i,ishort,h,sel_index) for sel_index,(tname,i,ishort,h) in enumerate(converted_selection)]
+            tableselection=[]
+            shortindex={}
+            for table in tables:
+                tselect=[(i,ishort,h,sel_index) for (tname,i,ishort,h,sel_index) in tagselection if tname==table]
+                tselect.sort()
+                tableselection.append((table,tselect))
+            return tableselection
+
+        old_index=self.index
+        if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
+        tableselection=ordered_selection(selection,self._table,self.short_types,self.short_indices)
+        hist=[[] for s in selection]
+        self.rewind()
+
         for ipos,pos in enumerate(self._pos):
             self.seek(pos)
+            self._index=ipos
             short=self._short[ipos]
-            if short: startkeyword=self.short_types[0]
-            else: startkeyword='EEEEE'
-            for tt in tablelist:
-                longkeyword=tt.upper()*5
-                keyword=[longkeyword,tt.upper()+'SHORT'][short]
-                if not (short and not (keyword in self.short_types)):
-                    # find start of correct table:
-                    if AUTOUGH2:
-                        if keyword<>startkeyword: self.skipto(keyword)
-                        self.skipto(keyword) # start of table
-                        self.skiplines(2)
-                        start=self.readline().index('INDEX')+5
-                    else: # TOUGH2
-                        kw=''
-                        while kw<>keyword:
-                            if keyword==startkeyword:
-                                self.skipto('@@@@@'); self.skipto('@@@@@')
-                                self.readline()
-                            else:
-                                self.skipto('\f',0)
-                                self.skiplines(4)
-                            headers=tuple(self.readline().strip().split()[0:3])
-                            kw=self.keytable[headers]
-                        fmt=self._table[keyword].row_format
-                    self.skip_over_next_blank()
+            last_tname=None
+            nelt_tables=-1
+            for (tname,tselect) in tableselection:
+                if self.simulator=='AUTOUGH2' and short: tablename=tname[0].upper()+'SHORT'
+                else: tablename=tname
+                if not (short and not (tablename in self.short_types)):
+                    self.skip_to_table(tablename,last_tname,nelt_tables)
+                    if tablename.startswith('element'): nelt_tables+=1
+                    start=self.readline().find('INDEX')+5
+                    self.skip_to_blank()
+                    self.skip_to_nonblank()
+                    fmt=self._table[tablename].row_format
                     index=0
                     line=self.readline()
-                    for (itemindex,colname,sindex) in tableselection[tt]:
-                        lineindex=[itemindex,shortindex[sindex]][short]
+                    for (itemindex,ishort,colname,sel_index) in tselect:
+                        lineindex=[itemindex,ishort][short]
                         if lineindex<>None:
                             for k in xrange(lineindex-index): line=self.readline()
                             index=lineindex
-                            if AUTOUGH2: vals=[fortran_float(s) for s in line[start:].strip().split()]
-                            else: vals=self.read_table_line_TOUGH2(keyword,fmt,line)
-                            valindex=self._table[longkeyword]._col[colname]
-                            hist[sindex].append(vals[valindex])
-                    if AUTOUGH2: self.skipto(keyword)  # end of table
-                    else: self.skipto('@@@@@') # TOUGH2
+                            if self.simulator=='AUTOUGH2': vals=[fortran_float(s) for s in line[start:].strip().split()]
+                            else: vals=self.read_table_line_TOUGH2(tablename,fmt,line)
+                            valindex=self._table[tablename]._col[colname]
+                            hist[sel_index].append(vals[valindex])
+                last_tname=tname
 
-        self.first()
-        result=[([self.times,self.fulltimes][shortindex[sindex]==None],np.array(h)) for sindex,h in enumerate(hist)]
+        self._index=old_index
+        result=[([self.times,self.fulltimes][len(h)==self.num_fulltimes],np.array(h)) for sel_index,h in enumerate(hist)]
         if len(result)==1: result=result[0]
         return result
 
