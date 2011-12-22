@@ -724,7 +724,6 @@ class t2listing(file):
                 if not (short and not (tablename in self.short_types)):
                     self.skip_to_table(tablename,last_tname,nelt_tables)
                     if tablename.startswith('element'): nelt_tables+=1
-                    start=self.readline().find('INDEX')+5
                     self.skip_to_blank()
                     self.skip_to_nonblank()
                     ncols=self._table[tablename].num_columns
