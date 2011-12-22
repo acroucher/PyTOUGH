@@ -110,6 +110,12 @@ class t2listing(file):
             if len(i)>0: self.index=i[0]
     step=property(get_step,set_step)
 
+    def get_table_names(self):
+        names=self._table.keys()
+        names.sort()
+        return names
+    table_names=property(get_table_names)
+
     def rewind(self):
         """Rewinds to start of listing (without reading any results)"""
         self.seek(0)
