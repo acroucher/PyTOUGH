@@ -178,7 +178,7 @@ class t2listing(file):
             # Set internal methods according to simulator type:
             simname=self.simulator.replace('+','plus')
             internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
-                          'read_tables','skip_to_table']
+                          'read_tables','skip_to_table','read_table_line']
             for fname in internal_fns:
                 fname_sim=fname+'_'+simname
                 if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
@@ -480,7 +480,8 @@ class t2listing(file):
                 else: keyval=keyval[0]
                 rows.append(keyval)
                 line=self.readline()
-            self._table[tablename]=listingtable(cols,rows)
+            row_format={'values':[start]}
+            self._table[tablename]=listingtable(cols,rows,row_format)
             self.readline()
         else:
             print 'Error parsing '+tablename+' table columns: table not created.'
@@ -611,34 +612,41 @@ class t2listing(file):
                 tablename+=str(nelt_tables)
 
     def read_table_AUTOUGH2(self,tablename):
+        fmt=self._table[tablename].row_format
         keyword=tablename[0].upper()*5
-        self.skiplines(3)
-        start=self.readline().index('INDEX')+5
+        self.skip_to_blank()
         self.readline()
+        self.skip_to_blank()
+        self.skip_to_nonblank()
         line=self.readline()
         row=0
-        while line[1:6]<>keyword: 
-            vals=[fortran_float(s) for s in line[start:].strip().split()]
-            self._table[tablename][row]=vals
+        while line[1:6]<>keyword:
+            self._table[tablename][row]=self.read_table_line_AUTOUGH2(line,fmt=fmt)
             row+=1
             line=self.readline()
         self.readline()
 
-    def read_table_line_TOUGH2(self,tablename,fmt,line):
-        """Reads values from a line in a TOUGH2 listing, given the tablename, and format."""
+    def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
+        start=fmt['values'][0]
+        vals=[fortran_float(s) for s in line[start:].strip().split()]        
+        return vals
+
+    def read_table_line_TOUGH2(self,line,num_columns,fmt):
+        """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
         vals=[fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(len(fmt['values'])-1)]
-        num_missing=self._table[tablename].num_columns-len(vals)
+        num_missing=num_columns-len(vals)
         for i in xrange(num_missing): vals.append(0.0)
         return vals
         
     def read_table_TOUGH2(self,tablename):
+        ncols=self._table[tablename].num_columns
         fmt=self._table[tablename].row_format
         self.skip_to_blank()
         self.skip_to_nonblank()
         line=self.readline()
         while line.strip():
             key=self._table[tablename].key_from_line(line)
-            self._table[tablename][key]=self.read_table_line_TOUGH2(tablename,fmt,line)
+            self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
             line=self.readline()
             if line.startswith('\f'): # extra headers in the middle of TOUGH2 listings
                 self.skip_over_next_blank()
@@ -705,7 +713,7 @@ class t2listing(file):
             last_tname=None
             nelt_tables=-1
             for (tname,tselect) in tableselection:
-                if self.simulator=='AUTOUGH2' and short: tablename=tname[0].upper()+'SHORT'
+                if short: tablename=tname[0].upper()+'SHORT'
                 else: tablename=tname
                 if not (short and not (tablename in self.short_types)):
                     self.skip_to_table(tablename,last_tname,nelt_tables)
@@ -713,6 +721,7 @@ class t2listing(file):
                     start=self.readline().find('INDEX')+5
                     self.skip_to_blank()
                     self.skip_to_nonblank()
+                    ncols=self._table[tablename].num_columns
                     fmt=self._table[tablename].row_format
                     index=0
                     line=self.readline()
@@ -721,8 +730,7 @@ class t2listing(file):
                         if lineindex<>None:
                             for k in xrange(lineindex-index): line=self.readline()
                             index=lineindex
-                            if self.simulator=='AUTOUGH2': vals=[fortran_float(s) for s in line[start:].strip().split()]
-                            else: vals=self.read_table_line_TOUGH2(tablename,fmt,line)
+                            vals=self.read_table_line(line,ncols,fmt)
                             valindex=self._table[tablename]._col[colname]
                             hist[sel_index].append(vals[valindex])
                 last_tname=tname
