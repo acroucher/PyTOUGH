@@ -1,7 +1,7 @@
 """For reading TOUGH2 listing files."""
 
 """
-Copyright 2011 University of Auckland.
+Copyright 2012 University of Auckland.
 
 This file is part of PyTOUGH.
 
@@ -181,14 +181,15 @@ class t2listing(file):
             linechars=line[1:6]
             if linechars in simulator.keys(): self.simulator=simulator[linechars]
             else: self.simulator=None
-            # Set internal methods according to simulator type:
-            simname=self.simulator.replace('+','plus')
-            internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
-                          'read_tables','skip_to_table','read_table_line']
-            for fname in internal_fns:
-                fname_sim=fname+'_'+simname
-                if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
-                setattr(self,fname,getattr(self,fname_sim))
+            if self.simulator:
+                # Set internal methods according to simulator type:
+                simname=self.simulator.replace('+','plus')
+                internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
+                              'read_tables','skip_to_table','read_table_line']
+                for fname in internal_fns:
+                    fname_sim=fname+'_'+simname
+                    if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
+                    setattr(self,fname,getattr(self,fname_sim))
 
     def table_type_AUTOUGH2(self,keyword):
         """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
