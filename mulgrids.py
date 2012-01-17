@@ -1006,7 +1006,7 @@ class mulgrid(object):
     def rotate(self,angle,centre=None):
         """Rotates grid horizontally by specified angle (degrees clockwise).
         If centre is not specified, the centre of the grid is used."""
-        if centre: c=centre
+        if centre<>None: c=centre
         else: c=self.centre
         R=linear_trans2().rotation(angle,c)
         for node in self.nodelist: node.pos=R(node.pos)
