@@ -220,6 +220,19 @@ class column(object):
         return np.max(l)/np.min(l)
     side_ratio=property(get_side_ratio)
 
+    def get_bisection_sides(self):
+        """Returns indices of column sides which should be used to bisect the column.  Bisection is done for triangles
+        across the two longest sides of the column, and for quadrilaterals across the longest side and its opposite."""
+        l=self.side_lengths
+        isort=np.argsort(l)
+        if self.num_nodes==3: return (isort[-1],isort[-2])
+        elif self.num_nodes==4:
+            imax=isort[-1]
+            iopp=(imax+2)%self.num_nodes
+            return (imax,iopp)
+        else: return None
+    bisection_sides=property(get_bisection_sides)
+
     def basis(self,xi):
         """Returns bilinear 2D finite element basis functions for the column at the specified local coordinate."""
         if self.num_nodes==3: return np.array([xi[0],xi[1],1.-xi[0]-xi[1]])
