@@ -210,7 +210,7 @@ class column(object):
 
     def get_side_lengths(self):
         "Returns list of side lengths for the column"
-        return np.array([norm(self.node[i].pos-self.node[i-1].pos) for i in xrange(self.num_nodes)])
+        return np.array([norm(self.node[(i+1)%self.num_nodes].pos-self.node[i].pos) for i in xrange(self.num_nodes)])
     side_lengths=property(get_side_lengths)
         
     def get_side_ratio(self):
@@ -1976,43 +1976,54 @@ class mulgrid(object):
             self.setup_block_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 
-    def refine(self,columns=[]):
-        """Refines selected columns in the grid by a factor of two.  If no columns are specified, all columns are refined.
-        Refinement is carried out by splitting: each column is divided into four.  Triangular transition columns are
-        added around the edge of the refinement region as needed.  Only 3 and 4-sided columns are supported."""
+    def refine(self,columns=[],bisect=False):
+        """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
+        Refinement is carried out by splitting: each column is divided into four, unless the bisect parameter is True,
+        in which case they are divided into two between their longest sides.  Triangular transition columns are added
+        around the edge of the refinement region as needed.  Only 3 and 4-sided columns are supported."""
         if columns==[]: columns=self.columnlist
         else: 
             if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
         connections=set([])
-        for col in columns: connections=connections | col.connection
+        sidenodes={}
+        next_nodeno=max([self.column_number_from_name(n.name) for n in self.nodelist])+1
+        next_colno=max([self.column_number_from_name(col.name) for col in self.columnlist])+1
+        casefn=[lowercase,uppercase][self.uppercase_names]
+        justfn=[ljust,rjust][self.right_justified_names]
+        def create_mid_node(node1,node2,sidenodes,next_nodeno,justfn,casefn):
+            midpos=0.5*(node1.pos+node2.pos)
+            nodenames=(node1.name,node2.name)
+            name=self.column_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
+            self.add_node(node(name,midpos))
+            sidenodes[nodenames]=self.nodelist[-1]
+            sidenodes[nodenames[1],nodenames[0]]=sidenodes[nodenames]
+            return sidenodes,next_nodeno
+        if bisect:
+            for col in columns:
+                for i in col.bisection_sides:
+                    n1,n2=col.node[i],col.node[(i+1)%col.num_nodes]
+                    con=self.connection_with_nodes([n1,n2])
+                    if con: connections.add(con)
+                    else: sidenodes,next_nodeno=create_mid_node(n1,n2,sidenodes,next_nodeno,justfn,casefn)
+        else: 
+            for col in columns: connections=connections | col.connection
         columns_plus_edge=set([])
         for con in connections: columns_plus_edge=columns_plus_edge | set(con.column)
         if all([col.num_nodes in [3,4] for col in columns_plus_edge]):
             edge=columns_plus_edge-set(columns)
-            next_nodeno=max([self.column_number_from_name(n.name) for n in self.nodelist])+1
-            next_colno=max([self.column_number_from_name(col.name) for col in self.columnlist])+1
-            casefn=[lowercase,uppercase][self.uppercase_names]
-            justfn=[ljust,rjust][self.right_justified_names]
-            def create_mid_node(node1,node2,sidenodes,next_nodeno,justfn,casefn):
-                midpos=0.5*(node1.pos+node2.pos)
-                nodenames=(node1.name,node2.name)
-                name=self.column_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
-                self.add_node(node(name,midpos))
-                sidenodes[nodenames]=self.nodelist[-1]
-                sidenodes[nodenames[1],nodenames[0]]=sidenodes[nodenames]
-                return sidenodes,next_nodeno
             # create midside nodes at connections:
-            sidenodes={}
             for con in connections:
                 sidenodes,next_nodeno=create_mid_node(con.node[0],con.node[1],sidenodes,next_nodeno,justfn,casefn)
-            # create midside nodes on grid boundaries in the refinement area:
-            bdy=self.boundary_nodes
-            for col in columns_plus_edge:
-                nn=col.num_nodes
-                for i,corner in enumerate(col.node):
-                    next_corner=col.node[(i+1)%nn]
-                    if (corner in bdy) and (next_corner in bdy):
-                        sidenodes,next_nodeno=create_mid_node(corner,next_corner,sidenodes,next_nodeno,justfn,casefn)
+            if not bisect:
+                # create midside nodes on grid boundaries in the refinement area:
+                bdy=self.boundary_nodes
+#                for col in columns_plus_edge:
+                for col in columns:
+                    nn=col.num_nodes
+                    for i,corner in enumerate(col.node):
+                        next_corner=col.node[(i+1)%nn]
+                        if (corner in bdy) and (next_corner in bdy):
+                            sidenodes,next_nodeno=create_mid_node(corner,next_corner,sidenodes,next_nodeno,justfn,casefn)
             def transition_type(nn,sides):
                 # returns transition type- classified by how many refined sides, starting side, and range
                 nref=len(sides)
