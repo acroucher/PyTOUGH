@@ -542,7 +542,7 @@ Adjusts positions of the specified nodes to optimize grid quality.  If no nodes 
 
 Note that an error will result if the connection angle weight and either of the other two weights is set to zero- in this case there are not enough constraints to fit the parameters.
 
-If the pest parameter is set to \texttt{True}, the PEST parameter estimation software is used to carry out the optimzation (this obviously requires that PEST is installed on your machine).  Otherwise, the \texttt{leastsq} routine in the \texttt{scipy} Python library is used.  Particularly for large problems, PEST may give quicker results.  PEST is free software and may be downloaded from \texttt{http://www.pesthomepage.org/}.  If PEST is used, a variety of intermediate files (named \texttt{pestmesh.*}) will be written to the working directory, including the PEST run record file (\texttt{pestmesh.rec}) which contains a detailed record of the optimization process.
+If the \emph{pest} parameter is set to \texttt{True}, the PEST parameter estimation software is used to carry out the optimzation (this obviously requires that PEST is installed on your machine).  Otherwise, the \texttt{leastsq} routine in the \texttt{scipy} Python library is used.  Particularly for large problems, PEST may give quicker results.  PEST is free software and may be downloaded from \texttt{http://www.pesthomepage.org/}.  If PEST is used, a variety of intermediate files (named \texttt{pestmesh.*}) will be written to the working directory, including the PEST run record file (\texttt{pestmesh.rec}) which contains a detailed record of the optimization process.
 
 \textbf{Parameters:}
 \begin{itemize}
