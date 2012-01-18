@@ -628,7 +628,7 @@ geo=mulgrid().rectangular([1000]*10,[500]*20,[100]*5+[200]*10,
 
 creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a rectangular grid of 10 blocks of size 1000 m in the \emph{x}-direction, 20 blocks of size 500 m in the \emph{x}-direction, 5 layers at the top of thickness 100 m and 10 layers underneath of thickness 200 m, and with origin (0,0,2500) m.  The grid will have the default naming convention (0) and atmosphere type (2).
 
-\subsubsection{\texttt{refine(\emph{columns}=[]), \emph{bisect}=False}}
+\subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False)}}
 
 Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \emph{bisect} parameter is \texttt{True}, in which case each column in split into two between its longest sides.
 
