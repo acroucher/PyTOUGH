@@ -208,10 +208,15 @@ class column(object):
         return max(angles)/min(angles)
     angle_ratio=property(get_angle_ratio)
 
+    def get_side_lengths(self):
+        "Returns list of side lengths for the column"
+        return [norm(self.node[i].pos-self.node[i-1].pos) for i in xrange(self.num_nodes)]
+    side_lengths=property(get_side_lengths)
+        
     def get_side_ratio(self):
         """Returns the side ratio for the column, defined as the ratio of the largest side length to 
         the smallest side length (a generalisation of the aspect ratio for quadrilateral columns)."""
-        l=[norm(self.node[i].pos-self.node[i-1].pos) for i in xrange(self.num_nodes)]
+        l=self.side_lengths
         return max(l)/min(l)
     side_ratio=property(get_side_ratio)
 
