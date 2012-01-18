@@ -1,7 +1,7 @@
 """For reading, writing and manipulating MULgraph geometry grids."""
 
 """
-Copyright 2011 University of Auckland.
+Copyright 2012 University of Auckland.
 
 This file is part of PyTOUGH.
 
