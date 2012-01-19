@@ -146,21 +146,37 @@ class t2incon(object):
 
     def transfer_from(self,sourceinc,sourcegeo,geo,mapping={},colmapping={}):
         """Transfers initial conditions from another t2incon object, using the two corresponding geometry objects, and the
-        optionally specified block and column mappings between them (these are created if not specified)."""
-        if (sourcegeo.atmosphere_type<2) and (geo.atmosphere_type==2):
-            print "Can\'t transfer initial conditions: "+sourcegeo.filename.strip()+" has an atmosphere, but "+geo.filename.strip()+" doesn't."
-        else:
-            self.empty()
-            if (colmapping=={}) or (mapping=={}): mapping,colmapping=geo.block_mapping(sourcegeo,True)
-            # atmosphere blocks:
-            if geo.atmosphere_type==0:
-                blk=geo.block_name(geo.layerlist[0].name,geo.atmosphere_column_name)
-                self[blk]=sourceinc[0]
-            elif geo.atmosphere_type==1:
+        optionally specified block and column mappings between them (these are created if not specified).  If there are 
+        no atmosphere blocks in the source initial conditions, default atmosphere conditions are assigned if necessary."""
+        self.empty()
+        if (colmapping=={}) or (mapping=={}): mapping,colmapping=geo.block_mapping(sourcegeo,True)
+        from copy import copy
+        # atmosphere blocks:
+        default_atm_incons=t2blockincon([1.013e5,20.])
+        if geo.atmosphere_type==0: # single atmosphere block
+            atmblk=geo.block_name(geo.layerlist[0].name,geo.atmosphere_column_name)
+            if sourcegeo.atmosphere_type==0: self[atmblk]=copy(sourceinc[0])
+            elif sourcegeo.atmosphere_type==1: # take average over source column atmosphere incons
+                varsum=np.zeros(len(sourceinc[0].variable))
+                for col in sourcegeo.columnlist:
+                    blk=sourcegeo.block_name(sourcegeo.layerlist[0].name,col.name)
+                    varsum+=np.array(sourceinc[blk].variable)
+                self[atmblk]=t2blockincon(varsum/sourcegeo.num_columns)
+            else: self[atmblk]=copy(default_atm_incons)
+        elif geo.atmosphere_type==1: # atmosphere block over each column
+            if sourcegeo.atmosphere_type==0: # broadcast single source atmosphere incons to each column
+                for col in geo.columnlist:
+                    blk=geo.block_name(geo.layerlist[0].name,col.name)
+                    self[blk]=copy(sourceinc[0])
+            elif sourcegeo.atmosphere_type==1: # atmosphere over each column in both source and destination
                 for col in geo.columnlist:
                     mappedcol=colmapping[col.name]
                     oldatmosblockname=sourcegeo.block_name(sourcegeo.layerlist[0].name,mappedcol)
                     blk=geo.block_name(geo.layerlist[0].name,col.name)
-                    self[blk]=sourceinc[oldatmosblockname]
-            # underground blocks:
-            for blk in geo.block_name_list[geo.num_atmosphere_blocks:]: self[blk]=sourceinc[mapping[blk]]
+                    self[blk]=copy(sourceinc[oldatmosblockname])
+            else: # use default
+                for col in geo.columnlist:
+                    blk=geo.block_name(geo.layerlist[0].name,col.name)
+                    self[blk]=copy(default_atm_incons)
+        # underground blocks:
+        for blk in geo.block_name_list[geo.num_atmosphere_blocks:]: self[blk]=copy(sourceinc[mapping[blk]])
