@@ -45,122 +45,119 @@ There is also a \texttt{connection\_angle\_cosine} property, which returns an \t
 
 The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, \texttt{extra\_connections} and \texttt{orphans} properties return actual problems with the grid which should be fixed.  A summary of all these problems is given by the \texttt{check} method (see section \ref{mulgridmethods}).
 
-\begin{table}
-  \begin{center}
-    \begin{tabular}{|l|l|p{75mm}|}
-      \hline
-      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
-      \hline
-      \texttt{area} & float & total horizontal area covered by the grid \\
-      \texttt{atmosphere\_connection} & float & connection distance to atmosphere blocks\\
-      \texttt{atmosphere\_type} & integer & type of atmosphere\\
-      \texttt{atmosphere\_volume} & float & volume of atmosphere blocks\\
-      \texttt{bad\_columns} & set & columns that do not contain their own centres\\
-      \texttt{bad\_layers} & set & layers that do not contain their own centres\\
-      \texttt{block\_name\_index} & dictionary & indices of blocks (by name)\\
-      \texttt{block\_name\_list} & list & names of blocks (by index)\\
-      \texttt{boundary\_columns} & set & set of columns on the outer boundary of the grid \\
-      \texttt{boundary\_nodes} & list & ordered list of nodes on the outer boundary of the grid \\
-      \texttt{boundary\_polygon} & list & list of points representing grid boundary (extra colinear points removed) \\
-      \texttt{bounds} & list & [bottom left, top right] horizontal bounds of grid\\
-      \texttt{centre} & \texttt{np.array} & position of horizontal centre of the grid \\
-      \texttt{columnlist} & list & columns (by index, e.g. \texttt{columnlist[23]})\\
-      \texttt{column\_angle\_ratio} & \texttt{np.array} & angle ratio for each column\\
-      \texttt{column\_side\_ratio} & \texttt{np.array} & side ratio for each column\\
-      \texttt{column} & dictionary & columns (by name, e.g. \texttt{column[`AA']})\\
-      \texttt{connection\_list} & list & connections between columns (by index)\\
-      \texttt{connection\_angle\_cosine} & \texttt{np.array} & angle cosines for all connections\\
-      \texttt{convention} & integer & naming convention for columns and layers\\
-      \texttt{default\_surface} & Boolean  & \texttt{True} if all columns have default surface elevation\\
-      \texttt{extra\_connections} & set & connections defined between columns that are not against each other\\
-      \texttt{filename} & string  & file name on disk\\
-      \texttt{layerlist} & list & layers (by index)\\
-      \texttt{layer} & dictionary & layers (by name)\\
-      \texttt{missing\_connections} & set & missing connections between columns\\
-      \texttt{nodelist} & list  & nodes (by index)\\
-      \texttt{node} & dictionary  & nodes (by name)\\
-      \texttt{num\_atmosphere\_blocks} & integer & number of atmosphere blocks\\
-      \texttt{num\_blocks} & integer & total number of blocks in the grid\\
-      \texttt{num\_columns} & integer & number of columns\\
-      \texttt{num\_connections} & integer & number of connections between columns\\
-      \texttt{num\_layers} & integer & number of layers\\
-      \texttt{num\_nodes} & integer & number of nodes\\
-      \texttt{num\_underground\_blocks} & integer & number of non-atmosphere blocks\\
-      \texttt{num\_wells} & integer & number of wells\\
-      \texttt{orphans} & set & orphaned nodes (nodes not belonging to any column)\\
-      \texttt{permeability\_angle} & float & rotation angle (degrees anticlockwise) of first horizontal permeability direction \\
-      \texttt{type} & string  & type of geometry (currently only `GENER' supported)\\
-      \texttt{unit\_type} & string & distance unit (blank for metres, `FEET' for ft)\\
-      \texttt{welllist} & list & wells (by index)\\
-      \texttt{well} & dictionary & wells (by name)\\
-      \hline
-    \end{tabular}
+\begin{center}
+  \begin{longtable}{|l|l|p{75mm}|}
+    \hline
+    \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+    \hline
+    \texttt{area} & float & total horizontal area covered by the grid \\
+    \texttt{atmosphere\_connection} & float & connection distance to atmosphere blocks\\
+    \texttt{atmosphere\_type} & integer & type of atmosphere\\
+    \texttt{atmosphere\_volume} & float & volume of atmosphere blocks\\
+    \texttt{bad\_columns} & set & columns that do not contain their own centres\\
+    \texttt{bad\_layers} & set & layers that do not contain their own centres\\
+    \texttt{block\_name\_index} & dictionary & indices of blocks (by name)\\
+    \texttt{block\_name\_list} & list & names of blocks (by index)\\
+    \texttt{boundary\_columns} & set & set of columns on the outer boundary of the grid \\
+    \texttt{boundary\_nodes} & list & ordered list of nodes on the outer boundary of the grid \\
+    \texttt{boundary\_polygon} & list & list of points representing grid boundary (extra colinear points removed) \\
+    \texttt{bounds} & list & [bottom left, top right] horizontal bounds of grid\\
+    \texttt{centre} & \texttt{np.array} & position of horizontal centre of the grid \\
+    \texttt{columnlist} & list & columns (by index, e.g. \texttt{columnlist[23]})\\
+    \texttt{column\_angle\_ratio} & \texttt{np.array} & angle ratio for each column\\
+    \texttt{column\_side\_ratio} & \texttt{np.array} & side ratio for each column\\
+    \texttt{column} & dictionary & columns (by name, e.g. \texttt{column[`AA']})\\
+    \texttt{connection\_list} & list & connections between columns (by index)\\
+    \texttt{connection\_angle\_cosine} & \texttt{np.array} & angle cosines for all connections\\
+    \texttt{convention} & integer & naming convention for columns and layers\\
+    \texttt{default\_surface} & Boolean  & \texttt{True} if all columns have default surface elevation\\
+    \texttt{extra\_connections} & set & connections defined between columns that are not against each other\\
+    \texttt{filename} & string  & file name on disk\\
+    \texttt{layerlist} & list & layers (by index)\\
+    \texttt{layer} & dictionary & layers (by name)\\
+    \texttt{missing\_connections} & set & missing connections between columns\\
+    \texttt{nodelist} & list  & nodes (by index)\\
+    \texttt{node} & dictionary  & nodes (by name)\\
+    \texttt{num\_atmosphere\_blocks} & integer & number of atmosphere blocks\\
+    \texttt{num\_blocks} & integer & total number of blocks in the grid\\
+    \texttt{num\_columns} & integer & number of columns\\
+    \texttt{num\_connections} & integer & number of connections between columns\\
+    \texttt{num\_layers} & integer & number of layers\\
+    \texttt{num\_nodes} & integer & number of nodes\\
+    \texttt{num\_underground\_blocks} & integer & number of non-atmosphere blocks\\
+    \texttt{num\_wells} & integer & number of wells\\
+    \texttt{orphans} & set & orphaned nodes (nodes not belonging to any column)\\
+    \texttt{permeability\_angle} & float & rotation angle (degrees anticlockwise) of first horizontal permeability direction \\
+    \texttt{type} & string  & type of geometry (currently only `GENER' supported)\\
+    \texttt{unit\_type} & string & distance unit (blank for metres, `FEET' for ft)\\
+    \texttt{welllist} & list & wells (by index)\\
+    \texttt{well} & dictionary & wells (by name)\\
+    \hline
     \caption{Properties of a \texttt{mulgrid} object}
     \label{tb:mulgrid_properties}
-  \end{center}
-\end{table}
+  \end{longtable}
+\end{center}
 
 \subsection{Methods}
 \label{mulgridmethods}
 
 The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgrid_methods}.  Details of these methods are given below.
 
-\begin{table}
-  \begin{center}
-    \begin{tabular}{|l|l|p{65mm}|}
-      \hline
-      \textbf{Method} & \textbf{Type} & \textbf{Description}\\
-      \hline
-      \texttt{add\_column} & -- & adds a column to the grid\\ 
-      \texttt{add\_connection} & -- & adds a connection to the grid\\ 
-      \texttt{add\_layer} & -- & adds a layer to the grid\\ 
-      \texttt{add\_node} & -- & adds a node to the grid\\ 
-      \texttt{add\_well} & -- & adds a well to the grid\\ 
-      \texttt{block\_mapping} & dictionary & mapping from the blocks of another \texttt{mulgrid} object\\
-      \texttt{block\_name} & string & name of block at given layer and column\\
-      \texttt{block\_name\_containing\_point} & string & name of block containing specified point\\
-      \texttt{check} & Boolean & checks grid for errors (and optionally fixes them)\\ 
-      \texttt{column\_containing\_point} & column & column containing specified horizontal point\\ 
-      \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
-      \texttt{column\_name} & string & column name of a block name\\ 
-      \texttt{columns\_in\_polygon} & list & columns inside a specified polygon\\ 
-      \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
-      \texttt{delete\_column} & -- & deletes a column from the grid\\ 
-      \texttt{delete\_connection} & -- & deletes a connection from the grid\\ 
-      \texttt{delete\_layer} & -- & deletes a layer from the grid\\ 
-      \texttt{delete\_node} & -- & deletes a node from the grid\\ 
-      \texttt{delete\_orphans} & -- & deletes any orphaned nodes from the grid\\ 
-      \texttt{delete\_orphan\_wells} & -- & deletes any orphaned wells from the grid\\ 
-      \texttt{delete\_well} & -- & deletes a well from the grid\\ 
-      \texttt{empty} & --  & empties contents of grid\\
-      \texttt{fit\_surface} & -- & fits column surface elevations from data\\ 
-      \texttt{from\_gmsh} & \texttt{mulgrid} & imports a grid from a \texttt{gmsh} mesh\\ 
-      \texttt{layer\_containing\_elevation} & layer & layer containing specified vertical elevation\\
-      \texttt{layer\_mapping} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
-      \texttt{layer\_name} & string & layer name of a block name\\ 
-      \texttt{layer\_plot} & -- & plots a variable over a layer of the grid\\
-      \texttt{line\_values} & tuple & values of a variable along an arbitrary line through the grid\\
-      \texttt{line\_plot} & -- & plots a variable along an arbitrary line through the grid\\
-      \texttt{nodes\_in\_polygon} & list & nodes inside a specified polygon\\ 
-      \texttt{optimize} & -- & adjusts node positions to optimize grid quality\\
-      \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
-      \texttt{read} & \texttt{mulgrid} & reads geometry file from disk\\
-      \texttt{rectangular} & \texttt{mulgrid} & creates rectangular grid\\
-      \texttt{refine} & -- & refines a specified part of the grid\\
-      \texttt{rename\_layer} & Boolean & renames a layer\\
-      \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
-      \texttt{slice\_plot} & -- & plots a variable over a vertical slice through the grid\\
-      \texttt{translate} & -- & moves a grid by simple translation in 3D\\
-      \texttt{well\_values} & tuple & values of a variable down a well\\
-      \texttt{write} & -- & writes to geometry file on disk\\
-      \texttt{write\_bna} & -- & writes to Atlas BNA file on disk\\ 
-      \texttt{write\_vtk} &  -- & writes to VTK file on disk\\
-      \hline
-    \end{tabular}
-    \caption{Methods of a \texttt{mulgrid} object}
-    \label{tb:mulgrid_methods}
-  \end{center}
-\end{table}
+\begin{center}
+\begin{longtable}{|l|l|p{70mm}|}
+  \hline
+  \textbf{Method} & \textbf{Type} & \textbf{Description}\\
+  \hline
+  \texttt{add\_column} & -- & adds a column to the grid\\ 
+  \texttt{add\_connection} & -- & adds a connection to the grid\\ 
+  \texttt{add\_layer} & -- & adds a layer to the grid\\ 
+  \texttt{add\_node} & -- & adds a node to the grid\\ 
+  \texttt{add\_well} & -- & adds a well to the grid\\ 
+  \texttt{block\_mapping} & dictionary & mapping from the blocks of another \texttt{mulgrid} object\\
+  \texttt{block\_name} & string & name of block at given layer and column\\
+  \texttt{block\_name\_containing\_point} & string & name of block containing specified point\\
+  \texttt{check} & Boolean & checks grid for errors (and optionally fixes them)\\ 
+  \texttt{column\_containing\_point} & column & column containing specified horizontal point\\ 
+  \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
+  \texttt{column\_name} & string & column name of a block name\\ 
+  \texttt{columns\_in\_polygon} & list & columns inside a specified polygon\\ 
+  \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
+  \texttt{delete\_column} & -- & deletes a column from the grid\\ 
+  \texttt{delete\_connection} & -- & deletes a connection from the grid\\ 
+  \texttt{delete\_layer} & -- & deletes a layer from the grid\\ 
+  \texttt{delete\_node} & -- & deletes a node from the grid\\ 
+  \texttt{delete\_orphans} & -- & deletes any orphaned nodes from the grid\\ 
+  \texttt{delete\_orphan\_wells} & -- & deletes any orphaned wells from the grid\\ 
+  \texttt{delete\_well} & -- & deletes a well from the grid\\ 
+  \texttt{empty} & --  & empties contents of grid\\
+  \texttt{fit\_surface} & -- & fits column surface elevations from data\\ 
+  \texttt{from\_gmsh} & \texttt{mulgrid} & imports a grid from a \texttt{gmsh} mesh\\ 
+  \texttt{layer\_containing\_elevation} & layer & layer containing specified vertical elevation\\
+  \texttt{layer\_mapping} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
+  \texttt{layer\_name} & string & layer name of a block name\\ 
+  \texttt{layer\_plot} & -- & plots a variable over a layer of the grid\\
+  \texttt{line\_values} & tuple & values of a variable along an arbitrary line through the grid\\
+  \texttt{line\_plot} & -- & plots a variable along an arbitrary line through the grid\\
+  \texttt{nodes\_in\_polygon} & list & nodes inside a specified polygon\\ 
+  \texttt{optimize} & -- & adjusts node positions to optimize grid quality\\
+  \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
+  \texttt{read} & \texttt{mulgrid} & reads geometry file from disk\\
+  \texttt{rectangular} & \texttt{mulgrid} & creates rectangular grid\\
+  \texttt{refine} & -- & refines a specified part of the grid\\
+  \texttt{rename\_layer} & Boolean & renames a layer\\
+  \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
+  \texttt{slice\_plot} & -- & plots a variable over a vertical slice through the grid\\
+  \texttt{split\_column} & Boolean & splits a quadrilateral column into two triangles\\ 
+  \texttt{translate} & -- & moves a grid by simple translation in 3D\\
+  \texttt{well\_values} & tuple & values of a variable down a well\\
+  \texttt{write} & -- & writes to geometry file on disk\\
+  \texttt{write\_bna} & -- & writes to Atlas BNA file on disk\\ 
+  \texttt{write\_vtk} &  -- & writes to VTK file on disk\\
+  \hline
+  \caption{Methods of a \texttt{mulgrid} object}
+  \label{tb:mulgrid_methods}
+\end{longtable}
+\end{center}
 
 \subsubsection{\texttt{add\_column(\emph{col})}}
 
@@ -730,6 +727,19 @@ geo.slice_plot(45.,t,`Temperature',`$^o$C',contours=[100,200])
 \end{verbatim}
 
 plots the variable \texttt{t} through a SW--NE vertical slice (heading 45$^{\circ}$) through the grid, with the values as Temperature ($^{\circ}C$) and contours drawn at 100$^o$C and 200$^o$C.
+
+\subsubsection{\texttt{split\_column(\emph{colname}, \emph{nodename})}}
+
+Splits a quadrilateral column with specified name into two triangular columns.  The direction of the split is determined
+by specifying the name of one of the splitting nodes.  The method returns \texttt{True} if the split was carried out successfully.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{colname}: string\\
+  Name of the quadrilateral column to be split.  If the column is not quadrilateral, the method returns \texttt{False} and nothing is done to the column.
+\item \textbf{nodename}: string\\
+  Name of one of the splitting nodes.  The column is split across this node and the one on the opposite side of the column.  If the specified node is not in the column, the method returns \texttt{False} and nothing is done to the column.
+\end{itemize}
 
 \subsubsection{\texttt{translate(\emph{shift})}}
 

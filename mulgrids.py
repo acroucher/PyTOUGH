@@ -571,7 +571,49 @@ class mulgrid(object):
         for node in col.node: node.column.remove(col)
         del self.column[colname]
         self.columnlist.remove(col)
-            
+
+    def split_column(self,colname,nodename):
+        """Splits the specified quadrilateral column into two triangles, splitting at the specified node.  Returns
+        True if the operation was successful."""
+        if colname in self.column:
+            col=self.column[colname]
+            nn=col.num_nodes
+            if nn==4:
+                nodenames=[node.name for node in col.node]
+                try:
+                    i0=nodenames.index(nodename)
+                    i=[(i0+j)%nn for j in xrange(nn)]
+                    next_colno=max([self.column_number_from_name(c.name) for c in self.columnlist])+1
+                    justfn=[ljust,rjust][self.right_justified_names]
+                    casefn=[lowercase,uppercase][self.uppercase_names]
+                    colname2=self.column_name_from_number(next_colno,justfn,casefn)
+                    col2=column(colname2,node=[col.node[i[2]],col.node[i[3]],col.node[i[0]]],surface=col.surface)
+                    # switch connections and neighbours from col to col2 as needed:
+                    n3=col.node[i[3]]
+                    n3cols=[c for c in list(col.neighbour) if n3 in c.node]
+                    swapcons,swapnbrs=[],[]
+                    for con in list(col.connection):
+                        if con.column[0] in n3cols:
+                            con.column[1]=col2; swapcons.append(con); swapnbrs.append(con.column[0])
+                        elif con.column[1] in n3cols:
+                            con.column[0]=col2; swapcons.append(con); swapnbrs.append(con.column[1])
+                    for con in swapcons:
+                        col.connection.remove(con)
+                        col2.connection.add(con)
+                    for c in swapnbrs:
+                        col.neighbour.remove(c)
+                        c.neighbour.remove(col)
+                        col2.neighbour.add(c)
+                        c.neighbour.add(col2)
+                    del col.node[i[3]]
+                    col.centre=col.centroid
+                    self.add_column(col2)
+                    self.add_connection(connection([col,col2]))
+                    self.setup_block_name_index()
+                    return True
+                except ValueError: return False # node not in column
+        return False
+
     def add_layer(self,lay=layer()):
         """Adds layer to the grid"""
         self.layerlist.append(lay)
@@ -1043,7 +1085,7 @@ class mulgrid(object):
                         if coli.name<=colj.name: mincol,maxcol=coli,colj
                         else: mincol,maxcol=colj,coli
                         missing.add((mincol.name,maxcol.name))
-        return set([connection(tuple([self.column[colname] for colname in m])) for m in missing])
+        return set([connection([self.column[colname] for colname in m]) for m in missing])
     missing_connections=property(get_missing_connections)
 
     def get_extra_connections(self):
