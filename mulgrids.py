@@ -1282,7 +1282,7 @@ class mulgrid(object):
         sortindex=np.argsort([norm(t[1]-line[0]) for t in track])
         return [track[i] for i in sortindex]
 
-    def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100)):
+    def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),connections=None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth and aspect ratio specified.
@@ -1323,6 +1323,13 @@ class mulgrid(object):
             verts,vals=[],[]
             if not isinstance(contours,bool): contours=list(contours)
             if contours<>False: xc,yc=[],[]
+            if connections<>None:
+                c=np.abs(self.connection_angle_cosine)
+                ithreshold=np.where(c>connections)[0]
+                from matplotlib.colors import colorConverter
+                for i in ithreshold:
+                    colc=[col.centre for col in self.connectionlist[i].column]
+                    plt.plot([p[0] for p in colc],[p[1] for p in colc],color=colorConverter.to_rgb(str(1.-c[i])))
             for col in self.columnlist:
                 blkname=self.block_name(layername,col.name)
                 if blkname in self.block_name_list:
