@@ -408,7 +408,8 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{column\_names}=None, \emph{node\_names}=None, \emph{column\_centres}=None, \emph{nodes}=None,\\
     \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`equal', \emph{plt}=None,\\
     \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
-    \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100)), \emph{connections}=None}}
+    \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100)),\\
+    \emph{connections}=None}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name, index or as an elevation (in which case the routine will find the corresponding layer).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
