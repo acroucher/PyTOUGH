@@ -220,18 +220,35 @@ class column(object):
         return np.max(l)/np.min(l)
     side_ratio=property(get_side_ratio)
 
-    def get_bisection_sides(self):
-        """Returns indices of column sides which should be used to bisect the column.  Bisection is done for triangles
-        across the two longest sides of the column, and for quadrilaterals across the longest side and its opposite."""
-        l=self.side_lengths
-        isort=np.argsort(l)
-        if self.num_nodes==3: return (isort[-1],isort[-2])
-        elif self.num_nodes==4:
-            imax=isort[-1]
-            iopp=(imax+2)%self.num_nodes
-            return (imax,iopp)
-        else: return None
-    bisection_sides=property(get_bisection_sides)
+    def bisection_sides(self,direction=None):
+        """Returns indices of column sides which should be used to bisect the column.  If direction is specified as 'x' or
+        'y', the column in bisected across the sides most closely aligned with that direction; otherwise, bisection is done
+        for triangles across the two longest sides of the column, and for quadrilaterals across the longest side and its
+        opposite."""
+        if direction==None:
+            l=self.side_lengths
+            isort=np.argsort(l)
+            if self.num_nodes==3: return (isort[-1],isort[-2])
+            elif self.num_nodes==4:
+                imax=isort[-1]
+                iopp=(imax+2)%self.num_nodes
+                return (imax,iopp)
+            else: return None
+        else:
+            n=np.array([[1.,0.],[0.,1.]][direction=='y'])
+            d,iside=[],[]
+            nn=self.num_nodes
+            if nn in [3,4]:
+                for i in xrange(nn):
+                    x1=0.5*(self.node[i].pos+self.node[(i+1)%nn].pos)
+                    if self.num_nodes==3: i2=(i+1)%nn
+                    else: i2=(i+2)%nn
+                    x2=0.5*(self.node[i2].pos+self.node[(i2+1)%nn].pos)
+                    d.append(abs(np.dot(x2-x1,n)))
+                    iside.append((i,i2))
+                imax=np.argsort(d)
+                return iside[imax[-1]]
+            else: return None
 
     def basis(self,xi):
         """Returns bilinear 2D finite element basis functions for the column at the specified local coordinate."""
@@ -2027,9 +2044,10 @@ class mulgrid(object):
 
     def refine(self,columns=[],bisect=False):
         """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
-        Refinement is carried out by splitting: each column is divided into four, unless the bisect parameter is True,
-        in which case they are divided into two between their longest sides.  Triangular transition columns are added
-        around the edge of the refinement region as needed.  Only 3 and 4-sided columns are supported."""
+        Refinement is carried out by splitting: each column is divided into four, unless the bisect parameter is 'x' or 'y',
+        in which case they are divided in the specified direction, or unless bisect is True, in which case they are divided
+        into two between their longest sides.  Triangular transition columns are added around the edge of the refinement 
+        region as needed.  Only 3 and 4-sided columns are supported."""
         if columns==[]: columns=self.columnlist
         else: 
             if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
@@ -2048,8 +2066,10 @@ class mulgrid(object):
             sidenodes[nodenames[1],nodenames[0]]=sidenodes[nodenames]
             return sidenodes,next_nodeno
         if bisect:
+            if bisect==True: direction=None
+            else: direction=bisect
             for col in columns:
-                for i in col.bisection_sides:
+                for i in col.bisection_sides(direction):
                     n1,n2=col.node[i],col.node[(i+1)%col.num_nodes]
                     con=self.connection_with_nodes([n1,n2])
                     if con: connections.add(con)

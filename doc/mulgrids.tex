@@ -630,14 +630,14 @@ creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a recta
 
 \subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False)}}
 
-Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \emph{bisect} parameter is \texttt{True}, in which case each column in split into two between its longest sides.
+Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \emph{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \emph{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \emph{bisect} is \texttt{True}, between its longest sides.
 
 \textbf{Parameters:}
 \begin{itemize}
   \item \textbf{columns}: list\\
     List of columns or column names to be refined.
-  \item \textbf{bisect}: Boolean\\
-    Set to \texttt{True} if columns are to be split into two, between their longest sides, instead of four (the default).
+  \item \textbf{bisect}: Boolean or string\\
+    Set to \texttt{True} if columns are to be split into two, between their longest sides, instead of four (the default).  Set to `x' or `y' to split columns along the specified axis.
 \end{itemize}
 
 \subsubsection{\texttt{rename\_layer(\emph{oldlayername}, \emph{newlayername})}}
