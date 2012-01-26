@@ -711,6 +711,13 @@ class mulgrid(object):
         """Returns a list of all nodes inside the specified polygon."""
         return [node for node in self.nodelist if in_polygon(node.pos,polygon)]
 
+    def node_nearest_to(self,point):
+        """Returns the node nearest to the specified point."""
+        if isinstance(point,list): point=np.array(point)
+        d=np.array([np.linalg.norm(node.pos-point) for node in self.nodelist])
+        isort=np.argsort(d)
+        return self.nodelist[isort[0]]
+
     def read_header(self,header):
         """Reads grid header info from file geo"""
         self.type=header[0:5]

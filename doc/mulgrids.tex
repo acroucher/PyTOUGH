@@ -139,6 +139,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{line\_values} & tuple & values of a variable along an arbitrary line through the grid\\
   \texttt{line\_plot} & -- & plots a variable along an arbitrary line through the grid\\
   \texttt{nodes\_in\_polygon} & list & nodes inside a specified polygon\\ 
+  \texttt{node\_nearest\_to} & \texttt{node} & node nearest to a specified point\\ 
   \texttt{optimize} & -- & adjusts node positions to optimize grid quality\\
   \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
   \texttt{read} & \texttt{mulgrid} & reads geometry file from disk\\
@@ -533,6 +534,16 @@ Returns a list of all nodes inside the specified polygon.
 \begin{itemize}
 \item \textbf{polygon}: list (of \texttt{np.array})\\
   List of points defining the polygon (each point is a two-element \texttt{np.array}).
+\end{itemize}
+
+\subsubsection{\texttt{node\_nearest\_to(\emph{point})}}
+
+Returns the node nearest to a specified point.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{point}:  \texttt{np.array} or list\\
+  Array or list of length 2, specifying the required point in 2-D.
 \end{itemize}
 
 \subsubsection{\texttt{optimize(\emph{nodenames}=None, \emph{connection\_angle\_weight}=1.0, \emph{column\_aspect\_weight}=0.0,\\
