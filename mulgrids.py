@@ -1218,7 +1218,7 @@ class mulgrid(object):
                     donecols.add(guess)
                     from copy import copy
                     nbrcols=list(copy(guess.neighbour))
-                    nearnbrcols=[col for col in nbrcols if col.near_point(pos)]
+                    nearnbrcols=[col for col in nbrcols if col.near_point(pos) and col in searchcols]
                     sortindex=np.argsort([norm(col.centre-pos) for col in nearnbrcols])
                     for i in sortindex:
                         if nearnbrcols[i].contains_point(pos): return nearnbrcols[i]
