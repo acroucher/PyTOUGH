@@ -376,7 +376,9 @@ class mulgrid(object):
         self.filename=filename
         self.type=type  # geometry type- only GENER supported
         self._convention=convention  # naming convention
+        # 0: 3-char column + 2-digit layer; 1: 3-char layer + 2-digit column; 2: 2-char layer + 3-digit column 
         self._atmosphere_type=atmos_type  # atmosphere type
+        # 0: single atmosphere block; 1: one atmosphere block per column; else: no atmosphere blocks
         self.set_secondary_variables()
         self.atmosphere_volume=atmos_volume
         self.atmosphere_connection=atmos_connection
