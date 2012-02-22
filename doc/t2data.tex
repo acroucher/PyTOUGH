@@ -508,7 +508,8 @@ Reads a \texttt{t2data} object from a TOUGH2 data file on disk.
   Name of the TOUGH2 data file to be read.
 \end{itemize}
 
-\subsubsection{\texttt{run(\emph{save\_filename}=`', \emph{incon\_filename}=`', \emph{simulator}=`AUTOUGH2\_2')}}
+\subsubsection{\texttt{run(\emph{save\_filename}=`', \emph{incon\_filename}=`', \emph{simulator}=`AUTOUGH2\_2',\\
+    \emph{silent}=False)}}
 
 Runs an AUTOUGH2 or TOUGH2 (but not TOUGH2\_MP) simulation using the data file corresponding to a \texttt{t2data} object.  The contents of the \texttt{t2data} object must first have been written to disk using the \texttt{write} function.  If the file names for the save file or initial conditions file are not specified, they are constructed by changing the file extension of the data file name.  The name of the TOUGH2 executable can be specified.
 
@@ -522,6 +523,8 @@ For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable mus
   Name of the initial conditions file for the simulation.  Default is \emph{base.incon} where the AUTOUGH2 data file name is \emph{base.dat}.
 \item \textbf{simulator}: string\\
   Name of the AUTOUGH2 or TOUGH2 executable.  Default is `AUTOUGH2\_2'.
+\item \textbf{silent}: Boolean\\
+  Set to \texttt{True} to suppress output to the display while running (default is \texttt{False}).
 \end{itemize}
 
 \subsubsection{\texttt{specific\_generation(\emph{type}=`MASS', \emph{name}=`')}}

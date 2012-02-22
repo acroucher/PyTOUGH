@@ -185,12 +185,14 @@ class t2data(object):
 
     def __repr__(self): return self.title
 
-    def run(self,save_filename='',incon_filename='',simulator='AUTOUGH2_2'):
+    def run(self,save_filename='',incon_filename='',simulator='AUTOUGH2_2',silent=False):
         """Runs simulation using TOUGH2 or AUTOUGH2.  It's assumed that the data object has been written to file
         using write().  For AUTOUGH2, if the filenames for the save file or initial conditions file are not specified,
-        they are constructed by changing the extensions of the data filename."""
+        they are constructed by changing the extensions of the data filename.  Set silent to True to suppress screen 
+        output."""
         if self.filename:
             from os.path import splitext
+            from os import devnull,system,remove
             datbase,ext=splitext(self.filename)
             if (self.type=='AUTOUGH2'):
                 if save_filename=='': save_filename=datbase+'.save'
@@ -204,14 +206,15 @@ class t2data(object):
                 f.write(inconbase+'\n')
                 f.write(datbase+'\n')
                 f.close()
+                if silent: out=' > '+devnull
+                else: out=''
                 # run AUTOUGH2:
-                from os import system,remove
-                system(simulator+' < '+runfilename)
+                system(simulator+' < '+runfilename+out)
                 remove(runfilename)
             else: # run TOUGH2 (need to specify simulator executable name)
-                listingname=datbase+'.listing'
-                from os import system
-                system(simulator+' < '+self.filename+' > '+listingname)
+                if silent: out=devnull
+                else: out=datbase+'.listing'
+                system(simulator+' < '+self.filename+' > '+out)
 
     def get_type(self):
         """Returns type (TOUGH2 or AUTOUGH2) based on whether the simulator has been set."""
