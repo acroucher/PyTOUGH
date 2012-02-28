@@ -123,7 +123,17 @@ Some parts of PyTOUGH use other Python libraries.  You do not need these librari
 \item \textbf{VTK} (\texttt{http://www.vtk.org/}), the Visualization Tool Kit (a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.) and \textbf{VTK Python}, the Python interface for VTK.
 \end{itemize}
 
-On Linux systems you can download and install these libraries via your package manager (e.g. on Debian, \texttt{python-matplotlib}, \texttt{python-scipy}, \texttt{libvtk5.4} and \texttt{python-vtk}).  On Windows you will need to download them from the internet (see links above) or elsewhere.  For Windows there does not appear to be an official version of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) here: \texttt{http://cpbotha.net/software/latest-vtk-windows-binaries/}.
+On Linux systems you can download and install these libraries via your package manager (e.g. on Debian or Debian-based distributions like Ubuntu, \texttt{aptitude install python-matplotlib python-scipy libvtk5.4 python-vtk}).  On Windows you will need to download them from the internet (see links above) or elsewhere.
+
+\subsubsection{Installing VTK-Python on Windows}
+
+There does not appear to be an official Windows build of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) here:
+
+\texttt{http://cpbotha.net/software/latest-vtk-windows-binaries/}
+
+Make sure you download and install the right version, corresponding to the version of Python you are using.  You will need to add a few things to the environment variables on your system to get it to work.  (If you aren't sure how to edit your environment variables, see section \ref{installing} below.) 
+
+In the directory where VTK is installed to, there should be sub-directories called something like \texttt{VTK\textbackslash bin} and \texttt{VTK\textbackslash lib\textbackslash site-packages}.  You need to add the full path to the \texttt{bin} directory to the PATH environment variable on your system, and the paths to both the \texttt{bin} and \texttt{lib\textbackslash site-packages} directories to your PYTHONPATH environment variable.
 
 Alternatively, there are third-party repackaged distributions of Python which come bundled with some or all of these additional libraries (see \texttt{http://www.python.org/download/}).
 
@@ -134,8 +144,9 @@ To use any Python library, you just need to \textbf{import} it first.  For examp
 When you import a library, you can also change its name.  For example, PyTOUGH imports Numerical Python using the command \texttt{import numpy as np}, which renames \texttt{numpy} as the abbreviated \texttt{np}.  This means it can, for example, access the Numerical Python \texttt{numpy.array} data type as \texttt{np.array}.  It also means you have access to Numerical Python as \texttt{np} in your own scripts and in the interactive Python environment, without having to import it yourself.
 
 \section{Installing and accessing PyTOUGH}
+\label{installing}
 
-First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.
+First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.  (On Windows, you may have to add the directory where Python has installed (e.g. \texttt{C:\textbackslash Python26} or similar) to your PATH environment variable- see below on how to do that.)
 
 PyTOUGH is a set of Python libraries (see section \ref{pylibraries}), each of which is contained in a Python script file (\texttt{*.py}).  You can save these script files to any directory on your computer-- it is usually best to create a special one just for PyTOUGH.
 
@@ -145,7 +156,7 @@ Then you need to tell Python where to find the directory containing PyTOUGH.  To
 
 \item \textbf{Linux}: add the command \texttt{PYTHONPATH=\emph{path}} to your \texttt{\textasciitilde.bash\_profile} or \texttt{\textasciitilde.bashrc}file, where \texttt{\emph{path}} is the location of the PyTOUGH scripts.  Add another statement \texttt{export PYTHONPATH}, save the file and restart your command prompt.  Now PyTOUGH should always be available from any directory on your system.
 
-\item \textbf{Windows XP}: go to \texttt{Control Panel > System > Advanced}, click the `Environment variables' button, and add a new variable called PYTHONPATH (if it doesn't already exist).  Add the PyTOUGH directory location to this variable.  Save the changes and restart your command prompt.
+\item \textbf{Windows}: go to \texttt{Control Panel > System > Advanced}, click the `Environment variables' button, and add a new variable called PYTHONPATH (if it doesn't already exist).  Add the PyTOUGH directory location to this variable.  Save the changes and restart your command prompt.
 
 \end{itemize}
 
