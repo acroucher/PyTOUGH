@@ -113,6 +113,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{add\_layer} & -- & adds a layer to the grid\\ 
   \texttt{add\_node} & -- & adds a node to the grid\\ 
   \texttt{add\_well} & -- & adds a well to the grid\\ 
+  \texttt{block\_contains\_point} & Boolean & whether a block contains a 3D point\\
   \texttt{block\_mapping} & dictionary & mapping from the blocks of another \texttt{mulgrid} object\\
   \texttt{block\_name} & string & name of block at given layer and column\\
   \texttt{block\_name\_containing\_point} & string & name of block containing specified point\\
@@ -180,9 +181,21 @@ Adds a \texttt{node} object \texttt{n} to the grid.
 
 Adds a \texttt{well} object \texttt{w} to the grid.
 
+\subsubsection{\texttt{block\_contains\_point(\emph{blockname}, \emph{pos})}}
+
+Returns \texttt{True} if the grid block with the given name contains the 3D point \texttt{pos}.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{blockname}: string\\
+  The name of the block.
+\item \textbf{pos}: \texttt{np.array}\\
+  3-element array representing the 3D point.
+\end{itemize}
+
 \subsubsection{\texttt{block\_mapping(\emph{geo}, \emph{column\_mapping}=\texttt{False})}}
 
-Returns a dictionary mapping each block name in the \texttt{mulgrid} object \emph{geo} to the name of the nearest block in the object's own geometry.  Can optionally also return the associated column mapping.
+Returns a dictionary mapping each block name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest block in the object's own geometry.  Can optionally also return the associated column mapping.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -245,7 +258,7 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
 
 \subsubsection{\texttt{column\_mapping(\emph{geo})}}
 
-Returns a dictionary mapping each column name in the \texttt{mulgrid} object \emph{geo} to the name of the nearest column in the object's own geometry.
+Returns a dictionary mapping each column name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest column in the object's own geometry.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -387,7 +400,7 @@ Returns the grid layer containing the specified vertical elevation.
 
 \subsubsection{\texttt{layer\_mapping(\emph{geo})}}
 
-Returns a dictionary mapping each layer name in the \texttt{mulgrid} object \emph{geo} to the name of the nearest layer in the object's own geometry.  (Note: this mapping takes no account of the grid surface, which may alter which layer is nearest in a given column.)
+Returns a dictionary mapping each layer name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest layer in the object's own geometry.  (Note: this mapping takes no account of the grid surface, which may alter which layer is nearest in a given column.)
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -553,7 +566,7 @@ Adjusts positions of the specified nodes to optimize grid quality.  If no nodes 
 
 Note that an error will result if the connection angle weight and either of the other two weights is set to zero- in this case there are not enough constraints to fit the parameters.
 
-If the \emph{pest} parameter is set to \texttt{True}, the PEST parameter estimation software is used to carry out the optimzation (this obviously requires that PEST is installed on your machine).  Otherwise, the \texttt{leastsq} routine in the \texttt{scipy} Python library is used.  Particularly for large problems, PEST may give quicker results.  PEST is free software and may be downloaded from \texttt{http://www.pesthomepage.org/}.  If PEST is used, a variety of intermediate files (named \texttt{pestmesh.*}) will be written to the working directory, including the PEST run record file (\texttt{pestmesh.rec}) which contains a detailed record of the optimization process.
+If the \texttt{pest} parameter is set to \texttt{True}, the PEST parameter estimation software is used to carry out the optimzation (this obviously requires that PEST is installed on your machine).  Otherwise, the \texttt{leastsq} routine in the \texttt{scipy} Python library is used.  Particularly for large problems, PEST may give quicker results.  PEST is free software and may be downloaded from \texttt{http://www.pesthomepage.org/}.  If PEST is used, a variety of intermediate files (named \texttt{pestmesh.*}) will be written to the working directory, including the PEST run record file (\texttt{pestmesh.rec}) which contains a detailed record of the optimization process.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -612,7 +625,7 @@ geo=mulgrid(filename)
 \subsubsection{\texttt{rectangular(\emph{xblocks}, \emph{yblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
     \emph{origin}=[0,0,0], \emph{justify}=`r', \emph{case}=`l')}}
 
-Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \emph{justify} and \emph{case} parameters control the formatting of the character part of the block names.
+Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -641,7 +654,7 @@ creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a recta
 
 \subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False)}}
 
-Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \emph{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \emph{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \emph{bisect} is \texttt{True}, between its longest sides.
+Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \emph{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \texttt{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \texttt{bisect} is \texttt{True}, between its longest sides.
 
 \textbf{Parameters:}
 \begin{itemize}

@@ -1296,6 +1296,20 @@ class mulgrid(object):
             if layer and (col.surface>layer.bottom): blkname=self.block_name(layer.name,col.name)
         return blkname
 
+    def block_contains_point(self,blockname,pos):
+        """Returns True if the block with specified name contains the specified 3D point."""
+        result=False
+        colname=self.column_name(blockname)
+        if colname in self.column:
+            col=self.column[colname]
+            layname=self.layer_name(blockname)
+            if layname in self.layer:
+                lay=self.layer[layname]
+                if col.surface>lay.bottom:
+                    if lay.contains_elevation(pos[2]):
+                        result=col.contains_point(pos[0:2])
+        return result
+
     def column_track(self,line):
         """Returns a list of tuples of (column,entrypoint,exitpoint) representing the horizontal track traversed by the
         specified line through the grid.  Line is a tuple of two 2D arrays.  The resulting list is ordered by distance
