@@ -223,13 +223,29 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 \section{\texttt{listingtable} objects}
 \label{listingtable}
 
-A \texttt{listingtable} object represents a table of results in a TOUGH2 listing file (whether it is an element, connection or generation table).  The column headings of the table are taken directly from the corresponding table in the listing file.  The rows of the table may be accessed either by index (zero-based) or by the name of the block, connection or generator (in the case of connection tables, tuples of block names, and for generation tables, tuples of block names and generator names).
+A \texttt{listingtable} object represents a table of results in a TOUGH2 listing file (whether it is an element, connection or generation table).  The column headings of the table are taken directly from the corresponding table in the listing file.  The rows of the table may be accessed either by (zero-based) index, or by the `key' for the table row, which depends on the table type (see Table \ref{tb:listing_table_keys}).
 
-Hence, the value in the element table for a given block and column can be accessed by \texttt{lst.element[\emph{blockname}][\emph{columnname}]}, or by \texttt{lst.element[\emph{blockindex}][\emph{columnname}]} (for a \texttt{t2listing} object \texttt{lst}).
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline
+      \textbf{Table type} & \textbf{Key}\\
+      \hline
+      \texttt{element} & block name\\
+      \texttt{connection} & (block name 1, block name 2)\\
+      \texttt{generation} & (block name, generator name)\\
+      \hline
+    \end{tabular}
+    \caption{Keys for different listing table types}
+    \label{tb:listing_table_keys}
+  \end{center}
+\end{table}
+
+Hence, the value in the element table for a given block and column can be accessed by \texttt{lst.element[\emph{blockname}][\emph{columnname}]}, or by \texttt{lst.element[\emph{blockindex}][\emph{columnname}]} (for a \texttt{t2listing} object \texttt{lst}).  Note that for connection and generation tables, the keys are tuples of two strings.
 
 The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[\emph{blockname}]} gives the row in the table for a specified block, with the values arranged in a dictionary whose keys are the columns of the table.  Conversely, \texttt{lst.element[\emph{columnname}]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid).
 
-The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.
+Note that a table row contains only the numerical values stored in that row, and not the corresponding key value (e.g. block name).  (This is because the data are stored internally as an \texttt{np.array} of floating point values, for efficiency with large tables.)  The key values of a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which is a list containing the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.
 
 \section{Examples}
 
