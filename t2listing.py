@@ -38,10 +38,12 @@ class listingtable(object):
         self._data=np.zeros((len(rows),len(cols)),float64)
     def __repr__(self): return repr(self.column_name)+'\n'+repr(self._data)
     def __getitem__(self,key):
-        if isinstance(key,int): return dict(zip(self.column_name,self._data[key,:]))
+        if isinstance(key,int): return dict(zip(['key']+self.column_name,[self.row_name[key]]+list(self._data[key,:])))
         else:
             if key in self.column_name: return self._data[:,self._col[key]]
-            elif key in self.row_name: return dict(zip(self.column_name,self._data[self._row[key],:]))
+            elif key in self.row_name:
+                rowindex=self._row[key]
+                return dict(zip(['key']+self.column_name,[self.row_name[rowindex]]+list(self._data[rowindex,:])))
             else: return None 
     def __setitem__(self,key,value):
         if isinstance(key,int): self._data[key,:]=value
