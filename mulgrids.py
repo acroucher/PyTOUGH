@@ -1994,7 +1994,7 @@ class mulgrid(object):
         writer.SetInput(vtu)
         writer.Write()
 
-    def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False):
+    def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False, layer_snap=0.0):
         """Fits column surface elevations to the grid from the data, using least-squares bilinear finite element fitting with
         Sobolev smoothing.  The parameter data should be in the form of a 3-column array with x,y,z data in each row.
         The smoothing parameters alpha and beta control the first and second derivatives of the surface.
@@ -2002,7 +2002,9 @@ class mulgrid(object):
         For columns with names in min_columns, column elevations will be calculated as the minimum of the fitted nodal
         elevations.  For all other columns, the average of the nodal values is used.  If grid_boundary is True, only data
         inside the bounding polygon of the grid are used- this can speed up the fitting if there are many data outside the 
-        grid, and the grid has a simply-shaped boundary."""
+        grid, and the grid has a simply-shaped boundary.  The layer_snap parameter can be specified as a positive number
+        to avoid the creation of very thin top surface layers, if the fitted elevation is very close to the bottom of a layer.
+        In this case the value of layer_snap is a tolerance representing the smallest permissible layer thickness."""
 
         if columns==[]: columns=self.columnlist
         else: 
@@ -2062,6 +2064,14 @@ class mulgrid(object):
                 if col.name in min_columns: col.surface=min(nodez)
                 else: col.surface=(sum(nodez))/col.num_nodes
                 col.num_layers=len([layer for layer in self.layerlist[1:] if layer.bottom<col.surface])
+                if layer_snap>0.0:
+                    itoplayer=self.num_layers-col.num_layers
+                    toplayer=self.layerlist[itoplayer]
+                    if col.surface-toplayer.bottom<layer_snap:
+                        # snap to bottom of layer:
+                        col.surface=layer.bottom
+                        col.num_layers-=1
+                
             self.setup_block_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 

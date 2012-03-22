@@ -349,7 +349,7 @@ Deletes the well with the specified name from the grid.
 Empties the grid of all its nodes, columns, layers, wells and connections.  Other properties are unaffected.
 
 \subsubsection{\texttt{fit\_surface(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
-    \emph{grid\_boundary}=False)}}
+    \emph{grid\_boundary}=False, \emph{layer\_snap}=0.0)}}
 
 Fits column surface elevations from data, using bilinear least-squares finite element fitting with Sobolev smoothing.  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points).
 
@@ -367,6 +367,8 @@ Fits column surface elevations from data, using bilinear least-squares finite el
   Columns, or names of columns for which elevations will be determined from the minimum of the fitted nodal elevations (elevations at all other columns are determined from the average of the fitted nodal elevations).
 \item \textbf{grid\_boundary}: Boolean\\
   If \texttt{True}, test each data point first to see if it lies inside the boundary polygon of the grid.  This can speed up the fitting process if there are many data points outside the grid, and the grid has a simple boundary (e.g. a rectangle).  In general if there are many data points outside the grid, it is best to clip the data set before fitting, particularly if it is to be used more than once.
+\item \textbf{layer\_snap}: float\\
+  Smallest desired surface block thickness.  Set to a positive value to prevent columns being assigned surface elevations that are very close to the bottom of a layer (resulting in very thin surface blocks).  Default value is zero (i.e. no layer snapping).
 \end{itemize}
 
 \subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
