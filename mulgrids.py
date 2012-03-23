@@ -2069,7 +2069,7 @@ class mulgrid(object):
                     toplayer=self.layerlist[itoplayer]
                     if col.surface-toplayer.bottom<layer_snap:
                         # snap to bottom of layer:
-                        col.surface=layer.bottom
+                        col.surface=toplayer.bottom
                         col.num_layers-=1
                 
             self.setup_block_name_index()
