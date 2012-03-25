@@ -479,7 +479,7 @@ class t2data(object):
         [block,name,nseq,nadd,nads,ltab,empty,gentype,itab,gx,ex,hg,fg]=infile.parse_string(line,'generator')
         block,name=fix_blockname(block),fix_blockname(name)
         time,rate,enthalpy=[],[],[]
-        if ltab:
+        if ltab and gentype<>'DELV':
             ntimes=abs(ltab)
             if ntimes>1:
                 nlines=int(ceil(ntimes/4.))
@@ -501,7 +501,7 @@ class t2data(object):
         genw=copy(gen.__dict__)
         genw['name'],genw['block']=unfix_blockname(genw['name']),unfix_blockname(genw['block'])
         outfile.write_value_line(genw,'generator')
-        if gen.ltab: ntimes=abs(gen.ltab)
+        if gen.ltab and gen.type<>'DELV': ntimes=abs(gen.ltab)
         else: ntimes=1
         if ntimes>1:
             nlines=int(ceil(ntimes/4.))
