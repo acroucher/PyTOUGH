@@ -253,7 +253,7 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
  \item \textbf{bounds}: list of \texttt{np.array} (or \texttt{None})\\
   Polygon representing e.g. the boundary of the grid: points outside this polygon will always return \texttt{None}.
  \item \textbf{qtree}: \texttt{quadtree} \\
-   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = quadtree(rectangle,columns)}, where \texttt{rectangle} is a bounding rectangle around the nodes of the columns to be searched, and \texttt{columns} is the list of \texttt{column} objects to be searched.
+   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = quadtree(rectangle,columns)}, where \texttt{rectangle} is a bounding rectangle around the nodes of the columns to be searched (i.e. a list containing two arrays, representing the bottom left and top right corners of the rectangle), and \texttt{columns} is the list of \texttt{column} objects to be searched.
 \end{itemize}
 
 \subsubsection{\texttt{column\_mapping(\emph{geo})}}
