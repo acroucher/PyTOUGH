@@ -80,6 +80,10 @@ def bounds_of_points(points):
     topright=np.array([max([pos[i] for pos in points]) for i in xrange(2)])
     return [bottomleft,topright]
 
+def rect_to_poly(rect):
+    """Converts a rectangle to a polygon."""
+    return [rect[0],np.array(rect[1][0],rect[0][1]),rect[1],np.array(rect[0][0],rect[1][1])]
+
 def polygon_area(polygon):
     """Calculates the area of an arbitrary polygon."""
     area=0.0

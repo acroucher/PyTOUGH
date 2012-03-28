@@ -1,7 +1,7 @@
 """For reading, writing and manipulating MULgraph geometry grids."""
 
 """
-Copyright 2012 University of Auckland.
+Copyright 2011 University of Auckland.
 
 This file is part of PyTOUGH.
 
@@ -187,7 +187,8 @@ class column(object):
 
     def in_polygon(self,polygon):
         """Returns true if the centre of the column is inside the specified polygon."""
-        return in_polygon(self.centre,polygon)
+        if len(polygon)==2: return in_rectangle(self.centre,polygon) # for rectangles
+        else: return in_polygon(self.centre,polygon)
 
     def get_exterior_angles(self):
         """Returns list of exterior angle for each node in the column."""
@@ -707,11 +708,13 @@ class mulgrid(object):
 
     def columns_in_polygon(self,polygon):
         """Returns a list of all columns with centres inside the specified polygon."""
-        return [col for col in self.columnlist if col.in_polygon(polygon)]
+        if len(polygon)==2: return [col for col in self.columnlist if col.in_rectangle(polygon)]
+        else: return [col for col in self.columnlist if col.in_polygon(polygon)]
 
     def nodes_in_polygon(self,polygon):
         """Returns a list of all nodes inside the specified polygon."""
-        return [node for node in self.nodelist if in_polygon(node.pos,polygon)]
+        if len(polygon)==2: return [node for node in self.nodelist if in_rectangle(node.pos,polygon)]
+        else: return [node for node in self.nodelist if in_polygon(node.pos,polygon)]
 
     def node_nearest_to(self,point):
         """Returns the node nearest to the specified point."""
@@ -1204,11 +1207,13 @@ class mulgrid(object):
         """Returns column containing the specified horizontal position (or None if not found).  If the columns
         parameter is specified, search only within the given list of columns.  A starting guess of the column
         can also be optionally provided, in which case that column and (if necessary) its neighbours will be 
-        searched first.  A bounding polygon for searching within can also optionally be supplied- this can, for
-        example, be specified as the boundary polygon of the grid.  A quadtree for searching the columns can
-        also optionally be specified."""
+        searched first.  A bounding polygon (or rectangle)for searching within can also optionally be supplied-
+        this can, for example, be specified as the boundary polygon of the grid.  A quadtree for searching
+        the columns can also optionally be specified."""
         target=None
-        if bounds<>None: inbounds=in_polygon(pos,bounds)
+        if bounds<>None:
+            if len(bounds)==2: inbounds=in_rectangle(pos,bounds)
+            else: inbounds=in_polygon(pos,bounds)
         else: inbounds=True
         if inbounds:
             if columns==None: searchcols=self.columnlist
@@ -1316,7 +1321,7 @@ class mulgrid(object):
         from the start of the line."""
         track=[]
         for col in self.columnlist:
-            polygon=[n.pos for n in col.node]
+            polygon=col.polygon
             crossings=line_polygon_intersections(polygon,line)
             if crossings: track.append(tuple([col]+crossings))
         sortindex=np.argsort([norm(t[1]-line[0]) for t in track])

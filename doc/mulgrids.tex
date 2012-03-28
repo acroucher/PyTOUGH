@@ -121,7 +121,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{column\_containing\_point} & column & column containing specified horizontal point\\ 
   \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
   \texttt{column\_name} & string & column name of a block name\\ 
-  \texttt{columns\_in\_polygon} & list & columns inside a specified polygon\\ 
+  \texttt{columns\_in\_polygon} & list & columns inside a specified polygon (or rectangle)\\ 
   \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
   \texttt{delete\_column} & -- & deletes a column from the grid\\ 
   \texttt{delete\_connection} & -- & deletes a connection from the grid\\ 
@@ -139,7 +139,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{layer\_plot} & -- & plots a variable over a layer of the grid\\
   \texttt{line\_values} & tuple & values of a variable along an arbitrary line through the grid\\
   \texttt{line\_plot} & -- & plots a variable along an arbitrary line through the grid\\
-  \texttt{nodes\_in\_polygon} & list & nodes inside a specified polygon\\ 
+  \texttt{nodes\_in\_polygon} & list & nodes inside a specified polygon (or rectangle)\\ 
   \texttt{node\_nearest\_to} & \texttt{node} & node nearest to a specified point\\ 
   \texttt{optimize} & -- & adjusts node positions to optimize grid quality\\
   \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
@@ -251,9 +251,9 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
 \item \textbf{guess}: \texttt{column} (or \texttt{None})\\
   Guess of required column.  If specified, this column will be tested first, followed (if necessary) by its neighbours; only if none of these contain the point will the remaining columns be searched.  This can speed up the process if data follow a sequential pattern in space, e.g. a grid or lines.
  \item \textbf{bounds}: list of \texttt{np.array} (or \texttt{None})\\
-  Polygon representing e.g. the boundary of the grid: points outside this polygon will always return \texttt{None}.
+  Polygon or rectangle representing e.g. the boundary of the grid: points outside this polygon will always return \texttt{None}.  If the polygon has only two points, it will be interpreted as a rectangle [bottom left, top right].
  \item \textbf{qtree}: \texttt{quadtree} \\
-   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = quadtree(rectangle,columns)}, where \texttt{rectangle} is a bounding rectangle around the nodes of the columns to be searched (i.e. a list containing two arrays, representing the bottom left and top right corners of the rectangle), and \texttt{columns} is the list of \texttt{column} objects to be searched.
+   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = quadtree(rectangle,columns)}, where \texttt{rectangle} is a bounding rectangle around the nodes of the columns to be searched (i.e. a list containing two arrays: [bottom left, top right]), and \texttt{columns} is the list of \texttt{column} objects to be searched.
 \end{itemize}
 
 \subsubsection{\texttt{column\_mapping(\emph{geo})}}
@@ -278,12 +278,12 @@ Gives the name of the column corresponding to the specified block name, accordin
 
 \subsubsection{\texttt{columns\_in\_polygon(\emph{polygon})}}
 
-Returns a list of all columns with centres inside the specified polygon.
+Returns a list of all columns with centres inside the specified polygon or rectangle.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{polygon}: list (of \texttt{np.array})\\
-  List of points defining the polygon (each point is a two-element \texttt{np.array}).
+  List of points defining the polygon (each point is a two-element \texttt{np.array}).  If the list has only two points, it will be interpreted as a rectangle [bottom left, top right].
 \end{itemize}
 
 \subsubsection{\texttt{connects(\emph{column1, column2})}}
@@ -543,12 +543,12 @@ plots the variable \texttt{t} along a line from (0,0,500) to (1000,0,500) throug
 
 \subsubsection{\texttt{nodes\_in\_polygon(\emph{polygon})}}
 
-Returns a list of all nodes inside the specified polygon.
+Returns a list of all nodes inside the specified polygon or rectangle.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{polygon}: list (of \texttt{np.array})\\
-  List of points defining the polygon (each point is a two-element \texttt{np.array}).
+  List of points defining the polygon (each point is a two-element \texttt{np.array}).  If the list has only two points, it will be interpreted as a rectangle [bottom left, top right].
 \end{itemize}
 
 \subsubsection{\texttt{node\_nearest\_to(\emph{point})}}
@@ -876,12 +876,12 @@ Returns \texttt{True} if a 2D point lies inside the column, and \texttt{False} o
 
 \subsubsection{\texttt{in\_polygon(\emph{polygon})}}
 
-Returns \texttt{true} if the column centre is inside the specified polygon.
+Returns \texttt{true} if the column centre is inside the specified polygon or rectangle.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{polygon}: list (of \texttt{np.array})\\
-  List of points defining the polygon (each point is a two-element \texttt{np.array}).
+  List of points defining the polygon (each point is a two-element \texttt{np.array}).  If the list has only two points, it will be interpreted as a rectangle [bottom left, top right].
 \end{itemize}
 
 \subsubsection{\texttt{is\_against(\emph{othercolumn})}}
