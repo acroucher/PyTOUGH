@@ -708,8 +708,7 @@ class mulgrid(object):
 
     def columns_in_polygon(self,polygon):
         """Returns a list of all columns with centres inside the specified polygon."""
-        if len(polygon)==2: return [col for col in self.columnlist if col.in_rectangle(polygon)]
-        else: return [col for col in self.columnlist if col.in_polygon(polygon)]
+        return [col for col in self.columnlist if col.in_polygon(polygon)]
 
     def nodes_in_polygon(self,polygon):
         """Returns a list of all nodes inside the specified polygon."""
