@@ -1546,7 +1546,7 @@ class mulgrid(object):
         line_length=norm(end-start)
         if line_length>0.0:
             for i in xrange(divisions+1):
-                xi=float(i)/(divisions+1)
+                xi=float(i)/divisions
                 pos=(1.-xi)*start+xi*end
                 dist=xi*line_length
                 blkname=self.block_name_containing_point(pos)
@@ -1562,18 +1562,29 @@ class mulgrid(object):
         for i in xrange(len(polyline)-1):
             start,end=polyline[i],polyline[i+1]
             xi,yi=self.line_values(start,end,variable,divisions,coordinate)
+            if i>0:
+                xi=xi[1:]; yi=yi[1:]
             if not coordinate:
                 if len(x)>0: xi+=x[-1]  # add end distance from last segment
             x+=list(xi)
             y+=list(yi)
         return np.array(x),np.array(y)
 
-    def well_values(self,well_name,variable,divisions=1,elevation=False):
+    def well_values(self,well_name,variable,divisions=1,elevation=False,deviations=False):
         """Gets values of a variable down a specified well, returning distance down the well 
-        (or elevation) and value."""
+        (or elevation) and value.  Vertical coordinates can be taken from the nodes of the
+        well deviations, or from the grid geometry layer centres (if deviations is False)."""
         if elevation: coordinate=2  # return coordinate 2 (i.e. z)
         else: coordinate=False
-        if well_name in self.well: return self.polyline_values(self.well[well_name].pos,variable,divisions,coordinate)
+        if well_name in self.well: 
+            well=self.well[well_name]
+            if layers:
+                polyline=[]
+                for layer in self.layerlist:
+                    p=well.elevation_pos(layer.centre)
+                    if p<>None: polyline.append(p)
+            else: polyline=well.pos
+            return self.polyline_values(polyline,variable,divisions,coordinate)
         else: return None
             
     def line_plot(self,start=None,end=None,variable=None,variable_name=None,unit=None,divisions=100,plt=None,subplot=111,title='',xlabel='distance (m)'):

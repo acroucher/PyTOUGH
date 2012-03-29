@@ -788,7 +788,8 @@ geo.translate([10.e3,0.0,-1000.0])
 
 translates the grid \texttt{geo} by 10 km in the \emph{x} direction and down 1 km in the \emph{z} direction.
 
-\subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False})}}
+\subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False},
+    \emph{layers}=\textt{False})}}
 
 Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).
 
@@ -804,6 +805,8 @@ The routine returns a tuple of two arrays (\emph{d},\emph{v}), the first (\emph{
   Number of divisions each well deviation is divided up into (default 1).
 \item \textbf{elevation}: Boolean\\
   Set to \texttt{True} if elevation rather than measured depth is to be returned.
+\item \textbf{layers}: Boolean\\
+  Set to \texttt{True} to return values at intersections of layer centres with the well track, rather than deviation nodes.
 \end{itemize}
 
 \subsubsection{\texttt{write(\emph{filename}=`')}}
