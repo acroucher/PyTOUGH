@@ -1578,12 +1578,12 @@ class mulgrid(object):
         else: coordinate=False
         if well_name in self.well: 
             well=self.well[well_name]
-            if layers:
+            if deviations: polyline=well.pos
+            else:
                 polyline=[]
                 for layer in self.layerlist:
                     p=well.elevation_pos(layer.centre)
                     if p<>None: polyline.append(p)
-            else: polyline=well.pos
             return self.polyline_values(polyline,variable,divisions,coordinate)
         else: return None
             

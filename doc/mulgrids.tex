@@ -788,10 +788,10 @@ geo.translate([10.e3,0.0,-1000.0])
 
 translates the grid \texttt{geo} by 10 km in the \emph{x} direction and down 1 km in the \emph{z} direction.
 
-\subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False},
-    \emph{layers}=\textt{False})}}
+\subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False}, \\
+    \emph{deviations}=\texttt{False})}}
 
-Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).
+Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions between layer centres or along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).  If \emph{deviations} is \texttt{True}, values will be returned at the nodes of the well track, instead of at grid layer centres.
 
 The routine returns a tuple of two arrays (\emph{d},\emph{v}), the first (\emph{d}) containing the measured depth down the well (or elevation if the \texttt{elevation} parameter is set to \texttt{True}), and the second (\emph{v}) containing the value of the variable at each point.  The value of the variable at any point is the (block average) value at the block containing the point.
 
@@ -805,8 +805,8 @@ The routine returns a tuple of two arrays (\emph{d},\emph{v}), the first (\emph{
   Number of divisions each well deviation is divided up into (default 1).
 \item \textbf{elevation}: Boolean\\
   Set to \texttt{True} if elevation rather than measured depth is to be returned.
-\item \textbf{layers}: Boolean\\
-  Set to \texttt{True} to return values at intersections of layer centres with the well track, rather than deviation nodes.
+\item \textbf{deviations}: Boolean\\
+  Set to \texttt{True} to return values at deviation nodees, rather than intersections of layer centres with the well track.
 \end{itemize}
 
 \subsubsection{\texttt{write(\emph{filename}=`')}}
