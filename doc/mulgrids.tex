@@ -118,6 +118,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{block\_name} & string & name of block at given layer and column\\
   \texttt{block\_name\_containing\_point} & string & name of block containing specified point\\
   \texttt{check} & Boolean & checks grid for errors (and optionally fixes them)\\ 
+  \texttt{column\_boundary\_nodes} & list & nodes around the outer boundary of a group of columns\\ 
   \texttt{column\_containing\_point} & column & column containing specified horizontal point\\ 
   \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
   \texttt{column\_name} & string & column name of a block name\\ 
@@ -139,6 +140,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{layer\_plot} & -- & plots a variable over a layer of the grid\\
   \texttt{line\_values} & tuple & values of a variable along an arbitrary line through the grid\\
   \texttt{line\_plot} & -- & plots a variable along an arbitrary line through the grid\\
+  \texttt{nodes\_in\_columns} & list & nodes in a specified list of columns\\ 
   \texttt{nodes\_in\_polygon} & list & nodes inside a specified polygon (or rectangle)\\ 
   \texttt{node\_nearest\_to} & \texttt{node} & node nearest to a specified point\\ 
   \texttt{optimize} & -- & adjusts node positions to optimize grid quality\\
@@ -235,6 +237,16 @@ Checks a grid for errors and optionally fixes them.  Errors checked for are: mis
   Whether to fix any problems identified.
 \item \textbf{silent}: Boolean\\
   Whether to print out feedback or not.
+\end{itemize}
+
+\subsubsection{\texttt{column\_boundary\_nodes(\emph{columns})}}
+
+Returns the nodes around the outer boundary of a list of columns.  The list is ordered, in a counter-clockwise direction.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{columns}: list\\
+  The list of columns for which the boundary is required.
 \end{itemize}
 
 \subsubsection{\texttt{column\_containing\_point(\emph{pos}, \emph{columns}=None, \emph{guess}=None, \emph{bounds}=None,\\
@@ -540,6 +552,16 @@ geo.line_plot([0.,0.,500.],[1000.,0.,500.],t,`Temperature',`$^o$C')
 \end{verbatim}
 
 plots the variable \texttt{t} along a line from (0,0,500) to (1000,0,500) through the grid, with the values as Temperature ($^{\circ}$C).
+
+\subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}
+
+Returns a list of all nodes in a specified list of columns.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{columns}: list (of \texttt{column})\\
+  List of columns in which to find nodes.
+\end{itemize}
 
 \subsubsection{\texttt{nodes\_in\_polygon(\emph{polygon})}}
 

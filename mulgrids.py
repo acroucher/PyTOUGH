@@ -1769,20 +1769,29 @@ class mulgrid(object):
             if all([node in con.node for node in nodes]): return con
         return None
 
-    def get_boundary_nodes(self):
-        """Returns an ordered list of the nodes on the outer boundary of the grid."""
+    def nodes_in_columns(self,columns):
+        """Returns a list of all nodes in the specified columns."""
+        nodes=set([])
+        for col in columns: nodes=nodes | set(col.node)
+        return list(nodes)
+        
+    def column_boundary_nodes(self,columns):
+        """Returns an ordered list of the nodes on the outer boundary of the group of specified columns."""
+        nodes=self.nodes_in_columns(columns)
         def next_bdy_node(n):
-            for col in n.column:
+            for col in [c for c in n.column if c in columns]:
                 i=col.node.index(n)
                 n2=col.node[(i+1)%col.num_nodes]
                 con=self.connection_with_nodes([n,n2])
                 if not con: return n2
+                else:
+                    if not all([(c in columns) for c in con.column]): return n2
             return None
-        # look for a starting node along the left-hand edge of the grid (this avoids
+        # look for a starting node along the left-hand edge of the selection (this avoids
         # picking up any interior boundaries):
         startnode=None
-        xmin=self.bounds[0][0]
-        leftnodes=[node for node in self.nodelist if node.pos[0]==xmin]
+        xmin=bounds_of_points([node.pos for node in nodes])[0][0]
+        leftnodes=[node for node in nodes if node.pos[0]==xmin]
         for node in leftnodes:
             nextnode=next_bdy_node(node)
             if nextnode:
@@ -1798,6 +1807,7 @@ class mulgrid(object):
                 back=node.name==startnode.name
             return bdynodes
         else: return []
+    def get_boundary_nodes(self): return self.column_boundary_nodes(self.columnlist)
     boundary_nodes=property(get_boundary_nodes)
 
     def get_boundary_polygon(self):
@@ -2027,9 +2037,7 @@ class mulgrid(object):
         if min_columns<>[]:
             if not isinstance(min_columns[0],str): min_columns=[col.name for col in min_columns]
         if all([col.num_nodes in [3,4] for col in columns]):
-            nodes=set([])
-            for col in columns: nodes=nodes | set(col.node)
-            nodes=list(nodes)
+            nodes=self.nodes_in_columns(columns)
             node_index=dict([(node.name,i) for i,node in enumerate(nodes)])
             num_nodes=len(nodes)
             bbox=bounds_of_points([node.pos for node in nodes])
