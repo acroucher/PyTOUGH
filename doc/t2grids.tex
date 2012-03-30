@@ -438,7 +438,7 @@ grid=t2grid().fromgeo(geo)
 grid.add_rocktype(rocktype(`greyw',permeability=[1.e-15]*2+[0.1e-15]))
 grid.add_rocktype(rocktype(`fill ',permeability=[15.e-15]*2+[5.e-15]))
 
-for blk in grid.blocklist:
+for blk in grid.blocklist[1:]:
     if 200<=blk.centre[0]<=400: blk.rocktype=grid.rocktype[`fill ']
     else: blk.rocktype=grid.rocktype[`greyw']
 \end{verbatim}
@@ -449,4 +449,4 @@ The second block of code creates a rectangular MULgraph geometry object with 20 
 
 Then the two rock types are created, \texttt{`greyw'} and \texttt{`fill '}.  (Note that rock types are expected by TOUGH2 to have names 5 characters long, so it is necessary to add spaces to shorter names.)
 
-The final part assigns the rock types to the grid.  In this case, the blocks in the grid are assigned the \texttt{`fill'} rock type if they are between 200 m and 400 m along the slice.  Blocks outside this region are assigned the \texttt{`greyw'} rock type.
+The final part assigns the rock types to the blocks in the grid.  The loop starts from 1 instead of 0, so that the atmosphere block is skipped.  In this example, the blocks in the grid are assigned the \texttt{`fill'} rock type if they are between 200 m and 400 m along the slice.  Blocks outside this region are assigned the \texttt{`greyw'} rock type.
