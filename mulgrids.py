@@ -353,23 +353,46 @@ class well(object):
             if isinstance(p,list) or isinstance(p,tuple): pos[i]=np.array(p)
         self.pos=pos
     def __repr__(self): return self.name
-    def get_num_deviations(self): return len(self.pos)-1
+    def get_num_pos(self): return len(self.pos)
+    num_pos=property(get_num_pos)
+    def get_num_deviations(self): return self.num_pos-1
     num_deviations=property(get_num_deviations)
     def get_head(self): return self.pos[0]
     head=property(get_head)
     def get_bottom(self): return self.pos[-1]
     bottom=property(get_bottom)
-    def elevation_pos(self,z):
+    def pos_coordinate(self,index):
+        """Returns array of specified coordinate in pos array."""
+        return np.array([pos[index] for pos in self.pos])
+    def get_pos_depth(self):
+        """Returns array of downhole depths corresponding to pos array."""
+        return np.cumsum([0.]+[np.linalg.norm(pos-self.pos[i]) for i,pos in enumerate(self.pos[1:])])
+    pos_depth=property(get_pos_depth)
+    def elevation_depth(self,elevation):
+        """Returns downhole depth corresponding to a given elevation (or None if the specified
+        elevation is outside the well)."""
+        epos=self.pos_coordinate(2)
+        # NB: np.interp() needs abcissa to be increasing, so have to reverse the arrays here:
+        if epos[-1]<=elevation<=epos[0]: return np.interp(elevation,epos[::-1],self.pos_depth[::-1])
+        else: return None
+    def depth_elevation(self,depth):
+        """Returns elevation corresponding to a given downhole depth (or None if the specified
+        depth is outside the well)."""
+        dpos=self.pos_depth
+        if dpos[0]<=depth<=dpos[-1]: return np.interp(depth,dpos,self.pos_coordinate(2))
+        else: return None
+    def elevation_pos(self,elevation):
         """Returns 3D position in well, given an elevation."""
-        wellz=np.array([pos[2] for pos in self.pos])
-        iarr=np.argwhere(wellz<=z)
-        if (len(iarr)>0):
-            i=iarr[0][0]
-            if i==0: return None  # z is above the wellhead
-            else:
-                f=(z-wellz[i-1])/(wellz[i]-wellz[i-1])
-                return (1.-f)*self.pos[i-1]+f*self.pos[i]
-        else: return None # z is below the bottom
+        poscoord=[self.pos_coordinate(i) for i in xrange(3)]
+        epos=poscoord[2]
+        if epos[-1]<=elevation<=epos[0]:
+            return np.array([np.interp(elevation,epos[::-1],poscoord[i][::-1]) for i in xrange(3)])
+        else: return None
+    def depth_pos(self,depth):
+        """Returns 3D position in well, given a depth."""
+        elevation=self.depth_elevation(depth)
+        if elevation: return self.elevation_pos(elevation)
+        else: return None
 
 class mulgrid(object):
     """MULgraph grid class"""

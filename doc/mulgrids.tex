@@ -610,7 +610,7 @@ If the \texttt{pest} parameter is set to \texttt{True}, the PEST parameter estim
 
 Returns values of a specified variable along an arbitrary polyline through the grid, defined as a list of 3-element lists or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
 
-The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{l}) containing the distance from the start (or the appropriate coordinate (0, 1, or 2) if \texttt{coordinate} is specified) for each point along the polyline, and the second (\emph{v}) containing the value of the variable at that point.  The value of the variable at any point is the (block average) value at the block containing the point.
+The routine returns a tuple of two arrays (\texttt{l},\texttt{v}), the first (\texttt{l}) containing the distance from the start (or the appropriate coordinate (0, 1, or 2) if \texttt{coordinate} is specified) for each point along the polyline, and the second (\texttt{v}) containing the value of the variable at that point.  The value of the variable at any point is the (block average) value at the block containing the point.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -640,7 +640,7 @@ Reads a \texttt{mulgrid} object from a MULgraph geometry file on disk.
 geo=mulgrid().read(filename)
 \end{verbatim}
 
-creates a \texttt{mulgrid} object and reads its contents from file \emph{filename}.  This can be done more simply just by passing the filename into the \texttt{mulgrid} creation command:
+creates a \texttt{mulgrid} object and reads its contents from file \texttt{filename}.  This can be done more simply just by passing the filename into the \texttt{mulgrid} creation command:
 
 \begin{verbatim}
 geo=mulgrid(filename)
@@ -678,7 +678,7 @@ creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a recta
 
 \subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False)}}
 
-Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \emph{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \texttt{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \texttt{bisect} is \texttt{True}, between its longest sides.
+Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \texttt{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \texttt{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \texttt{bisect} is \texttt{True}, between its longest sides.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -813,9 +813,9 @@ translates the grid \texttt{geo} by 10 km in the \emph{x} direction and down 1 k
 \subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False}, \\
     \emph{deviations}=\texttt{False})}}
 
-Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions between layer centres or along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).  If \emph{deviations} is \texttt{True}, values will be returned at the nodes of the well track, instead of at grid layer centres.
+Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions between layer centres or along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).  If \texttt{deviations} is \texttt{True}, values will be returned at the nodes of the well track, instead of at grid layer centres.
 
-The routine returns a tuple of two arrays (\emph{d},\emph{v}), the first (\emph{d}) containing the measured depth down the well (or elevation if the \texttt{elevation} parameter is set to \texttt{True}), and the second (\emph{v}) containing the value of the variable at each point.  The value of the variable at any point is the (block average) value at the block containing the point.
+The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\texttt{d}) containing the measured depth down the well (or elevation if the \texttt{elevation} parameter is set to \texttt{True}), and the second (\texttt{v}) containing the value of the variable at each point.  The value of the variable at any point is the (block average) value at the block containing the point.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -1000,20 +1000,100 @@ A \texttt{connection} object \texttt{con} can be created for example using the c
 
 \subsection{\texttt{well} objects}
 
-A \texttt{well} object represents a well in a \texttt{mulgrid} object.  The well has a \texttt{name} property, and its trace is defined as a list \texttt{pos} of (at least two) 3D positions (\texttt{np.arrays}).  The \texttt{num\_deviations} property returns the number of deviations in the trace (one less than the length of the \texttt{pos} list), while the \texttt{head} and \texttt{bottom} properties return the 3D positions of the wellhead and well bottom respectively.
+A \texttt{well} object represents a well in a \texttt{mulgrid} object.  The properties of a \texttt{well} object are given in Table \ref{tb:well_properties}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{bottom} & \texttt{np.array} & well bottom position \\
+      \texttt{head} & \texttt{np.array} & well head position \\
+      \texttt{name} & string & well name \\
+      \texttt{num\_deviations} & integer & number of deviations \\
+      \texttt{num\_pos} & integer & number of well track nodes \\
+      \texttt{pos} & list & positions (3-D arrays) of well track nodes \\
+      \texttt{pos\_depth} & \texttt{np.array} & downhole depths along well track \\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{well} object}
+    \label{tb:well_properties}
+  \end{center}
+\end{table}
+
+The well track can be deviated, and is defined as a list \texttt{pos} of (at least two) 3D positions (\texttt{np.arrays}).  The \texttt{num\_deviations} property returns the number of deviations in the track (one less than the \texttt{num\_pos} property, which is the number of nodes in the \texttt{pos} list).  The \texttt{pos\_depth} property returns an array of the downhole depths at each node along the well track.
 
 A \texttt{well} object \texttt{w} can be created simply with the command \texttt{w = well(name,pos)}, where \texttt{name} is the well name and \texttt{pos} is a list of 3-element \texttt{np.arrays} (or lists, or tuples) representing the well trace (starting from the wellhead).
 
-A \texttt{well} has one method:
+The methods of a \texttt{well} are listed in Table \ref{tb:well_methods} and described below.
 
-\subsubsection{\texttt{elevation\_pos(\emph{z})}}
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|}
+      \hline
+      \textbf{Method} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{depth\_elevation} & float & elevation for a given downhole depth \\
+      \texttt{depth\_pos} & \texttt{np.array} & position on well track for a given downhole depth \\
+      \texttt{elevation\_depth} & float & downhole depth for a given elevation \\
+      \texttt{elevation\_pos} & \texttt{np.array} & position on well track for a given elevation \\
+      \texttt{pos\_coordinate} & \texttt{np.array} & array of coordinates for a given index \\
+      \hline
+    \end{tabular}
+    \caption{Methods of a \texttt{well} object}
+    \label{tb:well_methods}
+  \end{center}
+\end{table}
 
-Returns the 3D position of the point in the well with specified elevation \texttt{z} (or \texttt{None} if \texttt{z} is above the wellhead or below the bottom).  The position is interpolated between the deviation locations.
+\subsubsection{\texttt{depth\_elevation(\emph{depth})}}
+
+Returns the elevation corresponding to the specified downhole \texttt{depth} (or \texttt{None} if \texttt{depth} is above the wellhead or below the bottom).
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{z}: float\\
-  Elevation of required point.
+\item \textbf{depth}: float\\
+  Downhole depth.
+\end{itemize}
+
+\subsubsection{\texttt{depth\_pos(\emph{depth})}}
+
+Returns the 3D position of the point in the well with specified downhole \texttt{depth} (or \texttt{None} if \texttt{depth} is above the wellhead or below the bottom).  The position is interpolated between the deviation locations.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{depth}: float\\
+  Downhole depth of the required point.
+\end{itemize}
+
+\subsubsection{\texttt{elevation\_depth(\emph{elevation})}}
+
+Returns the downhole depth corresponding to the specified \texttt{elevation} (or \texttt{None} if \texttt{elevation} is above the wellhead or below the bottom).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{elevation}: float\\
+  Elevation.
+\end{itemize}
+
+\subsubsection{\texttt{elevation\_pos(\emph{elevation})}}
+
+Returns the 3D position of the point in the well with specified \texttt{elevation} (or \texttt{None} if \texttt{elevation} is above the wellhead or below the bottom).  The position is interpolated between the deviation locations.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{elevation}: float\\
+  Elevation of the required point.
+\end{itemize}
+
+\subsubsection{\texttt{pos\_coordinate(\emph{index})}}
+
+Returns an \texttt{np.array} of the well track node coordinates for the given index (0, 1 or 2).  For example, \texttt{pos\_coordinate(2)} returns an array containing the elevations of all well track nodes.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{index}: integer\\
+  Index required (0, 1 or 2).
 \end{itemize}
 
 \section{Other functions: block name conversions}
