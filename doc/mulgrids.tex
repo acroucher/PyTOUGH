@@ -700,9 +700,9 @@ Renames a grid layer.  Returns \texttt{True} if the layer was found and renamed,
     New name of the layer.
 \end{itemize}
 
-\subsubsection{\texttt{rotate(\emph{angle}, \emph{centre}=\texttt{None})}}
+\subsubsection{\texttt{rotate(\emph{angle}, \emph{centre}=\texttt{None}, \emph{wells}=\texttt{False})}}
 
-Rotates a grid by a specified angle (in degrees) clockwise in the horizontal plane.  Any wells in the grid are also rotated.  The centre of rotation can be optionally specified.  If it is not specified, the centre of the grid is used as the centre of rotation.
+Rotates a grid by a specified angle (in degrees) clockwise in the horizontal plane.  Any wells in the grid are also rotated.  The centre of rotation can be optionally specified.  If it is not specified, the centre of the grid is used as the centre of rotation.  If the \texttt{wells} parameter is \texttt{True}, any wells in the grid are also rotated.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -710,7 +710,9 @@ Rotates a grid by a specified angle (in degrees) clockwise in the horizontal pla
     Angle (in degrees) to rotate the grid, positive for clockwise, negative for anti-clockwise.
   \item \textbf{centre}: \texttt{np.array}\\
     Centre of rotation in the horizontal \emph{x},\emph{y} plane (of length 2).
-\end{itemize}
+  \item \textbf{wells}: Boolean\\\
+    Set \texttt{True} to rotate wells.
+end{itemize}
 
 \textbf{Example:}
 
@@ -792,14 +794,16 @@ by specifying the name of one of the splitting nodes.  The method returns \textt
   Name of one of the splitting nodes.  The column is split across this node and the one on the opposite side of the column.  If the specified node is not in the column, the method returns \texttt{False} and nothing is done to the column.
 \end{itemize}
 
-\subsubsection{\texttt{translate(\emph{shift})}}
+\subsubsection{\texttt{translate(\emph{shift}, \emph{wells}=\texttt{False})}}
 
-Translates a grid by a specified shift in the \emph{x}, \emph{y} and \emph{z} directions.  Any wells in the grid are also translated.
+Translates a grid by a specified shift in the \emph{x}, \emph{y} and \emph{z} directions.  If the \texttt{wells} parameter is \texttt{True}, any wells in the grid are also translated.
 
 \textbf{Parameters:}
 \begin{itemize}
   \item \textbf{shift}: list (or \texttt{np.array})\\
     Distance to shift the grid in the \emph{x}, \emph{y} and \emph{z} directions (of length 3).
+  \item \textbf{wells}: Boolean\\\
+    Set \texttt{True} to translate wells.
 \end{itemize}
 
 \textbf{Example:}

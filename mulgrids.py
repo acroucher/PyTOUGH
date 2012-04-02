@@ -1104,26 +1104,30 @@ class mulgrid(object):
         grid.setup_block_name_index()
         return grid
 
-    def translate(self,shift):
-        """Translates a grid by specified shift."""
+    def translate(self,shift,wells=False):
+        """Translates a grid by specified shift.  If wells is True, they
+        will also be translated."""
         for node in self.nodelist: node.pos+=shift[0:2]
         for col in self.columnlist:
             col.centre+=shift[0:2]
             if col.surface<>None: col.surface+=shift[2]
         for layer in self.layerlist: layer.translate(shift[2])
-        for well in self.welllist:
-            for pos in well.pos: pos+=shift
+        if wells:
+            for well in self.welllist:
+                for pos in well.pos: pos+=shift
 
-    def rotate(self,angle,centre=None):
+    def rotate(self,angle,centre=None,wells=False):
         """Rotates grid horizontally by specified angle (degrees clockwise).
-        If centre is not specified, the centre of the grid is used."""
+        If centre is not specified, the centre of the grid is used.
+        If wells is True, they will also be rotated."""
         if centre<>None: c=centre
         else: c=self.centre
         R=linear_trans2().rotation(angle,c)
         for node in self.nodelist: node.pos=R(node.pos)
         for col in self.columnlist: col.centre=R(col.centre)
-        for well in self.welllist:
-            for pos in well.pos: pos[0:2]=R(pos[0:2])
+        if wells:
+            for well in self.welllist:
+                for pos in well.pos: pos[0:2]=R(pos[0:2])
 
     def get_missing_connections(self):
         """Returns a set of connections for columns that have shared faces but don't have a connection defined between them."""
