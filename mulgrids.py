@@ -1107,6 +1107,7 @@ class mulgrid(object):
     def translate(self,shift,wells=False):
         """Translates a grid by specified shift.  If wells is True, they
         will also be translated."""
+        if isinstance(shift,list): shift=np.array(shift)
         for node in self.nodelist: node.pos+=shift[0:2]
         for col in self.columnlist:
             col.centre+=shift[0:2]
@@ -1120,7 +1121,9 @@ class mulgrid(object):
         """Rotates grid horizontally by specified angle (degrees clockwise).
         If centre is not specified, the centre of the grid is used.
         If wells is True, they will also be rotated."""
-        if centre<>None: c=centre
+        if centre<>None:
+            if isinstance(centre,list): centre=np.array(centre)
+            c=centre
         else: c=self.centre
         R=linear_trans2().rotation(angle,c)
         for node in self.nodelist: node.pos=R(node.pos)
