@@ -1,7 +1,7 @@
 """For reading TOUGH2 listing files."""
 
 """
-Copyright 2011 University of Auckland.
+Copyright 2012 University of Auckland.
 
 This file is part of PyTOUGH.
 
@@ -73,7 +73,9 @@ class t2listing(file):
             self.setup_short()
             self.setup_pos()
             if self.num_fulltimes>0:
+                self._index=0
                 self.setup_tables()
+                self.set_table_attributes()
                 self.first()
             else: print 'No full results found in listing file.'
 
@@ -110,6 +112,12 @@ class t2listing(file):
             if len(i)>0: self.index=i[0]
     step=property(get_step,set_step)
 
+    def get_table_names(self):
+        names=self._table.keys()
+        names.sort()
+        return names
+    table_names=property(get_table_names)
+
     def rewind(self):
         """Rewinds to start of listing (without reading any results)"""
         self.seek(0)
@@ -133,8 +141,8 @@ class t2listing(file):
         for i in xrange(number):  self.readline()
 
     def skipto(self,keyword='',start=1):
-        """Skips to line starting (after the leading character) with keyword.  keyword can be either a string
-        or a list of strings, in which case it skips to a line starting with any of the specified strings.
+        """Skips to line starting  with keyword.  keyword can be either a string or a list of strings, in which case
+        it skips to a line starting with any of the specified strings.
         Returns the keyword found, or false if it can't find any of them.  The start parameter specifies which
         character in the line is to be considered the first to search."""
         line=''
@@ -145,22 +153,72 @@ class t2listing(file):
             if line=='': return False
         return [kw for kw in keywords if line[start:].startswith(kw)][0]
 
-    def detect_simulator(self):
-        """Detects whether the listing has been produced by AUTOUGH2 or TOUGH2/TOUGH2_MP."""
-        self.seek(0)
-        simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','@@@@@':'TOUGH2'}
-        tableword=self.skipto(simulator.keys())
-        if tableword: self.simulator=simulator[tableword]
-        else: self.simulator=None
-        if self.simulator=='AUTOUGH2':
-            self.setup_pos=self.setup_pos_AUTOUGH2
-            self.read_tables=self.read_tables_AUTOUGH2
-        if self.simulator=='TOUGH2':
-            self.setup_pos=self.setup_pos_TOUGH2
-            self.read_tables=self.read_tables_TOUGH2
-            self.table_keymap={('ELEM.','INDEX','P'):'EEEEE',('ELEM1','ELEM2','INDEX'):'CCCCC',
-                               ('ELEMENT','SOURCE','INDEX'):'GGGGG',('ELEM.','INDEX','X1'):'PPPPP'}
+    def skip_to_nonblank(self):
+        """Skips to start of next non-blank line."""
+        pos=self.tell()
+        while not self.readline().strip(): pos=self.tell()
+        self.seek(pos)
 
+    def skip_to_blank(self):
+        """Skips to start of next blank line."""
+        pos=self.tell()
+        while self.readline().strip(): pos=self.tell()
+        self.seek(pos)
+        
+    def skip_over_next_blank(self):
+        """Skips past next blank line."""
+        while self.readline().strip(): pass
+
+    def detect_simulator(self):
+        """Detects whether the listing has been produced by AUTOUGH2, TOUGH2/TOUGH2_MP or TOUGH+, and sets some internal methods
+        according to the simulator type."""
+        self.seek(0)
+        simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2','@@@@@':'TOUGH2','=====':'TOUGH+'}
+        line=' '
+        while not ('output data after' in line or 'output after' in line or line==''): line=self.readline().lower()
+        if line=='': self.simulator=None
+        else:
+            self.readline()
+            line=self.readline()
+            linechars=line[1:6]
+            if linechars in simulator.keys(): self.simulator=simulator[linechars]
+            else: self.simulator=None
+            if self.simulator:
+                # Set internal methods according to simulator type:
+                simname=self.simulator.replace('+','plus')
+                internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
+                              'read_tables','skip_to_table','read_table_line']
+                for fname in internal_fns:
+                    fname_sim=fname+'_'+simname
+                    if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
+                    setattr(self,fname,getattr(self,fname_sim))
+
+    def table_type_AUTOUGH2(self,keyword):
+        """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
+        keytable={'EEEEE':'element','CCCCC':'connection','GGGGG':'generation'}
+        if keyword in keytable: return keytable[keyword]
+        else: return None
+
+    def table_type_TOUGH2(self,headers):
+        """Returns TOUGH2 table name based on a tuple of the first three column headings."""
+        if headers[0:2]==('ELEM.','INDEX'):
+            if headers[2]=='P': return 'element'
+            elif headers[2]=='X1': return 'primary'
+        else:
+            keytable={('ELEM1','ELEM2','INDEX'):'connection',('ELEMENT','SOURCE','INDEX'):'generation'}
+            if headers in keytable: return keytable[headers]
+        return None
+
+    def table_type_TOUGHplus(self,headers):
+        """Returns TOUGH+ table name based on a tuple of the first three column headings."""
+        if headers[0:2]==('ELEM','INDEX'):
+            if headers[2]=='X1': return 'primary'
+            else: return 'element'
+        else:
+            keytable={('ELEM1','ELEM2','INDEX'):'connection',('ELEMENT','SOURCE','INDEX'):'generation'}
+            if headers in keytable: return keytable[headers]
+        return None
+        
     def setup_short(self):
         """Sets up short_types and short_indices, for handling short output."""
         self.short_types=[]
@@ -187,7 +245,7 @@ class t2listing(file):
                             index=int(line[indexpos:indexpos+5])-1
                             self.short_indices[shortkw][index]=lineindex
                         lineindex+=1
-        # (no SHORT output for TOUGH2)
+        # (no SHORT output for TOUGH2 or TOUGH+)
 
     def setup_pos_AUTOUGH2(self):
         """Sets up _pos list for AUTOUGH2 listings, containing file position at the start of each set of results.
@@ -250,55 +308,163 @@ class t2listing(file):
         self.fullsteps=np.array(s)
         self._short=[False for p in self._pos]
 
-    def setup_tables(self):
-        self.tablename={'EEEEE':'element','CCCCC':'connection','GGGGG':'generation','PPPPP':'primary'}
-        self._table={}
-        if self.simulator=='AUTOUGH2':self.setup_tables_AUTOUGH2()
-        else: self.setup_tables_TOUGH2()
-        if 'EEEEE' in self._table: self.element=self._table['EEEEE']
-        else: self.element=None
-        if 'CCCCC' in self._table: self.connection=self._table['CCCCC']
-        else: self.connection=None
-        if 'GGGGG' in self._table: self.generation=self._table['GGGGG']
-        else: self.generation=None
-        if 'PPPPP' in self._table: self.primary=self._table['PPPPP']
-        else: self.primary=None
+    def setup_pos_TOUGHplus(self):
+        """Sets up _pos list for TOUGH+ listings, containing file position at the start of each set of results.
+        Also sets up the times and steps arrays."""
+        self.seek(0)
+        # set up pos,times, steps and short arrays:
+        self._fullpos,self._pos=[],[]
+        t,s=[],[]
+        endfile=False
+        while not endfile:
+            line=' '
+            while not (line.lstrip().startswith('Output data after') or line==''): line=self.readline()
+            if line<>'':
+                self.skipto('TOTAL TIME',2)
+                pos=self.tell()
+                self._pos.append(pos)
+                self._fullpos.append(pos)
+                self.read_header_TOUGHplus()
+                t.append(self.time)
+                s.append(self.step)
+                self.skipto('@@@@@')
+            else: endfile=True
+        self.times=np.array(t)
+        self.steps=np.array(s)
+        self.fulltimes=np.array(t)
+        self.fullsteps=np.array(s)
+        self._short=[False for p in self._pos]
+
+    def set_table_attributes(self):
+        """Makes tables in self._table accessible as attributes."""        
+        for key,table in self._table.iteritems(): setattr(self,key,table)
         
     def setup_tables_AUTOUGH2(self):
-        """Sets up configuration of element, connection and generation tables for AUTOUGH2 listings."""
-        keyword='EEEEE'
+        """Sets up configuration of element, connection and generation tables."""
+        self._table={}
+        tablename='element'
         self.seek(self._fullpos[0])
-        while keyword in self.tablename:
-            self.read_header_AUTOUGH2()
-            self.setup_table_AUTOUGH2(keyword)
-            keyword=self.readline()[1:6]
+        while tablename:
+            self.read_header()
+            self.setup_table(tablename)
+            tablename=self.next_table()
 
     def setup_tables_TOUGH2(self):
-        """Sets up configuration of element, connection and generation tables for TOUGH2 listings."""
-        keyword='EEEEE'
+        self._table={}
+        tablename='element'
         self.seek(self._fullpos[0])
-        self.read_header_TOUGH2()
-        while keyword in self.tablename:
-            self.setup_table_TOUGH2(keyword)
-            self.skipto('\f',0)
+        self.read_header() # only one header at each time
+        while tablename:
+            self.setup_table(tablename)
+            tablename=self.next_table()
+
+    def setup_tables_TOUGHplus(self):
+        self.read_title_TOUGHplus()
+        self._table={}
+        tablename='element'
+        self.seek(self._fullpos[0])
+        self.read_header() # only one header at each time
+        nelt_tables=0 # can have multiple element tables
+        while tablename:
+            self.setup_table(tablename)
+            tablename=self.next_table()
+            if tablename=='element':
+                nelt_tables+=1
+                tablename+=str(nelt_tables)
+
+    def next_table_AUTOUGH2(self):
+        """Goes to start of next table at current time and returns its type- or None if there are no more."""
+        keyword=self.readline()[1:6]
+        return self.table_type(keyword)
+
+    def next_table_TOUGH2(self):
+        if self.skipto('\f',0):
             pos=self.tell()
+            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
+                if pos>=self._fullpos[self.index+1]: return None
             line=self.readline().strip()
             if (line==self.title):
-                if (self.num_times==1) or ((self.num_times>1) and (pos<self._fullpos[1])):
-                    self.skiplines(3)
-                    headerpos=self.tell()
-                    headers=tuple(self.readline().strip().split()[0:3])
-                    keyword=self.table_keymap[headers]
-                    self.seek(headerpos)
-                else: keyword=''
-            else: keyword=''
+                self.skiplines(3)
+                headpos=self.tell()
+                headers=tuple(self.readline().strip().split()[0:3])
+                self.seek(headpos)
+                return self.table_type(headers)
+            else: return None
+        else: return None
 
-    def valid_spaced_blockname(self,name):
-        """Tests if a 7-character string is a valid blockname with spaces around it.  Used to detect positions of table keys."""
-        return (name[0]==name[6]==' ') and valid_blockname(name[1:6])
+    def next_table_TOUGHplus(self):
+        if self.skipto('_____',0):
+            self.readline()
+            pos=self.tell()
+            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
+                if pos>=self._fullpos[self.index+1]: return None
+            headpos=self.tell()
+            headers=tuple(self.readline().strip().split()[0:3])
+            self.seek(headpos)
+            return self.table_type(headers)
+        else: return None
 
-    def setup_table_AUTOUGH2(self,keyword):
+    def skip_to_table_AUTOUGH2(self,tablename,last_tablename,nelt_tables):
+        """Skips forwards to headers of table with specified name at the current time."""
+        if self._short[self._index]: keyword=tablename[0].upper()+'SHORT'
+        else: keyword=tablename[0].upper()*5
+        self.skipto(keyword)
+        if tablename<>'element': self.skipto(keyword)
+        self.skip_to_blank()
+        self.skip_to_nonblank()
+
+    def skip_to_table_TOUGH2(self,tablename,last_tablename,nelt_tables):
+        if last_tablename==None:
+            for i in xrange(2): self.skipto('@@@@@')
+            self.skip_to_nonblank()
+            tname='element'
+        else: tname=last_tablename
+        while tname<>tablename:
+            self.skipto('@@@@@')
+            tname=self.next_table_TOUGH2()
+
+    def skip_to_table_TOUGHplus(self,tablename,last_tablename,nelt_tables):
+        if last_tablename==None:
+            self.skipto('=====',0)
+            self.skip_to_nonblank()
+            tname='element'
+            nelt_tables=0
+        else: tname=last_tablename
+        while tname<>tablename:
+            if tname=='primary': keyword='_____'
+            else: keyword='@@@@@'
+            self.skipto(keyword,0)
+            tname=self.next_table_TOUGHplus()
+            if tname=='element':
+                nelt_tables+=1
+                tname+=str(nelt_tables)
+
+    def keysearch_startpos(self,headline,key_headers):
+        """Returns start point for searching for keys, based on key header positions."""
+        keylength=5
+        half_keylength=int(keylength/2.)
+        headmid=[]
+        for header in key_headers:
+            header_startpos=headline.find(header)
+            header_endpos=header_startpos+len(header)-1
+            headmid.append(int((header_startpos+header_endpos)/2.))
+        startpos=[max(mid-half_keylength-1,0) for mid in headmid]
+        return startpos
+
+    def key_positions(self,line,nkeys,startpos):
+        """Returns detected positions of keys in a table line."""
+        def valid_spaced_blockname(name): return (name[0]==name[6]==' ') and valid_blockname(name[1:6])
+        keypos=[]
+        for k in xrange(nkeys):
+            pos=startpos[k]
+            while not valid_spaced_blockname(line[pos:pos+7]): pos+=1
+            while valid_spaced_blockname(line[pos:pos+7]): pos+=1
+            keypos.append(pos)
+        return keypos
+
+    def setup_table_AUTOUGH2(self,tablename):
         """Sets up table from AUTOUGH2 listing file."""
+        keyword=tablename[0].upper()*5
         self.skiplines(3)
         # Read column names (joining lowercase words to previous names):
         headline=self.readline()
@@ -314,13 +480,8 @@ class t2listing(file):
         start=headline.index('INDEX')+5
         nvalues=len([s for s in line[start:].strip().split()])
         if (len(cols)==nvalues):
-            # work out positions of keys in line:
-            keypos=[]
-            pos=0
-            for k in xrange(nkeys):
-                while not self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-                while self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-                keypos.append(pos)
+            startpos=self.keysearch_startpos(headline,strs[0:nkeys])
+            keypos=self.key_positions(line,nkeys,startpos)
             # determine row names:
             while line[1:6]<>keyword:
                 keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
@@ -328,30 +489,28 @@ class t2listing(file):
                 else: keyval=keyval[0]
                 rows.append(keyval)
                 line=self.readline()
-            self._table[keyword]=listingtable(cols,rows)
+            row_format={'values':[start]}
+            self._table[tablename]=listingtable(cols,rows,row_format)
             self.readline()
         else:
-            print 'Error parsing '+self.tablename[keyword]+' table columns: table not created.'
+            print 'Error parsing '+tablename+' table columns: table not created.'
 
-    def setup_table_TOUGH2(self,keyword):
-        """Sets up table from TOUGH2 listing file."""
-        # Read column names (joining 'RATE' items to previous names):
+    def setup_table_TOUGH2(self,tablename):
+        """Sets up table from TOUGH2 (or TOUGH+) listing file."""
+        # Read column names (joining flow items to previous names):
+        if self.simulator=='TOUGH2': flow_headers=['RATE']
+        else: flow_headers=['Flow','Veloc']
         headline=self.readline()
         strs=headline.strip().split()
         nkeys=strs.index('INDEX')
-        while self.readline().strip(): pass
+        self.skip_over_next_blank()
         rows,cols=[],[]
         for s in strs[nkeys+1:]:
-            if s<>'RATE': cols.append(s)
-            else: cols[-1]+=' '+s
+            if s in flow_headers: cols[-1]+=' '+s
+            else: cols.append(s)
         line=self.readline()
-        # work out positions of keys in line:
-        keypos=[]
-        pos=0
-        for k in xrange(nkeys):
-            while not self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-            while self.valid_spaced_blockname(line[pos:pos+7]): pos+=1
-            keypos.append(pos)
+        startpos=self.keysearch_startpos(headline,strs[0:nkeys])
+        keypos=self.key_positions(line,nkeys,startpos)
         # work out position of index:
         index_pos=[keypos[-1]+5]
         pos=line.find('.')
@@ -394,7 +553,7 @@ class t2listing(file):
             else: done=True
         numpos.append(len(line))
         row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
-        self._table[keyword]=listingtable(cols,rows,row_format,row_line)
+        self._table[tablename]=listingtable(cols,rows,row_format,row_line)
 
     def read_header_AUTOUGH2(self):
         """Reads header info (title and time data) for one set of AUTOUGH2 listing results."""
@@ -415,143 +574,177 @@ class t2listing(file):
         self._time=fortran_float(vals[0])
         self._step=int(vals[1])
         self.skipto('@@@@@')
-        while not self.readline().strip(): pos=self.tell()
-        self.seek(pos)
+        self.skip_to_nonblank()
+
+    def read_header_TOUGHplus(self):
+        """Reads header info (time data) for one set of TOUGH+ listing results."""
+        line=self.readline()
+        strs=line.split()
+        self._time,self._step=float(strs[0]),int(strs[1])
+        self.skipto('=====')
+        self.skip_to_nonblank()
+
+    def read_title_TOUGHplus(self):
+        """Reads simulation title for TOUGH+ listings, at top of file."""
+        self.seek(0)
+        line=' '
+        while not (line.lstrip().startswith('PROBLEM TITLE:') or line==''): line=self.readline()
+        if line=='': self.title=''
+        else:
+            colonpos=line.find(':')
+            if colonpos>=0: self.title=line[colonpos+1:].strip()
+            else: self.title=''
 
     def read_tables_AUTOUGH2(self):
-        keyword='EEEEE'
-        while keyword in self.tablename:
-            self.read_header_AUTOUGH2()
-            self.read_table_AUTOUGH2(keyword)
-            keyword=self.readline()[1:6]
+        tablename='element'
+        while tablename:
+            self.read_header()
+            self.read_table(tablename)
+            tablename=self.next_table()
 
     def read_tables_TOUGH2(self):
-        keyword='EEEEE'
-        self.read_header_TOUGH2()
-        while keyword in self.tablename:
-            self.read_table_TOUGH2(keyword)
-            self.skipto('\f',0)
-            pos=self.tell()
-            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
-                if pos>=self._fullpos[self.index+1]: keyword=''
-            if keyword<>'':
-                line=self.readline().strip()
-                if (line==self.title):
-                    self.skiplines(3)
-                    headers=tuple(self.readline().strip().split()[0:3])
-                    keyword=self.table_keymap[headers]
-                else: keyword=''
+        tablename='element'
+        self.read_header() # only one header at each time
+        while tablename:
+            self.read_table(tablename)
+            tablename=self.next_table()
 
-    def read_table_AUTOUGH2(self,keyword):
-        self.skiplines(3)
-        start=self.readline().index('INDEX')+5
+    def read_tables_TOUGHplus(self):
+        tablename='element'
+        self.read_header() # only one header at each time
+        nelt_tables=0
+        while tablename:
+            self.read_table(tablename)
+            tablename=self.next_table()
+            if tablename=='element':
+                nelt_tables+=1
+                tablename+=str(nelt_tables)
+
+    def read_table_AUTOUGH2(self,tablename):
+        fmt=self._table[tablename].row_format
+        keyword=tablename[0].upper()*5
+        self.skip_to_blank()
         self.readline()
+        self.skip_to_blank()
+        self.skip_to_nonblank()
         line=self.readline()
         row=0
-        while line[1:6]<>keyword: 
-            vals=[fortran_float(s) for s in line[start:].strip().split()]
-            self._table[keyword][row]=vals
+        while line[1:6]<>keyword:
+            self._table[tablename][row]=self.read_table_line_AUTOUGH2(line,fmt=fmt)
             row+=1
             line=self.readline()
         self.readline()
 
-    def read_table_line_TOUGH2(self,keyword,fmt,line):
-        """Reads values from a line in a TOUGH2 listing, given the keyword, and format."""
+    def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
+        start=fmt['values'][0]
+        vals=[fortran_float(s) for s in line[start:].strip().split()]        
+        return vals
+
+    def read_table_line_TOUGH2(self,line,num_columns,fmt):
+        """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
         vals=[fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(len(fmt['values'])-1)]
-        num_missing=self._table[keyword].num_columns-len(vals)
+        num_missing=num_columns-len(vals)
         for i in xrange(num_missing): vals.append(0.0)
         return vals
         
-    def read_table_TOUGH2(self,keyword):
-        fmt=self._table[keyword].row_format
-        while self.readline().strip(): pass
+    def read_table_TOUGH2(self,tablename):
+        ncols=self._table[tablename].num_columns
+        fmt=self._table[tablename].row_format
+        self.skip_to_blank()
+        self.skip_to_nonblank()
         line=self.readline()
         while line.strip():
-            key=self._table[keyword].key_from_line(line)
-            self._table[keyword][key]=self.read_table_line_TOUGH2(keyword,fmt,line)
+            key=self._table[tablename].key_from_line(line)
+            self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
             line=self.readline()
             if line.startswith('\f'): # extra headers in the middle of TOUGH2 listings
-                while self.readline().strip(): pass
+                self.skip_over_next_blank()
                 line=self.readline()
 
     def history(self,selection):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
            Table type is specified as 'e','c','g' or 'p' (upper or lower case) for element table,
-           connection table, generation table or primary table respectively."""
+           connection table, generation table or primary table respectively.  For TOUGH+ results, additional
+           element tables may be specified as 'e1' or 'e2'."""
+
         # This can obviously be done much more simply using next(), and accessing self._table,
         # but that is too slow for large listing files.  This method reads only the required data lines
         # in each table.
-        if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
-        hist=[[] for s in selection]
-        sel=[]
-        for (tt,key,h) in selection:  # convert keys to indices as necessary
-            keyword=tt.upper()*5
-            if isinstance(key,int): index=key
-            else: index=self._table[keyword]._row[key]
-            if self._table[keyword].row_line: index=self._table[keyword].row_line[index] # find line index if needed
-            sel.append((tt,index,h))
-        tables=list(set([tt for (tt,i,h) in sel]))
-        tablelist=[t for t in ['e','c','p','g'] if t in tables]  # need to retain e,c,g,p order
-        tagselection=[(tt,i,h,sindex) for sindex,(tt,i,h) in enumerate(sel)]
-        tableselection={}
-        shortindex={}
-        for table in tablelist:
-            tableselection[table]=[(i,h,sindex) for (tt,i,h,sindex) in tagselection if tt==table]
-            #  work out where (if at all) the items are in short output:
-            for (i,h,sindex) in tableselection[table]:
-                shortkw=table.upper()+'SHORT'
-                if shortkw in self.short_types:
-                    if i in self.short_indices[shortkw]: shortindex[sindex]=self.short_indices[shortkw][i]
-                    else: shortindex[sindex]=None
-                else: shortindex[sindex]=None
-            tableselection[table].sort()
-        self.rewind()   
 
-        AUTOUGH2=(self.simulator=='AUTOUGH2')
+        def tablename_from_specification(tabletype): # expand table specification to table name:
+            from string import digits
+            namemap={'e':'element','c':'connection','g':'generation','p':'primary'}
+            type0=tabletype[0].lower()
+            if type0 in namemap:
+                name=namemap[type0]
+                if tabletype[-1] in digits: name+=tabletype[-1] # additional TOUGH+ element tables
+                return name
+            else: return None
+
+        def ordered_selection(selection,tables,short_types,short_indices):
+            """Given the initial history selection, returns a list of tuples of table name and table selection.  The tables
+            are in the same order as they appear in the listing file.  The table selection is a list of tuples of 
+            (row index, column name, selection index, short row index) for each table, ordered by row index.  This ordering
+            means all data can be read sequentially to make it more efficient.""" 
+            converted_selection=[]
+            for (tspec,key,h) in selection:  # convert keys to indices as necessary, and expand table names
+                tablename=tablename_from_specification(tspec)
+                if isinstance(key,int): index=key
+                else: index=tables[tablename]._row[key]
+                if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
+                ishort=None
+                short_keyword=tspec[0].upper()+'SHORT'
+                if short_keyword in short_types:
+                    if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
+                converted_selection.append((tablename,index,ishort,h))
+            tables=list(set([sel[0] for sel in converted_selection]))
+            # need to retain table order as in the file:
+            tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
+            tagselection=[(tname,i,ishort,h,sel_index) for sel_index,(tname,i,ishort,h) in enumerate(converted_selection)]
+            tableselection=[]
+            shortindex={}
+            for table in tables:
+                tselect=[(i,ishort,h,sel_index) for (tname,i,ishort,h,sel_index) in tagselection if tname==table]
+                tselect.sort()
+                tableselection.append((table,tselect))
+            return tableselection
+
+        old_index=self.index
+        if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
+        tableselection=ordered_selection(selection,self._table,self.short_types,self.short_indices)
+        hist=[[] for s in selection]
+        self.rewind()
+
         for ipos,pos in enumerate(self._pos):
             self.seek(pos)
+            self._index=ipos
             short=self._short[ipos]
-            if short: startkeyword=self.short_types[0]
-            else: startkeyword='EEEEE'
-            for tt in tablelist:
-                longkeyword=tt.upper()*5
-                keyword=[longkeyword,tt.upper()+'SHORT'][short]
-                if not (short and not (keyword in self.short_types)):
-                    # find start of correct table:
-                    if AUTOUGH2:
-                        if keyword<>startkeyword: self.skipto(keyword)
-                        self.skipto(keyword) # start of table
-                        self.skiplines(2)
-                        start=self.readline().index('INDEX')+5
-                    else: # TOUGH2
-                        kw=''
-                        while kw<>keyword:
-                            if keyword==startkeyword:
-                                self.skipto('@@@@@'); self.skipto('@@@@@')
-                                self.readline()
-                            else:
-                                self.skipto('\f',0)
-                                self.skiplines(4)
-                            headers=tuple(self.readline().strip().split()[0:3])
-                            kw=self.table_keymap[headers]
-                        fmt=self._table[keyword].row_format
-                    while self.readline().strip(): pass
+            last_tname=None
+            nelt_tables=-1
+            for (tname,tselect) in tableselection:
+                if short: tablename=tname[0].upper()+'SHORT'
+                else: tablename=tname
+                if not (short and not (tablename in self.short_types)):
+                    self.skip_to_table(tablename,last_tname,nelt_tables)
+                    if tablename.startswith('element'): nelt_tables+=1
+                    self.skip_to_blank()
+                    self.skip_to_nonblank()
+                    ncols=self._table[tablename].num_columns
+                    fmt=self._table[tablename].row_format
                     index=0
                     line=self.readline()
-                    for (itemindex,colname,sindex) in tableselection[tt]:
-                        lineindex=[itemindex,shortindex[sindex]][short]
+                    for (itemindex,ishort,colname,sel_index) in tselect:
+                        lineindex=[itemindex,ishort][short]
                         if lineindex<>None:
                             for k in xrange(lineindex-index): line=self.readline()
                             index=lineindex
-                            if AUTOUGH2: vals=[fortran_float(s) for s in line[start:].strip().split()]
-                            else: vals=self.read_table_line_TOUGH2(keyword,fmt,line)
-                            valindex=self._table[longkeyword]._col[colname]
-                            hist[sindex].append(vals[valindex])
-                    if AUTOUGH2: self.skipto(keyword)  # end of table
-                    else: self.skipto('@@@@@') # TOUGH2
+                            vals=self.read_table_line(line,ncols,fmt)
+                            valindex=self._table[tablename]._col[colname]
+                            hist[sel_index].append(vals[valindex])
+                last_tname=tname
 
-        self.first()
-        result=[([self.times,self.fulltimes][shortindex[sindex]==None],np.array(h)) for sindex,h in enumerate(hist)]
+        self._index=old_index
+        result=[([self.times,self.fulltimes][len(h)==self.num_fulltimes],np.array(h)) for sel_index,h in enumerate(hist)]
         if len(result)==1: result=result[0]
         return result
 
@@ -593,13 +786,13 @@ class t2listing(file):
         result is the difference between the given index and the one before that.  If neither are given, the result is the difference between
         the last and penultimate sets of results."""
         from copy import deepcopy
-        keyword='EEEEE'
+        tablename='element'
         if indexa == None: self.last()
         else: self.set_index(indexa)
-        results2=deepcopy(self._table[keyword])
+        results2=deepcopy(self._table[tablename])
         if indexb == None: self.prev()
         else: self.set_index(indexb)
-        results1=self._table[keyword]
+        results1=self._table[tablename]
         cvg={}
         for name in results1.column_name:
             iblk=np.argmax(abs(results2[name]-results1[name]))
@@ -616,11 +809,16 @@ class t2listing(file):
         natm=geo.num_atmosphere_blocks
         nele=geo.num_underground_blocks
         arrays={'Block':{},'Node':{}}
-        for name in self.element.column_name: arrays['Block'][name]=vtkFloatArray()
+        elt_tablenames=[key for key in self._table.keys() if key.startswith('element')]
+        for tablename in elt_tablenames:
+            for name in self._table[tablename].column_name: arrays['Block'][name]=vtkFloatArray()
         flownames=[]
+        def is_flowname(name):
+            name=name.lower()
+            return name.startswith('flo') or name.endswith('flo') or name.endswith('flow') or name.endswith('veloc')
         if flows:
             if flux_matrix==None: flux_matrix=grid.flux_matrix(geo)
-            flownames=[name for name in self.connection.column_name if (name.endswith('flow') or name.startswith('FLO'))]
+            flownames=[name for name in self.connection.column_name if is_flowname(name)]
             for name in flownames: arrays['Block'][name]=vtkFloatArray()
         array_length={'Block':nele,'Node':0}
         array_data={'Block':{},'Node':{}}
@@ -635,8 +833,10 @@ class t2listing(file):
                     array.SetName(name)
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
-                    if geo_matches: array_data[array_type][name]=self.element[name][natm:] # faster
-                    else: array_data[array_type][name]=np.array([self.element[blk][name] for blk in geo.block_name_list[natm:]]) # more flexible
+                    for tablename in elt_tablenames:
+                        if geo_matches: array_data[array_type][name]=self._table[tablename][name][natm:] # faster
+                        else:  # more flexible
+                            array_data[array_type][name]=np.array([self._table[tablename][blk][name] for blk in geo.block_name_list[natm:]])
         for array_type,data_dict in array_data.items():
             for name,data in data_dict.items():
                 if name in flownames:
@@ -709,7 +909,8 @@ class t2listing(file):
         from geometry import line_projection
         from t2data import t2generator
         initial_index=self.index
-        keyword={'AUTOUGH2':{'P':'Pressure','T':'Temperature'},'TOUGH2':{'P':'P','T':'T'}}
+        keyword={'AUTOUGH2':{'P':'Pressure','T':'Temperature'},'TOUGH2':{'P':'P','T':'T'},
+                 'TOUGH+':{'P':'Pressure','T':'Temperature'}}
         self.last()
         bdy_nodes=geo.boundary_nodes
         for blk in dat.grid.blocklist[geo.num_atmosphere_blocks:]:
