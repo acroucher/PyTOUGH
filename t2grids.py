@@ -554,3 +554,29 @@ class t2grid(object):
         else:
             for blk,val in zip(self.blocklist,values): inc[blk.name]=tuple(val)
         return inc
+
+    def neargroups(self,blocknames):
+        """Given a list or set of block names, finds groups of 'near' blocks.  Blocks are assigned the same group
+        if they are neighbours, or share a neighbour."""
+        blocknames=list(set(blocknames))
+        nblks=len(blocknames)
+        groups=[]
+        for blk in blocknames: groups.append(set([blk]))
+        from copy import copy
+        done=False
+        while not done:
+            done=True
+            for i,g in enumerate(groups):
+                ng=copy(g)
+                for blk in g: ng = ng | self.block[blk].neighbour_name
+                if i<len(groups)-1:
+                    for g2 in groups[i+1:]:
+                        ng2=copy(g2)
+                        for blk in g2: ng2 = ng2 | self.block[blk].neighbour_name
+                        if ng & ng2:
+                            g.update(g2)
+                            groups.remove(g2)
+                            done=False
+                            break
+                    if not done: break
+        return groups
