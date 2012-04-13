@@ -6,7 +6,7 @@ PyTOUGH (\textbf{Py}thon \textbf{TOUGH}) is a set of Python software routines fo
 
 \section{What are TOUGH2 and AUTOUGH2?}
 
-TOUGH2 \citep{tough2} is a general-purpose simulator for modelling subsurface fluid and heat flow, often used for simulating geothermal reservoirs.  TOUGH2\_MP \citep{tough2mp} is a multi-processor version of TOUGH2.
+TOUGH2 \citep{tough2} is a general-purpose simulator for modelling subsurface fluid and heat flow, often used for simulating geothermal reservoirs.
 
 AUTOUGH2 is the University of Auckland version of TOUGH2.  The main differences between AUTOUGH2 and TOUGH2 are:
 
@@ -15,9 +15,11 @@ AUTOUGH2 is the University of Auckland version of TOUGH2.  The main differences 
   \item \textbf{Generator types}: AUTOUGH2 includes a variety of extra generator types developed for geothermal reservoir simulation (e.g. makeup and reinjection wells).
 \end{itemize}
 
+TOUGH2\_MP \citep{tough2mp} is a multi-processor version of TOUGH2.  TOUGH+ is a redeveloped version of TOUGH2, with a more modular code structure implemented in Fortran-95.
+
 \subsection{TOUGH2 data files}
 
-TOUGH2 takes its main input from a \textbf{data file}, which contains information about the model grid, simulation parameters, time stepping, sources of heat and mass etc.  The data file formats for TOUGH2 and AUTOUGH2 are almost identical, with minor differences.  TOUGH2\_MP can read TOUGH2 data files, but also supports some extensions (e.g. for 8-character instead of 5-character block names) to this format.  PyTOUGH does not currently support the TOUGH2\_MP extensions.
+TOUGH2 takes its main input from a \textbf{data file}, which contains information about the model grid, simulation parameters, time stepping, sources of heat and mass etc.  The data file formats for TOUGH2 and AUTOUGH2 are almost identical, with minor differences.  TOUGH2\_MP can read TOUGH2 data files, but also supports some extensions (e.g. for 8-character instead of 5-character block names) to this format.  PyTOUGH does not currently support the TOUGH2\_MP extensions.  TOUGH+ data files can also have some extensions, which PyTOUGH does not support as yet.
 
 Because TOUGH2 uses a finite volume formulation, the only model grid data it needs are the volumes of the grid blocks and the distances and areas associated with the connections between blocks.  Hence, the TOUGH2 data file need not contain any information about the specific locations of the blocks in space, and it contains no information about the locations of the vertices or edges of the blocks.  This makes it easy to use TOUGH2 to simulate one-, two- or three-dimensional models, all with the same format of data file.  However, this lack of reference to any coordinate system also makes it more difficult to generate model grids, and to visualise simulation results in space.
 
@@ -31,7 +33,7 @@ The MULgraph geometry file assumes the grid has a layered structure, with blocks
 
 The output from TOUGH2 is written to a \textbf{listing file}, which is a text file containing tables of results for each time step (or only selected time steps, if preferred).  At each time step there is an `element table', containing results for block properties (e.g. pressure, temperature etc.).  There may also be a `connection table', containing results for flows between blocks, and a `generation table', containing results (e.g. flow rates) at the generators in the model (e.g. wells).
 
-The formats of the listing files produced by TOUGH2, AUTOUGH2 and TOUGH2\_MP are all slightly different, and also vary depending on the EOS used.  However, PyTOUGH attempts to detect and read all of these formats.
+The formats of the listing files produced by TOUGH2, AUTOUGH2, TOUGH2\_MP and TOUGH+ are all slightly different, and also vary depending on the EOS used.  However, PyTOUGH attempts to detect and read all of these formats.
 
 \section{What is Python?}
 
