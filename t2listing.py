@@ -661,11 +661,12 @@ class t2listing(file):
                 self.skip_over_next_blank()
                 line=self.readline()
 
-    def history(self,selection):
+    def history(self,selection,short=True):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
            Table type is specified as 'e','c','g' or 'p' (upper or lower case) for element table,
            connection table, generation table or primary table respectively.  For TOUGH+ results, additional
-           element tables may be specified as 'e1' or 'e2'."""
+           element tables may be specified as 'e1' or 'e2'.  If the short parameter is True, results from 
+           'short output' (AUTOUGH2 only) are included in the results."""
 
         # This can obviously be done much more simply using next(), and accessing self._table,
         # but that is too slow for large listing files.  This method reads only the required data lines
@@ -718,30 +719,31 @@ class t2listing(file):
         for ipos,pos in enumerate(self._pos):
             self.seek(pos)
             self._index=ipos
-            short=self._short[ipos]
-            last_tname=None
-            nelt_tables=-1
-            for (tname,tselect) in tableselection:
-                if short: tablename=tname[0].upper()+'SHORT'
-                else: tablename=tname
-                if not (short and not (tablename in self.short_types)):
-                    self.skip_to_table(tablename,last_tname,nelt_tables)
-                    if tablename.startswith('element'): nelt_tables+=1
-                    self.skip_to_blank()
-                    self.skip_to_nonblank()
-                    ncols=self._table[tablename].num_columns
-                    fmt=self._table[tablename].row_format
-                    index=0
-                    line=self.readline()
-                    for (itemindex,ishort,colname,sel_index) in tselect:
-                        lineindex=[itemindex,ishort][short]
-                        if lineindex<>None:
-                            for k in xrange(lineindex-index): line=self.readline()
-                            index=lineindex
-                            vals=self.read_table_line(line,ncols,fmt)
-                            valindex=self._table[tablename]._col[colname]
-                            hist[sel_index].append(vals[valindex])
-                last_tname=tname
+            is_short=self._short[ipos]
+            if not (is_short and not short):
+                last_tname=None
+                nelt_tables=-1
+                for (tname,tselect) in tableselection:
+                    if is_short: tablename=tname[0].upper()+'SHORT'
+                    else: tablename=tname
+                    if not (is_short and not (tablename in self.short_types)):
+                        self.skip_to_table(tname,last_tname,nelt_tables)
+                        if tname.startswith('element'): nelt_tables+=1
+                        self.skip_to_blank()
+                        self.skip_to_nonblank()
+                        ncols=self._table[tname].num_columns
+                        fmt=self._table[tname].row_format
+                        index=0
+                        line=self.readline()
+                        for (itemindex,ishort,colname,sel_index) in tselect:
+                            lineindex=[itemindex,ishort][is_short]
+                            if lineindex<>None:
+                                for k in xrange(lineindex-index): line=self.readline()
+                                index=lineindex
+                                vals=self.read_table_line(line,ncols,fmt)
+                                valindex=self._table[tname]._col[colname]
+                                hist[sel_index].append(vals[valindex])
+                    last_tname=tname
 
         self._index=old_index
         result=[([self.times,self.fulltimes][len(h)==self.num_fulltimes],np.array(h)) for sel_index,h in enumerate(hist)]
