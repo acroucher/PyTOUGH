@@ -159,14 +159,16 @@ Returns dictionary of maximum differences, and locations of difference, of all e
   Indices of results between which the maximum differences are to be calculated.  If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the result is the difference between the given index and the one before that.  If neither are given, the result is the difference between the last and penultimate sets of results.
 \end{itemize}
 
-\subsubsection{\texttt{history(\emph{selection})}}
+\subsubsection{\texttt{history(\emph{selection}, \emph{short}=True)}}
 
-Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.
+Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.  Short output (AUTOUGH2 only) can be omitted from the history results by setting the \texttt{short} parameter to \texttt{False}.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{selection}: list of tuples\\
   Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing table type (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the block/ connection/ generator name and the table column name.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)  For history of additional element tables in TOUGH+ results, use `e1', `e2' etc. instead of `e'.
+\item \textbf{short}: Boolean\\
+  Whether short output (AUTOUGH2 only) is to be included in the history results- default is \texttt{True}.
 \end{itemize}
 
 \textbf{Example:}
