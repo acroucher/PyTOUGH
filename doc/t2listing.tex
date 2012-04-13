@@ -166,7 +166,7 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{selection}: list of tuples\\
-  Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing table type (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the block/ connection/ generator name and the table column name.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)
+  Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing table type (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the block/ connection/ generator name and the table column name.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)  For history of additional element tables in TOUGH+ results, use `e1', `e2' etc. instead of `e'.
 \end{itemize}
 
 \textbf{Example:}
