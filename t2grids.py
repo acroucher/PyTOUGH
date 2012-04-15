@@ -208,7 +208,9 @@ class t2grid(object):
         """Deletes a block from the grid"""
         if blockname in self.block:
             blk=self.block[blockname]
-            for conname in blk.connection_name: self.delete_connection(conname)
+            from copy import copy
+            connames=copy(blk.connection_name)
+            for conname in connames: self.delete_connection(conname)
             del self.block[blockname]
             if blk in self.blocklist: self.blocklist.remove(blk)
 
@@ -226,6 +228,7 @@ class t2grid(object):
         """Deletes a connection from the grid"""
         if connectionname in self.connection:
             con=self.connection[connectionname]
+            for block in con.block: block.connection_name.remove(connectionname)
             del self.connection[connectionname]
             self.connectionlist.remove(con)
 
