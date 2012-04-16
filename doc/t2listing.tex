@@ -192,8 +192,9 @@ Navigates to the next set of full results in the listing file.  Returns \texttt{
 
 Navigates to the previous set of full results in the listing file.  Returns \texttt{False} if already at the first set of results (and \texttt{True} otherwise).
 
-\subsubsection{\texttt{write\_vtk(\emph{geo},\emph{filename},\emph{grid}=None,\emph{indices}=None,\emph{flows}=False,\emph{wells}=False,\\
-\emph{start\_time}=0,\emph{time\_unit}=`s')}}
+\subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{flows}=False,
+\emph{wells}=False,\\
+\emph{start\_time}=0, \emph{time\_unit}=`s')}}
 
 Writes a \texttt{t2listing} object to a set of VTK files on disk, for visualisation with VTK, Paraview, Mayavi etc.  The results in the listing object are written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written correspond to the variables given in the columns of the element table of the \texttt{t2listing} object.  (For TOUGH+ results, variables from the additional element tables are also included.) In addition, data arrays from an associated \texttt{mulgrid} and (optionally) \texttt{t2grid} objects can be included.
 
@@ -248,7 +249,45 @@ Hence, the value in the element table for a given block and column can be access
 
 The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[\emph{blockname}]} gives the row in the table for a specified block, with the values arranged in a dictionary which can be accessed using the column names of the table (e.g. \texttt{lst.element[`AR231'][`Temperature']}).  This dictionary for each row also contains an additional \texttt{`key'} item which returns the key for that row.  Conversely, \texttt{lst.element[\emph{columnname}]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid, for an element table).
 
-The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.
+The properties of a \texttt{listingtable} object are given in Table \ref{tb:listingtable_properties}.  The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.  The \texttt{num\_keys} property just returns the number of keys used to identify each row- generally 1 for an element table and 2 for connection and generation tables.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{column\_name} & list & column headings\\
+      \texttt{num\_columns} & integer & number of columns \\
+      \texttt{num\_keys} & integer & number of keys per row \\
+      \texttt{num\_rows} & integer & number of rows \\
+      \texttt{row\_name} & list & keys for each row \\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{listingtable} object}
+    \label{tb:listingtable_properties}
+  \end{center}
+\end{table}
+
+\texttt{listingtable} objects have one method as described below.
+
+\subsubsection{\texttt{rows\_matching(\emph{pattern}, \emph{index}=0, \emph{match\_any}=False)}}
+
+Returns a list of rows in the table with keys matching the specified regular expression string, \texttt{pattern}.
+
+For tables with multiple keys, \texttt{pattern} can be a list or tuple of regular expressions.  If a single string pattern is given for a multiple-key table, the pattern is matched on the index$^{th}$ key (and any value of the other key- unless the \texttt{match\_any} option is used; see below).
+
+If \texttt{match\_any} is set to \texttt{True}, rows are returned with keys matching any of the specified patterns (instead of all of them).  If this option is used in conjunction with a single string pattern, the specified pattern is applied to all keys.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{pattern}: string, list or tuple\\
+  Regular expression string specifying the pattern to match.  For multiple-key tables, this can be a list or tuple of regular expression strings.
+\item \textbf{index}: integer\\
+  Index of the key to which the pattern is to be applied, for multiple-key tables and when \texttt{pattern} is specified as a single string.
+\item \textbf{match\_any}: Boolean\\
+  If \texttt{False}, return only rows with keys matching \emph{all} of their corresponding patterns.  If \texttt{True}, return rows with keys matching \emph{any} of the specified patterns- and if a single string pattern is given, apply this to all keys.
+\end{itemize}
 
 \section{Examples}
 

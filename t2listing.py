@@ -24,7 +24,7 @@ class listingtable(object):
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
     e.g. table[i] returns the ith row (as a dictionary), table[rowname] returns the row with the specified name,
     and table[colname] returns the column with the specified name."""
-    def __init__(self,cols,rows,row_format=None,row_line=None):
+    def __init__(self,cols,rows,row_format=None,row_line=None,num_keys=1):
         """The row_format parameter is a dictionary with three keys, 'key','index' and 'values'.  These contain the positions,
         in each row of the table, of the start of the keys, index and data fields.  The row_line parameter is a list containing,
         for each row of the table, the number of lines before it in the listing file, from the start of the table.  This is
@@ -33,6 +33,7 @@ class listingtable(object):
         self.row_name=rows
         self.row_format=row_format
         self.row_line=row_line
+        self.num_keys=num_keys
         self._col=dict([(c,i) for i,c in enumerate(cols)])
         self._row=dict([(r,i) for i,r in enumerate(rows)])
         self._data=np.zeros((len(rows),len(cols)),float64)
@@ -58,6 +59,28 @@ class listingtable(object):
         key=[fix_blockname(line[pos:pos+5]) for pos in self.row_format['key']]
         if len(key)==1: return key[0]
         else: return tuple(key)
+    def rows_matching(self,pattern,index=0,match_any=False):
+        """Returns rows in the table with keys matching the specified regular expression pattern
+        string.
+        For tables with multiple keys, pattern can be a list or tuple of regular expressions.  If
+        a single string pattern is given for a multiple-key table, the pattern is matched on the
+        index'th key (and any value of the other key- unless match_any is used; see below).
+        If match_any is set to True, rows are returned with keys matching any of the specified
+        patterns (instead of all of them).  If this option is used in conjunction with a single
+        string pattern, the specified pattern is applied to all keys."""
+        from re import search
+        if self.num_keys==1: return [self[key] for key in self.row_name if search(pattern,key)]
+        else: 
+            if isinstance(pattern,str): pattern=[pattern]
+            else: pattern=list(pattern)
+            if len(pattern)<self.num_keys:
+                if match_any: default=[pattern[0]]
+                else: default=['.*']
+                if 0<=index<=self.num_keys:
+                    pattern=default*index+pattern+default*(self.num_keys-1-index)
+                else: return []
+            combine=[all,any][match_any]
+            return [self[key] for key in self.row_name if combine([search(p,n) for p,n in zip(pattern,key)])]
 
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
@@ -444,10 +467,12 @@ class t2listing(file):
         keylength=5
         half_keylength=int(keylength/2.)
         headmid=[]
+        search_start=0
         for header in key_headers:
-            header_startpos=headline.find(header)
+            header_startpos=headline.find(header,search_start)
             header_endpos=header_startpos+len(header)-1
             headmid.append(int((header_startpos+header_endpos)/2.))
+            search_start=header_endpos
         startpos=[max(mid-half_keylength-1,0) for mid in headmid]
         return startpos
 
@@ -490,7 +515,7 @@ class t2listing(file):
                 rows.append(keyval)
                 line=self.readline()
             row_format={'values':[start]}
-            self._table[tablename]=listingtable(cols,rows,row_format)
+            self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys)
             self.readline()
         else:
             print 'Error parsing '+tablename+' table columns: table not created.'
@@ -553,7 +578,7 @@ class t2listing(file):
             else: done=True
         numpos.append(len(line))
         row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
-        self._table[tablename]=listingtable(cols,rows,row_format,row_line)
+        self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys)
 
     def read_header_AUTOUGH2(self):
         """Reads header info (title and time data) for one set of AUTOUGH2 listing results."""
