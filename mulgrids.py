@@ -738,12 +738,23 @@ class mulgrid(object):
         if len(polygon)==2: return [node for node in self.nodelist if in_rectangle(node.pos,polygon)]
         else: return [node for node in self.nodelist if in_polygon(node.pos,polygon)]
 
-    def node_nearest_to(self,point):
-        """Returns the node nearest to the specified point."""
+    def get_node_kdtree(self):
+        """Returns a kd-tree structure for searching the grid for particular nodes."""
+        from scipy.spatial import cKDTree
+        return cKDTree([node.pos for node in self.nodelist])
+    node_kdtree=property(get_kdtree)
+        
+    def node_nearest_to(self,point,kdtree=None):
+        """Returns the node nearest to the specified point.  A kd-tree can be specified to speed
+        searching- useful if searching for a lot of points."""
         if isinstance(point,list): point=np.array(point)
-        d=np.array([np.linalg.norm(node.pos-point) for node in self.nodelist])
-        isort=np.argsort(d)
-        return self.nodelist[isort[0]]
+        if kdtree:
+            r,i=kdtree.query(point)
+            return self.nodelist[i]
+        else:
+            d=np.array([np.linalg.norm(node.pos-point) for node in self.nodelist])
+            isort=np.argsort(d)
+            return self.nodelist[isort[0]]
 
     def read_header(self,header):
         """Reads grid header info from file geo"""

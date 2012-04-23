@@ -73,6 +73,7 @@ The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, 
     \texttt{default\_surface} & Boolean  & \texttt{True} if all columns have default surface elevation\\
     \texttt{extra\_connections} & set & connections defined between columns that are not against each other\\
     \texttt{filename} & string  & file name on disk\\
+    \texttt{node\_kdtree} & \texttt{cKDTree} & tree structure for fast searching for nodes \\
     \texttt{layerlist} & list & layers (by index)\\
     \texttt{layer} & dictionary & layers (by name)\\
     \texttt{missing\_connections} & set & missing connections between columns\\
@@ -573,14 +574,16 @@ Returns a list of all nodes inside the specified polygon or rectangle.
   List of points defining the polygon (each point is a two-element \texttt{np.array}).  If the list has only two points, it will be interpreted as a rectangle [bottom left, top right].
 \end{itemize}
 
-\subsubsection{\texttt{node\_nearest\_to(\emph{point})}}
+\subsubsection{\texttt{node\_nearest\_to(\emph{point}, \emph{kdtree}=None)}}
 
-Returns the node nearest to a specified point.
+Returns the node nearest to a specified point.  An optional kd-tree structure can be specified to speed searching- useful if searching for many points.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{point}:  \texttt{np.array} or list\\
   Array or list of length 2, specifying the required point in 2-D.
+\item \textbf{kdtree}:  \texttt{cKDTree}\\
+  kd-tree structure for searching for nodes.  Such a tree can be constructed using the \texttt{node\_kdtree} property of a \texttt{mulgrid} object.  You will need the \texttt{scipy} library installed before you can use this property.
 \end{itemize}
 
 \subsubsection{\texttt{optimize(\emph{nodenames}=None, \emph{connection\_angle\_weight}=1.0, \emph{column\_aspect\_weight}=0.0,\\
