@@ -742,7 +742,7 @@ class mulgrid(object):
         """Returns a kd-tree structure for searching the grid for particular nodes."""
         from scipy.spatial import cKDTree
         return cKDTree([node.pos for node in self.nodelist])
-    node_kdtree=property(get_kdtree)
+    node_kdtree=property(get_node_kdtree)
         
     def node_nearest_to(self,point,kdtree=None):
         """Returns the node nearest to the specified point.  A kd-tree can be specified to speed
