@@ -462,30 +462,28 @@ class t2listing(file):
                 nelt_tables+=1
                 tname+=str(nelt_tables)
 
-    def keysearch_startpos(self,headline,key_headers):
-        """Returns start point for searching for keys, based on key header positions."""
+    def key_positions(self,line,nkeys):
+        """Returns detected positions of keys in the start of a table line.  This works on the assumption
+        that key values must have a digit present in their last character.  It searches backwards from the 
+        end of the position of INDEX in the header line- sometimes keys can overlap into this area."""
         keylength=5
-        half_keylength=int(keylength/2.)
-        headmid=[]
-        search_start=0
-        for header in key_headers:
-            header_startpos=headline.find(header,search_start)
-            header_endpos=header_startpos+len(header)-1
-            headmid.append(int((header_startpos+header_endpos)/2.))
-            search_start=header_endpos
-        startpos=[max(mid-half_keylength-1,0) for mid in headmid]
-        return startpos
-
-    def key_positions(self,line,nkeys,startpos):
-        """Returns detected positions of keys in a table line."""
-        def valid_spaced_blockname(name): return (name[0]==name[6]==' ') and valid_blockname(name[1:6])
         keypos=[]
+        pos=len(line)-1
+        indexstr='INDEX'
+        indexpos=pos-len(indexstr)
+        # skip over index:
+        while line[pos]==' ' and pos>indexpos: pos-=1
+        while line[pos]<>' ' and pos>indexpos: pos-=1
         for k in xrange(nkeys):
-            pos=startpos[k]
-            while not valid_spaced_blockname(line[pos:pos+7]): pos+=1
-            while valid_spaced_blockname(line[pos:pos+7]): pos+=1
-            keypos.append(pos)
-        return keypos
+            while line[pos]==' ' and pos>=keylength: pos-=1
+            pos-=(keylength-1)
+            if valid_blockname(line[pos:pos+keylength]):
+                keypos.append(pos)
+                pos-=1
+            else: return None
+        keypos.reverse()
+        if len(keypos)<>nkeys: return None
+        else: return keypos
 
     def setup_table_AUTOUGH2(self,tablename):
         """Sets up table from AUTOUGH2 listing file."""
@@ -494,7 +492,8 @@ class t2listing(file):
         # Read column names (joining lowercase words to previous names):
         headline=self.readline()
         strs=headline.strip().split()
-        nkeys=strs.index('INDEX')
+        indexstr='INDEX'
+        nkeys=strs.index(indexstr)
         rows,cols=[],[]
         for s in strs[nkeys+1:]:
             if s[0]==s[0].upper(): cols.append(s)
@@ -502,21 +501,23 @@ class t2listing(file):
         self.readline()
         line=self.readline()
         # Double-check number of columns:
-        start=headline.index('INDEX')+5
+        indexpos=headline.index(indexstr)
+        start=indexpos+len(indexstr)
         nvalues=len([s for s in line[start:].strip().split()])
         if (len(cols)==nvalues):
-            startpos=self.keysearch_startpos(headline,strs[0:nkeys])
-            keypos=self.key_positions(line,nkeys,startpos)
-            # determine row names:
-            while line[1:6]<>keyword:
-                keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
-                if len(keyval)>1: keyval=tuple(keyval)
-                else: keyval=keyval[0]
-                rows.append(keyval)
-                line=self.readline()
-            row_format={'values':[start]}
-            self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys)
-            self.readline()
+            keypos=self.key_positions(line[:start],nkeys)
+            if keypos:
+                # determine row names:
+                while line[1:6]<>keyword:
+                    keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
+                    if len(keyval)>1: keyval=tuple(keyval)
+                    else: keyval=keyval[0]
+                    rows.append(keyval)
+                    line=self.readline()
+                row_format={'values':[start]}
+                self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys)
+                self.readline()
+            else: print 'Error parsing '+tablename+' table keys: table not created.'
         else:
             print 'Error parsing '+tablename+' table columns: table not created.'
 
@@ -527,58 +528,62 @@ class t2listing(file):
         else: flow_headers=['Flow','Veloc']
         headline=self.readline()
         strs=headline.strip().split()
-        nkeys=strs.index('INDEX')
+        indexstr='INDEX'
+        indexpos=headline.index(indexstr)
+        start=indexpos+len(indexstr)
+        nkeys=strs.index(indexstr)
         self.skip_over_next_blank()
         rows,cols=[],[]
         for s in strs[nkeys+1:]:
             if s in flow_headers: cols[-1]+=' '+s
             else: cols.append(s)
         line=self.readline()
-        startpos=self.keysearch_startpos(headline,strs[0:nkeys])
-        keypos=self.key_positions(line,nkeys,startpos)
-        # work out position of index:
-        index_pos=[keypos[-1]+5]
-        pos=line.find('.')
-        c=line[pos-2]
-        if c in [' ','-']: index_pos.append(pos-2)
-        elif c.isdigit(): index_pos.append(pos-1)
-        # determine row names:
-        longest_line=line
-        rowdict={}
-        count,index=0,-1
-        while line.strip():
-            keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
-            if len(keyval)>1: keyval=tuple(keyval)
-            else: keyval=keyval[0]
-            indexstr=line[index_pos[0]:index_pos[1]]
-            try: index=int(indexstr)-1
-            except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
-            rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
-            line=self.readline(); count+=1
-            if line.startswith('\f'): # extra headers in the middle of TOUGH2 listings
-                while self.readline().strip(): count+=1
-                line=self.readline(); count+=2
-            if len(line.strip())>len(longest_line): longest_line=line
-        # sort rows (needed for TOUGH2_MP):
-        indices=rowdict.keys(); indices.sort()
-        row_line=[rowdict[index][0] for index in indices]
-        rows=[rowdict[index][1] for index in indices]
-        # determine row parsing format:
-        line=longest_line
-        start=keypos[-1]+5
-        numpos=[]
-        p,done=start,False
-        while not done:
-            pos=line.find('.',p)
-            if pos>2:
-                c=line[pos-2]
-                if c in [' ','-']: numpos.append(pos-2)
-                elif c.isdigit(): numpos.append(pos-1)
-                p=pos+1
-            else: done=True
-        numpos.append(len(line))
-        row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
-        self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys)
+        keypos=self.key_positions(line[:start],nkeys)
+        if keypos:
+            # work out position of index:
+            index_pos=[keypos[-1]+5]
+            pos=line.find('.')
+            c=line[pos-2]
+            if c in [' ','-']: index_pos.append(pos-2)
+            elif c.isdigit(): index_pos.append(pos-1)
+            # determine row names:
+            longest_line=line
+            rowdict={}
+            count,index=0,-1
+            while line.strip():
+                keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
+                if len(keyval)>1: keyval=tuple(keyval)
+                else: keyval=keyval[0]
+                indexstr=line[index_pos[0]:index_pos[1]]
+                try: index=int(indexstr)-1
+                except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
+                rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
+                line=self.readline(); count+=1
+                if line.startswith('\f'): # extra headers in the middle of TOUGH2 listings
+                    while self.readline().strip(): count+=1
+                    line=self.readline(); count+=2
+                if len(line.strip())>len(longest_line): longest_line=line
+            # sort rows (needed for TOUGH2_MP):
+            indices=rowdict.keys(); indices.sort()
+            row_line=[rowdict[index][0] for index in indices]
+            rows=[rowdict[index][1] for index in indices]
+            # determine row parsing format:
+            line=longest_line
+            start=keypos[-1]+5
+            numpos=[]
+            p,done=start,False
+            while not done:
+                pos=line.find('.',p)
+                if pos>2:
+                    c=line[pos-2]
+                    if c in [' ','-']: numpos.append(pos-2)
+                    elif c.isdigit(): numpos.append(pos-1)
+                    p=pos+1
+                else: done=True
+            numpos.append(len(line))
+            row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
+            self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys)
+        else: print 'Error parsing '+tablename+' table keys: table not created.'
 
     def read_header_AUTOUGH2(self):
         """Reads header info (title and time data) for one set of AUTOUGH2 listing results."""
