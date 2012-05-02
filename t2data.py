@@ -711,7 +711,7 @@ class t2data(object):
     def write_history_generators(self,outfile):
         if self.history_generator:
             outfile.write('GOFT\n')
-            for gen in self.history_generator: outfile.write(unfix_blockname(gen.name)+'\n')
+            for blk in self.history_generator: outfile.write(unfix_blockname(blk.name)+'\n')
             outfile.write('\n')
 
     def read_indom(self,infile):
