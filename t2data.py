@@ -1087,6 +1087,7 @@ class t2data(object):
         if self.parameter['option'][10]==2:
             self.parameter['option'][10]=0
             self.convert_mulkom_heat_conductivity()
+            warnings.append('MOP(10)=2: MULKOM rock heat conductivities (values have been converted to TOUGH2 equivalents)')
         if self.parameter['option'][12]==2:
             self.parameter['option'][12]=0
             warnings.append('MOP(12)=2: piecewise linear well table interpolation')
