@@ -991,8 +991,6 @@ class t2historyfile(object):
         self._keyrows={}
         self.column_name=[]
         self.row_name=[]
-        self.num_columns=0
-        self.row_name=[]
 
     def get_num_keys(self): return len(self.keys)
     num_keys=property(get_num_keys)
@@ -1000,6 +998,8 @@ class t2historyfile(object):
     num_times=property(get_num_times)
     def get_num_rows(self): return len(self._data)
     num_rows=property(get_num_rows)
+    def get_num_columns(self): return len(self.column_name)
+    num_columns=property(get_num_columns)
     def get_keytype(self): return {'FOFT':'block','COFT':'connection','GOFT':'generator',None:'key'}[self.type]
     keytype=property(get_keytype)
 
@@ -1027,17 +1027,18 @@ class t2historyfile(object):
         self._rowindex=0
         from glob import glob
         files=glob(filename)
+        configured=False
         for i,f in enumerate(files):
             self._file=open(f)
-            first=(i==0)
             header=self._file.readline()
             if header:
-                if first:
+                if not configured:
                     self.detect_simulator(header)
                     if self.simulator=='TOUGH2_MP':
                         self.setup_headers(header)
                     else: print 'History file type not supported.'
-                self.read_data(first)
+                self.read_data(configured)
+                if self.num_columns>0: configured=True
             self._file.close()
         self.finalize_data()
 
@@ -1071,7 +1072,6 @@ class t2historyfile(object):
             else: cols.append(title)
             i+=1
         self.column_name=cols
-        self.num_columns=len(self.column_name)
         self.col_start=[header.index(colname) for colname in self.column_name]
         self.key_start=[header.index(key) for key in self.key_name]
         self.time_pos=[header.index(time_header)]
@@ -1082,8 +1082,8 @@ class t2historyfile(object):
             self.key_start.append(self.col_start[0])
             self.time_pos.append(self.key_start[0])
 
-    def read_data(self,first):
-        """Reads in the data.  If first is True, this is the first file read in."""
+    def read_data(self,configured):
+        """Reads in the data.  If configured is True, the headers etc. have already been parsed."""
         def get_key(line):
             return tuple([fix_blockname(line[self.key_start[i]:self.key_start[i+1]].rstrip()) for i in xrange(self._nkeys)])
         def get_time(line): return fortran_float(line[self.time_pos[0]:self.time_pos[1]])
@@ -1099,7 +1099,7 @@ class t2historyfile(object):
             time=get_time(line)
             key=get_key(line)
             vals=get_vals(line)
-            if first and (time<>last_time): self.times.append(time)
+            if (not configured) and (time<>last_time): self.times.append(time)
             last_time=time
             if not (key in otherfile_keys):
                 self.row_name.append(key+(time,))
