@@ -970,3 +970,149 @@ class t2listing(file):
                     gen_name=blk.name
                     dat.add_generator(t2generator(gen_name,blk.name,type='RECH',gx=coef,ex=h,hg=p0))
         self.index=initial_index
+
+class t2historyfile(object):
+    """Class for TOUGH2 FOFT, COFT and GOFT files (history of element, connection and generator variables)."""
+
+    def __init__(self,filename=None):
+        self.filename=filename
+        self.empty()
+        if self.filename: self.read(filename)
+
+    def empty(self):
+        self.simulator=None
+        self.type=None
+        self._data=[]
+        self._row=None
+        self.times=[]
+        self.keys=[]
+        self.key_name=[]
+        self.times=[]
+        self._keyrows={}
+        self.column_name=[]
+        self.row_name=[]
+        self.num_columns=0
+        self.row_name=[]
+
+    def get_num_keys(self): return len(self.keys)
+    num_keys=property(get_num_keys)
+    def get_num_times(self): return len(self.times)
+    num_times=property(get_num_times)
+    def get_num_rows(self): return len(self._data)
+    num_rows=property(get_num_rows)
+    def get_keytype(self): return {'FOFT':'block','COFT':'connection','GOFT':'generator',None:'key'}[self.type]
+    keytype=property(get_keytype)
+
+    def __repr__(self):
+        return 'History results for '+str(self.num_keys)+' '+self.keytype+'s at '+str(self.num_times)+' times'
+
+    def __getitem__(self,key):
+        """Returns results for a given key value, in the form of a dictionary with keys corresponding to the
+        column names.  Each value is an array of history results for that key and column name- unless the key also
+        has the time appended as its third element, in which case the dictionary values are just single floating
+        point values for each column."""
+        if self.num_rows>0:
+            if isinstance(key,str): key=(key,)
+            if key in self.keys:
+                keydata=self._data[self._keyrows[key]]
+                return dict([(colname,keydata[:,icol]) for icol,colname in enumerate(self.column_name)])
+            elif key in self._row:
+                row=self._data[self._row[key]]
+                return dict([(colname,row[icol]) for icol,colname in enumerate(self.column_name)])
+            else: return None
+        else: return None
+
+    def read(self,filename):
+        """Reads contents of file(s) and stores in appropriate data structures."""
+        self._rowindex=0
+        from glob import glob
+        files=glob(filename)
+        for i,f in enumerate(files):
+            self._file=open(f)
+            first=(i==0)
+            header=self._file.readline()
+            if header:
+                if first:
+                    self.detect_simulator(header)
+                    if self.simulator=='TOUGH2_MP':
+                        self.setup_headers(header)
+                    else: print 'History file type not supported.'
+                self.read_data(first)
+            self._file.close()
+        self.finalize_data()
+
+    def detect_simulator(self,header):
+        """Detects simulator (TOUGH2 or TOUGH2_MP) from header line."""
+        if 'OFT' in header: self.simulator='TOUGH2_MP'
+        else: self.simulator='TOUGH2'
+        
+    def setup_headers(self,header):
+        """Sets up keys and column headings from given header line."""
+        headers=header.strip().split()
+        self.type=headers[0] # FOFT, COFT or GOFT
+        time_header=[h for h in headers if h.lower().startswith('time')][0]
+        self.time_index=headers.index(time_header)
+        if self.type=='FOFT':
+            self.key_index=self.time_index-1
+            self._nkeys=1
+        else: # COFT or GOFT
+            self.key_index=self.time_index+1
+            self._nkeys=2
+        self.key_name=headers[self.key_index:self.key_index+self._nkeys]
+        merge_titles=['GAS','GENERATION']
+        startcol=self._nkeys+2
+        cols=[]
+        i=startcol
+        while i<=len(headers)-1:
+            title=headers[i]
+            if title in merge_titles:
+                cols.append(title+' '+headers[i+1])
+                i+=1
+            else: cols.append(title)
+            i+=1
+        self.column_name=cols
+        self.num_columns=len(self.column_name)
+        self.col_start=[header.index(colname) for colname in self.column_name]
+        self.key_start=[header.index(key) for key in self.key_name]
+        self.time_pos=[header.index(time_header)]
+        if self.type=='FOFT':
+            self.key_start.append(self.time_pos[0])
+            self.time_pos.append(self.col_start[0])
+        else:
+            self.key_start.append(self.col_start[0])
+            self.time_pos.append(self.key_start[0])
+
+    def read_data(self,first):
+        """Reads in the data.  If first is True, this is the first file read in."""
+        def get_key(line):
+            return tuple([fix_blockname(line[self.key_start[i]:self.key_start[i+1]].rstrip()) for i in xrange(self._nkeys)])
+        def get_time(line): return fortran_float(line[self.time_pos[0]:self.time_pos[1]])
+        def get_vals(line):
+            start=self.col_start+[len(line)] # allow for lines of different lengths
+            return [fortran_float(line[start[i]:start[i+1]]) for i in xrange(self.num_columns)]
+        line=self._file.readline()
+        while not line.strip(): line=self._file.readline() # skip any blanks
+        last_time=None
+        from copy import copy
+        otherfile_keys=copy(self.keys)
+        while line:
+            time=get_time(line)
+            key=get_key(line)
+            vals=get_vals(line)
+            if first and (time<>last_time): self.times.append(time)
+            last_time=time
+            if not (key in otherfile_keys):
+                self.row_name.append(key+(time,))
+                if not key in self.keys:
+                    self._keyrows[key]=[]
+                    self.keys.append(key)
+                self._keyrows[key].append(self._rowindex)
+                self._data.append(vals)
+                self._rowindex+=1
+            line=self._file.readline()
+
+    def finalize_data(self):
+        self._data=np.array(self._data,float64)
+        self.times=np.array(self.times,float64)
+        self._row=dict([(r,i) for i,r in enumerate(self.row_name)])
+
