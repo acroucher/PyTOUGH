@@ -1060,15 +1060,17 @@ class t2historyfile(object):
             self.key_index=self.time_index+1
             self._nkeys=2
         self.key_name=headers[self.key_index:self.key_index+self._nkeys]
-        merge_titles=['GAS','GENERATION']
+        prepend_titles, append_titles=['GAS','GENERATION'],['flow']
         startcol=self._nkeys+2
         cols=[]
         i=startcol
         while i<=len(headers)-1:
             title=headers[i]
-            if title in merge_titles:
+            if title in prepend_titles:
                 cols.append(title+' '+headers[i+1])
                 i+=1
+            elif title in append_titles:
+                cols[-1]+=' '+title
             else: cols.append(title)
             i+=1
         self.column_name=cols
