@@ -559,9 +559,12 @@ class t2listing(file):
                 except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
                 rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
                 line=self.readline(); count+=1
-                if line.startswith('\f'): # extra headers in the middle of TOUGH2 listings
-                    while self.readline().strip(): count+=1
-                    line=self.readline(); count+=2
+                if line.startswith('\f'):
+                    line=self.readline()
+                    if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
+                    else: # extra headers in the middle of TOUGH2 listings
+                        while self.readline().strip(): count+=1
+                        line=self.readline(); count+=2
                 if len(line.strip())>len(longest_line): longest_line=line
             # sort rows (needed for TOUGH2_MP):
             indices=rowdict.keys(); indices.sort()
@@ -687,9 +690,12 @@ class t2listing(file):
             key=self._table[tablename].key_from_line(line)
             self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
             line=self.readline()
-            if line.startswith('\f'): # extra headers in the middle of TOUGH2 listings
-                self.skip_over_next_blank()
+            if line.startswith('\f'):
                 line=self.readline()
+                if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
+                else: # extra headers in the middle of TOUGH2 listings
+                    self.skip_over_next_blank()
+                    line=self.readline()
 
     def history(self,selection,short=True):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
