@@ -858,7 +858,7 @@ class mulgrid(object):
     def read(self,filename):
         """Reads MULgraph grid from file"""
         self.empty()
-        geo=open(filename)
+        geo=open(filename,'rU')
         line=padstring(geo.readline())
         self.read_header(line)
         if self.type=='GENER':
@@ -1082,7 +1082,7 @@ class mulgrid(object):
         """Returns a MULgraph grid constructed from a 2D gmsh grid and the specified layer structure."""
         grid=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
         grid.empty()
-        gmsh=open(filename)
+        gmsh=open(filename,'rU')
         line=''
         while not '$Nodes' in line: line=gmsh.readline()
         num_nodes=int(gmsh.readline().strip())

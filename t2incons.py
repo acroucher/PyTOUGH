@@ -99,7 +99,7 @@ class t2incon(object):
     def read(self,filename):
         """Reads initial conditions from file."""
         self.empty()
-        f=open(filename)
+        f=open(filename,'rU')
         line=f.readline() # header
         finished=False
         timing=False
