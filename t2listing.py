@@ -1035,7 +1035,7 @@ class t2historyfile(object):
         files=glob(filename)
         configured=False
         for i,f in enumerate(files):
-            self._file=open(f)
+            self._file=open(f,'rU')
             header=self._file.readline()
             if header:
                 if not configured:
