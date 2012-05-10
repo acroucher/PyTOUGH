@@ -89,7 +89,7 @@ class t2listing(file):
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
     def __init__(self,filename=None):
-        super(t2listing,self).__init__(filename)
+        super(t2listing,self).__init__(filename,'rU')
         self.detect_simulator()
         if self.simulator==None: print 'Could not detect simulator type.'
         else:

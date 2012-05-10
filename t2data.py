@@ -907,7 +907,7 @@ class t2data(object):
     def read(self,filename=''):
         """Reads data from file"""
         if filename: self.filename=filename
-        infile=t2datafile(self.filename)
+        infile=t2datafile(self.filename,'rU')
         read_fn=dict(zip(t2data_sections,
                          [self.read_simulator, self.read_rocktypes, self.read_meshmaker, self.read_parameters, self.read_start, 
                          self.read_noversion, self.read_rpcap, self.read_lineq, self.read_solver, self.read_multi, self.read_times,
