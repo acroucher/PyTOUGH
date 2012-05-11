@@ -1018,7 +1018,7 @@ class t2historyfile(object):
         has the time appended as its third element, in which case the dictionary values are just single floating
         point values for each column."""
         if self.num_rows>0:
-            if isinstance(key,str): key=(key,)
+            if not isinstance(key,tuple): key=(key,)
             if key in self.keys:
                 keydata=self._data[self._keyrows[key]]
                 return dict([(colname,keydata[:,icol]) for icol,colname in enumerate(self.column_name)])
@@ -1034,15 +1034,13 @@ class t2historyfile(object):
         from glob import glob
         files=glob(filename)
         configured=False
-        for i,f in enumerate(files):
-            self._file=open(f,'rU')
+        for i,fname in enumerate(files):
+            self._file=open(fname,'rU')
             header=self._file.readline()
             if header:
                 if not configured:
                     self.detect_simulator(header)
-                    if self.simulator=='TOUGH2_MP':
-                        self.setup_headers(header)
-                    else: print 'History file type not supported.'
+                    self.setup_headers(fname,header)
                 self.read_data(configured)
                 if self.num_columns>0: configured=True
             self._file.close()
@@ -1052,9 +1050,28 @@ class t2historyfile(object):
         """Detects simulator (TOUGH2 or TOUGH2_MP) from header line."""
         if 'OFT' in header: self.simulator='TOUGH2_MP'
         else: self.simulator='TOUGH2'
+        internal_fns=['setup_headers','read_data']
+        for fname in internal_fns:
+            fname_sim=fname+'_'+self.simulator
+            setattr(self,fname,getattr(self,fname_sim))
         
-    def setup_headers(self,header):
-        """Sets up keys and column headings from given header line."""
+    def setup_headers_TOUGH2(self,filename,header):
+        """Sets up keys and column headings from given filename and header line, for TOUGH2 output."""
+        if filename.endswith('OFT') and len(filename)>=4: self.type=filename[-4:].strip()
+        else: self.type=None
+        items=header.strip().split(',')
+        if items[-1]=='': del items[-1] # often an extra comma on the end of the lines
+        items=items[3:]
+        inti=0
+        for item in items:
+            try: inti=int(item)
+            except: pass
+        if inti==0: ncols=len(items)
+        else: ncols=inti
+        self.column_name=range(ncols)
+
+    def setup_headers_TOUGH2_MP(self,filename,header):
+        """Sets up keys and column headings from given filename and header line, for TOUGH2_MP output."""
         headers=header.strip().split()
         self.type=headers[0] # FOFT, COFT or GOFT
         time_header=[h for h in headers if h.lower().startswith('time')][0]
@@ -1090,8 +1107,32 @@ class t2historyfile(object):
             self.key_start.append(self.col_start[0])
             self.time_pos.append(self.key_start[0])
 
-    def read_data(self,configured):
-        """Reads in the data.  If configured is True, the headers etc. have already been parsed."""
+    def read_data_TOUGH2(self,configured):
+        """Reads in the data, for TOUGH2 output."""
+        self._file.seek(0)
+        lines=self._file.readlines()
+        for line in lines:
+            items=line.strip().split(',')
+            if items[-1]=='': del items[-1]
+            time_index=int(items.pop(0))
+            time=float(items.pop(0))
+            self.times.append(time)
+            nc1=self.num_columns+1
+            nsets=len(items)/nc1
+            for i in xrange(nsets):
+                setvals=items[i*nc1:(i+1)*nc1]
+                key=(int(setvals[0]),)
+                vals=[fortran_float(val) for val in setvals[1:]]
+                self.row_name.append(key+(time,))
+                if not key in self.keys:
+                    self._keyrows[key]=[]
+                    self.keys.append(key)
+                self._keyrows[key].append(self._rowindex)
+                self._data.append(vals)
+                self._rowindex+=1
+        
+    def read_data_TOUGH2_MP(self,configured):
+        """Reads in the data, for TOUGH2_MP output."""
         def get_key(line):
             return tuple([fix_blockname(line[self.key_start[i]:self.key_start[i+1]].rstrip()) for i in xrange(self._nkeys)])
         def get_time(line): return fortran_float(line[self.time_pos[0]:self.time_pos[1]])
