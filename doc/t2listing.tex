@@ -289,6 +289,71 @@ If \texttt{match\_any} is set to \texttt{True}, rows are returned with keys matc
   If \texttt{False}, return only rows with keys matching \emph{all} of their corresponding patterns.  If \texttt{True}, return rows with keys matching \emph{any} of the specified patterns- and if a single string pattern is given, apply this to all keys.
 \end{itemize}
 
+\section{\texttt{t2historyfile} objects}
+
+In addition to the main listing file, TOUGH2 can optionally produce extra files containing time history data from selected blocks, connections or generators- named FOFT, COFT and GOFT files respectively.  (AUTOUGH2 does not produce these files, but can instead produce `short output' at selected blocks, connections or generators within the listing file itself.)
+
+The \texttt{t2listing} module contains a \texttt{t2historyfile} class for reading and manipulating these history files.  The same class is used for FOFT, COFT and GOFT files.  A history file of any of these types can be opened using a command such as:
+
+\begin{verbatim}
+hist = t2historyfile(filename)
+\end{verbatim}
+
+where \texttt{\emph{filename}} is the name of the file.  It may contain wildcards (*) so that several files matching a pattern are read in to the same object.  This is useful for reading output from TOUGH2\_MP, which creates separate history files for each processor used in the calculation (e.g. \texttt{FOFT\_P.000}, \texttt{FOFT\_P.001}, etc.).  It is assumed that all files opened are however of the same type (FOFT, COFT or GOFT).
+
+Once a history file has been read in, history results for a particular key (i.e. block, connection or generator) can be extracted.  For TOUGH2\_MP, the keys are the block names for FOFT files, tuples of block names for COFT files, and tuples of block names and source names for GOFT files.  For example:
+
+\begin{verbatim}
+foft = t2historyfile('FOFT_P.*')
+blockname = 'fmq20'
+results = foft[blockname]
+\end{verbatim}
+
+This will return a dictionary containing an \texttt{np.array} for each column in the file, indexed by the column name.  For example the temperature history at this block would be given by:
+
+\begin{verbatim}
+temp = foft[blockname]['TEMPERATURE']
+\end{verbatim}
+
+Results at a particular time can also be found:
+
+\begin{verbatim}
+time = 3.156e7
+result = foft[blockname,time]
+\end{verbatim}
+
+Again, this will return a dictionary with one item for each column, but in this case each item is just a single floating point number instead of an array.
+
+For TOUGH2 rather than TOUGH2\_MP, the keys are integer indices of blocks, connections or generators, rather than names or tuples of names.  Similarly, the column names are just integers.  This is because the key names and column names are not given in TOUGH2 history files.  Aside from these differences, they can be used in the same way as TOUGH2\_MP history files, for example:
+
+\begin{verbatim}
+foft = t2historyfile('FOFT')
+blkindex = 123
+temp = foft[blkindex][1]
+\end{verbatim}
+
+The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:historyfile_properties}.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|l|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{key\_name} & list & names of keys\\
+      \texttt{num\_times} & integer & number of times\\
+      \texttt{num\_columns} & integer & number of data columns\\
+      \texttt{num\_rows} & integer & total number of data (for all keys)\\
+      \texttt{simulator} & string & detected simulator (`TOUGH2' or `TOUGH2\_MP')\\
+      \texttt{times} & \texttt{np.array} & times at which results are given\\
+      \texttt{type} & string & history type (`FOFT', `COFT' or `GOFT')\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{t2historyfile} object}
+    \label{tb:historyfile_properties}
+  \end{center}
+\end{table}
+
 \section{Examples}
 
 \subsection{Slice plot of drawdown}
