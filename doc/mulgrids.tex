@@ -437,12 +437,12 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{column\_names}=None, \emph{node\_names}=None, \emph{column\_centres}=None, \emph{nodes}=None,\\
     \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`equal', \emph{plt}=None,\\
     \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
-    \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100)),\\
-    \emph{connections}=None, \emph{colourbar\_limits}=None}}
+    \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
+    \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None)}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name, index or as an elevation (in which case the routine will find the corresponding layer).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
-The name and units of the variable can optionally be specified, and the names of the columns and nodes can also optionally be displayed on the plot, as well as the column centres (represented by crosses).  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the title and x- and y-axis labels.
+The name and units of the variable can optionally be specified, and the names of the columns and nodes can also optionally be displayed on the plot, as well as the column centres (represented by crosses).  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the title and x- and y-axis labels, and the plot limits.
 
 When a variable is plotted over the grid, contours at specified levels can also be drawn, and optionally labelled with their values.
 
@@ -492,6 +492,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
   Set non-zero to plot connections in the grid, shaded by absolute value of the connection angle cosine.  The value specifies the lower cut-off value, above which connections will be plotted.  Connections are shaded in greyscale from white (0.0) to black (1.0).  This can be used to check orthogonality of grid connections, as less orthogonal connections (with larger angle cosine) will show up darker on the plot.  If set to \texttt{None}, no connections will be plotted.
 \item \textbf{colourbar\_limits}: tuple, list, \texttt{np.array} (or \texttt{None})\\
   Specify a two-element tuple, list or \texttt{np.array} to set the limits of the colour scale.  Default (\texttt{None}) will auto-scale.
+\item \textbf{plot\_limits}: tuple or list (or \texttt{None})\\
+  Specify a two-element tuple (or list) of plot axis ranges, each itself being a tuple (or list) of minimum and maximum values, i.e. ((xmin,xmax),(ymin,ymax)).  Default is \texttt{False} which will auto-scale.
 \end{itemize}
 
 \textbf{Example:}
@@ -731,13 +733,13 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{block\_names}=None, \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`auto',\\
     \emph{plt}=None, \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`', \emph{ylabel}=`elevation (m)',\\
     \emph{contours}=False, \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
-    \emph{colourbar\_limits}=None)}}
+    \emph{colourbar\_limits}=None, \emph{plot\_limits}=None)}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
 The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
-The name and units of the variable can optionally be specified, and the name of each block can also optionally be displayed on the plot.  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the plot title and x- and z-axis labels.
+The name and units of the variable can optionally be specified, and the name of each block can also optionally be displayed on the plot.  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the plot title and x- and z-axis labels, and the plot limits.
 
 When a variable is plotted over the grid, contours at specified levels can also be drawn, and optionally labelled with their values.
 
@@ -779,6 +781,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
   Number of divisions in the x- and z-directions in the regular grid superimposed on the slice, and used to produce the contours (default (100,100)).
 \item \textbf{colourbar\_limits}: tuple, list, \texttt{np.array} (or \texttt{None})\\
   Specify a two-element tuple, list or \texttt{np.array} to set the limits of the colour scale.  Default (\texttt{None}) will auto-scale.
+\item \textbf{plot\_limits}: tuple or list (or \texttt{None})\\
+  Specify a two-element tuple (or list) of plot axis ranges, each itself being a tuple (or list) of minimum and maximum values, i.e. ((xmin,xmax),(zmin,zmax)).  Default is \texttt{False} which will auto-scale.
 \end{itemize}
 
 \textbf{Example:}

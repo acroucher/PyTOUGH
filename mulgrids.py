@@ -1375,10 +1375,10 @@ class mulgrid(object):
         sortindex=np.argsort([norm(t[1]-line[0]) for t in track])
         return [track[i] for i in sortindex]
 
-    def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),connections=None,colourbar_limits=None):
+    def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),connections=None,colourbar_limits=None,plot_limits=None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
-       superimposed, and the colour map, linewidth, aspect ratio and colour-bar limits specified.
+       superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
        If no variable is specified, only the grid is drawn, without shading. If an elevation (float) is given instead
        of a layer name, the layer containing that elevation is plotted."""
         import matplotlib
@@ -1450,7 +1450,10 @@ class mulgrid(object):
             if variable<>None: col.set_array(np.array(vals))
             if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
             ax.add_collection(col)
-            ax.autoscale_view()
+            if plot_limits<>None:
+                plt.xlim(plot_limits[0])
+                plt.ylim(plot_limits[1])
+            else: ax.autoscale_view()
             if contours<>False:
                 from matplotlib.mlab import griddata
                 xc,yc=np.array(xc),np.array(yc)
@@ -1475,10 +1478,10 @@ class mulgrid(object):
             plt.title(title)
             if loneplot: plt.show()
 
-    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='auto',plt=None,subplot=111,title='',xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),colourbar_limits=None):
+    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='auto',plt=None,subplot=111,title='',xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),colourbar_limits=None,plot_limits=None):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
-       map, linewidth, aspect ratio and colour-bar limits specified.
+       map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
        If no variable is specified, only the grid is drawn, without shading.  If no line is specified, a slice
        through the grid bounds is made (bottom left to top right).
        If a string 'x' or 'y' is passed in instead of a line, a plot is made through the centre of the grid along
@@ -1564,7 +1567,10 @@ class mulgrid(object):
             if variable<>None: col.set_array(np.array(vals))
             if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
             ax.add_collection(col)
-            ax.autoscale_view()
+            if plot_limits<>None:
+                plt.xlim(plot_limits[0])
+                plt.ylim(plot_limits[1])
+            else: ax.autoscale_view()
             if contours<>False:
                 from matplotlib.mlab import griddata
                 xc,yc=np.array(xc),np.array(yc)
