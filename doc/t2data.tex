@@ -540,11 +540,12 @@ Returns an \texttt{np.array} containing the total specific generation rate in ea
 \end{itemize}
 
 \subsubsection{\texttt{transfer\_from(\emph{source}, \emph{sourcegeo}, \emph{geo}, \emph{top\_generator}=[], \emph{bottom\_generator}=[],\\
-    \emph{sourceinconfilename}=`', \emph{inconfilename}=`', \emph{rename\_generators}=False)}}
+    \emph{sourceinconfilename}=`', \emph{inconfilename}=`', \emph{rename\_generators}=False, \\
+    \emph{preserve\_generation\_totals}=False)}}
 
 Transfers data from another \texttt{t2data} object, and its associated \texttt{mulgrid} object.  Parameters, rock types and rock type assignments, and optionally initial conditions files are transferred.  In general the data for a given block in the geometry is found by identifying the nearest block in the source geometry and transferring data from that block.  There are, however, exceptions, such as for generators that need to remain on the surface or bottom of the model.  The \texttt{top\_generator} and \texttt{bottom\_generator} lists specify the `layer' part of the generator name for generators that should remain on the top or bottom of the model, respectively.
 
-For generator types in which the \texttt{gx} and \texttt{rate} properties represent generation rates (as opposed to other types for which these properties are used to represent other things, e.g. productivity index for wells on deliverability), the values of \texttt{gx} and \texttt{rate} are scaled to account for the different volume of the block the generator has been mapped into.  If a generator with generation rate $G$ is mapped into $n$ blocks with volumes $V_1, V_2,\ldots, V_n$ then the generation rate for the new generator in block $i$ is $G V_i/\sum_{k=1}^{n}{V_k}$.  This should preserve the total generation rate over the model.  (For generator types matching the \texttt{bottom\_generator} or \texttt{top\_generator} specifications, the column area instead of the block volume is used to determine the appropriate scaling.)  Note that of the columns a top or bottom generator is mapped into, only those with centres inside the source geometry are included in the scaling calculations.  The generator types for which this scaling is carried out are: ` AIR', `COM1', `COM2', `COM3', `COM4', `COM5', `HEAT', `MASS', `NACL', `TRAC'  and ` VOL'.
+For generator types in which the \texttt{gx} and \texttt{rate} properties represent generation rates (as opposed to other types for which these properties are used to represent other things, e.g. productivity index for wells on deliverability), the values of \texttt{gx} and \texttt{rate} are scaled to account for the different volume of the block the generator has been mapped into.  If \texttt{preserve\_generation\_totals} is \texttt{True}, and a generator with generation rate $G$ is mapped into $n$ blocks with volumes $V_1, V_2,\ldots, V_n$, then the generation rate for the new generator in block $i$ will be $G V_i/\sum_{k=1}^{n}{V_k}$.  This should preserve the total generation rate over the model.  (For generator types matching the \texttt{bottom\_generator} or \texttt{top\_generator} specifications, the column area instead of the block volume is used to determine the appropriate scaling.)  Note that of the columns a top or bottom generator is mapped into, only those with centres inside the source geometry are included in the scaling calculations.  The generator types for which this scaling is carried out are: ` AIR', `COM1', `COM2', `COM3', `COM4', `COM5', `HEAT', `MASS', `NACL', `TRAC'  and ` VOL'.
 
 If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a new initial conditions file with filename \texttt{inconfilename} is written to disk, with initial conditions transferred from the file \texttt{sourceinconfilename}.
 
@@ -566,6 +567,8 @@ If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a
   Name of the (optional) initial conditions file to write, corresponding to the destination \texttt{t2data} object.
 \item \textbf{rename\_generators}: Boolean\\
   If \texttt{False}, generators other than those at the top and bottom of the model retain their original names.  Otherwise, they will be renamed according to their column names in the new grid.
+\item \textbf{preserve\_generation\_totals}: Boolean\\
+  If \texttt{False} (the default), the transfer of generators will attempt to preserve the distribution of specific generation of the original model; otherwise, it will attempt to preserve the total generation over the model.
 \end{itemize}
 
 \subsubsection{\texttt{total\_generation(\emph{type}=`MASS', \emph{name}=`')}}

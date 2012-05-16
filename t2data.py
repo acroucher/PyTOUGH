@@ -958,11 +958,12 @@ class t2data(object):
         self.grid.rocktype=deepcopy(source.grid.rocktype)
         for blk in self.grid.blocklist: blk.rocktype=self.grid.rocktype[source.grid.block[mapping[blk.name]].rocktype.name]
 
-    def transfer_generators_from(self,source,sourcegeo,geo,top_generator=[],bottom_generator=[],mapping={},colmapping={},rename=False):
+    def transfer_generators_from(self,source,sourcegeo,geo,top_generator=[],bottom_generator=[],mapping={},colmapping={},rename=False,preserve_totals=False):
         """Transfers generators from another t2data object, using the specified top and bottom generator lists and 
         optional block and column mappings.  If the rename parameter is False, generators other than those at the top or
         bottom of the model will keep their original names; if True, these generators will be renamed according to their
-        new column names."""
+        new column names.  If preserve_totals is True, the transfer will attempt to preserve total generation, when a source
+        block is mapped into a set of blocks with a different total volume."""
         from copy import deepcopy
         tablegens=[' AIR','COM1','COM2','COM3','COM4','COM5','HEAT','MASS','NACL','TRAC',' VOL']
         if (colmapping=={}) or (mapping=={}): mapping,colmapping=sourcegeo.block_mapping(geo,True)
@@ -976,10 +977,11 @@ class t2data(object):
             sourcecolname=sourcegeo.column_name(sourcegen.block)
             if sourcecategory in col_generator:
                 mappedcols=[col for col in incols if colmapping[col.name]==sourcecolname]
-                mappedcolarea=sum([col.area for col in mappedcols])
+                if preserve_totals: area=sum([col.area for col in mappedcols])
+                else: area=sourcegeo.column[sourcecolname].area
                 for col in mappedcols:
                     gen=deepcopy(sourcegen)
-                    area_ratio=col.area/mappedcolarea
+                    area_ratio=col.area/area
                     if gen.ltab: ntimes=abs(gen.ltab)
                     else: ntimes=1
                     if gen.type in tablegens:
@@ -995,12 +997,13 @@ class t2data(object):
             else: # other generators, do block by block:
                 sourceblock=source.grid.block[sourcegen.block]
                 mappedblocks=[blk for blk in self.grid.blocklist if mapping[blk.name]==sourceblock.name]
-                mappedblockvol=sum([blk.volume for blk in mappedblocks])
+                if preserve_totals: vol=sum([blk.volume for blk in mappedblocks])
+                else: vol=sourceblock.volume
                 for blk in mappedblocks:
                     gen=deepcopy(sourcegen)
                     if gen.ltab: ntimes=abs(gen.ltab)
                     else: ntimes=1
-                    vol_ratio=blk.volume/mappedblockvol
+                    vol_ratio=blk.volume/vol
                     if gen.type in tablegens:
                         if gen.gx: gen.gx*=vol_ratio
                         if ntimes>1: gen.rate=[rate*vol_ratio for rate in gen.rate]
@@ -1012,7 +1015,7 @@ class t2data(object):
                     gen.block=blk.name
                     self.add_generator(gen)
                     
-    def transfer_from(self,source,sourcegeo,geo,top_generator=[],bottom_generator=[],sourceinconfilename='',inconfilename='',rename_generators=False):
+    def transfer_from(self,source,sourcegeo,geo,top_generator=[],bottom_generator=[],sourceinconfilename='',inconfilename='',rename_generators=False,preserve_generation_totals=False):
         """Copies parameters, rock types and assignments, generators and initial conditions
         from another t2data object (without altering the grid structure).
         The top_generator and bottom_generator lists specify the generators which are to be kept at the top or
@@ -1021,7 +1024,10 @@ class t2data(object):
         If both the inconfilename parameters are specified, a new initial conditions file with filename 'inconfilename'
         is written to disk, with initial conditions transferred from the file 'sourceinconfilename'.
         If the rename_generators parameter is False, generators (other than those at the top and bottom of the model) keep
-        their original names- otherwise, they are renamed according to their new column names. """
+        their original names- otherwise, they are renamed according to their new column names.
+        If preserve_generation_totals is True, generators are transferred in such a way as to preserve total generation,
+        even when a source block is mapped into a set of blocks with a different total volume.  This can however alter the
+        distribution of specific generation."""
         mapping,colmapping=sourcegeo.block_mapping(geo,True)
         from copy import copy
         self.grid=t2grid().fromgeo(geo)
@@ -1042,7 +1048,7 @@ class t2data(object):
         self.selection=copy(source.selection)
         self.output_times=copy(source.output_times)
         self.transfer_rocktypes_from(source,mapping)
-        self.transfer_generators_from(source,sourcegeo,geo,top_generator,bottom_generator,mapping,colmapping,rename_generators)
+        self.transfer_generators_from(source,sourcegeo,geo,top_generator,bottom_generator,mapping,colmapping,rename_generators,preserve_generation_totals)
         # short output (these can't really be transferred sensibly):
         self.short_output={}
         self.history_block={}
