@@ -271,7 +271,7 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
 
 \subsubsection{\texttt{column\_mapping(\emph{geo})}}
 
-Returns a dictionary mapping each column name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest column in the object's own geometry.
+Returns a dictionary mapping each column name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest column in the object's own geometry.  If the SciPy library is available, a KDTree structure is used to speed searching.
 
 \textbf{Parameters:}
 \begin{itemize}

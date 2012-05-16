@@ -1291,14 +1291,22 @@ class mulgrid(object):
         return target
 
     def column_mapping(self,geo):
-        """Returns a dictionary mapping each column name in a geometry object geo to the name of the nearest column in self."""
+        """Returns a dictionary mapping each column name in a geometry object geo to the name of the nearest column in self.
+         If the SciPy library is available, a KDTree structure is used to speed searching."""
         if self.atmosphere_type==geo.atmosphere_type==0:
             mapping={geo.atmosphere_column_name:self.atmosphere_column_name}
         else: mapping={}
-        for col in geo.columnlist:
-            coldist=np.array([norm(selfcol.centre-col.centre) for selfcol in self.columnlist])
-            closest=self.columnlist[np.argmin(coldist)]
-            mapping[col.name]=closest.name
+        try:
+            from scipy.spatial import cKDTree
+            kdtree=cKDTree([col.centre for col in self.columnlist])
+            def closest_col(col):
+                r,i=kdtree.query(col.centre)
+                return self.columnlist[i]
+        except ImportError: # if don't have SciPy installed:
+            def closest_col(col):
+                coldist=np.array([norm(selfcol.centre-col.centre) for selfcol in self.columnlist])
+                return self.columnlist[np.argmin(coldist)]
+        for col in geo.columnlist: mapping[col.name]=closest_col(col).name
         return mapping
 
     def layer_mapping(self,geo):
