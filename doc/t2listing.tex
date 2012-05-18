@@ -291,9 +291,9 @@ If \texttt{match\_any} is set to \texttt{True}, rows are returned with keys matc
 
 \section{\texttt{t2historyfile} objects}
 
-In addition to the main listing file, TOUGH2 can optionally produce extra files containing time history data from selected blocks, connections or generators- named FOFT, COFT and GOFT files respectively.  (AUTOUGH2 does not produce these files, but can instead produce `short output' at selected blocks, connections or generators within the listing file itself.)
+In addition to the main listing file, TOUGH2 can optionally produce extra files containing time history data from selected blocks, connections or generators, named \texttt{FOFT}, \texttt{COFT} and \texttt{GOFT} files respectively.  TOUGH+ can optionally name these files \texttt{Elem\_Time\_Series}, \texttt{Conx\_Time\_Series} and \texttt{SS\_Time\_Series} instead.  (AUTOUGH2 does not produce separate history files, but can instead produce `short output' at selected blocks, connections or generators within the listing file itself.)
 
-The \texttt{t2listing} module contains a \texttt{t2historyfile} class for reading and manipulating these history files.  The same class is used for FOFT, COFT and GOFT files.  A history file of any of these types can be opened using a command such as:
+The \texttt{t2listing} module contains a \texttt{t2historyfile} class for reading and manipulating these history files.  History files produced by TOUGH2, TOUGH2\_MP and TOUGH+ are supported, although they all have different formats.  The same class is used for FOFT, COFT and GOFT files.  A history file of any of these types can be opened using a command such as:
 
 \begin{verbatim}
 hist = t2historyfile(filename)
@@ -324,12 +324,19 @@ result = foft[blockname,time]
 
 Again, this will return a dictionary with one item for each column, but in this case each item is just a single floating point number instead of an array.
 
-For TOUGH2 rather than TOUGH2\_MP, the keys are integer indices of blocks, connections or generators, rather than names or tuples of names.  Similarly, the column names are just integers.  This is because the key names and column names are not given in TOUGH2 history files.  Aside from these differences, they can be used in the same way as TOUGH2\_MP history files, for example:
+For \textbf{TOUGH2} rather than TOUGH2\_MP, the keys are integer indices of blocks, connections or generators, rather than names or tuples of names.  Similarly, the column names are just integers.  This is because the key names and column names are not given in TOUGH2 history files.  Aside from these differences, they can be used in the same way as TOUGH2\_MP history files, for example:
 
 \begin{verbatim}
 foft = t2historyfile('FOFT')
 blkindex = 123
 temp = foft[blkindex][1]
+\end{verbatim}
+
+For \textbf{TOUGH+} connection and generator history files (\texttt{COFT} and \texttt{GOFT}, or \texttt{Conx\_Time\_Series} and \texttt{SS\_Time\_Series}), multiple connections and generators can be specified as usual in the TOUGH2 input data file, but individual results for them are not written to the history file.  Instead, the results for them are summed.  As a result, there are no `keys' as such for accessing individual results, and the \texttt{t2historyfile} works a little differently.  An array containing the data in each column can be accessed by specifying the column name, for example:
+
+\begin{verbatim}
+ct = t2historyfile('Conx_Time_Series')
+qh = ct['HeatFlow']
 \end{verbatim}
 
 The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:historyfile_properties}.
@@ -340,6 +347,7 @@ The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:his
       \hline
       \textbf{Property} & \textbf{Type} & \textbf{Description}\\
       \hline
+      \texttt{column\_name} & list & column headings\\
       \texttt{key\_name} & list & names of keys\\
       \texttt{num\_times} & integer & number of times\\
       \texttt{num\_columns} & integer & number of data columns\\

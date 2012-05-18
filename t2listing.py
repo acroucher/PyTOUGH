@@ -1010,7 +1010,9 @@ class t2historyfile(object):
     keytype=property(get_keytype)
 
     def __repr__(self):
-        return 'History results for '+str(self.num_keys)+' '+self.keytype+'s at '+str(self.num_times)+' times'
+        if self._nkeys>0: nkeystr=str(self.num_keys)
+        else: nkeystr='summed'
+        return 'History results for '+nkeystr+' '+self.keytype+'s at '+str(self.num_times)+' times'
 
     def __getitem__(self,key):
         """Returns results for a given key value, in the form of a dictionary with keys corresponding to the
@@ -1018,14 +1020,20 @@ class t2historyfile(object):
         has the time appended as its third element, in which case the dictionary values are just single floating
         point values for each column."""
         if self.num_rows>0:
-            if not isinstance(key,tuple): key=(key,)
-            if key in self.keys:
-                keydata=self._data[self._keyrows[key]]
-                return dict([(colname,keydata[:,icol]) for icol,colname in enumerate(self.column_name)])
-            elif key in self._row:
-                row=self._data[self._row[key]]
-                return dict([(colname,row[icol]) for icol,colname in enumerate(self.column_name)])
-            else: return None
+            if self._nkeys>0:
+                if not isinstance(key,tuple): key=(key,)
+                if key in self.keys:
+                    keydata=self._data[self._keyrows[key]]
+                    return dict([(colname,keydata[:,icol]) for icol,colname in enumerate(self.column_name)])
+                elif key in self._row:
+                    row=self._data[self._row[key]]
+                    return dict([(colname,row[icol]) for icol,colname in enumerate(self.column_name)])
+                else: return None
+            else: # no keys (e.g. TOUGH+ COFT/GOFT)
+                try:
+                    icol=self.column_name.index(key)
+                    return self._data[:,icol]
+                except ValueError: return None
         else: return None
 
     def read(self,filename):
@@ -1049,10 +1057,12 @@ class t2historyfile(object):
     def detect_simulator(self,header):
         """Detects simulator (TOUGH2 or TOUGH2_MP) from header line."""
         if 'OFT' in header: self.simulator='TOUGH2_MP'
+        elif header.startswith('Time ['): self.simulator='TOUGH+'
         else: self.simulator='TOUGH2'
         internal_fns=['setup_headers','read_data']
+        simname=self.simulator.replace('+','plus')
         for fname in internal_fns:
-            fname_sim=fname+'_'+self.simulator
+            fname_sim=fname+'_'+simname
             setattr(self,fname,getattr(self,fname_sim))
         
     def setup_headers_TOUGH2(self,filename,header):
@@ -1107,6 +1117,28 @@ class t2historyfile(object):
             self.key_start.append(self.col_start[0])
             self.time_pos.append(self.key_start[0])
 
+    def setup_headers_TOUGHplus(self,filename,header):
+        """Sets up keys and column headings from given filename and header line, for TOUGH+ output."""
+        headers=header.strip().split('-')
+        if filename.endswith('OFT') and len(filename)>=4: self.type=filename[-4:].strip()
+        elif '_Time_Series' in filename:
+            filetype={'Elem_Time_Series':'FOFT','Conx_Time_Series':'COFT','SS_Time_Series':'GOFT'}
+            for key in filetype.keys():
+                if key in filename:
+                    self.type=filetype[key]
+                    break
+        else: self.type=None
+        if self.type=='FOFT':
+            self.time_index=1
+            self._nkeys=1
+        else:
+            self.time_index=0
+            self._nkeys=0
+        cols=headers[self._nkeys+1:]
+        from re import sub
+        cols=[sub('\[.*\]','',col).strip() for col in cols] # remove units
+        self.column_name=cols
+
     def read_data_TOUGH2(self,configured):
         """Reads in the data, for TOUGH2 output."""
         self._file.seek(0)
@@ -1139,26 +1171,54 @@ class t2historyfile(object):
         def get_vals(line):
             start=self.col_start+[len(line)] # allow for lines of different lengths
             return [fortran_float(line[start[i]:start[i+1]]) for i in xrange(self.num_columns)]
-        line=self._file.readline()
-        while not line.strip(): line=self._file.readline() # skip any blanks
+        lines=self._file.readlines()
         last_time=None
         from copy import copy
         otherfile_keys=copy(self.keys)
-        while line:
-            time=get_time(line)
-            key=get_key(line)
-            vals=get_vals(line)
-            if (not configured) and (time<>last_time): self.times.append(time)
-            last_time=time
-            if not (key in otherfile_keys):
-                self.row_name.append(key+(time,))
-                if not key in self.keys:
-                    self._keyrows[key]=[]
-                    self.keys.append(key)
-                self._keyrows[key].append(self._rowindex)
+        for line in lines:
+            if line.strip():
+                time=get_time(line)
+                key=get_key(line)
+                vals=get_vals(line)
+                if (not configured) and (time<>last_time): self.times.append(time)
+                last_time=time
+                if not (key in otherfile_keys):
+                    self.row_name.append(key+(time,))
+                    if not key in self.keys:
+                        self._keyrows[key]=[]
+                        self.keys.append(key)
+                    self._keyrows[key].append(self._rowindex)
+                    self._data.append(vals)
+                    self._rowindex+=1
+
+    def read_data_TOUGHplus(self,configured):
+        """Reads in the data, for TOUGH+ output."""
+        lines=self._file.readlines()
+        if self.type=='FOFT': 
+            for line in lines:
+                items=line.strip().split(',')
+                time=fortran_float(items[1])
+                self.times.append(time)
+                nc1=self.num_columns+1
+                nsets=(len(items)-2)/nc1
+                for i in xrange(nsets):
+                    setvals=items[2+i*nc1:2+(i+1)*nc1]
+                    key=(int(setvals[0]),)
+                    if key[0]>0:
+                        vals=[fortran_float(val) for val in setvals[1:]]
+                        self.row_name.append(key+(time,))
+                        if not key in self.keys:
+                            self._keyrows[key]=[]
+                            self.keys.append(key)
+                        self._keyrows[key].append(self._rowindex)
+                        self._data.append(vals)
+                        self._rowindex+=1
+        else:
+            for line in lines:
+                vals=[fortran_float(val) for val in line.strip().split()]
+                time=vals.pop(0)
+                self.times.append(time)
                 self._data.append(vals)
-                self._rowindex+=1
-            line=self._file.readline()
 
     def finalize_data(self):
         self._data=np.array(self._data,float64)
