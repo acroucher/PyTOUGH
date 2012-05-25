@@ -120,9 +120,11 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{block\_name\_containing\_point} & string & name of block containing specified point\\
   \texttt{check} & Boolean & checks grid for errors (and optionally fixes them)\\ 
   \texttt{column\_boundary\_nodes} & list & nodes around the outer boundary of a group of columns\\ 
+  \texttt{column\_bounds} & list & bounding rectangle around a list of columns\\ 
   \texttt{column\_containing\_point} & column & column containing specified horizontal point\\ 
   \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
   \texttt{column\_name} & string & column name of a block name\\ 
+  \texttt{column\_quadtree} & quadtree & quadtree structure for searching columns\\ 
   \texttt{columns\_in\_polygon} & list & columns inside a specified polygon (or rectangle)\\ 
   \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
   \texttt{delete\_column} & -- & deletes a column from the grid\\ 
@@ -218,7 +220,7 @@ Gives the name of the block corresponding to the specified layer and column name
   Name of layer and column (the widths of these strings are determined by the grid's naming convention).
 \end{itemize}
 
-\subsubsection{\texttt{block\_name\_containing\_point(\emph{pos})}}
+\subsubsection{\texttt{block\_name\_containing\_point(\emph{pos}, \emph{qtree}=None)}}
 
 Gives the name of the block containing a specified 3-D position in the grid (returns \texttt{None} if the point lies outside the grid).
 
@@ -226,6 +228,8 @@ Gives the name of the block containing a specified 3-D position in the grid (ret
 \begin{itemize}
 \item \textbf{pos}: \texttt{np.array}\\
   Position of point in 3-D
+\item \textbf{qtree}: \texttt{quadtree}\\
+  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
 \end{itemize}
 
 \subsubsection{\texttt{check(\emph{fix}=False,\emph{silent}=False)}}
@@ -250,6 +254,16 @@ Returns the nodes around the outer boundary of a list of columns.  The list is o
   The list of columns for which the boundary is required.
 \end{itemize}
 
+\subsubsection{\texttt{column\_bounds(\emph{columns})}}
+
+Returns a bounding rectangle around a list of columns.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{columns}: list\\
+  The list of columns for which the bounds are required.
+\end{itemize}
+
 \subsubsection{\texttt{column\_containing\_point(\emph{pos}, \emph{columns}=None, \emph{guess}=None, \emph{bounds}=None,\\
 \emph{qtree}=None)}}
 
@@ -266,7 +280,7 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
  \item \textbf{bounds}: list of \texttt{np.array} (or \texttt{None})\\
   Polygon or rectangle representing e.g. the boundary of the grid: points outside this polygon will always return \texttt{None}.  If the polygon has only two points, it will be interpreted as a rectangle [bottom left, top right].
  \item \textbf{qtree}: \texttt{quadtree} \\
-   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = quadtree(rectangle,columns)}, where \texttt{rectangle} is a bounding rectangle around the nodes of the columns to be searched (i.e. a list containing two arrays: [bottom left, top right]), and \texttt{columns} is the list of \texttt{column} objects to be searched.
+   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = geo.column\_quadtree(columns)}, where \texttt{columns} is the list of \texttt{column} objects to be searched.
 \end{itemize}
 
 \subsubsection{\texttt{column\_mapping(\emph{geo})}}
@@ -287,6 +301,16 @@ Gives the name of the column corresponding to the specified block name, accordin
 \begin{itemize}
 \item \textbf{block\_name}: string\\
   Block name.
+\end{itemize}
+
+\subsubsection{\texttt{column\_quadtree(\emph{columns}=None)}}
+
+Returns a quadtree structure for fast searching of grid columns, to find which column a given point lies in.  This can then be passed into various other \texttt{mulgrid} methods that do such searching, e.g. \texttt{block\_name\_containing\_point()} or \texttt{well\_values}, to speed them up (useful for large grids).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{columns}: list (or \texttt{None})\\
+  A list of columns in the grid, specifying the search area.  This parameter can be used to further speed searching if it is only necessary to search columns in a defined area.  If \texttt{None}, the search area is the whole grid (all columns).
 \end{itemize}
 
 \subsubsection{\texttt{columns\_in\_polygon(\emph{polygon})}}
@@ -504,7 +528,7 @@ geo.layer_plot(-500.,t,`Temperature',`$^o$C', contours=np.arange(100,200,25))
 
 plots the variable \texttt{t} at elevation -500 m over the grid, with the values as Temperature ($^{\circ}$C), and with contours drawn from 100$^o$C to 200$^o$C with a contour interval of 25$^o$C.
 
-\subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False})}}
+\subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False}, \emph{qtree}=None)}}
 
 Returns values of a specified variable along an arbitrary line through the grid.  The start and end points of the line (\texttt{start} and \texttt{end}) are 3-element lists or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
 
@@ -520,6 +544,8 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
   Number of segments the line is divided up into (default 100).
 \item \textbf{coordinate}: integer or Boolean\\
   If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0,1 or 2) values.
+\item \textbf{qtree}: \texttt{quadtree}\\
+  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
 \end{itemize}
 
 \subsubsection{\texttt{line\_plot(\emph{start}=None, \emph{end}=None, \emph{variable}, \emph{variable\_name}=None,\\
@@ -613,7 +639,7 @@ If the \texttt{pest} parameter is set to \texttt{True}, the PEST parameter estim
   Set \texttt{True} to use the PEST parameter estimation software to perform the optimization.
 \end{itemize}
 
-\subsubsection{\texttt{polyline\_values(\emph{polyline}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False})}}
+\subsubsection{\texttt{polyline\_values(\emph{polyline}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False}, \emph{qtree}=None)}}
 
 Returns values of a specified variable along an arbitrary polyline through the grid, defined as a list of 3-element lists or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
 
@@ -629,6 +655,8 @@ The routine returns a tuple of two arrays (\texttt{l},\texttt{v}), the first (\t
   Number of segments the line is divided up into (default 100).
 \item \textbf{coordinate}: integer or Boolean\\
   If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0, 1 or 2) values.
+\item \textbf{qtree}: \texttt{quadtree}\\
+  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
 \end{itemize}
 
 \subsubsection{\texttt{read(\emph{filename})}}
@@ -827,7 +855,7 @@ geo.translate([10.e3,0.0,-1000.0])
 translates the grid \texttt{geo} by 10 km in the \emph{x} direction and down 1 km in the \emph{z} direction.
 
 \subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False}, \\
-    \emph{deviations}=\texttt{False})}}
+    \emph{deviations}=\texttt{False},\emph{qtree}=None)}}
 
 Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions between layer centres or along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).  If \texttt{deviations} is \texttt{True}, values will be returned at the nodes of the well track, instead of at grid layer centres.
 
@@ -845,6 +873,8 @@ The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\t
   Set to \texttt{True} if elevation rather than measured depth is to be returned.
 \item \textbf{deviations}: Boolean\\
   Set to \texttt{True} to return values at deviation nodees, rather than intersections of layer centres with the well track.
+\item \textbf{qtree}: \texttt{quadtree}\\
+  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
 \end{itemize}
 
 \subsubsection{\texttt{write(\emph{filename}=`')}}

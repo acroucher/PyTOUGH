@@ -584,8 +584,13 @@ class mulgrid(object):
         return all([(blkname[0:3]==blkname[0:3].rjust(3)) for blkname in self.block_name_list])
     right_justified_names=property(get_right_justified_names)
 
+    def column_bounds(self,columns):
+        """Returns horizontal bounding box for a list of columns."""
+        nodes=self.nodes_in_columns(columns)
+        return bounds_of_points([node.pos for node in nodes])
+
     def get_bounds(self):
-        """Returns horizontal bounding box for grid"""
+        """Returns horizontal bounding box for grid."""
         return bounds_of_points([node.pos for node in self.nodelist])
     bounds=property(get_bounds)
 
@@ -738,6 +743,15 @@ class mulgrid(object):
         if len(polygon)==2: return [node for node in self.nodelist if in_rectangle(node.pos,polygon)]
         else: return [node for node in self.nodelist if in_polygon(node.pos,polygon)]
 
+    def column_quadtree(self,columns=None):
+        """Returns a quadtree structure for searching the grid for columns containing particular points.  If the columns
+        parameter is specified, a quadtree is returned just for those columns, otherwise it is for all columns."""
+        if columns==None:
+            bounds=self.bounds
+            columns=self.columnlist
+        else: bounds=self.columns_bounds(columns)
+        return quadtree(bounds,columns)
+            
     def get_node_kdtree(self):
         """Returns a kd-tree structure for searching the grid for particular nodes."""
         from scipy.spatial import cKDTree
@@ -1340,10 +1354,10 @@ class mulgrid(object):
         if column_mapping: return (mapping,col_mapping)
         else: return mapping
 
-    def block_name_containing_point(self,pos):
+    def block_name_containing_point(self,pos,qtree=None):
         """Returns name of grid block containing 3D point (or None if the point is outside the grid)."""
         blkname=None
-        col=self.column_containing_point(pos[0:2])
+        col=self.column_containing_point(pos[0:2],qtree=qtree)
         if col:
             layer=self.layer_containing_elevation(pos[2])
             if layer and (col.surface>layer.bottom): blkname=self.block_name(layer.name,col.name)
@@ -1594,7 +1608,7 @@ class mulgrid(object):
             plt.title(title)
             if loneplot: plt.show()
 
-    def line_values(self,start,end,variable,divisions=100,coordinate=False):
+    def line_values(self,start,end,variable,divisions=100,coordinate=False,qtree=None):
         """Gets values of variable along specified line through geometry.  Returns two arrays for
         distance along line (or specified coordinate) and value at each position."""
         if isinstance(start,list): start=np.array(start)
@@ -1606,19 +1620,19 @@ class mulgrid(object):
                 xi=float(i)/divisions
                 pos=(1.-xi)*start+xi*end
                 dist=xi*line_length
-                blkname=self.block_name_containing_point(pos)
+                blkname=self.block_name_containing_point(pos,qtree=qtree)
                 if blkname:
                     if coordinate: x.append(pos[coordinate])
                     else: x.append(dist)
                     y.append(variable[self.block_name_index[blkname]])
         return np.array(x),np.array(y)
 
-    def polyline_values(self,polyline,variable,divisions=100,coordinate=False):
+    def polyline_values(self,polyline,variable,divisions=100,coordinate=False,qtree=None):
         """Gets values of a variable along a specified polyline, returning two arrays for distance along the polyline and value."""
         x,y=[],[]
         for i in xrange(len(polyline)-1):
             start,end=polyline[i],polyline[i+1]
-            xi,yi=self.line_values(start,end,variable,divisions,coordinate)
+            xi,yi=self.line_values(start,end,variable,divisions,coordinate,qtree=qtree)
             if i>0:
                 xi=xi[1:]; yi=yi[1:]
             if not coordinate:
@@ -1627,7 +1641,7 @@ class mulgrid(object):
             y+=list(yi)
         return np.array(x),np.array(y)
 
-    def well_values(self,well_name,variable,divisions=1,elevation=False,deviations=False):
+    def well_values(self,well_name,variable,divisions=1,elevation=False,deviations=False,qtree=None):
         """Gets values of a variable down a specified well, returning distance down the well 
         (or elevation) and value.  Vertical coordinates can be taken from the nodes of the
         well deviations, or from the grid geometry layer centres (if deviations is False)."""
@@ -1641,7 +1655,7 @@ class mulgrid(object):
                 for layer in self.layerlist:
                     p=well.elevation_pos(layer.centre)
                     if p<>None: polyline.append(p)
-            return self.polyline_values(polyline,variable,divisions,coordinate)
+            return self.polyline_values(polyline,variable,divisions,coordinate,qtree=qtree)
         else: return None
             
     def line_plot(self,start=None,end=None,variable=None,variable_name=None,unit=None,divisions=100,plt=None,subplot=111,title='',xlabel='distance (m)'):
