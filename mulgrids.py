@@ -1388,7 +1388,11 @@ class mulgrid(object):
             crossings=line_polygon_intersections(polygon,line)
             if crossings: track.append(tuple([col]+crossings))
         sortindex=np.argsort([norm(t[1]-line[0]) for t in track])
-        return [track[i] for i in sortindex]
+        track=[track[i] for i in sortindex]
+        # add start and end points if they are inside the grid:
+        if len(track[0])<3: track[0]=(track[0][0],line[0],track[0][1])
+        if len(track[-1])<3: track[-1]=(track[-1][0],track[-1][1],line[1])
+        return track
 
     def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),connections=None,colourbar_limits=None,plot_limits=None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
