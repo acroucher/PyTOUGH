@@ -91,7 +91,8 @@ class quadtree(object):
             if elt.contains_point(pos): return elt
             done.append(elt)
             for nbr in elt.neighbour:
-                if rectangles_intersect(nbr.bounding_box,self.bounds) and not ((nbr in done) or (nbr in todo)):
+                if rectangles_intersect(nbr.bounding_box,self.bounds) and nbr in self.elements and \
+                        not ((nbr in done) or (nbr in todo)):
                     todo.append(nbr)
         return None
     def search(self,pos):
@@ -2111,7 +2112,6 @@ class mulgrid(object):
             nodes=self.nodes_in_columns(columns)
             node_index=dict([(node.name,i) for i,node in enumerate(nodes)])
             num_nodes=len(nodes)
-            bbox=bounds_of_points([node.pos for node in nodes])
             # assemble least squares FEM fitting system:
             from scipy import sparse
             A=sparse.lil_matrix((num_nodes,num_nodes))
@@ -2119,7 +2119,7 @@ class mulgrid(object):
             guess=None
             if grid_boundary: bounds=self.boundary_polygon
             else: bounds=None
-            qtree=quadtree(bbox,columns)
+            qtree=self.column_quadtree(columns)
             import sys
             nd=len(data)
             for idata,d in enumerate(data):
