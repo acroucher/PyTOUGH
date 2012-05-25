@@ -749,7 +749,7 @@ class mulgrid(object):
         if columns==None:
             bounds=self.bounds
             columns=self.columnlist
-        else: bounds=self.columns_bounds(columns)
+        else: bounds=self.column_bounds(columns)
         return quadtree(bounds,columns)
             
     def get_node_kdtree(self):
