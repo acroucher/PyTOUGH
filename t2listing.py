@@ -1069,15 +1069,20 @@ class t2historyfile(object):
         """Sets up keys and column headings from given filename and header line, for TOUGH2 output."""
         if filename.endswith('OFT') and len(filename)>=4: self.type=filename[-4:].strip()
         else: self.type=None
+        self.time_index=1
+        self._nkeys=1
         items=header.strip().split(',')
         if items[-1]=='': del items[-1] # often an extra comma on the end of the lines
         items=items[3:]
-        inti=0
-        for item in items:
-            try: inti=int(item)
+        int_index=0
+        for i,item in enumerate(items):
+            try:
+                int_item=int(item)
+                int_index=i
+                break
             except: pass
-        if inti==0: ncols=len(items)
-        else: ncols=inti
+        if int_index==0: ncols=len(items)
+        else: ncols=int_index
         self.column_name=range(ncols)
 
     def setup_headers_TOUGH2_MP(self,filename,header):
