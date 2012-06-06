@@ -475,7 +475,7 @@ class t2listing(file):
         while line[pos]==' ' and pos>indexpos: pos-=1
         while line[pos]<>' ' and pos>indexpos: pos-=1
         for k in xrange(nkeys):
-            while line[pos]==' ' and pos>=keylength: pos-=1
+            while not line[pos].isdigit() and pos>=keylength: pos-=1
             pos-=(keylength-1)
             if valid_blockname(line[pos:pos+keylength]):
                 keypos.append(pos)
