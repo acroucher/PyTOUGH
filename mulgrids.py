@@ -62,11 +62,15 @@ class quadtree(object):
     """Quadtree for spatial searching in 2D grids."""
     def __init__(self,bounds,elements,parent=None):
         self.parent=parent
-        if self.parent: self.generation=self.parent.generation+1
-        else: self.generation=0
         self.bounds=bounds
         self.elements=elements
         self.child=[]
+        if self.parent:
+            self.generation=self.parent.generation+1
+            self.all_elements=self.parent.all_elements
+        else:
+            self.generation=0
+            self.all_elements=elements
         if self.num_elements>1:
             rects=sub_rectangles(self.bounds)
             rect_elements=[[],[],[],[]]
@@ -91,8 +95,8 @@ class quadtree(object):
             if elt.contains_point(pos): return elt
             done.append(elt)
             for nbr in elt.neighbour:
-                if rectangles_intersect(nbr.bounding_box,self.bounds) and nbr in self.elements and \
-                        not ((nbr in done) or (nbr in todo)):
+                if rectangles_intersect(nbr.bounding_box,self.bounds) and nbr in self.all_elements \
+                        and not ((nbr in done) or (nbr in todo)):
                     todo.append(nbr)
         return None
     def search(self,pos):
