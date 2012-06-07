@@ -70,7 +70,7 @@ class quadtree(object):
             self.all_elements=self.parent.all_elements
         else:
             self.generation=0
-            self.all_elements=elements
+            self.all_elements=set(elements)
         if self.num_elements>1:
             rects=sub_rectangles(self.bounds)
             rect_elements=[[],[],[],[]]
@@ -94,9 +94,8 @@ class quadtree(object):
             elt=todo.pop(0)
             if elt.contains_point(pos): return elt
             done.append(elt)
-            for nbr in elt.neighbour:
-                if rectangles_intersect(nbr.bounding_box,self.bounds) and nbr in self.all_elements \
-                        and not ((nbr in done) or (nbr in todo)):
+            for nbr in elt.neighbour & self.all_elements:
+                if rectangles_intersect(nbr.bounding_box,self.bounds) and not ((nbr in done) or (nbr in todo)):
                     todo.append(nbr)
         return None
     def search(self,pos):
