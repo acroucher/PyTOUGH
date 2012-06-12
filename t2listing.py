@@ -24,7 +24,7 @@ class listingtable(object):
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
     e.g. table[i] returns the ith row (as a dictionary), table[rowname] returns the row with the specified name,
     and table[colname] returns the column with the specified name."""
-    def __init__(self,cols,rows,row_format=None,row_line=None,num_keys=1):
+    def __init__(self,cols,rows,row_format=None,row_line=None,num_keys=1,allow_reverse_keys=False):
         """The row_format parameter is a dictionary with three keys, 'key','index' and 'values'.  These contain the positions,
         in each row of the table, of the start of the keys, index and data fields.  The row_line parameter is a list containing,
         for each row of the table, the number of lines before it in the listing file, from the start of the table.  This is
@@ -34,6 +34,7 @@ class listingtable(object):
         self.row_format=row_format
         self.row_line=row_line
         self.num_keys=num_keys
+        self.allow_reverse_keys=allow_reverse_keys
         self._col=dict([(c,i) for i,c in enumerate(cols)])
         self._row=dict([(r,i) for i,r in enumerate(rows)])
         self._data=np.zeros((len(rows),len(cols)),float64)
@@ -45,6 +46,11 @@ class listingtable(object):
             elif key in self.row_name:
                 rowindex=self._row[key]
                 return dict(zip(['key']+self.column_name,[self.row_name[rowindex]]+list(self._data[rowindex,:])))
+            elif len(key)>1 and self.allow_reverse_keys:
+                revkey=key[::-1] # try reversed key for multi-key tables
+                if revkey in self.row_name:
+                    rowindex=self._row[revkey]
+                    return dict(zip(['key']+self.column_name,[self.row_name[rowindex][::-1]]+list(-self._data[rowindex,:])))
             else: return None 
     def __setitem__(self,key,value):
         if isinstance(key,int): self._data[key,:]=value
@@ -515,7 +521,8 @@ class t2listing(file):
                     rows.append(keyval)
                     line=self.readline()
                 row_format={'values':[start]}
-                self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys)
+                allow_rev=tablename=='connection'
+                self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys,allow_reverse_keys=allow_rev)
                 self.readline()
             else: print 'Error parsing '+tablename+' table keys: table not created.'
         else:
@@ -586,7 +593,8 @@ class t2listing(file):
                 else: done=True
             numpos.append(len(line))
             row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
-            self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys)
+            allow_rev=tablename=='connection'
+            self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys,allow_reverse_keys=allow_rev)
         else: print 'Error parsing '+tablename+' table keys: table not created.'
 
     def read_header_AUTOUGH2(self):
