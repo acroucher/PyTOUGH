@@ -736,21 +736,29 @@ class t2listing(file):
             for (tspec,key,h) in selection:  # convert keys to indices as necessary, and expand table names
                 tablename=tablename_from_specification(tspec)
                 if isinstance(key,int): index=key
-                else: index=tables[tablename]._row[key]
-                if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
-                ishort=None
-                short_keyword=tspec[0].upper()+'SHORT'
-                if short_keyword in short_types:
-                    if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
-                converted_selection.append((tablename,index,ishort,h))
+                else:
+                    index,reverse=None,False
+                    if key in tables[tablename].row_name: index=tables[tablename]._row[key]
+                    elif len(key)>1 and tables[tablename].allow_reverse_keys:
+                        revkey=key[::-1]
+                        if revkey in tables[tablename].row_name:
+                            index=tables[tablename]._row[revkey]
+                            reverse=True
+                if index:
+                    if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
+                    ishort=None
+                    short_keyword=tspec[0].upper()+'SHORT'
+                    if short_keyword in short_types:
+                        if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
+                    converted_selection.append((tablename,index,ishort,h,reverse))
             tables=list(set([sel[0] for sel in converted_selection]))
             # need to retain table order as in the file:
             tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
-            tagselection=[(tname,i,ishort,h,sel_index) for sel_index,(tname,i,ishort,h) in enumerate(converted_selection)]
+            tagselection=[(tname,i,ishort,h,rev,sel_index) for sel_index,(tname,i,ishort,h,rev) in enumerate(converted_selection)]
             tableselection=[]
             shortindex={}
             for table in tables:
-                tselect=[(i,ishort,h,sel_index) for (tname,i,ishort,h,sel_index) in tagselection if tname==table]
+                tselect=[(i,ishort,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in tagselection if tname==table]
                 tselect.sort()
                 tableselection.append((table,tselect))
             return tableselection
@@ -780,14 +788,15 @@ class t2listing(file):
                         fmt=self._table[tname].row_format
                         index=0
                         line=self.readline()
-                        for (itemindex,ishort,colname,sel_index) in tselect:
+                        for (itemindex,ishort,colname,reverse,sel_index) in tselect:
                             lineindex=[itemindex,ishort][is_short]
                             if lineindex<>None:
                                 for k in xrange(lineindex-index): line=self.readline()
                                 index=lineindex
                                 vals=self.read_table_line(line,ncols,fmt)
                                 valindex=self._table[tname]._col[colname]
-                                hist[sel_index].append(vals[valindex])
+                                sgn=[1.,-1.][reverse]
+                                hist[sel_index].append(sgn*vals[valindex])
                     last_tname=tname
 
         self._index=old_index
