@@ -550,6 +550,7 @@ class t2listing(file):
             longest_line=line
             rowdict={}
             count,index=0,-1
+            def count_read(count): return self.readline(),count+1
             while line.strip():
                 keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
                 if len(keyval)>1: keyval=tuple(keyval)
@@ -558,13 +559,13 @@ class t2listing(file):
                 try: index=int(indexstr)-1
                 except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
                 rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
-                line=self.readline(); count+=1
+                line,count=count_read(count)
                 if line.startswith('\f'):
-                    line=self.readline()
+                    line,count=count_read(count)
                     if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
                     else: # extra headers in the middle of TOUGH2 listings
-                        while self.readline().strip(): count+=1
-                        line=self.readline(); count+=2
+                        while line.strip(): line,count=count_read(count)
+                        line,count=count_read(count)
                 if len(line.strip())>len(longest_line): longest_line=line
             # sort rows (needed for TOUGH2_MP):
             indices=rowdict.keys(); indices.sort()
