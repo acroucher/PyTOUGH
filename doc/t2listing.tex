@@ -166,7 +166,8 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{selection}: list of tuples\\
-  Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing table type (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the block/ connection/ generator name and the table column name.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)  For history of additional element tables in TOUGH+ results, use `e1', `e2' etc. instead of `e'.
+  Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing \textbf{table type} (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the \textbf{block/ connection/ generator name} and the \textbf{table column name}.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)  For history of additional element tables in TOUGH+ results, use `e1', `e2' etc. instead of `e'.  Note that, as for listing tables, connection and generator names (or `keys') are specified as two-element tuples (see Table \ref{tb:listing_table_keys}).
+
 \item \textbf{short}: Boolean\\
   Whether short output (AUTOUGH2 only) is to be included in the history results- default is \texttt{True}.
 \end{itemize}
@@ -175,10 +176,10 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
 
 \begin{verbatim}
 [(tt,temp),(tq,q),(tg,g)] = lst.history([(`e',`AR210',`Temperature'),
-(`c',(`AB300',`AC300'),`Mass flow'),(`g',(`BO110',`BH110'),`Generation rate')])
+(`c',(`AB300',`AC300'),`Mass flow'),(`g',(`BR110',`SO  1'),`Generation rate')])
 \end{verbatim}
 
-returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \texttt{(tq,q)} and \texttt{(tg,g)}, giving the times and values of temperature at block `AR210', mass flow at the connection between blocks `AB300' and `AC300', and generation rate in the generator `BH110' in block `BO110' respectively.
+returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \texttt{(tq,q)} and \texttt{(tg,g)}, giving the times and values of temperature at block `AR210', mass flow at the connection between blocks `AB300' and `AC300', and generation rate in the generator `SO  1' in block `BR110' respectively.
 
 \subsubsection{\texttt{last()}}
 
