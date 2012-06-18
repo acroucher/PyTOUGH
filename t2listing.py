@@ -744,7 +744,7 @@ class t2listing(file):
                         if revkey in tables[tablename].row_name:
                             index=tables[tablename]._row[revkey]
                             reverse=True
-                if index:
+                if index<>None:
                     if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
                     ishort=None
                     short_keyword=tspec[0].upper()+'SHORT'
