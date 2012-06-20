@@ -2021,15 +2021,21 @@ class mulgrid(object):
             arrays['Block']['Volume'].SetValue(iblk,self.block_volume(lay,col))
         return arrays
     vtk_data=property(get_vtk_data)
-        
+
+    def filename_base(self,filename=''):
+        """Returns base of filename (with extension removed).  If specified filename is blank,
+        the geometry filename property is used; if this is also blank, a default is used."""
+        from os.path import splitext
+        default_filename='geometry.dat'
+        if filename=='':
+            if self.filename=='': filename=default_filename
+            else: filename=self.filename
+        base,ext=splitext(filename)
+        return base
+
     def write_bna(self,filename=''):
         """Writes grid to Atlas BNA file."""
-        from os.path import splitext
-        if filename=='':
-            if self.filename=='': filename='geometry.bna'
-            else:
-                base,ext=splitext(self.filename)
-                filename=base+'.bna'
+        filename=self.filename_base(filename)+'.bna'
         f=open(filename,'w')
         headerfmt='"%3s","",%1d\n'
         nodefmt='%10.2f,%10.2f\n'
@@ -2044,15 +2050,9 @@ class mulgrid(object):
         """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D, with the specified filename,
         for visualisation with VTK."""
         from vtk import vtkXMLUnstructuredGridWriter
-        from os.path import splitext
-        if filename=='':
-            if self.filename=='': filename='geometry.vtu'
-            else:
-                base,ext=splitext(self.filename)
-                filename=base+'.vtu'
-        if wells:
-            base,ext=splitext(filename)
-            self.write_well_vtk(base+'_wells.vtu')
+        base=self.filename_base(filename)
+        filename=base+'.vtu'
+        if wells: self.write_well_vtk(filename)
         if arrays==None: arrays=self.vtk_data
         vtu=self.get_vtk_grid(arrays)
         writer=vtkXMLUnstructuredGridWriter()
@@ -2093,12 +2093,7 @@ class mulgrid(object):
 
     def write_well_vtk(self,filename=''):
         from vtk import vtkXMLUnstructuredGridWriter
-        if filename=='':
-            if self.filename=='': filename='geometry_wells.vtu'
-            else:
-                from os.path import splitext
-                base,ext=splitext(self.filename)
-                filename=base+'_wells.vtu'
+        filename=self.filename_base(filename)+'_wells.vtu'
         vtu=self.get_well_vtk_grid()
         writer=vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
