@@ -135,6 +135,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{delete\_orphan\_wells} & -- & deletes any orphaned wells from the grid\\ 
   \texttt{delete\_well} & -- & deletes a well from the grid\\ 
   \texttt{empty} & --  & empties contents of grid\\
+  \texttt{export\_surfer} & -- & exports to various files on disk for visualization in Surfer\\ 
   \texttt{fit\_surface} & -- & fits column surface elevations from data\\ 
   \texttt{from\_gmsh} & \texttt{mulgrid} & imports a grid from a \texttt{gmsh} mesh\\ 
   \texttt{layer\_containing\_elevation} & layer & layer containing specified vertical elevation\\
@@ -384,6 +385,29 @@ Deletes the well with the specified name from the grid.
 \subsubsection{\texttt{empty()}}
 
 Empties the grid of all its nodes, columns, layers, wells and connections.  Other properties are unaffected.
+
+\subsubsection{\texttt{export\_surfer(\emph{filename}='', \emph{aspect}=8.0, \emph{left}=0.0)}}
+
+Exports the grid to files on disk useful for visualization in Surfer.  Six files are written out:
+
+\begin{itemize}
+\item an Atlas BNA file (\texttt{filename.bna}) representing the grid columns
+\item a CSV file (\texttt{filename\_column\_names.csv}) containing the column names
+\item a Golden Software blanking file (\texttt{filename\_layers.bln}) file representing the grid layers
+\item a CSV file (\texttt{filename\_layer\_bottom\_elevations.csv}) containing the bottom elevations of the layers
+\item a CSV file (\texttt{filename\_layer\_centres.csv}) containing the elevations of the centres of the layers
+\item a CSV file (\texttt{filename\_layer\_names.csv}) containing the names of the layers
+\end{itemize}
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Base name for the exported files.  If it is not specified, the \texttt{filename} property of the \texttt{mulgrid} object itself is used (unless this is also blank, in which case a default name is used), with its extension removed.
+\item \textbf{aspect}: float\\
+  Aspect ratio for the layer plot, so that the width is the total height of the grid divided by \texttt{aspect} (default 8.0).
+\item \textbf{left}: float\\
+  Coordinate value of the left hand side of the layer plot (default zero).
+\end{itemize}
 
 \subsubsection{\texttt{fit\_surface(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
     \emph{grid\_boundary}=False, \emph{layer\_snap}=0.0)}}

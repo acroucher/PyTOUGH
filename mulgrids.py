@@ -2034,7 +2034,7 @@ class mulgrid(object):
         return base
 
     def write_bna(self,filename=''):
-        """Writes grid to Atlas BNA file."""
+        """Writes horizontal grid to Atlas BNA file."""
         filename=self.filename_base(filename)+'.bna'
         f=open(filename,'w')
         headerfmt='"%3s","",%1d\n'
@@ -2044,7 +2044,52 @@ class mulgrid(object):
             for node in col.node+[col.node[0]]:
                 f.write(nodefmt%(node.pos[0],node.pos[1]))
         f.close()
-    def export_surfer(self,filename=''): self.write_bna(filename) # for backwards compatibility
+
+    def write_layer_bln(self,filename='',aspect=8.0,left=0.0):
+        """Writes layer grid to Golden Software blanking (BLN) file."""
+        filename=self.filename_base(filename)+'_layers.bln'
+        f=open(filename,'w')
+        width=(self.layerlist[1].top-self.layerlist[-1].bottom)/aspect
+        right=left+width
+        f.write('5,1\n')
+        nodefmt='%10.2f,%10.2f\n'
+        for layer in self.layerlist:
+            pts=[(left,layer.top),(left,layer.bottom),(right,layer.bottom),(right,layer.top),(left,layer.top)]
+            for x,z in pts: f.write(nodefmt%(x,z))
+        f.close()
+
+    def write_bna_labels(self,filename=''):
+        """Writes label file for BNA file (containing the column names)."""
+        filename=self.filename_base(filename)+'_column_names.csv'
+        f=open(filename,'w')
+        fmt='%10.2f,%10.2f,"%s"\n'
+        for col in self.columnlist: f.write(fmt%tuple(list(col.centre)+[col.name]))
+        f.close()
+
+    def write_layer_bln_labels(self,filename='',aspect=8.0,left=0.0):
+        """Writes label files for layer BLN file (containing the bottom elevations, centres and layer names)."""
+        base=self.filename_base(filename)
+        width=(self.layerlist[1].top-self.layerlist[-1].bottom)/aspect
+        right=left+width
+        centre=left+0.5*width
+        labels=['bottom_elevation','centre','name']
+        filenames=[base+'_layer_'+label+'s.csv' for label in labels]
+        files=dict(zip(labels,[file(filename,'w') for filename in filenames]))
+        fmt=dict(zip(labels,['%10.2f,%10.2f,%10.2f\n']*2+['%10.2f,%10.2f,"%s"\n']))
+        start=dict(zip(labels,[0,1,1]))
+        for label in labels: files[label].write('"X","Y","'+label+'"\n')
+        for i,layer in enumerate(self.layerlist):
+            for label in labels:
+                vals=dict(zip(labels,[(left,layer.bottom,layer.bottom),(right,layer.centre,layer.centre),(centre,layer.centre,layer.name)]))
+                if i>=start[label]: files[label].write(fmt[label]%vals[label])
+        for f in files.values(): f.close()
+
+    def export_surfer(self,filename='',aspect=8.0,left=0.0):
+        """Writes files used for plotting geometry in Surfer."""
+        self.write_bna(filename)
+        self.write_bna_labels(filename)
+        self.write_layer_bln(filename,aspect,left)
+        self.write_layer_bln_labels(filename,aspect,left)
 
     def write_vtk(self,filename='',arrays=None,wells=False):
         """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D, with the specified filename,
