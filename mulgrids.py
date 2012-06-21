@@ -361,6 +361,8 @@ class well(object):
     num_pos=property(get_num_pos)
     def get_num_deviations(self): return self.num_pos-1
     num_deviations=property(get_num_deviations)
+    def get_deviated(self): return self.num_deviations>1
+    deviated=property(get_deviated)
     def get_head(self): return self.pos[0]
     head=property(get_head)
     def get_bottom(self): return self.pos[-1]
@@ -385,12 +387,20 @@ class well(object):
         dpos=self.pos_depth
         if dpos[0]<=depth<=dpos[-1]: return np.interp(depth,dpos,self.pos_coordinate(2))
         else: return None
-    def elevation_pos(self,elevation):
-        """Returns 3D position in well, given an elevation."""
+    def elevation_pos(self,elevation,extend=False):
+        """Returns 3D position in well, given an elevation.  If extend is True, return extrapolated
+        positions for elevations below the bottom of the well."""
         poscoord=[self.pos_coordinate(i) for i in xrange(3)]
         epos=poscoord[2]
         if epos[-1]<=elevation<=epos[0]:
             return np.array([np.interp(elevation,epos[::-1],poscoord[i][::-1]) for i in xrange(3)])
+        elif elevation<epos[-1] and extend: # extrapolate last deviation:
+            pbot=self.pos[-1]
+            if self.num_pos>1: ptop=self.pos[-2]
+            else: ptop=np.array(list(pbot[0:2])+[pbot[2]+1.])
+            ebot,etop=pbot[2],ptop[2]
+            alpha=(elevation-ebot)/(etop-ebot)
+            return (1.-alpha)*pbot+alpha*ptop
         else: return None
     def depth_pos(self,depth):
         """Returns 3D position in well, given a depth."""
@@ -1656,19 +1666,24 @@ class mulgrid(object):
             y+=list(yi)
         return np.array(x),np.array(y)
 
-    def well_values(self,well_name,variable,divisions=1,elevation=False,deviations=False,qtree=None):
+    def well_values(self,well_name,variable,divisions=1,elevation=False,deviations=False,qtree=None,extend=False):
         """Gets values of a variable down a specified well, returning distance down the well 
         (or elevation) and value.  Vertical coordinates can be taken from the nodes of the
-        well deviations, or from the grid geometry layer centres (if deviations is False)."""
+        well deviations, or from the grid geometry layer centres (if deviations is False).
+        If extend is True, the well trace is extended to the bottom of the model."""
         if elevation: coordinate=2  # return coordinate 2 (i.e. z)
         else: coordinate=False
         if well_name in self.well: 
             well=self.well[well_name]
-            if deviations: polyline=well.pos
+            if deviations:
+                from copy import copy
+                polyline=copy(well.pos)
+                grid_bottom=self.layerlist[-1].bottom
+                if extend and well.bottom[2]>grid_bottom: polyline.append(well.elevation_pos(grid_bottom,extend=True))
             else:
                 polyline=[]
                 for layer in self.layerlist:
-                    p=well.elevation_pos(layer.centre)
+                    p=well.elevation_pos(layer.centre,extend=extend)
                     if p<>None: polyline.append(p)
             return self.polyline_values(polyline,variable,divisions,coordinate,qtree=qtree)
         else: return None
