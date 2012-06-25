@@ -95,6 +95,7 @@ class t2listing(file):
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
     def __init__(self,filename=None):
+        self.filename=filename
         super(t2listing,self).__init__(filename,'rU')
         self.detect_simulator()
         if self.simulator==None: print 'Could not detect simulator type.'
@@ -203,6 +204,7 @@ class t2listing(file):
         according to the simulator type."""
         self.seek(0)
         simulator={'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2','@@@@@':'TOUGH2','=====':'TOUGH+'}
+        MP=self.filename.endswith('OUTPUT_DATA') and self.readline().startswith('\f') and not ('@@@@@' in self.readline())
         line=' '
         while not ('output data after' in line or 'output after' in line or line==''): line=self.readline().lower()
         if line=='': self.simulator=None
@@ -210,15 +212,19 @@ class t2listing(file):
             self.readline()
             line=self.readline()
             linechars=line[1:6]
-            if linechars in simulator.keys(): self.simulator=simulator[linechars]
+            if linechars in simulator.keys():
+                self.simulator=simulator[linechars]
+                if self.simulator=='TOUGH2' and MP: self.simulator+='_MP'
             else: self.simulator=None
             if self.simulator:
                 # Set internal methods according to simulator type:
                 simname=self.simulator.replace('+','plus')
                 internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
-                              'read_tables','skip_to_table','read_table_line']
+                              'read_tables','skip_to_table','read_table_line','read_title']
                 for fname in internal_fns:
                     fname_sim=fname+'_'+simname
+                    # use TOUGH2 methods for TOUGH2_MP/TOUGH+ unless there are customized methods for these simulators:
+                    if simname=='TOUGH2_MP' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('_MP','')
                     if simname=='TOUGHplus' and not hasattr(self,fname_sim): fname_sim=fname_sim.replace('plus','2')
                     setattr(self,fname,getattr(self,fname_sim))
 
@@ -316,44 +322,14 @@ class t2listing(file):
         t,s=[],[]
         endfile=False
         while not endfile:
-            lf_found=self.skipto('\f',0)
-            if lf_found:
-                pos=self.tell()
-                self.skiplines(2)
-                line=self.readline()
-                if 'OUTPUT DATA AFTER' in line:
-                    self._pos.append(pos)
-                    self._fullpos.append(pos)
-                    self.seek(pos)
-                    self.read_header_TOUGH2()
-                    t.append(self.time)
-                    s.append(self.step)
-                    self.skiplines(2)
-                    self.skipto('@@@@@')
-            else: endfile=True
-        self.times=np.array(t)
-        self.steps=np.array(s)
-        self.fulltimes=np.array(t)
-        self.fullsteps=np.array(s)
-        self._short=[False for p in self._pos]
-
-    def setup_pos_TOUGHplus(self):
-        """Sets up _pos list for TOUGH+ listings, containing file position at the start of each set of results.
-        Also sets up the times and steps arrays."""
-        self.seek(0)
-        # set up pos,times, steps and short arrays:
-        self._fullpos,self._pos=[],[]
-        t,s=[],[]
-        endfile=False
-        while not endfile:
             line=' '
-            while not (line.lstrip().startswith('Output data after') or line==''): line=self.readline()
+            while not (line.lstrip().lower().startswith('output data after') or line==''): line=self.readline()
             if line<>'':
-                self.skipto('TOTAL TIME',2)
+                while not ('total time' in self.readline().lower()): pass
                 pos=self.tell()
                 self._pos.append(pos)
                 self._fullpos.append(pos)
-                self.read_header_TOUGHplus()
+                self.read_header()
                 t.append(self.time)
                 s.append(self.step)
                 self.skipto('@@@@@')
@@ -379,6 +355,7 @@ class t2listing(file):
             tablename=self.next_table()
 
     def setup_tables_TOUGH2(self):
+        self.read_title()
         self._table={}
         tablename='element'
         self.seek(self._fullpos[0])
@@ -388,7 +365,7 @@ class t2listing(file):
             tablename=self.next_table()
 
     def setup_tables_TOUGHplus(self):
-        self.read_title_TOUGHplus()
+        self.read_title()
         self._table={}
         tablename='element'
         self.seek(self._fullpos[0])
@@ -407,19 +384,19 @@ class t2listing(file):
         return self.table_type(keyword)
 
     def next_table_TOUGH2(self):
-        if self.skipto('\f',0):
-            pos=self.tell()
-            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
-                if pos>=self._fullpos[self.index+1]: return None
-            line=self.readline().strip()
-            if (line==self.title):
-                self.skiplines(3)
-                headpos=self.tell()
-                headers=tuple(self.readline().strip().split()[0:3])
-                self.seek(headpos)
-                return self.table_type(headers)
-            else: return None
-        else: return None
+        if self.title: searchstr=self.title
+        else: searchstr='KCYC' # no title to search for
+        line=' '
+        while not ((line.strip().startswith(searchstr)) or line==''): line=self.readline()
+        pos=self.tell()
+        if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
+            if pos>=self._fullpos[self.index+1]: return None
+        if self.title: self.skiplines(3)
+        else: self.skiplines(1)
+        headpos=self.tell()
+        headers=tuple(self.readline().strip().split()[0:3])
+        self.seek(headpos)
+        return self.table_type(headers)
 
     def next_table_TOUGHplus(self):
         if self.skipto('_____',0):
@@ -444,7 +421,7 @@ class t2listing(file):
 
     def skip_to_table_TOUGH2(self,tablename,last_tablename,nelt_tables):
         if last_tablename==None:
-            for i in xrange(2): self.skipto('@@@@@')
+            self.skipto('@@@@@')
             self.skip_to_nonblank()
             tname='element'
         else: tname=last_tablename
@@ -528,10 +505,38 @@ class t2listing(file):
         else:
             print 'Error parsing '+tablename+' table columns: table not created.'
 
+    def parse_table_line(self,line,start):
+        """Parses line of a table and returns starting indices of each column"""
+        numpos=[]
+        from re import finditer,escape
+        # find all decimal points:
+        pts=[match.start() for match in finditer(escape('.'), line)]+[len(line)]
+        exponential=False
+        for i,pt in enumerate(pts[:-1]):
+            nextpt=pts[i+1]
+            s=line[pt:nextpt].lower()
+            if 'e' in s: # exponential format
+                c=line[pt-2]
+                if c in [' ','-']: numstart=pt-2
+                elif c.isdigit(): numstart=pt-1
+                else: numstart=pt-1 # shouldn't normally occur
+                exponential=True
+            else: # floating point format
+                if i==0: numstart=start
+                else:
+                    pos=[p for p in [lasts.find(delim) for delim in [' ','-']] if p>0]
+                    if len(pos)>0: numstart=pts[i-1]+min(pos)
+                    elif exponential: numstart=pts[i-1]+lasts.lower().find('e')+4
+                    else: numstart=pt-1 # consecutive floats with no delimiter- can't really parse
+                exponential=False
+            numpos.append(numstart)
+            lasts=s
+        return numpos+[len(line)]
+
     def setup_table_TOUGH2(self,tablename):
         """Sets up table from TOUGH2 (or TOUGH+) listing file."""
         # Read column names (joining flow items to previous names):
-        if self.simulator=='TOUGH2': flow_headers=['RATE']
+        if self.simulator in ['TOUGH2','TOUGH2_MP']: flow_headers=['RATE']
         else: flow_headers=['Flow','Veloc']
         headline=self.readline()
         strs=headline.strip().split()
@@ -567,7 +572,7 @@ class t2listing(file):
                 except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
                 rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
                 line,count=count_read(count)
-                if line.startswith('\f'):
+                if line.startswith('\f') or line==headline:
                     line,count=count_read(count)
                     if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
                     else: # extra headers in the middle of TOUGH2 listings
@@ -578,20 +583,7 @@ class t2listing(file):
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
             rows=[rowdict[index][1] for index in indices]
-            # determine row parsing format:
-            line=longest_line
-            start=keypos[-1]+5
-            numpos=[]
-            p,done=start,False
-            while not done:
-                pos=line.find('.',p)
-                if pos>2:
-                    c=line[pos-2]
-                    if c in [' ','-']: numpos.append(pos-2)
-                    elif c.isdigit(): numpos.append(pos-1)
-                    p=pos+1
-                else: done=True
-            numpos.append(len(line))
+            numpos=self.parse_table_line(longest_line,start)
             row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
             allow_rev=tablename=='connection'
             self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys,allow_reverse_keys=allow_rev)
@@ -599,7 +591,7 @@ class t2listing(file):
 
     def read_header_AUTOUGH2(self):
         """Reads header info (title and time data) for one set of AUTOUGH2 listing results."""
-        self.title=self.readline().strip()
+        self.read_title()
         line=self.readline()
         istart,iend=string.find(line,'AFTER')+5,string.find(line,'TIME STEPS')
         self._step=int(line[istart:iend])
@@ -609,33 +601,33 @@ class t2listing(file):
         self.readline()
 
     def read_header_TOUGH2(self):
-        """Reads header info (title and time data) for one set of TOUGH2 listing results."""
+        """Reads header info (time data) for one set of TOUGH2 listing results."""
+        strs=self.readline().split()
+        self._time,self._step=fortran_float(strs[0]),int(strs[1])
+        marker=['@@@@@','====='][self.simulator=='TOUGH+']
+        self.skipto(marker)
+        self.skip_to_nonblank()
+
+    def read_title_AUTOUGH2(self):
+        """Read simulation title for AUTOUGH2 listings, from current position- in all headers."""
         self.title=self.readline().strip()
-        self.skiplines(6)
-        vals=self.readline().split()
-        self._time=fortran_float(vals[0])
-        self._step=int(vals[1])
-        self.skipto('@@@@@')
-        self.skip_to_nonblank()
-
-    def read_header_TOUGHplus(self):
-        """Reads header info (time data) for one set of TOUGH+ listing results."""
-        line=self.readline()
-        strs=line.split()
-        self._time,self._step=float(strs[0]),int(strs[1])
-        self.skipto('=====')
-        self.skip_to_nonblank()
-
-    def read_title_TOUGHplus(self):
-        """Reads simulation title for TOUGH+ listings, at top of file."""
+        
+    def read_title_TOUGH2(self):
+        """Reads simulation title for TOUGH2 listings, at top of file."""
         self.seek(0)
         line=' '
-        while not (line.lstrip().startswith('PROBLEM TITLE:') or line==''): line=self.readline()
+        while not ('problem title' in line.lower() and ':' in line) or (line==''): line=self.readline()
         if line=='': self.title=''
         else:
             colonpos=line.find(':')
             if colonpos>=0: self.title=line[colonpos+1:].strip()
             else: self.title=''
+
+    def read_title_TOUGH2_MP(self):
+        """Reads simulation title for TOUGH2_MP listings, at top of file."""
+        self.seek(0)
+        self.readline()
+        self.title=self.readline().strip()
 
     def read_tables_AUTOUGH2(self):
         tablename='element'
@@ -692,6 +684,7 @@ class t2listing(file):
     def read_table_TOUGH2(self,tablename):
         ncols=self._table[tablename].num_columns
         fmt=self._table[tablename].row_format
+        headline=self.readline()
         self.skip_to_blank()
         self.skip_to_nonblank()
         line=self.readline()
@@ -699,7 +692,7 @@ class t2listing(file):
             key=self._table[tablename].key_from_line(line)
             self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
             line=self.readline()
-            if line.startswith('\f'):
+            if line.startswith('\f') or line==headline:
                 line=self.readline()
                 if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
                 else: # extra headers in the middle of TOUGH2 listings
@@ -966,7 +959,7 @@ class t2listing(file):
         from t2data import t2generator
         initial_index=self.index
         keyword={'AUTOUGH2':{'P':'Pressure','T':'Temperature'},'TOUGH2':{'P':'P','T':'T'},
-                 'TOUGH+':{'P':'Pressure','T':'Temperature'}}
+                 'TOUGH2_MP':{'P':'P','T':'T'},'TOUGH+':{'P':'Pressure','T':'Temperature'}}
         self.last()
         bdy_nodes=geo.boundary_nodes
         for blk in dat.grid.blocklist[geo.num_atmosphere_blocks:]:
