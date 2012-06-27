@@ -45,6 +45,8 @@ There is also a \texttt{connection\_angle\_cosine} property, which returns an \t
 
 The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, \texttt{extra\_connections} and \texttt{orphans} properties return actual problems with the grid which should be fixed.  A summary of all these problems is given by the \texttt{check} method (see section \ref{mulgridmethods}).
 
+Blocks at the ground surface that have very small vertical thickness can sometimes cause problems.  The \texttt{min\_surface\_block\_thickness} property gives a tuple containing the minimum surface block thickness and the name of the column in which it occurs.  Thin surface blocks of this type can be eliminated using the \texttt{snap\_columns\_to\_layers()} method.
+
 \begin{center}
   \begin{longtable}{|l|l|p{75mm}|}
     \hline
@@ -76,6 +78,7 @@ The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, 
     \texttt{node\_kdtree} & \texttt{cKDTree} & tree structure for fast searching for nodes \\
     \texttt{layerlist} & list & layers (by index)\\
     \texttt{layer} & dictionary & layers (by name)\\
+    \texttt{min\_surface\_block\_thickness} & (float, string) & thickness of thinnest surface block (and associated column name)\\
     \texttt{missing\_connections} & set & missing connections between columns\\
     \texttt{nodelist} & list  & nodes (by index)\\
     \texttt{node} & dictionary  & nodes (by name)\\
@@ -125,6 +128,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
   \texttt{column\_name} & string & column name of a block name\\ 
   \texttt{column\_quadtree} & quadtree & quadtree structure for searching columns\\ 
+  \texttt{column\_surface\_layer} & \texttt{column} & surface layer for a specified column\\
   \texttt{columns\_in\_polygon} & list & columns inside a specified polygon (or rectangle)\\ 
   \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
   \texttt{delete\_column} & -- & deletes a column from the grid\\ 
@@ -154,7 +158,9 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{refine} & -- & refines a specified part of the grid\\
   \texttt{rename\_layer} & Boolean & renames a layer\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
+  \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
   \texttt{slice\_plot} & -- & plots a variable over a vertical slice through the grid\\
+  \texttt{snap\_columns\_to\_layers} & -- & snaps column surfaces to layer bottoms\\
   \texttt{split\_column} & Boolean & splits a quadrilateral column into two triangles\\ 
   \texttt{translate} & -- & moves a grid by simple translation in 3D\\
   \texttt{well\_values} & tuple & values of a variable down a well\\
@@ -312,6 +318,16 @@ Returns a quadtree structure for fast searching of grid columns, to find which c
 \begin{itemize}
 \item \textbf{columns}: list (or \texttt{None})\\
   A list of columns in the grid, specifying the search area.  This parameter can be used to further speed searching if it is only necessary to search columns in a defined area.  If \texttt{None}, the search area is the whole grid (all columns).
+\end{itemize}
+
+\subsubsection{\texttt{column\_surface\_layer(\emph{col})}}
+
+Returns the layer containing the surface elevation of a specified column.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{col}: \texttt{column}\\
+  The column for which the surface layer is to be found.
 \end{itemize}
 
 \subsubsection{\texttt{columns\_in\_polygon(\emph{polygon})}}
@@ -844,6 +860,18 @@ geo.slice_plot(45.,t,`Temperature',`$^o$C',contours=[100,200])
 \end{verbatim}
 
 plots the variable \texttt{t} through a SW--NE vertical slice (heading 45$^{\circ}$) through the grid, with the values as Temperature ($^{\circ}C$) and contours drawn at 100$^o$C and 200$^o$C.
+
+\subsubsection{\texttt{snap\_columns\_to\_layers(\emph{min\_thickness}=1.0, \emph{columns}=[])}}
+
+Snaps column surfaces to the bottom of their layers, if the surface block thickness is smaller than a given value.  This can be carried out over an optional subset of columns in the grid, otherwise over all columns.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{min\_thickness}: float\\
+  Minimum surface block thickness.  Blocks with thickness less than this value will be eliminated by `snapping' the column surface elevation to the bottom of the surface layer.  Values of \texttt{min\_thickness} less than or equal to zero will have no effect.
+\item \textbf{columns}: list\\
+  List of columns to process.  If empty (the default), process all columns.
+\end{itemize}
 
 \subsubsection{\texttt{split\_column(\emph{colname}, \emph{nodename})}}
 

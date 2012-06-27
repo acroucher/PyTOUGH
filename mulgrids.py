@@ -157,7 +157,7 @@ class column(object):
         if val==None: self.default_surface=True
         else: self.default_surface=False
     surface=property(get_surface,set_surface)
-        
+
     def is_against(self,col):
         """Returns True if the column is against the specified other column- that is, if it shares more than one node with it."""
         return len(set(self.node).intersection(set(col.node)))>1
@@ -748,6 +748,26 @@ class mulgrid(object):
             col.default_surface=True
             col.num_layers=self.num_layers-1
 
+    def set_column_num_layers(self,col):
+        """Sets col.num_layers property according to the layers in the grid."""
+        col.num_layers=len([layer for layer in self.layerlist[1:] if layer.bottom<col.surface])
+
+    def column_surface_layer_index(self,col):
+        """Returns the index in the layerlist of the surface layer for the given column."""
+        return self.num_layers-col.num_layers
+
+    def column_surface_layer(self,col):
+        """Returns the surface layer for the given column."""
+        return self.layerlist[self.column_surface_layer_index(col)]
+
+    def get_min_surface_block_thickness(self):
+        """Returns the minimum surface block thickness, and the column name it occurs in."""
+        surfcols=[col for col in self.columnlist if col.surface<>None]
+        thick=np.array([col.surface-self.column_surface_layer(col).bottom for col in surfcols])
+        imin=np.argmin(thick)
+        return thick[imin],surfcols[imin].name
+    min_surface_block_thickness=property(get_min_surface_block_thickness)
+
     def columns_in_polygon(self,polygon):
         """Returns a list of all columns with centres inside the specified polygon."""
         return [col for col in self.columnlist if col.in_polygon(polygon)]
@@ -870,7 +890,7 @@ class mulgrid(object):
             name,surface=line[0:3].strip().rjust(self.colname_length),float(line[3:13])*self.unit_scale
             col=self.column[name]
             col.surface=surface
-            col.num_layers=len([layer for layer in self.layerlist[1:] if layer.bottom<col.surface])
+            self.set_column_num_layers(col)
             line=geo.readline()
 
     def read_wells(self,geo):
@@ -1362,8 +1382,7 @@ class mulgrid(object):
             else:
                 # if source block is above surface in column, use first layer below surface instead:
                 if self.column[sourcecol].surface<=self.layer[sourcelayer].bottom:
-                    toplayer_index=self.num_layers-self.column[sourcecol].num_layers
-                    sourcelayer=self.layerlist[toplayer_index].name
+                    sourcelayer=self.column_surface_layer(self.column[sourcecol]).name
             mapping[dest]=self.block_name(sourcelayer,sourcecol)
         if column_mapping: return (mapping,col_mapping)
         else: return mapping
@@ -1966,7 +1985,7 @@ class mulgrid(object):
                     corners=[col.node[ic] for ic in icorner]
                 else: corners=col.node
                 for node in corners: elt.append(node3d[lay.name,node.name][0])
-                if ilayer==self.num_layers-col.num_layers-1: # top block
+                if ilayer==self.column_surface_layer_index(col)-1: # top block
                     for node in corners:
                         if node.name in extra_node: elt.append(node3d[atmlayer.name,node.name,col.name][0])
                         else: elt.append(node3d[atmlayer.name,node.name][0])
@@ -2160,6 +2179,21 @@ class mulgrid(object):
         writer.SetInput(vtu)
         writer.Write()
 
+    def snap_columns_to_layers(self,min_thickness=1.0,columns=[]):
+        """Snaps column surfaces to the bottom of their layers, if the surface block thickness is smaller than
+        a given value.  This can be carried out over an optional subset of columns in the grid, otherwise over 
+        all columns."""
+        if min_thickness>0.0:
+            if columns==[]: columns=self.columnlist
+            else: 
+                if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
+            for col in columns:
+                toplayer=self.column_surface_layer(col)
+                if col.surface-toplayer.bottom<min_thickness:
+                    col.surface=toplayer.bottom
+                    col.num_layers-=1
+            self.setup_block_name_index()
+
     def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False, layer_snap=0.0):
         """Fits column surface elevations to the grid from the data, using least-squares bilinear finite element fitting with
         Sobolev smoothing.  The parameter data should be in the form of a 3-column array with x,y,z data in each row.
@@ -2222,19 +2256,12 @@ class mulgrid(object):
             from scipy.sparse.linalg import spsolve
             z=spsolve(A,b)
             # assign nodal elevations to columns:
-            for i,col in enumerate(columns):
+            for col in columns:
                 nodez=[z[node_index[node.name]] for node in col.node]
                 if col.name in min_columns: col.surface=min(nodez)
                 else: col.surface=(sum(nodez))/col.num_nodes
-                col.num_layers=len([layer for layer in self.layerlist[1:] if layer.bottom<col.surface])
-                if layer_snap>0.0:
-                    itoplayer=self.num_layers-col.num_layers
-                    toplayer=self.layerlist[itoplayer]
-                    if col.surface-toplayer.bottom<layer_snap:
-                        # snap to bottom of layer:
-                        col.surface=toplayer.bottom
-                        col.num_layers-=1
-                
+                self.set_column_num_layers(col)
+            self.snap_columns_to_layers(layer_snap,columns)
             self.setup_block_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 
