@@ -760,6 +760,14 @@ class mulgrid(object):
         """Returns the surface layer for the given column."""
         return self.layerlist[self.column_surface_layer_index(col)]
 
+    def copy_layers_from(self,geo):
+        """Copies layer structure from another geometry."""
+        self.layer,self.layerlist={},[]
+        from copy import deepcopy
+        for lay in geo.layerlist: self.add_layer(deepcopy(lay))
+        for col in self.columnlist: self.set_column_num_layers(col)
+        self.setup_block_name_index()
+
     def get_min_surface_block_thickness(self):
         """Returns the minimum surface block thickness, and the column name it occurs in."""
         surfcols=[col for col in self.columnlist if col.surface<>None]

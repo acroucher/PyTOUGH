@@ -131,6 +131,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{column\_surface\_layer} & \texttt{column} & surface layer for a specified column\\
   \texttt{columns\_in\_polygon} & list & columns inside a specified polygon (or rectangle)\\ 
   \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
+  \texttt{copy\_layers\_from} & -- & copies layer structure from another geometry\\ 
   \texttt{delete\_column} & -- & deletes a column from the grid\\ 
   \texttt{delete\_connection} & -- & deletes a connection from the grid\\ 
   \texttt{delete\_layer} & -- & deletes a layer from the grid\\ 
@@ -348,6 +349,16 @@ Returns \texttt{True} if the geometry contains a connection connecting the two s
 \begin{itemize}
 \item \textbf{column1, column2}: \texttt{column}\\
   Two columns in the geometry.
+\end{itemize}
+
+\subsubsection{\texttt{copy\_layers\_from(\emph{geo})}}
+
+Copies the layer structure from the geometry \texttt{geo} (deleting any existing layers first).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \texttt{mulgrid}\\
+  The geometry to copy layers from.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_column(\emph{colname})}}
