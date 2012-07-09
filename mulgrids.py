@@ -40,12 +40,12 @@ def unfix_blockname(name):
     return name[0:3]+"%2d"%int(name[3:5])
 
 def valid_blockname(name):
-    """Tests if a 5-character string is a valid blockname.  Allows names with the first three characters either letters, numbers or spaces, the
-    fourth character a digit or a space and the last character a digit."""
-    from string import ascii_letters,digits
+    """Tests if a 5-character string is a valid blockname.  Allows names with the first three characters either letters, numbers,
+    spaces or punctuation, the fourth character a digit or a space and the last character a digit."""
+    from string import ascii_letters,digits,punctuation
     digit_space=digits+' '
-    letter_digit_space=ascii_letters+digit_space
-    return all([s in letter_digit_space for s in name[0:3]]) and (name[3] in digit_space) and (name[4] in digits)
+    letter_digit_space_punct=ascii_letters+digit_space+punctuation
+    return all([s in letter_digit_space_punct for s in name[0:3]]) and (name[3] in digit_space) and (name[4] in digits)
 
 def fortran_float(s):
     """Returns float of a string written by Fortran.  Sometimes when Fortran writes out very small values,
