@@ -384,19 +384,18 @@ class t2listing(file):
         return self.table_type(keyword)
 
     def next_table_TOUGH2(self):
-        if self.title: searchstr=self.title
-        else: searchstr='KCYC' # no title to search for
-        line=' '
-        while not ((line.strip().startswith(searchstr)) or line==''): line=self.readline()
-        pos=self.tell()
-        if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
-            if pos>=self._fullpos[self.index+1]: return None
-        if self.title: self.skiplines(3)
-        else: self.skiplines(1)
-        headpos=self.tell()
-        headers=tuple(self.readline().strip().split()[0:3])
-        self.seek(headpos)
-        return self.table_type(headers)
+        line='\n'
+        while not ((line.strip().startswith('KCYC') and 'ITER' in line) or line==''): line=self.readline()
+        if line=='': return None
+        else:
+            pos=self.tell()
+            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
+                if pos>=self._fullpos[self.index+1]: return None
+            self.skip_to_nonblank()
+            headpos=self.tell()
+            headers=tuple(self.readline().strip().split()[0:3])
+            self.seek(headpos)
+            return self.table_type(headers)
 
     def next_table_TOUGHplus(self):
         if self.skipto('_____',0):
