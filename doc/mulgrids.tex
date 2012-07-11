@@ -581,13 +581,13 @@ plots the variable \texttt{t} at elevation -500 m over the grid, with the values
 
 \subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False}, \emph{qtree}=None)}}
 
-Returns values of a specified variable along an arbitrary line through the grid.  The start and end points of the line (\texttt{start} and \texttt{end}) are 3-element lists or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
+Returns values of a specified variable along an arbitrary line through the grid.  The start and end points of the line (\texttt{start} and \texttt{end}) are 3-element lists, tuples or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
 
 The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{l}) containing the distance from the start (or the appropriate coordinate (0,1, or 2) if \texttt{coordinate} is specified) for each point along the line, and the second (\emph{v}) containing the value of the variable at that point.  The value of the variable at any point is the (block average) value at the block containing the point.
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{start}, \textbf{end}: list or \texttt{np.array} (of length 3)\\
+\item \textbf{start}, \textbf{end}: list, tuple or \texttt{np.array} (of length 3)\\
   Start and end points of the line in 3D.
 \item \textbf{variable}: list (or \texttt{np.array})\\
   Variable to be plotted, of length equal to the number of blocks in the grid.
@@ -607,7 +607,7 @@ Plots a variable along a line through the grid, using the \texttt{matplotlib} pl
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{start}, \textbf{end}: list or \texttt{np.array}\\
+\item \textbf{start}, \textbf{end}: list, tuple or \texttt{np.array}\\
   Start and end point of the line, each of length 3 (\texttt{None} to plot across the bounds of the grid).
 \item \textbf{variable}: list (or \texttt{np.array})\\
   Variable to be plotted, of length equal to the number of blocks (or columns) in the grid.
@@ -661,7 +661,7 @@ Returns the node nearest to a specified point.  An optional kd-tree structure ca
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{point}:  \texttt{np.array} or list\\
+\item \textbf{point}:  \texttt{np.array}, list or tuple\\
   Array or list of length 2, specifying the required point in 2-D.
 \item \textbf{kdtree}:  \texttt{cKDTree}\\
   kd-tree structure for searching for nodes.  Such a tree can be constructed using the \texttt{node\_kdtree} property of a \texttt{mulgrid} object.  You will need the \texttt{scipy} library installed before you can use this property.
@@ -739,7 +739,7 @@ Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{xblocks}, \textbf{yblocks}, \textbf{zblocks}: list (or \texttt{np.array})\\
+\item \textbf{xblocks}, \textbf{yblocks}, \textbf{zblocks}: list, tuple or \texttt{np.array}\\
   Lists (or arrays) of block sizes in the \emph{x}, \emph{y} and \emph{z} directions.
 \item \textbf{convention}: integer\\
   Naming convention for grid columns and layers.
@@ -794,7 +794,7 @@ Rotates a grid by a specified angle (in degrees) clockwise in the horizontal pla
 \begin{itemize}
   \item \textbf{angle}: float\\
     Angle (in degrees) to rotate the grid, positive for clockwise, negative for anti-clockwise.
-  \item \textbf{centre}: list (or \texttt{np.array})\\
+  \item \textbf{centre}: list, tuple or \texttt{np.array}\\
     Centre of rotation in the horizontal \emph{x},\emph{y} plane (of length 2).
   \item \textbf{wells}: Boolean\\
     Set \texttt{True} to rotate wells.
@@ -903,7 +903,7 @@ Translates a grid by a specified shift in the \emph{x}, \emph{y} and \emph{z} di
 
 \textbf{Parameters:}
 \begin{itemize}
-  \item \textbf{shift}: list (or \texttt{np.array})\\
+  \item \textbf{shift}: list, tuple or \texttt{np.array}\\
     Distance to shift the grid in the \emph{x}, \emph{y} and \emph{z} directions (of length 3).
   \item \textbf{wells}: Boolean\\\
     Set \texttt{True} to translate wells.
