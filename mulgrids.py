@@ -2007,7 +2007,6 @@ class mulgrid(object):
         from vtk import vtkUnstructuredGrid,vtkPoints,vtkIdList
         node3d,extra_node,elt3d=self.grid3d
         # construct the vtk grid
-        nele=len(elt3d)
         grid=vtkUnstructuredGrid()
         pts=vtkPoints()
         pts.SetNumberOfPoints(len(node3d))
@@ -2308,7 +2307,6 @@ class mulgrid(object):
         columns_plus_edge=set([])
         for con in connections: columns_plus_edge=columns_plus_edge | set(con.column)
         if all([col.num_nodes in [3,4] for col in columns_plus_edge]):
-            edge=columns_plus_edge-set(columns)
             # create midside nodes at connections:
             for con in connections:
                 sidenodes,next_nodeno=create_mid_node(con.node[0],con.node[1],sidenodes,next_nodeno,justfn,casefn)

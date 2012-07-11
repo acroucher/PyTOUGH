@@ -475,7 +475,6 @@ class t2data(object):
 
     def read_generator(self,line,infile):
         """Returns generator read from line in file"""
-        from string import rjust
         [block,name,nseq,nadd,nads,ltab,empty,gentype,itab,gx,ex,hg,fg]=infile.parse_string(line,'generator')
         block,name=fix_blockname(block),fix_blockname(name)
         time,rate,enthalpy=[],[],[]

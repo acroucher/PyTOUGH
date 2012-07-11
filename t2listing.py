@@ -748,7 +748,6 @@ class t2listing(file):
             tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
             tagselection=[(tname,i,ishort,h,rev,sel_index) for sel_index,(tname,i,ishort,h,rev) in enumerate(converted_selection)]
             tableselection=[]
-            shortindex={}
             for table in tables:
                 tselect=[(i,ishort,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in tagselection if tname==table]
                 tselect.sort()
@@ -953,7 +952,7 @@ class t2listing(file):
         inflows due to pressure changes in the blocks on the model's horizontal boundaries.
         Recharge generators are given the names of their blocks- any existing generators with the same
         names will be overwritten."""
-        from IAPWS97 import cowat,sat,visc
+        from IAPWS97 import cowat,visc
         from geometry import line_projection
         from t2data import t2generator
         initial_index=self.index
@@ -971,7 +970,6 @@ class t2listing(file):
                     t0=self.element[blk.name][keyword[self.simulator]['T']]
                     rho,u=cowat(t0,p0)
                     h=u+p0/rho
-                    Ps=sat(t0)
                     xnu=visc(rho,t0)/rho
                     coef=0.
                     for iface in xrange(col.num_nodes):

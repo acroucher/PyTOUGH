@@ -100,7 +100,6 @@ def polygon_area(polygon):
 def line_polygon_intersections(polygon,line):
     """Returns a list of the intersection points at which a line crosses a polygon.  The list is sorted
     by distance from the start of the line."""
-    tolerance=1.e-6
     crossings=[]
     ref=polygon[0]
     l1,l2=line[0]-ref,line[1]-ref

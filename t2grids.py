@@ -444,7 +444,6 @@ class t2grid(object):
         A=sparse.lil_matrix((3*nele,self.num_connections))
         if not self.block_centres_defined: self.calculate_block_centres(geo)
         for iblk,blk in enumerate(self.blocklist[natm:]):
-            nbr_name=blk.neighbour_name
             ncons=blk.num_connections
             for conname in blk.connection_name:
                 otherindex,sgn=[(0,-1),(1,1)][conname[0]==blk.name]
@@ -562,7 +561,6 @@ class t2grid(object):
         """Given a list or set of block names, finds groups of 'near' blocks.  Blocks are assigned the same group
         if they are neighbours, or share a neighbour."""
         blocknames=list(set(blocknames))
-        nblks=len(blocknames)
         groups=[]
         for blk in blocknames: groups.append(set([blk]))
         from copy import copy
