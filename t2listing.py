@@ -209,8 +209,9 @@ class t2listing(file):
         while not ('output data after' in line or 'output after' in line or line==''): line=self.readline().lower()
         if line=='': self.simulator=None
         else:
-            self.readline()
+            self.skip_to_nonblank()
             line=self.readline()
+            if line[1:].startswith('THE TIME IS'): line=self.readline() # AUTOUGH2
             linechars=line[1:6]
             if linechars in simulator.keys():
                 self.simulator=simulator[linechars]
@@ -562,7 +563,7 @@ class t2listing(file):
             rowdict={}
             count,index=0,-1
             def count_read(count): return self.readline(),count+1
-            while line.strip():
+            while line.strip() and not line[1:].startswith('@@@@@'):
                 keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
                 if len(keyval)>1: keyval=tuple(keyval)
                 else: keyval=keyval[0]
@@ -687,7 +688,7 @@ class t2listing(file):
         self.skip_to_blank()
         self.skip_to_nonblank()
         line=self.readline()
-        while line.strip():
+        while line.strip() and not line[1:].startswith('@@@@@'):
             key=self._table[tablename].key_from_line(line)
             self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
             line=self.readline()
