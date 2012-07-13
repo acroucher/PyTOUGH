@@ -445,6 +445,17 @@ class t2listing(file):
                 nelt_tables+=1
                 tname+=str(nelt_tables)
 
+    def start_of_values(self,line):
+        """Returns start index of values in a table line.  Characters before this start index are taken to contain
+        the key(s) and row index."""
+        dotpos=line.find('.')
+        if dotpos>=2:
+            pos=dotpos-1 # numeral before decimal point in first value
+            c=line[pos-1]
+            if c.isdigit(): return pos
+            elif c in ['-',' ']: return pos-1
+        return None
+        
     def key_positions(self,line,nkeys):
         """Returns detected positions of keys in the start of a table line.  This works on the assumption
         that key values must have a digit present in their last character.  It searches backwards from the 
@@ -452,11 +463,8 @@ class t2listing(file):
         keylength=5
         keypos=[]
         pos=len(line)-1
-        indexstr='INDEX'
-        indexpos=pos-len(indexstr)
-        # skip over index:
-        while line[pos]==' ' and pos>indexpos: pos-=1
-        while line[pos]<>' ' and pos>indexpos: pos-=1
+        while line[pos]==' ': pos-=1
+        while line[pos]<>' ': pos-=1
         for k in xrange(nkeys):
             while not line[pos].isdigit() and pos>=keylength: pos-=1
             pos-=(keylength-1)
@@ -483,9 +491,8 @@ class t2listing(file):
             else: cols[-1]+=' '+s
         self.readline()
         line=self.readline()
+        start=self.start_of_values(line)
         # Double-check number of columns:
-        indexpos=headline.index(indexstr)
-        start=indexpos+len(indexstr)
         nvalues=len([s for s in line[start:].strip().split()])
         if (len(cols)==nvalues):
             keypos=self.key_positions(line[:start],nkeys)
@@ -541,8 +548,6 @@ class t2listing(file):
         headline=self.readline()
         strs=headline.strip().split()
         indexstr='INDEX'
-        indexpos=headline.index(indexstr)
-        start=indexpos+len(indexstr)
         nkeys=strs.index(indexstr)
         self.skip_over_next_blank()
         rows,cols=[],[]
@@ -550,14 +555,10 @@ class t2listing(file):
             if s in flow_headers: cols[-1]+=' '+s
             else: cols.append(s)
         line=self.readline()
+        start=self.start_of_values(line)
         keypos=self.key_positions(line[:start],nkeys)
         if keypos:
-            # work out position of index:
-            index_pos=[keypos[-1]+5]
-            pos=line.find('.')
-            c=line[pos-2]
-            if c in [' ','-']: index_pos.append(pos-2)
-            elif c.isdigit(): index_pos.append(pos-1)
+            index_pos=[keypos[-1]+5,start]
             # determine row names:
             longest_line=line
             rowdict={}
@@ -571,6 +572,7 @@ class t2listing(file):
                 try: index=int(indexstr)-1
                 except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
                 rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
+                if len(line.strip())>len(longest_line): longest_line=line
                 line,count=count_read(count)
                 if line.startswith('\f') or line==headline:
                     line,count=count_read(count)
@@ -578,7 +580,6 @@ class t2listing(file):
                     else: # extra headers in the middle of TOUGH2 listings
                         while line.strip(): line,count=count_read(count)
                         line,count=count_read(count)
-                if len(line.strip())>len(longest_line): longest_line=line
             # sort rows (needed for TOUGH2_MP):
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
