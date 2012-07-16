@@ -2287,11 +2287,10 @@ class mulgrid(object):
         justfn=[ljust,rjust][self.right_justified_names]
         def create_mid_node(node1,node2,sidenodes,next_nodeno,justfn,casefn):
             midpos=0.5*(node1.pos+node2.pos)
-            nodenames=(node1.name,node2.name)
+            nodenames=frozenset((node1.name,node2.name))
             name=self.column_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
             self.add_node(node(name,midpos))
             sidenodes[nodenames]=self.nodelist[-1]
-            sidenodes[nodenames[1],nodenames[0]]=sidenodes[nodenames]
             return sidenodes,next_nodeno
         if bisect:
             if bisect==True: direction=None
@@ -2313,7 +2312,6 @@ class mulgrid(object):
             if not bisect:
                 # create midside nodes on grid boundaries in the refinement area:
                 bdy=self.boundary_nodes
-#                for col in columns_plus_edge:
                 for col in columns:
                     nn=col.num_nodes
                     for i,corner in enumerate(col.node):
@@ -2347,7 +2345,7 @@ class mulgrid(object):
                 nn=col.num_nodes
                 refined_sides=[]
                 for i,corner in enumerate(col.node):
-                    if (corner.name,col.node[(i+1)%nn].name) in sidenodes: refined_sides.append(i)
+                    if frozenset((corner.name,col.node[(i+1)%nn].name)) in sidenodes: refined_sides.append(i)
                 nrefined,istart,irange=transition_type(nn,refined_sides)
                 if (col.num_nodes==4) and ((nrefined==4) or ((nrefined==2) and (irange==1))):
                     # create quadrilateral centre node:
@@ -2360,7 +2358,7 @@ class mulgrid(object):
                     for vert in subcol:
                         if isinstance(vert,int): n=col.node[(istart+vert)%nn]
                         elif vert=='c': n=centrenodes[col.name]
-                        else: n=sidenodes[tuple([col.node[(istart+i)%nn].name for i in vert])]
+                        else: n=sidenodes[frozenset([col.node[(istart+i)%nn].name for i in vert])]
                         nodes.append(n)
                     self.add_column(column(name,nodes,surface=col.surface))
                     self.columnlist[-1].num_layers=col.num_layers
