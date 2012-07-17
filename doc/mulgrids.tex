@@ -762,9 +762,11 @@ geo=mulgrid().rectangular([1000]*10,[500]*20,[100]*5+[200]*10,
 
 creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a rectangular grid of 10 blocks of size 1000 m in the \emph{x}-direction, 20 blocks of size 500 m in the \emph{x}-direction, 5 layers at the top of thickness 100 m and 10 layers underneath of thickness 200 m, and with origin (0,0,2500) m.  The grid will have the default naming convention (0) and atmosphere type (2).
 
-\subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False)}}
+\subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False, \emph{bisect\_edge\_columns}=[])}}
 
 Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \texttt{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \texttt{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \texttt{bisect} is \texttt{True}, between its longest sides.
+
+The \texttt{bisect\_edge\_columns} parameter can be used to give more desirable column shapes in the transition region, if the original columns occupying the transition region have large aspect ratios.  By default, these will become even worse when they are triangulated to form the transition columns, if they are connected to the refinement region by their shorter sides.  Including them in \texttt{bisect\_edge\_columns} means they will be bisected (parallel to the edge of the refinement region) before the refinement is carried out, which should improve the aspect ratios of the transition columns.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -772,6 +774,8 @@ Refines the specified columns in the grid.  Appropriate transition columns are c
     List of columns or column names to be refined.
   \item \textbf{bisect}: Boolean or string\\
     Set to \texttt{True} if columns are to be split into two, between their longest sides, instead of four (the default).  Set to `x' or `y' to split columns along the specified axis.
+  \item \textbf{bisect\_edge\_columns}: list\\
+    List of columns or column names in the transition region (just outside the refinement area) to be bisected prior to the refinement, to improve the aspect ratios of the transition columns.
 \end{itemize}
 
 \subsubsection{\texttt{rename\_layer(\emph{oldlayername}, \emph{newlayername})}}

@@ -2270,12 +2270,15 @@ class mulgrid(object):
             self.setup_block_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 
-    def refine(self,columns=[],bisect=False):
+    def refine(self,columns=[],bisect=False,bisect_edge_columns=[]):
         """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
         Refinement is carried out by splitting: each column is divided into four, unless the bisect parameter is 'x' or 'y',
         in which case they are divided in the specified direction, or unless bisect is True, in which case they are divided
         into two between their longest sides.  Triangular transition columns are added around the edge of the refinement 
-        region as needed.  Only 3 and 4-sided columns are supported."""
+        region as needed.  Only 3 and 4-sided columns are supported.  The parameter bisect_edge_columns can contain a list of
+        columns outside the edge of the refinement area (as specified by the columns parameter) which should be bisected prior
+        to the refinement.  This is useful for columns with larger aspect ratios just outside the refinement area, whose aspect
+        ratios would become even greater from simple refinement."""
         if columns==[]: columns=self.columnlist
         else: 
             if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
@@ -2303,9 +2306,14 @@ class mulgrid(object):
                     else: sidenodes,next_nodeno=create_mid_node(n1,n2,sidenodes,next_nodeno,justfn,casefn)
         else: 
             for col in columns: connections=connections | col.connection
-        columns_plus_edge=set([])
+        if isinstance(bisect_edge_columns[0],str): bisect_edge_columns=[self.column[col] for col in bisect_edge_columns]
+        columns_plus_edge=set(bisect_edge_columns)
         for con in connections: columns_plus_edge=columns_plus_edge | set(con.column)
         if all([col.num_nodes in [3,4] for col in columns_plus_edge]):
+            # bisect edge columns if required:
+            for col in bisect_edge_columns:
+                for con in col.connection:
+                    if all([concol in bisect_edge_columns for concol in con.column]): connections.add(con)
             # create midside nodes at connections:
             for con in connections:
                 sidenodes,next_nodeno=create_mid_node(con.node[0],con.node[1],sidenodes,next_nodeno,justfn,casefn)
@@ -2330,12 +2338,12 @@ class mulgrid(object):
                     diff=sides[1]-sides[0]
                     if diff<3: return nref,sides[0],diff
                     else: return nref,sides[1],1
-                print 'Error in refine()- unrecognised transition type:',nref,'of',nn,'sides refined.'
+                else: print 'Error in refine()- unrecognised transition type:',nref,'of',nn,'sides refined.'
             transition_column={3:{(1,0): ((0,(0,1),2),((0,1),1,2)),  # how to subdivide, based on no. of nodes, no. of
                                   (2,1): ((0,(0,1),(1,2),2),((0,1),1,(1,2))), # refined sides and range of refined sides
                                   (3,2): ((0,(0,1),(2,0)),((0,1),1,(1,2)),((1,2),2,(2,0)),((0,1),(1,2),(2,0)))},
                                4:{(1,0): ((0,(0,1),3),((0,1),1,2),((0,1),2,3)),
-                                  (2,1): ((0,(0,1),'c'),((0,1),1,(1,2),'c'),((1,2),2,'c'),(2,3,'c'),(0,'c',3)),
+                                  (2,1): ((0,(0,1),'c'),((0,1),1,'c'),(1,(1,2),'c'),((1,2),2,'c'),(2,3,'c'),(0,'c',3)),
                                   (2,2): ((0,(0,1),(2,3),3),((0,1),1,2,(2,3))),
                                   (3,2): ((0,(0,1),(2,3),3),((0,1),1,(1,2)),((1,2),2,(2,3)),((0,1),(1,2),(2,3))),
                                   (4,3): ((0,(0,1),'c',(3,0)),((0,1),1,(1,2),'c'),((1,2),2,(2,3),'c'),((2,3),3,(3,0),'c'))}}
