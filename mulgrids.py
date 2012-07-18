@@ -768,6 +768,12 @@ class mulgrid(object):
         for col in self.columnlist: self.set_column_num_layers(col)
         self.setup_block_name_index()
 
+    def copy_wells_from(self,geo):
+        """Copies wells from another geometry."""
+        self.well,self.welllist={},[]
+        from copy import deepcopy
+        for w in geo.welllist: self.add_well(deepcopy(w))
+
     def get_min_surface_block_thickness(self):
         """Returns the minimum surface block thickness, and the column name it occurs in."""
         surfcols=[col for col in self.columnlist if col.surface<>None]
