@@ -1195,7 +1195,7 @@ class t2historyfile(object):
                 time=get_time(line)
                 key=get_key(line)
                 vals=get_vals(line)
-                if (not configured) and (time<>last_time): self.times.append(time)
+                if (not configured) and ((self.num_keys==0) or (key==self.keys[0])): self.times.append(time)
                 last_time=time
                 if not (key in otherfile_keys):
                     self.row_name.append(key+(time,))
