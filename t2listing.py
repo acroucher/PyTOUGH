@@ -1034,15 +1034,15 @@ class t2historyfile(object):
                 if not isinstance(key,tuple): key=(key,)
                 if key in self.keys:
                     keydata=self._data[self._keyrows[key]]
-                    return dict([(colname,keydata[:,icol]) for icol,colname in enumerate(self.column_name)])
+                    return dict([(colname,keydata[:,icol+1]) for icol,colname in enumerate(self.column_name)])
                 elif key in self._row:
                     row=self._data[self._row[key]]
-                    return dict([(colname,row[icol]) for icol,colname in enumerate(self.column_name)])
+                    return dict([(colname,row[icol+1]) for icol,colname in enumerate(self.column_name)])
                 else: return None
             else: # no keys (e.g. TOUGH+ COFT/GOFT)
                 try:
                     icol=self.column_name.index(key)
-                    return self._data[:,icol]
+                    return self._data[:,icol+1]
                 except ValueError: return None
         else: return None
 
@@ -1175,7 +1175,7 @@ class t2historyfile(object):
                     self._keyrows[key]=[]
                     self.keys.append(key)
                 self._keyrows[key].append(self._rowindex)
-                self._data.append(vals)
+                self._data.append([time]+vals)
                 self._rowindex+=1
         
     def read_data_TOUGH2_MP(self,configured):
@@ -1187,24 +1187,33 @@ class t2historyfile(object):
             start=self.col_start+[len(line)] # allow for lines of different lengths
             return [fortran_float(line[start[i]:start[i+1]]) for i in xrange(self.num_columns)]
         lines=self._file.readlines()
-        last_time=None
+        first_key=None
         from copy import copy
         otherfile_keys=copy(self.keys)
         for line in lines:
             if line.strip():
                 time=get_time(line)
                 key=get_key(line)
+                if not first_key: first_key=key
                 vals=get_vals(line)
-                if (not configured) and ((self.num_keys==0) or (key==self.keys[0])): self.times.append(time)
-                last_time=time
+                rowname=key+(time,)
                 if not (key in otherfile_keys):
-                    self.row_name.append(key+(time,))
-                    if not key in self.keys:
-                        self._keyrows[key]=[]
-                        self.keys.append(key)
-                    self._keyrows[key].append(self._rowindex)
-                    self._data.append(vals)
-                    self._rowindex+=1
+                    if key in self._keyrows:
+                        keyrows=self._keyrows[key]
+                        keytimes=[self._data[irow][0] for irow in self._keyrows[key]]
+                        keyrownames=[self.row_name[irow] for irow in self._keyrows[key]]
+                        newtime=not (time in keytimes)
+                        newrowname=not (rowname in keyrownames)
+                    else: newtime,newrowname=True,True
+                    if (not configured) and (key==first_key) and newtime: self.times.append(time)
+                    if newrowname:
+                        self.row_name.append(rowname)
+                        if not key in self.keys:
+                            self._keyrows[key]=[]
+                            self.keys.append(key)
+                        self._keyrows[key].append(self._rowindex)
+                        self._data.append([time]+vals)
+                        self._rowindex+=1
 
     def read_data_TOUGHplus(self,configured):
         """Reads in the data, for TOUGH+ output."""
@@ -1226,14 +1235,14 @@ class t2historyfile(object):
                             self._keyrows[key]=[]
                             self.keys.append(key)
                         self._keyrows[key].append(self._rowindex)
-                        self._data.append(vals)
+                        self._data.append([time]+vals)
                         self._rowindex+=1
         else:
             for line in lines:
                 vals=[fortran_float(val) for val in line.strip().split()]
                 time=vals.pop(0)
                 self.times.append(time)
-                self._data.append(vals)
+                self._data.append([time]+vals)
 
     def finalize_data(self):
         self._data=np.array(self._data,float64)
