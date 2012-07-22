@@ -76,32 +76,30 @@ class t2data_parser(file):
             'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['4s']+['10.4e']*7],
             'part2' : [['vol']*8,['10.4e']*8]
             }
-        self.conversion_function={'d':int,'f':float,'e':float,'g':float,'s':str}
-        # pre-calculate widths of all specifications:
-        self.spec_width={}
+        self.conversion_function={'d':int,'f':float,'e':float,'g':float,'s':lambda x:x.rstrip('\n'),'x':lambda x:None}
+        # wrap conversion functions with exception handler to return None on ValueError:
+        def value_error_none(f):
+            def fn(x):
+                try: return f(x)
+                except ValueError: return None
+            return fn
+        self.conversion_function=dict([(typ,value_error_none(f)) for typ,f in self.conversion_function.iteritems()])
+        # pre-process specifications to speed up reading:
+        self.line_spec={}
         for section,[names,specs] in self.specification.iteritems():
+            self.line_spec[section]=[]
+            pos=0
             for spec in specs:
-                fmt=spec[:-1]
-                self.spec_width[fmt]=int(fmt.partition('.')[0])
+                fmt,typ=spec[:-1],spec[-1]
+                w=int(fmt.partition('.')[0])
+                nextpos=pos+w
+                self.line_spec[section].append(((pos,nextpos),typ))
+                pos=nextpos
 
     def parse_string(self,line,linetype):
         """Parses a string into values according to specified input format (d,f,s, or x for integer, float, string or skip).
         Blanks are converted to None."""
-        fmt=self.specification[linetype][1]
-        result,pos=[],0
-        for f in fmt:
-            spec,typ=f[0:-1],f[-1]
-            width=self.spec_width[spec]
-            if typ=='x': val=None
-            else:
-                try:
-                    val=self.conversion_function[typ](line[pos:pos+width])
-                    if typ=='s':
-                        if val.endswith('\n'): val=''.join((val[:-1],' '))
-                except ValueError: val=None
-            result.append(val)
-            pos+=width
-        return result
+        return [self.conversion_function[typ](line[i1:i2]) for (i1,i2),typ in self.line_spec[linetype]]
     def write_values_to_string(self,vals,linetype):
         """Inverse of parse_string()"""
         fmt=self.specification[linetype][1]
