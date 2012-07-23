@@ -85,7 +85,7 @@ class t2data_parser(file):
             return fn
         self.conversion_function=dict([(typ,value_error_none(f)) for typ,f in self.conversion_function.iteritems()])
         # pre-process specifications to speed up reading:
-        self.line_spec={}
+        self.line_spec,self.spec_width={},{}
         for section,[names,specs] in self.specification.iteritems():
             self.line_spec[section]=[]
             pos=0
@@ -95,6 +95,7 @@ class t2data_parser(file):
                 nextpos=pos+w
                 self.line_spec[section].append(((pos,nextpos),typ))
                 pos=nextpos
+                self.spec_width[fmt]=w
 
     def parse_string(self,line,linetype):
         """Parses a string into values according to specified input format (d,f,s, or x for integer, float, string or skip).
@@ -103,18 +104,18 @@ class t2data_parser(file):
     def write_values_to_string(self,vals,linetype):
         """Inverse of parse_string()"""
         fmt=self.specification[linetype][1]
-        s=""
+        strs=[]
         for val,f in zip(vals,fmt):
-            if (val<>None) and (f[-1]<>'x'): valstr=('%'+f) % val
+            if (val<>None) and (f[-1]<>'x'): valstr=('%%%s'%f) % val
             else: valstr=' '*self.spec_width[f[0:-1]] # blank
-            s=s+valstr
-        return s
+            strs.append(valstr)
+        return ''.join(strs)
     def read_values(self,linetype):
         line=self.readline()
         return self.parse_string(line,linetype)
     def write_values(self,vals,linetype):
         line=self.write_values_to_string(vals,linetype)
-        self.write(line+'\n')
+        self.write('%s\n'%line)
     def read_value_line(self,variable,linetype):
         """Reads a line of parameter values into dictionary variable. Null values are ignored."""
         spec=self.specification[linetype]
