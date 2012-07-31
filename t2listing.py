@@ -677,8 +677,8 @@ class t2listing(file):
 
     def read_table_line_TOUGH2(self,line,num_columns,fmt):
         """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
-        nvals=len(fmt['values'])
-        return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(nvals-1)]+[0.0]*(num_columns-nvals)
+        nvals=len(fmt['values'])-1
+        return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(nvals)]+[0.0]*(num_columns-nvals)
         
     def read_table_TOUGH2(self,tablename):
         ncols=self._table[tablename].num_columns
