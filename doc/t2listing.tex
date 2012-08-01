@@ -44,6 +44,16 @@ The connection and generation tables work very similarly to the element table, e
 
 The names of the columns for each table are read directly from the listing file, and will depend on the TOUGH2 equation of state (EOS) being used.
 
+\subsubsection{Skipping tables}
+
+The default behaviour is for a \texttt{t2listing} object to read all tables present in the listing file.  However, it is possible to skip the reading of specified tables if required.  This can be useful for speeding up reading of large listing files where not all tables are required.  For example, sometimes the connection data are not required, but for large models the connection table is often much bigger than the others, so skipping it can make reading significantly faster.  Data in skipped tables are not available either via their corresponding properties or via the \texttt{history()} method.
+
+To skip tables, specify their table names (\texttt{element}, \texttt{connection} etc.) in the optional \texttt{skip\_tables} parameter when creating the \texttt{t2listing} object.  (By default, this parameter is an empty list.)  For example, to read a listing file with name `output.listing' into the object \texttt{lst} and skip reading the connection and generation tables:
+
+\begin{verbatim}
+lst = t2listing('output.listing',skip_tables=['connection','generation'])
+\end{verbatim}
+
 \subsubsection{Full and short output}
 
 AUTOUGH2 allows the use of `short' output, in which a specified selection of block, connection or generator properties are printed at time steps between normal full output.  A \texttt{t2listing} object will read short output results, if they are present, when producing time histories using the \texttt{history()} method.  However it is not possible to navigate to short output results or access them via the \texttt{t2listing} table properties above.

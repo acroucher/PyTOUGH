@@ -94,8 +94,9 @@ class t2listing(file):
        given by element['aa100']['Pressure'].)  It is possible to navigate through time in the listing by 
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
-    def __init__(self,filename=None):
+    def __init__(self,filename=None,skip_tables=[]):
         self.filename=filename
+        self.skip_tables=skip_tables
         super(t2listing,self).__init__(filename,'rU')
         self.detect_simulator()
         if self.simulator==None: print 'Could not detect simulator type.'
@@ -221,7 +222,7 @@ class t2listing(file):
                 # Set internal methods according to simulator type:
                 simname=self.simulator.replace('+','plus')
                 internal_fns=['setup_pos','table_type','setup_table','setup_tables','read_header','read_table','next_table',
-                              'read_tables','skip_to_table','read_table_line','read_title']
+                              'read_tables','skip_to_table','read_table_line','read_title','skip_table']
                 for fname in internal_fns:
                     fname_sim=fname+'_'+simname
                     # use TOUGH2 methods for TOUGH2_MP/TOUGH+ unless there are customized methods for these simulators:
@@ -352,7 +353,8 @@ class t2listing(file):
         self.seek(self._fullpos[0])
         while tablename:
             self.read_header()
-            self.setup_table(tablename)
+            if tablename in self.skip_tables: self.skip_table(tablename)
+            else: self.setup_table(tablename)
             tablename=self.next_table()
 
     def setup_tables_TOUGH2(self):
@@ -362,7 +364,8 @@ class t2listing(file):
         self.seek(self._fullpos[0])
         self.read_header() # only one header at each time
         while tablename:
-            self.setup_table(tablename)
+            if tablename in self.skip_tables: self.skip_table(tablename)
+            else: self.setup_table(tablename)
             tablename=self.next_table()
 
     def setup_tables_TOUGHplus(self):
@@ -373,7 +376,8 @@ class t2listing(file):
         self.read_header() # only one header at each time
         nelt_tables=0 # can have multiple element tables
         while tablename:
-            self.setup_table(tablename)
+            if tablename in self.skip_tables: self.skip_table(tablename)
+            else: self.setup_table(tablename)
             tablename=self.next_table()
             if tablename=='element':
                 nelt_tables+=1
@@ -634,14 +638,16 @@ class t2listing(file):
         tablename='element'
         while tablename:
             self.read_header()
-            self.read_table(tablename)
+            if tablename in self.skip_tables: self.skip_table(tablename)
+            else: self.read_table(tablename)
             tablename=self.next_table()
 
     def read_tables_TOUGH2(self):
         tablename='element'
         self.read_header() # only one header at each time
         while tablename:
-            self.read_table(tablename)
+            if tablename in self.skip_tables: self.skip_table(tablename)
+            else: self.read_table(tablename)
             tablename=self.next_table()
 
     def read_tables_TOUGHplus(self):
@@ -649,7 +655,8 @@ class t2listing(file):
         self.read_header() # only one header at each time
         nelt_tables=0
         while tablename:
-            self.read_table(tablename)
+            if tablename in self.skip_tables: self.skip_table(tablename)
+            else: self.read_table(tablename)
             tablename=self.next_table()
             if tablename=='element':
                 nelt_tables+=1
@@ -668,6 +675,13 @@ class t2listing(file):
             self._table[tablename][row]=self.read_table_line_AUTOUGH2(line,fmt=fmt)
             row+=1
             line=self.readline()
+        self.readline()
+
+    def skip_table_AUTOUGH2(self,tablename):
+        keyword=tablename[0].upper()*5
+        self.skip_to_blank()
+        line=self.readline()
+        while line[1:6]<>keyword: line=self.readline()
         self.readline()
 
     def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
@@ -695,6 +709,20 @@ class t2listing(file):
                 line=self.readline()
                 if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
                 else: # extra headers in the middle of TOUGH2 listings
+                    self.skip_over_next_blank()
+                    line=self.readline()
+
+    def skip_table_TOUGH2(self,tablename):
+        headline=self.readline()
+        self.skip_to_blank()
+        self.skip_to_nonblank()
+        line=self.readline()
+        while line.strip() and not line[1:].startswith('@@@@@'):
+            line=self.readline()
+            if line.startswith('\f') or line==headline:
+                line=self.readline()
+                if line.strip()==self.title: break
+                else:
                     self.skip_over_next_blank()
                     line=self.readline()
 
@@ -727,22 +755,23 @@ class t2listing(file):
             converted_selection=[]
             for (tspec,key,h) in selection:  # convert keys to indices as necessary, and expand table names
                 tablename=tablename_from_specification(tspec)
-                if isinstance(key,int): index=key
-                else:
-                    index,reverse=None,False
-                    if key in tables[tablename].row_name: index=tables[tablename]._row[key]
-                    elif len(key)>1 and tables[tablename].allow_reverse_keys:
-                        revkey=key[::-1]
-                        if revkey in tables[tablename].row_name:
-                            index=tables[tablename]._row[revkey]
-                            reverse=True
-                if index<>None:
-                    if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
-                    ishort=None
-                    short_keyword=tspec[0].upper()+'SHORT'
-                    if short_keyword in short_types:
-                        if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
-                    converted_selection.append((tablename,index,ishort,h,reverse))
+                if tablename in tables:
+                    if isinstance(key,int): index=key
+                    else:
+                        index,reverse=None,False
+                        if key in tables[tablename].row_name: index=tables[tablename]._row[key]
+                        elif len(key)>1 and tables[tablename].allow_reverse_keys:
+                            revkey=key[::-1]
+                            if revkey in tables[tablename].row_name:
+                                index=tables[tablename]._row[revkey]
+                                reverse=True
+                    if index<>None:
+                        if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
+                        ishort=None
+                        short_keyword=tspec[0].upper()+'SHORT'
+                        if short_keyword in short_types:
+                            if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
+                        converted_selection.append((tablename,index,ishort,h,reverse))
             tables=list(set([sel[0] for sel in converted_selection]))
             # need to retain table order as in the file:
             tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
@@ -757,6 +786,7 @@ class t2listing(file):
         old_index=self.index
         if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
         tableselection=ordered_selection(selection,self._table,self.short_types,self.short_indices)
+        if len(tableselection)==0: return None # no valid specifications
         hist=[[] for s in selection]
         self.rewind()
 
