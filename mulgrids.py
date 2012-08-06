@@ -2382,3 +2382,26 @@ class mulgrid(object):
             self.identify_neighbours()
             self.setup_block_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
+
+    def column_neighbour_groups(self,columns):
+        """Given a list or set of columns, finds sets of columns that are connected together, and
+        returns a list of them."""
+        columns=list(set(columns))
+        groups=[]
+        for col in columns: groups.append(set([col]))
+        from copy import copy
+        done=False
+        while not done:
+            done=True
+            for i,g in enumerate(groups):
+                ng=copy(g)
+                for col in g: ng = ng | col.neighbour
+                if i<len(groups)-1:
+                    for g2 in groups[i+1:]:
+                        if ng & g2:
+                            g.update(g2)
+                            groups.remove(g2)
+                            done=False
+                            break
+                    if not done: break
+        return groups

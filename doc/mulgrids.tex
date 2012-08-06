@@ -127,6 +127,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{column\_containing\_point} & column & column containing specified horizontal point\\ 
   \texttt{column\_mapping} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
   \texttt{column\_name} & string & column name of a block name\\ 
+  \texttt{column\_neighbour\_groups} & list & groups connected columns\\ 
   \texttt{column\_quadtree} & quadtree & quadtree structure for searching columns\\ 
   \texttt{column\_surface\_layer} & \texttt{column} & surface layer for a specified column\\
   \texttt{columns\_in\_polygon} & list & columns inside a specified polygon (or rectangle)\\ 
@@ -310,6 +311,16 @@ Gives the name of the column corresponding to the specified block name, accordin
 \begin{itemize}
 \item \textbf{block\_name}: string\\
   Block name.
+\end{itemize}
+
+\subsubsection{\texttt{column\_neighbour\_groups(\emph{columns})}}
+
+From the given list or set of columns, finds sets of columns that are connected together, and returns a list of them.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{columns}: list or set\\
+  List or set of columns to group.
 \end{itemize}
 
 \subsubsection{\texttt{column\_quadtree(\emph{columns}=None)}}
