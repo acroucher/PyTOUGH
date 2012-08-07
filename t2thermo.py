@@ -248,3 +248,27 @@ def viss(t,d):
     if t<=350.0: return 1.0e-7*(V1-d*(1858.0-5.9*t)*1.0e-3)
     else: return 1.0e-7*(V1+d*(0.353+d*(676.5e-6+d*102.1e-9)))
     
+def separated_steam_fraction(h, separator_pressure, separator_pressure2 = None):
+    """Return separated steam fraction from given enthalpy h and separator pressure.  Specify
+    a second separator pressure for two-stage flash."""
+    def enth(t,p,f):
+        d,u = f(t,p)
+        return u + p/d
+    def hlhs(p):
+        ts = tsat(p)
+        return enth(ts,p,cowat), enth(ts,p,supst)
+    if separator_pressure2 == None:
+        # if single stage
+        hl1,hs1 = hlhs(separator_pressure)
+        hl = 1.0/(hs1-hl1)
+        hs = -hl1/(hs1-hl1)
+    else:
+        # if two stages
+        hl1,hs1 = hlhs(separator_pressure)
+        hl2,hs2 = hlhs(separator_pressure2)
+        hl = (hs2-hl1)/((hs1-hl1)*(hs2-hl2))
+        hs = (hs1*(hl1-hl2)-hl1*(hs2-hl2))/((hs1-hl1)*(hs2-hl2))
+    # steam fraction is hl*h+hs
+    frac = hl*h+hs
+    return max(min(frac,1.0),0.0)
+

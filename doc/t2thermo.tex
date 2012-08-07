@@ -20,6 +20,7 @@ The functions available through the \texttt{t2thermo} library are listed in Tabl
       \hline
       \texttt{cowat} & tuple & density and internal energy of liquid water\\
       \texttt{sat} & float & saturation pressure as a function of temperature\\
+      \texttt{separated\_steam\_fraction} & float & separated steam fraction for given enthalpy and separator pressure\\
       \texttt{supst} & tuple & density and internal energy of dry steam\\
       \texttt{tsat} & float & saturation temperature as a function of pressure\\
       \texttt{visw} & float & dynamic viscosity of water\\
@@ -33,7 +34,7 @@ The functions available through the \texttt{t2thermo} library are listed in Tabl
 
 \section{Thermodynamic functions}
 
-The thermodynamic routines used in TOUGH2 provide functions for liquid water and dry steam.  These functions calculate secondary parameters from the primary thermodynamic variables.
+The thermodynamic routines used in TOUGH2 provide functions for liquid water and dry steam.  These functions calculate secondary parameters from the primary thermodynamic variables.  Their names follow the subroutine names used in the TOUGH2 code.
 
 \subsection{Liquid water: \texttt{cowat(\emph{t,p})}}
 
@@ -109,6 +110,23 @@ Note that the IFC-67 formulation did not include an explicit formula for calcula
 \begin{itemize}
 \item \textbf{p}: float\\
   Pressure (Pa)
+\end{itemize}
+
+\section{Other functions}
+
+\subsection{\texttt{separated\_steam\_fraction(\emph{h}, \emph{separator\_pressure},\\
+    \emph{separator\_pressure2} = None)}}
+
+Returns the separated steam fraction for a given enthalpy \texttt{h} and separator pressure.  A second separator pressure may be specified in the case of two-stage flash.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{h}: float\\
+  Enthalpy (J/kg)
+\item \textbf{separator\_pressure}: float\\
+  Steam separator pressure (Pa)
+\item \textbf{separator\_pressure2}: float (or \texttt{None})\\
+  Second separator pressure (Pa) for two-stage flash- set to \texttt{None} (the default) for single-stage.
 \end{itemize}
 
 \section{Example}

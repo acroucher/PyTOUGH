@@ -34,7 +34,7 @@ The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t
 
 \subsubsection{Element, connection and generation tables}
 
-There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \texttt{listingtable} (see section \ref{listingtable}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.
+There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \texttt{listingtable} (see section \ref{listingtable}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
 
 For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element[`AR210'][`Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120][`Pressure']} gives the pressure at the block with (zero-based) index 120.
 
@@ -108,6 +108,7 @@ The \texttt{reductions} property is a list of tuples of time step indices at whi
       \texttt{short\_types} & list of string & types of short output present\\
       \texttt{step} & integer & time step number of current set of results\\
       \texttt{steps} & \texttt{np.array} & array of time step numbers (integer) for all results (full and short)\\
+      \texttt{table\_names} & list & names of available tables\\
       \texttt{time} & float & time of current set of results\\
       \texttt{times} & \texttt{np.array} & array of times (float) for all results (full and short)\\
       \texttt{title} & string & simulation title\\
