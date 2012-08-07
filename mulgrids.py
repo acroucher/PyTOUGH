@@ -1910,6 +1910,7 @@ class mulgrid(object):
     def column_boundary_nodes(self,columns):
         """Returns an ordered list of the nodes on the outer boundary of the group of specified columns."""
         nodes=self.nodes_in_columns(columns)
+        blacklist_connections=[]
         def next_bdy_node(n):
             for col in [c for c in n.column if c in columns]:
                 i=col.node.index(n)
@@ -1917,7 +1918,8 @@ class mulgrid(object):
                 con=self.connection_with_nodes([n,n2])
                 if not con: return n2
                 else:
-                    if not all([(c in columns) for c in con.column]): return n2
+                    if not (con in blacklist_connections) and \
+                            not all([(c in columns) for c in con.column]): return n2
             return None
         # look for a starting node along the left-hand edge of the selection (this avoids
         # picking up any interior boundaries):
@@ -1937,6 +1939,16 @@ class mulgrid(object):
                 bdynodes.append(node)
                 node=next_bdy_node(node)
                 back=node.name==startnode.name
+                if (node in bdynodes) and not back : # loop in boundary
+                    nodei=bdynodes.index(node)
+                    nnodes=len(bdynodes)
+                    loopcount=nnodes-nodei-1
+                    for i in xrange(loopcount):
+                        n1,n2=bdynodes[-2],bdynodes[-1]
+                        con=self.connection_with_nodes([n1,n2])
+                        if con: blacklist_connections.append(con)
+                        bdynodes.pop()
+                    node=bdynodes.pop()
             return bdynodes
         else: return []
     def get_boundary_nodes(self): return self.column_boundary_nodes(self.columnlist)
