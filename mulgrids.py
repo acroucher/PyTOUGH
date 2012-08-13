@@ -1446,7 +1446,8 @@ class mulgrid(object):
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
        If no variable is specified, only the grid is drawn, without shading. If an elevation (float) is given instead
-       of a layer name, the layer containing that elevation is plotted."""
+       of a layer name, the layer containing that elevation is plotted.  If layer is set to None, then the ground surface
+       is plotted (i.e. the surface layer for each column)."""
         import matplotlib
         if plt==None: 
             import matplotlib.pyplot as plt
@@ -1459,10 +1460,13 @@ class mulgrid(object):
             if l: layername=l.name
             else: layername=''
             default_title='layer '+layername+' (elevation '+("%4.0f"%float(layer)).strip()+' m)'
+        elif layer==None:
+            layername=''
+            default_title='surface layer'
         else:
             layername=layer
             default_title='layer '+layername
-        if layername in self.layer:
+        if (layername in self.layer) or (layer==None):
             if variable<>None:
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
@@ -1490,6 +1494,7 @@ class mulgrid(object):
                     colc=[col.centre for col in self.connectionlist[i].column]
                     plt.plot([p[0] for p in colc],[p[1] for p in colc],color=colorConverter.to_rgb(str(1.-c[i])))
             for col in self.columnlist:
+                if layer==None: layername=self.column_surface_layer(col).name
                 blkname=self.block_name(layername,col.name)
                 if blkname in self.block_name_list:
                     if contours<>False:

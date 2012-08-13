@@ -537,7 +537,7 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None)}}
 
-Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name, index or as an elevation (in which case the routine will find the corresponding layer).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
+Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name, index or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
 The name and units of the variable can optionally be specified, and the names of the columns and nodes can also optionally be displayed on the plot, as well as the column centres (represented by crosses).  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the title and x- and y-axis labels, and the plot limits.
 
@@ -545,8 +545,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{layer}: string, integer or float\\
-  Name (string) or index (integer) of layer to plot, or elevation (float).
+\item \textbf{layer}: string, integer, float or \texttt{None}\\
+  Name (string) or index (integer) of layer to plot, or elevation (float).  Specifying \texttt{None} gives a surface plot.
 \item \textbf{variable}: list (or \texttt{np.array})\\
   Variable to be plotted, of length equal to the number of blocks or columns in the grid (or \texttt{None} just to plot the grid).
 \item \textbf{variable\_name}: string\\
