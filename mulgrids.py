@@ -2329,7 +2329,8 @@ class mulgrid(object):
                     else: sidenodes,next_nodeno=create_mid_node(n1,n2,sidenodes,next_nodeno,justfn,casefn)
         else: 
             for col in columns: connections=connections | col.connection
-        if isinstance(bisect_edge_columns[0],str): bisect_edge_columns=[self.column[col] for col in bisect_edge_columns]
+        if bisect_edge_columns<>[]:
+            if isinstance(bisect_edge_columns[0],str): bisect_edge_columns=[self.column[col] for col in bisect_edge_columns]
         columns_plus_edge=set(bisect_edge_columns)
         for con in connections: columns_plus_edge=columns_plus_edge | set(con.column)
         if all([col.num_nodes in [3,4] for col in columns_plus_edge]):
