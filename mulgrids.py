@@ -1044,7 +1044,7 @@ class mulgrid(object):
         """Writes MULgraph grid layers to file"""
         geo.write('LAYERS\n')
         for lay in self.layerlist:
-            geo.write("%3s%10.2f%10.2f\n" % (lay.name,lay.bottom/self.unit_scale,lay.centre/self.unit_scale))
+            geo.write("%3s%10.2f%10.2f\n" % (lay.name.ljust(3),lay.bottom/self.unit_scale,lay.centre/self.unit_scale))
         geo.write('\n')
         
     def write_surface(self,geo):
