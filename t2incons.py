@@ -89,6 +89,11 @@ class t2incon(object):
         else: self._blocklist.append(incon)
         self._block[incon.block]=incon
 
+    def insert_incon(self,index,incon):
+        """Inserts a t2blockincon at the specified index."""
+        self._blocklist.insert(index,incon)
+        self._block[incon.block]=incon
+
     def delete_incon(self,block):
         """Deletes a t2blockincon."""
         if block in self._block:

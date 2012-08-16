@@ -102,6 +102,7 @@ The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2inco
       \texttt{add\_incon} & -- & adds a set of initial conditions for one block\\
       \texttt{delete\_incon} & -- & deletes the initial conditions for one block\\
       \texttt{empty} & -- & deletes all initial conditions from the object\\
+      \texttt{insert\_incon} & -- & inserts initial conditions for one block at a specified index\\
       \texttt{read} & -- & reads initial conditions from file\\
       \texttt{transfer\_from} & -- & transfers initial conditions from one grid to another\\
       \texttt{write} & -- & writes initial conditions to file\\
@@ -135,6 +136,18 @@ Deletes a set of initial conditions for a single block.
 \subsubsection{\texttt{empty()}}
 
 Deletes initial conditions for all blocks.
+
+\subsubsection{\texttt{insert\_incon(\emph{index},\emph{incon})}}
+
+Inserts a set of initial conditions for a single block at the specified index.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{index}: integer\\
+  Index (zero-based) at which to insert the initial conditions.
+\item \textbf{incon}: \texttt{t2blockincon}\\
+  Initial conditions for the block.
+\end{itemize}
 
 \subsubsection{\texttt{read(\emph{filename})}}
 
