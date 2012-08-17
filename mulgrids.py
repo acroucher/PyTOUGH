@@ -1019,25 +1019,25 @@ class mulgrid(object):
         """Writes MULgraph grid nodes to file"""
         geo.write('VERTICES\n')
         for node in self.nodelist:
-            geo.write("%3s%10.2f%10.2f\n" % (node.name,node.pos[0]/self.unit_scale,node.pos[1]/self.unit_scale))
+            geo.write("%3s%10.2f%10.2f\n" % (node.name.ljust(3),node.pos[0]/self.unit_scale,node.pos[1]/self.unit_scale))
         geo.write('\n')
         
     def write_columns(self,geo):
         """Writes MULgraph grid columns to file"""
         geo.write('GRID\n')
         for col in self.columnlist:
-            geo.write("%3s%1d%2d" % (col.name,col.centre_specified,col.num_nodes))
+            geo.write("%3s%1d%2d" % (col.name.ljust(3),col.centre_specified,col.num_nodes))
             if col.centre_specified:
                 geo.write("%10.2f%10.2f\n" % (col.centre[0]/self.unit_scale,col.centre[1]/self.unit_scale))
             else: geo.write('\n')
-            for node in col.node: geo.write("%s\n" % node.name)
+            for node in col.node: geo.write("%3s\n" % node.name.ljust(3))
         geo.write('\n')
             
     def write_connections(self,geo):
         """Writes MULgraph grid connections to file"""
         geo.write('CONNECTIONS\n')
         for con in self.connectionlist:
-            geo.write("%3s%3s\n" % (con.column[0].name,con.column[1].name))
+            geo.write("%3s%3s\n" % (con.column[0].name.ljust(3),con.column[1].name.ljust(3)))
         geo.write('\n')
 
     def write_layers(self,geo):
@@ -1051,7 +1051,7 @@ class mulgrid(object):
         """Writes MULgraph grid surface to file"""
         geo.write('SURFA\n')
         for col in [col for col in self.columnlist if not col.default_surface]:
-            geo.write("%3s%10.2f\n" % (col.name,col.surface/self.unit_scale))
+            geo.write("%3s%10.2f\n" % (col.name.ljust(3),col.surface/self.unit_scale))
         geo.write('\n')
 
     def write_wells(self,geo):
