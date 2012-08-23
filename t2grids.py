@@ -36,9 +36,8 @@ class rocktype(object):
 
 class t2block(object):
     """Grid block"""
-    def __init__(self,name='     ',volume=1.0,blockrocktype=rocktype(),centre=None,atmosphere=False,ahtx=None,pmx=None):
+    def __init__(self,name='     ',volume=1.0,blockrocktype=rocktype(),centre=None,atmosphere=False,ahtx=None,pmx=None,nseq=None,nadd=None):
         self.name=name
-        self.nseq,self.nadd=None,None
         self.volume=volume
         self.rocktype=blockrocktype
         if isinstance(centre,list): centre=np.array(centre)
@@ -46,6 +45,7 @@ class t2block(object):
         self.atmosphere=atmosphere
         self.ahtx=ahtx
         self.pmx=pmx
+        self.nseq,self.nadd=nseq,nadd
         self.connection_name=set([])
     def __repr__(self): return self.name
     def get_num_connections(self): return len(self.connection_name)
@@ -57,14 +57,14 @@ class t2block(object):
 
 class t2connection(object):
     """Connection between two blocks"""
-    def __init__(self,blocks=[t2block(),t2block()],direction=1,distance=[0.0,0.0],area=1.0,dircos=0.0,sigma=None):
+    def __init__(self,blocks=[t2block(),t2block()],direction=1,distance=[0.0,0.0],area=1.0,dircos=0.0,sigma=None,nseq=None,nad1=None,nad2=None):
         self.block=blocks
-        self.nseq,self.nad1,self.nad2=None,None,None
         self.direction=direction # permeability direction
         self.distance=distance
         self.area=area
         self.dircos=dircos # direction cosine
         self.sigma=sigma # radiant emittance factor (TOUGH2)
+        self.nseq,self.nad1,self.nad2=nseq,nad1,nad2
     def __repr__(self):
         return self.block[0].name+':'+self.block[1].name
 

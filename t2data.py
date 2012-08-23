@@ -417,10 +417,9 @@ class t2data(object):
             rocktype=self.grid.rocktype[rockname]
             if (x<>None) and (y<>None) and (z<>None): centre=np.array([x,y,z])
             else: centre=None
-            self.grid.add_block(t2block(name,volume,rocktype,centre=centre,ahtx=ahtx,pmx=pmx))
-            if nseq>0:
-                self.grid.block[name].nseq=nseq
-                self.grid.block[name].nadd=nadd
+            if nseq==0: nseq=None
+            if nadd==0: nadd=None
+            self.grid.add_block(t2block(name,volume,rocktype,centre=centre,ahtx=ahtx,pmx=pmx,nseq=nseq,nadd=nadd))
             line=padstring(infile.readline())
 
     def write_blocks(self,outfile):
@@ -444,11 +443,10 @@ class t2data(object):
         while line.strip():
             [name1,name2,nseq,nad1,nad2,isot,d1,d2,areax,betax,sigx]=infile.parse_string(line,'connections')
             name1,name2=fix_blockname(name1),fix_blockname(name2)
-            self.grid.add_connection(t2connection([self.grid.block[name1],self.grid.block[name2]],isot,[d1,d2],areax,betax,sigx))
-            if nseq>=1:
-                self.grid.connection[(name1,name2)].nseq=nseq
-                self.grid.connection[(name1,name2)].nad1=nad1
-                self.grid.connection[(name1,name2)].nad2=nad2
+            if nseq==0: nseq=None
+            if nad1==0: nad1=None
+            if nad2==0: nad2=None
+            self.grid.add_connection(t2connection([self.grid.block[name1],self.grid.block[name2]],isot,[d1,d2],areax,betax,sigx,nseq,nad1,nad2))
             line=padstring(infile.readline())
 
     def write_connections(self,outfile):
