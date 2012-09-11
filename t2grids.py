@@ -382,7 +382,8 @@ class t2grid(object):
     def get_rocktype_indices(self):
         """Returns an integer array containing the rocktype index for each block in the grid."""
         rocknames=[rt.name for rt in self.rocktypelist]
-        return np.array([rocknames.index(blk.rocktype.name) for blk in self.blocklist])
+        rockdict=dict([(name,i) for i,name in enumerate(rocknames)])
+        return np.array([rockdict[blk.rocktype.name] for blk in self.blocklist])
     rocktype_indices=property(get_rocktype_indices)
 
     def get_vtk_data(self,geo):
