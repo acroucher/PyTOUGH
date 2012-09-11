@@ -120,7 +120,7 @@ class node(object):
     """Grid node class"""
     def __init__(self,name='   ',pos=np.array([0.0,0.0])):
         self.name=name
-        if isinstance(pos,list) or isinstance(pos,tuple): pos=np.array(pos)
+        if isinstance(pos,(tuple,list)): pos=np.array(pos)
         self.pos=pos
         self.column=set([])
     def __repr__(self): return self.name
@@ -354,7 +354,7 @@ class well(object):
     def __init__(self,name='  ',pos=[]):
         self.name=name
         for i,p in enumerate(pos):
-            if isinstance(p,list) or isinstance(p,tuple): pos[i]=np.array(p)
+            if isinstance(p,(list,tuple)): pos[i]=np.array(p)
         self.pos=pos
     def __repr__(self): return self.name
     def get_num_pos(self): return len(self.pos)
@@ -809,7 +809,7 @@ class mulgrid(object):
     def node_nearest_to(self,point,kdtree=None):
         """Returns the node nearest to the specified point.  A kd-tree can be specified to speed
         searching- useful if searching for a lot of points."""
-        if isinstance(point,list) or isinstance(point,tuple): point=np.array(point)
+        if isinstance(point,(list,tuple)): point=np.array(point)
         if kdtree:
             r,i=kdtree.query(point)
             return self.nodelist[i]
@@ -1070,7 +1070,7 @@ class mulgrid(object):
         The optional justify and case parameters specify the format of the character part of the block names
         (whether they are right or left justified, and lower or upper case)."""
         for item in [xblocks,yblocks,zblocks,origin]:
-            if isinstance(item,list) or isinstance(item,tuple): item=np.array(item)
+            if isinstance(item,(list,tuple)): item=np.array(item)
         grid=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
         grid.empty()
         xverts=np.array([0.]+np.cumsum(xblocks).tolist())+origin[0]
@@ -1178,7 +1178,7 @@ class mulgrid(object):
     def translate(self,shift,wells=False):
         """Translates a grid by specified shift.  If wells is True, they
         will also be translated."""
-        if isinstance(shift,list) or isinstance(shift,tuple): shift=np.array(shift)
+        if isinstance(shift,(list,tuple)): shift=np.array(shift)
         for node in self.nodelist: node.pos+=shift[0:2]
         for col in self.columnlist:
             col.centre+=shift[0:2]
@@ -1193,7 +1193,7 @@ class mulgrid(object):
         If centre is not specified, the centre of the grid is used.
         If wells is True, they will also be rotated."""
         if centre<>None:
-            if isinstance(centre,list) or isinstance(centre,tuple): centre=np.array(centre)
+            if isinstance(centre,(list,tuple)): centre=np.array(centre)
             c=centre
         else: c=self.centre
         R=linear_trans2().rotation(angle,c)
@@ -1455,7 +1455,7 @@ class mulgrid(object):
         else: loneplot=False
         matplotlib.rcParams.update({'mathtext.default': 'regular','figure.figsize':(12,9)})
         ax=plt.subplot(subplot,aspect=aspect)
-        if isinstance(layer,float) or isinstance(layer,int):
+        if isinstance(layer,(float,int)):
             l=self.layer_containing_elevation(float(layer))
             if l: layername=l.name
             else: layername=''
@@ -1570,7 +1570,7 @@ class mulgrid(object):
             else:
                 l=self.bounds
                 default_title='vertical slice across grid bounds'
-        elif isinstance(line,float) or isinstance(line,int):
+        elif isinstance(line,(float,int)):
             r=0.5*norm(self.bounds[1]-self.bounds[0])
             from math import radians,cos,sin
             theta=radians(line)
@@ -1673,7 +1673,7 @@ class mulgrid(object):
         """Gets values of variable along specified line through geometry.  Returns two arrays for
         distance along line (or specified coordinate) and value at each position."""
         for item in [start,end]:
-            if isinstance(item,list) or isinstance(item,tuple): item=np.array(item)
+            if isinstance(item,(list,tuple)): item=np.array(item)
         x,y=[],[]
         line_length=norm(end-start)
         if line_length>0.0:
@@ -1731,7 +1731,7 @@ class mulgrid(object):
             default_title='line plot across grid bounds'
         else:
             for item in [start,end]:
-                if isinstance(item,list) or isinstance(item,tuple): item=np.array(item)
+                if isinstance(item,(list,tuple)): item=np.array(item)
             default_title='line plot from ('+("%7.0f"%start[0]).strip()+','+("%7.0f"%start[1]).strip()+','+("%7.0f"%start[2]).strip()+') to ('+("%7.0f"%end[0]).strip()+','+("%7.0f"%end[1]).strip()+','+("%7.0f"%end[2]).strip()+')'
         x,y=self.line_values(start,end,variable,divisions)
         import matplotlib

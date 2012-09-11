@@ -131,6 +131,23 @@ class t2data_parser(file):
             vals.append(val)
         self.write_values(vals,linetype)
 
+import struct
+class fortran_unformatted_file(file):
+    """Class for 'unformatted' binary file written by Fortran.  These are different from plain binary files
+    in that the byte length of each 'record' is written at its start and end."""
+    def readrec(self,fmt):
+        nb,=struct.unpack('i',self.read(4))
+        packed=self.read(nb)
+        self.read(4)
+        return struct.unpack(fmt,packed)
+    def writerec(self,fmt,val):
+        nb=struct.calcsize(fmt)
+        if isinstance(val,(tuple,list,np.ndarray)):
+            packed=struct.pack(fmt,*val)
+        else: packed=struct.pack(fmt,val)
+        head=struct.pack('i',nb)
+        self.write(''.join((head,packed,head)))
+
 class t2generator(object):
     """TOUGH2 generator (source or sink)"""
     def __init__(self,name='     ',block='     ',nseq=None,nadd=None,nads=None,type='MASS',
@@ -161,9 +178,10 @@ t2data_sections=['SIMUL','ROCKS','MESHM','PARAM','START','NOVER','RPCAP','LINEQ'
 
 class t2data(object):
     """Class for TOUGH2 data"""
-    def __init__(self,filename=''):
+    def __init__(self,filename='',meshfilename=''):
         from copy import copy
         self.filename=filename
+        self.meshfilename=meshfilename
         self.title=''
         self.simulator=''
         self.parameter=copy(default_parameters)
@@ -189,7 +207,7 @@ class t2data(object):
         self.meshmaker=[]
         self._sections=[]
         self.end_keyword='ENDCY'
-        if self.filename: self.read(filename)
+        if self.filename: self.read(filename,meshfilename)
 
     def __repr__(self): return self.title
 
@@ -440,7 +458,7 @@ class t2data(object):
         """Reads grid connections"""
         self.grid.connectionlist,self.grid.connection=[],{}
         line=padstring(infile.readline())
-        while line.strip():
+        while line.strip() and not line.startswith('+++'):
             [name1,name2,nseq,nad1,nad2,isot,d1,d2,areax,betax,sigx]=infile.parse_string(line,'connections')
             name1,name2=fix_blockname(name1),fix_blockname(name2)
             if nseq==0: nseq=None
@@ -909,8 +927,81 @@ class t2data(object):
             if len(vals)<8: vals+=[None]*(8-len(vals))
             outfile.write_values(vals,'part2')
 
-    def read(self,filename=''):
-        """Reads data from file"""
+    def read_meshfile(self,infile):
+        """Reads grid from auxiliary ASCII mesh file."""
+        mesh_sections=['ELEME','CONNE']
+        read_fn=dict(zip(mesh_sections,[self.read_blocks,self.read_connections]))
+        more=True
+        while more:
+            line=infile.readline()
+            if line:
+                keyword=line[0:5].strip()
+                if keyword in mesh_sections:
+                    read_fn[keyword](infile)
+                    self._sections.append(keyword)
+            else: more=False
+
+    def read_binary_meshfiles(self):
+        """Reads grid from auxiliary binary mesh files (e.g. TOUGH2_MP 'MESHA','MESHB' files)."""
+        fa,fb=(fortran_unformatted_file(filename,'rb') for filename in self.meshfilename)
+        nel,=fa.readrec('i')
+        ncon,nelb=fb.readrec('2i')
+        if nelb<0: # used as a flag to indicate that rocktype names have been replaced by indices
+            nelb=-nelb
+            rocktype_indices=True
+        else: rocktype_indices=False
+        if nel==nelb:
+            # read MESHA file:
+            evol,aht,pmx=(np.array(fa.readrec('%dd'%nel)) for i in xrange(3))
+            gcoord=[np.array(fa.readrec('%dd'%nel)) for i in xrange(3)]
+            gcoord=np.transpose(np.vstack([gc for gc in gcoord]))
+            del1,del2,area,beta,sig=(np.array(fa.readrec('%dd'%ncon)) for i in xrange(5))
+            isox=np.array(fa.readrec('%di'%ncon))
+            # read MESHB file:
+            elem=list(fb.readrec('8s'*nel))
+            if rocktype_indices: rtype=[self.grid.rocktypelist[i] for i in np.array(fb.readrec('%di'%nel))-1]
+            else: rtype=[self.grid.rocktype[name] for name in list(fb.readrec('5s'*nel))]
+            nex1,nex2=(np.array(fb.readrec('%di'%ncon))-1 for i in xrange(2))
+            # construct grid:
+            self.grid.block,self.grid.blocklist={},[]
+            for i in xrange(nel):
+                name=fix_blockname(elem[i][0:5])
+                self.grid.add_block(t2block(name,evol[i],rtype[i],centre=gcoord[i,:],ahtx=aht[i],pmx=pmx[i]))
+            del evol,aht,pmx,gcoord,elem
+            self.grid.connectionlist,self.grid.connection=[],{}
+            for i in xrange(ncon):
+                blk1,blk2=self.grid.blocklist[nex1[i]],self.grid.blocklist[nex2[i]]
+                self.grid.add_connection(t2connection([blk1,blk2],isox[i],[del1[i],del2[i]],area[i],beta[i],sig[i]))
+        else: print 'Files',self.meshfilename[0],'and',self.meshfilename[1],'do not contain the same number of blocks (',nel,'vs.',nelb,').'
+        fa.close(); fb.close()
+
+    def write_binary_meshfiles(self):
+        """Writes grid to auxiliary binary mesh files."""
+        fa,fb=(fortran_unformatted_file(filename,'wb') for filename in self.meshfilename)
+        nel,ncon=self.grid.num_blocks,self.grid.num_connections
+        fa.writerec('i',nel)
+        fb.writerec('2i',(ncon,-nel))
+        # write MESHA file:
+        blkdata=np.array([[blk.volume,blk.ahtx,blk.pmx]+list(blk.centre) for blk in self.grid.blocklist])
+        for i in xrange(6): fa.writerec('%dd'%nel,blkdata[:,i])
+        del blkdata
+        condata=np.array([con.distance+[con.area,con.dircos,con.sigma] for con in self.grid.connectionlist])
+        for i in xrange(5): fa.writerec('%dd'%ncon,condata[:,i])
+        del condata
+        fa.writerec('%di'%ncon,np.array([con.direction for con in self.grid.connectionlist]))
+        conblks=np.array([[con.block[0].name.ljust(8),con.block[1].name.ljust(8)] for con in self.grid.connectionlist])
+        for i in xrange(2): fa.writerec('8s'*ncon,conblks[:,i])
+        del conblks
+        # write MESHB file:
+        blocknames=np.array([blk.name for blk in self.grid.blocklist])
+        fb.writerec('8s'*nel,[name.ljust(8) for name in blocknames])
+        fb.writerec('%di'%nel,self.grid.rocktype_indices+1)
+        blkdict=dict(((name,i) for i,name in enumerate(blocknames)))
+        nex=np.array([[blkdict[blk.name] for blk in con.block] for con in self.grid.connectionlist])+1
+        for i in xrange(2): fb.writerec('%di'%ncon,nex[:,i])
+
+    def read(self,filename='',meshfilename=''):
+        """Reads data from file.  Mesh data can optionally be read from an auxiliary file."""
         if filename: self.filename=filename
         infile=t2data_parser(self.filename,'rU')
         read_fn=dict(zip(t2data_sections,
@@ -936,12 +1027,34 @@ class t2data(object):
                     self._sections.append(keyword)
             else: more=False
         infile.close()
+        if meshfilename and (self.grid.num_blocks==0):
+            self.meshfilename=meshfilename
+            if isinstance(meshfilename,str):
+                meshfile=t2data_parser(self.meshfilename,'rU')
+                self.read_meshfile(meshfile)
+                meshfile.close()
+            elif isinstance(meshfilename,(list,tuple)):
+                if len(meshfilename)==2: self.read_binary_meshfiles()
+            else: print 'Mesh filename must be either a string or a two-element tuple or list.'
         return self
 
-    def write(self,filename=''):
-        """Writes data to file"""
+    def write(self,filename='',meshfilename=''):
+        """Writes data to file.  Mesh data can optionally be written to an auxiliary file."""
         if filename: self.filename=filename
         if self.filename=='': self.filename='t2data.dat'
+        mesh_sections=[]
+        if meshfilename: self.meshfilename=meshfilename
+        if self.meshfilename:
+            if isinstance(self.meshfilename,str):
+                meshfile=t2data_parser(self.meshfilename,'w')
+                self.write_blocks(meshfile)
+                self.write_connections(meshfile)
+                meshfile.close()
+                mesh_sections=['ELEME','CONNE']
+            elif isinstance(self.meshfilename,(list,tuple)):
+                if len(self.meshfilename)==2:
+                    self.write_binary_meshfiles()
+                    mesh_sections=['ELEME','CONNE']
         outfile=t2data_parser(self.filename,'w')
         write_fn=dict(zip(t2data_sections,
                           [self.write_simulator, self.write_rocktypes, self.write_meshmaker, self.write_parameters,
@@ -950,9 +1063,11 @@ class t2data(object):
                            self.write_connections, self.write_generators, self.write_short_output, self.write_history_blocks,
                            self.write_history_connections, self.write_history_generators, self.write_incons, self.write_indom]))
         self.write_title(outfile)
-        for keyword in self._sections: write_fn[keyword](outfile)
+        for keyword in self._sections:
+            if keyword not in mesh_sections: write_fn[keyword](outfile)
         extra_sections=[keyword for keyword in t2data_sections if not (keyword in self._sections)]
-        for keyword in extra_sections: write_fn[keyword](outfile)
+        for keyword in extra_sections:
+            if keyword not in mesh_sections: write_fn[keyword](outfile)
         outfile.write(self.end_keyword+'\n')
         outfile.close()
     
