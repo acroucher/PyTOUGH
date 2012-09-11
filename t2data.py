@@ -981,24 +981,28 @@ class t2data(object):
         nel,ncon=self.grid.num_blocks,self.grid.num_connections
         fa.writerec('i',nel)
         fb.writerec('2i',(ncon,-nel))
+        # assemble data into arrays:
+        rocknames=[rt.name for rt in self.grid.rocktypelist]
+        rockdict=dict([(name,i) for i,name in enumerate(rocknames)])
+        block_dt=np.dtype([('index','i4'),('name','|S8'),('name8','|S8'),('rockindex','i4'),('volume','f8'),
+                           ('ahtx','f8'),('pmx','f8'),('cx','f8'),('cy','f8'),('cz','f8')])
+        blkdata=np.array([(i,blk.name,blk.name.ljust(8),rockdict[blk.rocktype.name],blk.volume,blk.ahtx,blk.pmx,blk.centre[0],
+                           blk.centre[1],blk.centre[2]) for i,blk in enumerate(self.grid.blocklist)],dtype=block_dt)
+        blkdict=dict(zip(blkdata[:]['name'],blkdata[:]['index']))
+        con_dt=np.dtype([('blk1','|S8'),('blk2','|S8'),('blk1index','i4'),('blk2index','i4'),('d1','f8'),('d2','f8'),
+                         ('dirn','i4'),('area','f8'),('dircos','f8'),('sigma','f8')])
+        condata=np.array([(con.block[0].name.ljust(8),con.block[1].name.ljust(8),blkdict[con.block[0].name],blkdict[con.block[1].name],
+                           con.distance[0],con.distance[1],con.direction,con.area,con.dircos,con.sigma)
+                          for con in self.grid.connectionlist],dtype=con_dt)
         # write MESHA file:
-        blkdata=np.array([[blk.volume,blk.ahtx,blk.pmx]+list(blk.centre) for blk in self.grid.blocklist])
-        for i in xrange(6): fa.writerec('%dd'%nel,blkdata[:,i])
-        del blkdata
-        condata=np.array([con.distance+[con.area,con.dircos,con.sigma] for con in self.grid.connectionlist])
-        for i in xrange(5): fa.writerec('%dd'%ncon,condata[:,i])
-        del condata
-        fa.writerec('%di'%ncon,np.array([con.direction for con in self.grid.connectionlist]))
-        conblks=np.array([[con.block[0].name.ljust(8),con.block[1].name.ljust(8)] for con in self.grid.connectionlist])
-        for i in xrange(2): fa.writerec('8s'*ncon,conblks[:,i])
-        del conblks
+        for var in ['volume','ahtx','pmx','cx','cy','cz']: fa.writerec('%dd'%nel,blkdata[:][var])
+        for var in ['d1','d2','area','dircos','sigma']: fa.writerec('%dd'%ncon,condata[:][var])
+        fa.writerec('%di'%ncon,condata[:]['dirn'])
+        for var in ['blk1','blk2']: fa.writerec('8s'*ncon,condata[:][var])
         # write MESHB file:
-        blocknames=np.array([blk.name for blk in self.grid.blocklist])
-        fb.writerec('8s'*nel,[name.ljust(8) for name in blocknames])
-        fb.writerec('%di'%nel,self.grid.rocktype_indices+1)
-        blkdict=dict(((name,i) for i,name in enumerate(blocknames)))
-        nex=np.array([[blkdict[blk.name] for blk in con.block] for con in self.grid.connectionlist])+1
-        for i in xrange(2): fb.writerec('%di'%ncon,nex[:,i])
+        fb.writerec('8s'*nel,blkdata[:]['name8'])
+        fb.writerec('%di'%nel,blkdata[:]['rockindex']+1)
+        for var in ['blk1index','blk2index']: fb.writerec('%di'%ncon,condata[:][var]+1)
 
     def read(self,filename='',meshfilename=''):
         """Reads data from file.  Mesh data can optionally be read from an auxiliary file."""
