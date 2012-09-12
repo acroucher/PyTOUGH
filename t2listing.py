@@ -612,6 +612,10 @@ class t2listing(file):
         marker=['@@@@@','====='][self.simulator=='TOUGH+']
         self.skipto(marker)
         self.skip_to_nonblank()
+        pos=self.tell()
+        strs=self.readline().split()
+        if len(strs)<4: self.skip_to_nonblank() # to skip over extra lines in EOS7c listings 
+        else: self.seek(pos)
 
     def read_title_AUTOUGH2(self):
         """Read simulation title for AUTOUGH2 listings, from current position- in all headers."""
