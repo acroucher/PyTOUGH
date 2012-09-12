@@ -24,7 +24,7 @@ creates an empty \texttt{t2data} object called \texttt{dat}.
 dat=t2data(filename)
 \end{verbatim}
 
-creates a \texttt{t2data} object called \texttt{dat} and reads its contents from file \texttt{filename}.
+creates a \texttt{t2data} object called \texttt{dat} and reads its contents from file \texttt{filename}.  (It is also possible to read the mesh part of the \texttt{t2data} object from separate files- see below.)
 
 Because a \texttt{t2data} object contains a large number of different parameters, it is usually easier to load one from an existing TOUGH2 data file and edit it, rather than creating a new one from scratch. 
 
@@ -55,6 +55,7 @@ The details of all the \texttt{t2data} properties are given below.
       \texttt{incon} & dictionary & initial conditions & INCON\\
       \texttt{indom} & dictionary & rocktype-specific initial conditions & INDOM\\
       \texttt{lineq} & dictionary & linear equation solver options (AUTOUGH2 only) & LINEQ\\
+      \texttt{meshfilename} & string or tuple & file name(s) on disk containing mesh data & --\\
       \texttt{meshmaker} & list & mesh generation options & MESHM\\
       \texttt{multi} & dictionary & EOS configuration & MULTI\\
       \texttt{noversion} & Boolean & suppressing printing of version summary & NOVER\\
@@ -157,6 +158,14 @@ A dictionary property representing linear equation solver options, corresponding
     \label{tb:lineq}
   \end{center}
 \end{table}
+
+\subsubsection{\texttt{meshfilename} property}
+
+A string property (or tuple of strings) containing the name(s) of files on disk containing the mesh data.  (This does not correspond to any parameter in the TOUGH2 data file.)  Its default value is an empty string which means mesh data will be read from the main data file.
+
+If \texttt{meshfilename} is a single (non-empty) string, this is interpreted as the name of a formatted text file containing `ELEME' and `CONNE' sections specifying the mesh (e.g. the `MESH' file created by TOUGH2 or TOUGH2\_MP).
+
+If \texttt{meshfilename} is a tuple of two strings, these are interpreted as the names of two binary files containing the mesh data, e.g. the `MESHA' and `MESHB' files created by TOUGH2\_MP.
 
 \subsubsection{\texttt{meshmaker} property}
 
@@ -498,15 +507,19 @@ Returns the index (in the \texttt{generatorlist} list) of the generator with the
   Tuple of block name and generator name (both strings) of the generator.
 \end{itemize}
 
-\subsubsection{\texttt{read(\emph{filename})}}
+\subsubsection{\texttt{read(\emph{filename}, \emph{meshfilename}=`')}}
 
-Reads a \texttt{t2data} object from a TOUGH2 data file on disk.
+Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data may optionally be read from auxiliary files, if it is not present in the main data file.  (Note that if the main data file does contain mesh information (the `ELEME' and `CONNE' sections), any auxiliary mesh files will not be read.)
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{filename}: string\\
   Name of the TOUGH2 data file to be read.
+\item \textbf{meshfilename}: string or tuple\\
+  Name of separate mesh file(s) to read, containing element and connection data.  If empty, then mesh data will be read from the main data file.  If a non-empty string is given, this is interpreted as the name of a formatted text file containing `ELEME' and `CONNE' data sections (as in the `MESH' files created by TOUGH2 and TOUGH2\_MP).
 \end{itemize}
+
+Note that it is possible to create a \texttt{t2data} object and read its contents in from disk files in one step, e.g.: \texttt{dat = t2data(filename,meshfilename)}.
 
 \subsubsection{\texttt{run(\emph{save\_filename}=`', \emph{incon\_filename}=`', \emph{simulator}=`AUTOUGH2\_2',\\
     \emph{silent}=False)}}
@@ -583,14 +596,16 @@ Returns an \texttt{np.array} containing the total generation rate in each block 
   Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
 \end{itemize}
 
-\subsubsection{\texttt{write(\emph{filename}=`')}}
+\subsubsection{\texttt{write(\emph{filename}=`', \emph{meshfilename}=`')}}
 
-Writes a \texttt{t2data} object to a TOUGH2 data file on disk.
+Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{meshfilename} parameter is used, mesh information can be written to auxiliary mesh files.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{filename}: string\\
   Name of the TOUGH2 data file to be written.  If no file name is specified, the object's own \texttt{filename} property is used.
+\item \textbf{meshfilename}: string or tuple\\
+  Name of auxiliary mesh file(s) to be written.  If this is empty (the default), the object's own \texttt{meshfilename} property is used.  Otherwise, if a single (non-empty) string is given, this in interpreted as the name of a file to write formatted mesh information to (as in the `MESH' files produced by TOUGH2 and TOUGH2\_MP).  If a tuple of two strings is given, this in interpreted as the names of two binary files (as in the `MESHA' and `MESHB' files produced by TOUGH2\_MP).
 \end{itemize}
 
 \section{\texttt{t2generator} objects}
