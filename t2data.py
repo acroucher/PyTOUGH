@@ -988,12 +988,14 @@ class t2data(object):
                            ('ahtx','f8'),('pmx','f8'),('cx','f8'),('cy','f8'),('cz','f8')])
         blkdata=np.array([(i,blk.name,blk.name.ljust(8),rockdict[blk.rocktype.name],blk.volume,blk.ahtx,blk.pmx,blk.centre[0],
                            blk.centre[1],blk.centre[2]) for i,blk in enumerate(self.grid.blocklist)],dtype=block_dt)
+        for var in ['ahtx','pmx','cx','cy','cz']: blkdata[:][var]=np.nan_to_num(blkdata[:][var]) # replace nan values with zero
         blkdict=dict(zip(blkdata[:]['name'],blkdata[:]['index']))
         con_dt=np.dtype([('blk1','|S8'),('blk2','|S8'),('blk1index','i4'),('blk2index','i4'),('d1','f8'),('d2','f8'),
                          ('dirn','i4'),('area','f8'),('dircos','f8'),('sigma','f8')])
         condata=np.array([(con.block[0].name.ljust(8),con.block[1].name.ljust(8),blkdict[con.block[0].name],blkdict[con.block[1].name],
                            con.distance[0],con.distance[1],con.direction,con.area,con.dircos,con.sigma)
                           for con in self.grid.connectionlist],dtype=con_dt)
+        condata[:]['sigma']=np.nan_to_num(condata[:]['sigma'])
         # write MESHA file:
         for var in ['volume','ahtx','pmx','cx','cy','cz']: fa.writerec('%dd'%nel,blkdata[:][var])
         for var in ['d1','d2','area','dircos','sigma']: fa.writerec('%dd'%ncon,condata[:][var])
