@@ -687,54 +687,85 @@ class t2data(object):
         self.history_block=[]
         badblocks=[]
         line=infile.readline()
-        while line.strip():
-            blockname=fix_blockname(line[0:5])
-            if blockname in self.grid.block: self.history_block.append(self.grid.block[blockname])
-            else: badblocks.append(blockname)
-            line=infile.readline()
-        if len(badblocks)>0: print 'History blocks',badblocks,'do not exist and will be ignored.'
-        
+        if self.grid.num_blocks>0:
+            while line.strip():
+                blockname=fix_blockname(line[0:5])
+                if blockname in self.grid.block: self.history_block.append(self.grid.block[blockname])
+                else: badblocks.append(blockname)
+                line=infile.readline()
+            if len(badblocks)>0: print 'History blocks',badblocks,'do not exist and will be ignored.'
+        else: # no grid- don't check blocks; and store names rather than t2blocks
+            while line.strip():
+                blockname=fix_blockname(line[0:5])
+                self.history_block.append(blockname)
+                line=infile.readline()
+
     def read_history_connections(self,infile):
         """Reads history connections (TOUGH2)"""
         self.history_connection=[]
         badcons=[]
         line=infile.readline()
-        while line.strip():
-            blknames=(fix_blockname(line[0:5]),fix_blockname(line[5:10]))
-            if blknames in self.grid.connection: self.history_connection.append(self.grid.connection[blknames])
-            else: badcons.append(blknames)
-            line=infile.readline()
-        if len(badcons)>0: print 'History connections',badcons,'do not exist and will be ignored.'
+        if self.grid.num_blocks>0:
+            while line.strip():
+                blknames=(fix_blockname(line[0:5]),fix_blockname(line[5:10]))
+                if blknames in self.grid.connection: self.history_connection.append(self.grid.connection[blknames])
+                else: badcons.append(blknames)
+                line=infile.readline()
+            if len(badcons)>0: print 'History connections',badcons,'do not exist and will be ignored.'
+        else: # no grid
+            while line.strip():
+                blknames=(fix_blockname(line[0:5]),fix_blockname(line[5:10]))
+                self.history_connection.append(blknames)
+                line=infile.readline()
 
     def read_history_generators(self,infile):
         """Reads history generators (TOUGH2)"""
         self.history_generator=[]
         badgens=[]
         line=infile.readline()
-        while line.strip():
-            blockname=fix_blockname(line[0:5])
-            if blockname in self.grid.block: self.history_generator.append(self.grid.block[blockname])
-            else: badgens.append(blockname)
-            line=infile.readline()
-        if len(badgens)>0: print 'History generator blocks',badgens,'do not exist and will be ignored.'
+        if self.grid.num_blocks>0:
+            while line.strip():
+                blockname=fix_blockname(line[0:5])
+                if blockname in self.grid.block: self.history_generator.append(self.grid.block[blockname])
+                else: badgens.append(blockname)
+                line=infile.readline()
+            if len(badgens)>0: print 'History generator blocks',badgens,'do not exist and will be ignored.'
+        else: # no grid
+            while line.strip():
+                blockname=fix_blockname(line[0:5])
+                self.history_generator.append(blockname)
+                line=infile.readline()
 
     def write_history_blocks(self,outfile):
         if self.history_block:
             outfile.write('FOFT\n')
-            for block in self.history_block: outfile.write(unfix_blockname(block.name)+'\n')
+            if self.grid.num_blocks>0:
+                def blkname(blk): return blk.name
+            else:
+                def blkname(blk): return blk
+            for blk in self.history_block: outfile.write(unfix_blockname(blkname(blk))+'\n')
             outfile.write('\n')
         
     def write_history_connections(self,outfile):
         if self.history_connection:
             outfile.write('COFT\n')
+            if self.grid.num_blocks>0:
+                def conname(con): return (blk.name for blk in con.block)
+            else:
+                def conname(con): return con
             for con in self.history_connection:
-                outfile.write(unfix_blockname(con.block[0].name)+unfix_blockname(con.block[1].name)+'\n')
+                cname=conname(con)
+                outfile.write(unfix_blockname(cname[0])+unfix_blockname(cname[1])+'\n')
             outfile.write('\n')
         
     def write_history_generators(self,outfile):
         if self.history_generator:
             outfile.write('GOFT\n')
-            for blk in self.history_generator: outfile.write(unfix_blockname(blk.name)+'\n')
+            if self.grid.num_blocks>0:
+                def blkname(blk): return blk.name
+            else:
+                def blkname(blk): return blk
+            for blk in self.history_generator: outfile.write(unfix_blockname(blkname(blk))+'\n')
             outfile.write('\n')
 
     def read_indom(self,infile):

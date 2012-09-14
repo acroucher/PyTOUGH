@@ -117,15 +117,15 @@ A \texttt{t2grid} object (see chapter \ref{t2grids}) representing the simulation
 
 \subsubsection{\texttt{history\_block} property}
 
-A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.
+A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2block} objects; otherwise, they are block names (i.e. strings).
 
 \subsubsection{\texttt{history\_connection} property}
 
-A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.
+A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2connection} objects; otherwise, they are tuples of block names (i.e. tuples of strings).
 
 \subsubsection{\texttt{history\_generator} property}
 
-A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.
+A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2block} objects; otherwise, they are block names (i.e. strings).
 
 \subsubsection{\texttt{incon} property}
 
