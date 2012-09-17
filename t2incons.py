@@ -33,11 +33,11 @@ class t2incon(object):
         if filename: self.read(filename)
 
     def __getitem__(self,key):
-        if isinstance(key,int) or isinstance(key,slice): return self._blocklist[key]
+        if isinstance(key,(int,slice)): return self._blocklist[key]
         elif isinstance(key,str): return self._block[key]
         else: return None
     def __setitem__(self,key,value):
-        if isinstance(value,tuple) or isinstance(value,list): value=t2blockincon(value,key)
+        if isinstance(value,(list,tuple)): value=t2blockincon(value,key)
         if value.block<>key: value.block=key
         self.add_incon(value)
 
