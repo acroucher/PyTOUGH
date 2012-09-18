@@ -432,7 +432,12 @@ class t2data(object):
         while line.strip():
             [name,nseq,nadd,rockname,volume,ahtx,pmx,x,y,z]=infile.parse_string(line,'blocks')
             name=fix_blockname(name)
-            rocktype=self.grid.rocktype[rockname]
+            if rockname in self.grid.rocktype: rocktype=self.grid.rocktype[rockname]
+            else:
+                try: # MESH files can have rocktype indices
+                    rockindex=int(rockname)-1
+                    rocktype=self.grid.rocktypelist[rockindex]
+                except: raise RuntimeError("Unknown rocktype "+rockname+" in block "+name)
             if (x<>None) and (y<>None) and (z<>None): centre=np.array([x,y,z])
             else: centre=None
             if nseq==0: nseq=None
