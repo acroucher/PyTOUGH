@@ -757,7 +757,7 @@ class t2listing(file):
             (row index, column name, selection index, short row index) for each table, ordered by row index.  This ordering
             means all data can be read sequentially to make it more efficient.""" 
             converted_selection=[]
-            for (tspec,key,h) in selection:  # convert keys to indices as necessary, and expand table names
+            for sel_index,(tspec,key,h) in enumerate(selection):  # convert keys to indices as necessary, and expand table names
                 tablename=tablename_from_specification(tspec)
                 if tablename in tables:
                     if isinstance(key,int): index=key
@@ -775,14 +775,13 @@ class t2listing(file):
                         short_keyword=tspec[0].upper()+'SHORT'
                         if short_keyword in short_types:
                             if index in short_indices[short_keyword]: ishort=short_indices[short_keyword][index]
-                        converted_selection.append((tablename,index,ishort,h,reverse))
+                        converted_selection.append((tablename,index,ishort,h,reverse,sel_index))
             tables=list(set([sel[0] for sel in converted_selection]))
             # need to retain table order as in the file:
             tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
-            tagselection=[(tname,i,ishort,h,rev,sel_index) for sel_index,(tname,i,ishort,h,rev) in enumerate(converted_selection)]
             tableselection=[]
             for table in tables:
-                tselect=[(i,ishort,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in tagselection if tname==table]
+                tselect=[(i,ishort,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in converted_selection if tname==table]
                 tselect.sort()
                 tableselection.append((table,tselect))
             return tableselection
