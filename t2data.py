@@ -739,33 +739,28 @@ class t2data(object):
     def write_history_blocks(self,outfile):
         if self.history_block:
             outfile.write('FOFT\n')
-            if self.grid.num_blocks>0:
-                def blkname(blk): return blk.name
-            else:
-                def blkname(blk): return blk
-            for blk in self.history_block: outfile.write(unfix_blockname(blkname(blk))+'\n')
+            for blk in self.history_block:
+                if isinstance(blk,str): blkname=blk
+                else: blkname=blk.name
+                outfile.write(unfix_blockname(blkname)+'\n')
             outfile.write('\n')
         
     def write_history_connections(self,outfile):
         if self.history_connection:
             outfile.write('COFT\n')
-            if self.grid.num_blocks>0:
-                def conname(con): return (blk.name for blk in con.block)
-            else:
-                def conname(con): return con
             for con in self.history_connection:
-                cname=conname(con)
+                if isinstance(con,tuple): cname=con
+                else: cname=tuple([blk.name for blk in con.block])
                 outfile.write(unfix_blockname(cname[0])+unfix_blockname(cname[1])+'\n')
             outfile.write('\n')
         
     def write_history_generators(self,outfile):
         if self.history_generator:
             outfile.write('GOFT\n')
-            if self.grid.num_blocks>0:
-                def blkname(blk): return blk.name
-            else:
-                def blkname(blk): return blk
-            for blk in self.history_generator: outfile.write(unfix_blockname(blkname(blk))+'\n')
+            for blk in self.history_generator:
+                if isinstance(blk,str): blkname=blk
+                else: blkname=blk.name
+                outfile.write(unfix_blockname(blkname)+'\n')
             outfile.write('\n')
 
     def read_indom(self,infile):
