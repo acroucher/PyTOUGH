@@ -126,7 +126,7 @@ class t2incon(object):
             else: finished=True
         self.timing=None
         if timing:
-            line=f.readline().strip()
+            line=f.readline().rstrip()
             if len(line)>=45: self.timing={'kcyc':int(line[0:5]),'iter':int(line[5:10]),'nm':int(line[10:15]),
                                   'tstart':float(line[15:30]),'sumtim':float(line[30:45])}
 
