@@ -1436,6 +1436,7 @@ class mulgrid(object):
                     # add start or end points if they are inside the grid:
                     if col.contains_point(line[0]): crossings.insert(0,line[0])
                     elif col.contains_point(line[1]): crossings.append(line[1])
+                    else: continue
                 track.append(tuple([col]+crossings))
         sortindex=np.argsort([norm(centre(t[1])-line[0]) for t in track])
         track=[track[i] for i in sortindex]
