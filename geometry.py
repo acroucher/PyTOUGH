@@ -97,9 +97,10 @@ def polygon_area(polygon):
             area+=0.5*(p1[0]*p2[1]-p2[0]*p1[1])
     return area
 
-def line_polygon_intersections(polygon,line,indices=False):
+def line_polygon_intersections(polygon,line,bounded_line=True,indices=False):
     """Returns a list of the intersection points at which a line crosses a polygon.  The list is sorted
-    by distance from the start of the line."""
+    by distance from the start of the line.  If bounded_line is True, only return intersections between
+    the line's end points.  If indices is True, also return polygon side indices of intersections."""
     crossings=[]
     ref=polygon[0]
     l1,l2=line[0]-ref,line[1]-ref
@@ -113,7 +114,9 @@ def line_polygon_intersections(polygon,line,indices=False):
         A,b=np.array(zip(dp,l1-l2)),l1-p1
         try:
             xi=solve(A,b)
-            if in_unit(xi[0]) and in_unit(xi[1]):
+            if bounded_line: inline=in_unit(xi[1])
+            else: inline=True
+            if in_unit(xi[0]) and inline :
                 c=tuple(ref+p1+xi[0]*dp)
                 ind[c]=i
         except LinAlgError: continue
