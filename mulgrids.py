@@ -180,7 +180,21 @@ class column(object):
         """Returns (horizontal) bounding box of the column."""
         return bounds_of_points([node.pos for node in self.node])
     bounding_box=property(get_bounding_box)
-        
+
+    def get_neighbourlist(self):
+        """Returns a list of neighbouring columns corresponding to each column side (None if
+        the column side is on a boundary)."""
+        nbrlist = []
+        for i,nodei in enumerate(self.node):
+            i1 = (i+1)%self.num_nodes
+            nodes = set([nodei,self.node[i1]])
+            con = [cn for cn in self.connection if set(cn.node)==nodes]
+            if con: col = [c for c in con[0].column if c<>self][0]
+            else: col = None
+            nbrlist.append(col)
+        return nbrlist
+    neighbourlist=property(get_neighbourlist)
+
     def near_point(self,pos):
         """Returns True if pos is within the bounding box of the column."""
         return in_rectangle(pos,self.bounding_box)

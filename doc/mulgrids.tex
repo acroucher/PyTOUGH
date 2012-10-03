@@ -1018,7 +1018,7 @@ A \texttt{node} object \texttt{n} can be created for example using the command \
 
 A \texttt{column} object represents a column in a \texttt{mulgrid} object.  The properties of a \texttt{column} object are listed in Table \ref{tb:column_properties}.
 
-The main properties defining a column are its \texttt{name} and \texttt{node} properties.  The \texttt{name} is specified according to the naming convention of the \texttt{mulgrid} object that the column belongs to.  The \texttt{node} property is a list of \texttt{node} objects (not node names) that belong to the column.  A \texttt{column}'s \texttt{neighbour} property is a set of other \texttt{columns} connected to that column via a \texttt{connection} (see section \ref{connections}), and its \texttt{connection} property is a set of connections the column is part of.  A \texttt{column}'s \texttt{centroid} property returns the average of the positions of its vertices- which is what the \texttt{centre} property is set to, unless otherwise specified.
+The main properties defining a column are its \texttt{name} and \texttt{node} properties.  The \texttt{name} is specified according to the naming convention of the \texttt{mulgrid} object that the column belongs to.  The \texttt{node} property is a list of \texttt{node} objects (not node names) that belong to the column.  A \texttt{column}'s \texttt{neighbour} property is a set of other \texttt{columns} connected to that column via a \texttt{connection} (see section \ref{connections}), and its \texttt{connection} property is a set of connections the column is part of.  The \texttt{neighbourlist} property is a list of neighbouring columns, with each item corresponding to a column edge (\texttt{None} if the edge is on a grid boundary).  A \texttt{column}'s \texttt{centroid} property returns the average of the positions of its vertices- which is what the \texttt{centre} property is set to, unless otherwise specified.
 
 A \texttt{column} object has two properties measuring `grid quality'.  The \texttt{angle\_ratio} property returns the ratio of largest to smallest interior angles in the column.  The \texttt{side\_ratio} property returns the ratio of largest to smallest side lengths (a generalisation of `aspect ratio' to columns with any number of sides).  Values as close as possible to 1.0 for both these measures are desirable (their values are both exactly 1.0 for any regular polygon, e.g. an equilateral triangle or square).  Columns with large angle ratios will be highly skewed, while those with large side ratios will be typically highly elongated in one direction.
 
@@ -1069,6 +1069,7 @@ Returns \texttt{true} if the column is `against' \texttt{othercolumn}- that is, 
       \texttt{connection} & set & connections the column is in \\
       \texttt{name} & string & name of the column \\
       \texttt{neighbour} & set & set of neighbouring columns \\
+      \texttt{neighbourlist} & list & ordered list of neighbouring columns \\
       \texttt{node} & list & list of nodes (vertices) belonging to the column \\
       \texttt{num\_neighbours} & integer & number of neighbouring columns \\
       \texttt{num\_nodes} & integer & number of nodes belonging to the column \\
