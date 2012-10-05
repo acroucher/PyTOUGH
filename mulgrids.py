@@ -1494,7 +1494,7 @@ class mulgrid(object):
                 else: more = False
             return nextcol,more
 
-        def next_neighbour_column(col,pos,more,cols):
+        def next_neighbour_column(col,more,cols):
             """Determine a new neighbour column not already visited."""
             nbrs = col.neighbour - cols
             if nbrs: return nbrs.pop(),more
@@ -1519,7 +1519,7 @@ class mulgrid(object):
                     if nextcol:
                         if nextcol in cols:
                             nextcol,more = next_corner_column(col,outpos,more,cols)
-                            if nextcol==None: nextcol,more = next_neighbour_column(col,outpos,more,cols)
+                            if nextcol==None: nextcol,more = next_neighbour_column(col,more,cols)
                     else: nextcol,more = next_corner_column(col,outpos,more,cols)
                     col = nextcol
                     if col: colnbr = col.neighbourlist
