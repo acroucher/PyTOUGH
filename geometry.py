@@ -97,14 +97,14 @@ def polygon_area(polygon):
             area+=0.5*(p1[0]*p2[1]-p2[0]*p1[1])
     return area
 
-def line_polygon_intersections(polygon,line,bounded_line=True,indices=False):
+def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False):
     """Returns a list of the intersection points at which a line crosses a polygon.  The list is sorted
-    by distance from the start of the line.  If bounded_line is True, only return intersections between
-    the line's end points.  If indices is True, also return polygon side indices of intersections."""
+    by distance from the start of the line.  The parameter bound_line controls whether to limit intersections
+    between the line's start and end points.  If indices is True, also return polygon side indices of intersections."""
     crossings=[]
     ref=polygon[0]
     l1,l2=line[0]-ref,line[1]-ref
-    tol=1.e-15
+    tol=1.e-12
     ind={}
     def in_unit(x): return -tol<=x<=1.0+tol
     for i,p in enumerate(polygon):
@@ -114,8 +114,9 @@ def line_polygon_intersections(polygon,line,bounded_line=True,indices=False):
         A,b=np.array(zip(dp,l1-l2)),l1-p1
         try:
             xi=solve(A,b)
-            if bounded_line: inline=in_unit(xi[1])
-            else: inline=True
+            inline=True
+            if bound_line[0]: inline=inline and (-tol<=xi[1])
+            if bound_line[1]: inline=inline and (xi[1]<=1.0+tol)
             if in_unit(xi[0]) and inline :
                 c=tuple(ref+p1+xi[0]*dp)
                 ind[c]=i
