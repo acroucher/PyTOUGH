@@ -1454,31 +1454,30 @@ class mulgrid(object):
             """Finds starting point for track- an arbitrary point on the line that is inside
             the grid.  If the start point of the line is inside the grid, that is used;
             otherwise, a recursive bisection technique is used to find a point."""
-            col= self.column_containing_point(line[0])
-            if col: pos, start_type = line[0],'start'
-            else:
-                col= self.column_containing_point(line[1])
-                if col: pos, start_type = line[1],'end'
-                else: # line ends are both outside the grid:
-                    start_type = 'mid'
-                    max_levels = 7
+            col,start_type = None,None
+            for endpt,name in zip(line,['start','end']):
+                pos,col,start_type= endpt,self.column_containing_point(endpt),name
+                if col: break
+            if not col: # line ends are both outside the grid:
+                start_type = 'mid'
+                max_levels = 7
 
-                    def find_start(line,level=0):
-                        midpt = 0.5*(line[0] + line[1])
-                        col = self.column_containing_point(midpt)
-                        if col: return midpt,col
-                        else:
-                            if level <= max_levels:
-                                line0,line1 = [line[0],midpt],[midpt,line[1]]
-                                pos,col = find_start(line0,level+1)
+                def find_start(line,level=0):
+                    midpt = 0.5*(line[0] + line[1])
+                    col = self.column_containing_point(midpt)
+                    if col: return midpt,col
+                    else:
+                        if level <= max_levels:
+                            line0,line1 = [line[0],midpt],[midpt,line[1]]
+                            pos,col = find_start(line0,level+1)
+                            if col: return pos,col
+                            else:
+                                pos,col = find_start(line1,level+1)
                                 if col: return pos,col
-                                else:
-                                    pos,col = find_start(line1,level+1)
-                                    if col: return pos,col
-                                    else: return None,None
-                            else: return None,None
+                                else: return None,None
+                        else: return None,None
 
-                    pos,col = find_start(line)
+                pos,col = find_start(line)
             return pos,col,start_type
 
         def next_corner_column(col,pos,more,cols):
