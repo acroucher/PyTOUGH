@@ -238,7 +238,7 @@ class t2listing(file):
 
     def table_type_TOUGH2(self,headers):
         """Returns TOUGH2 table name based on a tuple of the first three column headings."""
-        if headers[0:2]==('ELEM.','INDEX'):
+        if headers[0:2] in [('ELEM.','INDEX'),('ELEM.','IND.')]:
             if headers[2]=='P': return 'element'
             elif headers[2]=='X1': return 'primary'
         else:
@@ -463,7 +463,7 @@ class t2listing(file):
     def key_positions(self,line,nkeys):
         """Returns detected positions of keys in the start of a table line.  This works on the assumption
         that key values must have a digit present in their last character.  It searches backwards from the 
-        end of the position of INDEX in the header line- sometimes keys can overlap into this area."""
+        end of the position of INDEX (or IND.) in the header line- sometimes keys can overlap into this area."""
         keylength=5
         keypos=[]
         pos=len(line)-1
@@ -551,8 +551,12 @@ class t2listing(file):
         else: flow_headers=['Flow','Veloc']
         headline=self.readline()
         strs=headline.strip().split()
-        indexstr='INDEX'
-        nkeys=strs.index(indexstr)
+        indexstrs=['INDEX','IND.'] # for EWASG
+        for s in indexstrs:
+            if s in strs:
+                indexstr=s
+                nkeys=strs.index(s)
+                break
         self.skip_over_next_blank()
         rows,cols=[],[]
         for s in strs[nkeys+1:]:

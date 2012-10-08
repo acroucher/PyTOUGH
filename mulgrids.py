@@ -180,7 +180,21 @@ class column(object):
         """Returns (horizontal) bounding box of the column."""
         return bounds_of_points([node.pos for node in self.node])
     bounding_box=property(get_bounding_box)
-        
+
+    def get_neighbourlist(self):
+        """Returns a list of neighbouring columns corresponding to each column side (None if
+        the column side is on a boundary)."""
+        nbrlist = []
+        for i,nodei in enumerate(self.node):
+            i1 = (i+1)%self.num_nodes
+            nodes = set([nodei,self.node[i1]])
+            con = [cn for cn in self.connection if set(cn.node)==nodes]
+            if con: col = [c for c in con[0].column if c<>self][0]
+            else: col = None
+            nbrlist.append(col)
+        return nbrlist
+    neighbourlist=property(get_neighbourlist)
+
     def near_point(self,pos):
         """Returns True if pos is within the bounding box of the column."""
         return in_rectangle(pos,self.bounding_box)
@@ -1426,20 +1440,108 @@ class mulgrid(object):
         """Returns a list of tuples of (column,entrypoint,exitpoint) representing the horizontal track traversed by the
         specified line through the grid.  Line is a tuple of two 2D arrays.  The resulting list is ordered by distance
         from the start of the line."""
-        def centre(crossings): return sum(crossings)/len(crossings)
-        track=[]
-        for col in self.columnlist:
-            polygon=col.polygon
-            crossings=line_polygon_intersections(polygon,line)
-            if crossings:
-                if len(crossings)<2:
-                    # add start or end points if they are inside the grid:
-                    if col.contains_point(line[0]): crossings.insert(0,line[0])
-                    elif col.contains_point(line[1]): crossings.append(line[1])
-                track.append(tuple([col]+crossings))
-        sortindex=np.argsort([norm(centre(t[1])-line[0]) for t in track])
-        track=[track[i] for i in sortindex]
-        return track
+
+        def furthest_intersection(poly,line):
+            """Returns furthest intersection point between line and poly."""
+            pts,inds = line_polygon_intersections(poly, line, bound_line=(True,False), indices=True)
+            if pts:
+                d = np.array([np.linalg.norm(intpt-line[0]) for intpt in pts])
+                i = np.argmax(d)
+                return pts[i],inds[i]
+            else: return None,None
+
+        def find_track_start(line):
+            """Finds starting point for track- an arbitrary point on the line that is inside
+            the grid.  If the start point of the line is inside the grid, that is used;
+            otherwise, a recursive bisection technique is used to find a point."""
+            col,start_type = None,None
+            for endpt,name in zip(line,['start','end']):
+                pos,col,start_type= endpt,self.column_containing_point(endpt),name
+                if col: break
+            if not col: # line ends are both outside the grid:
+                start_type = 'mid'
+                max_levels = 7
+
+                def find_start(line,level=0):
+                    midpt = 0.5*(line[0] + line[1])
+                    col = self.column_containing_point(midpt)
+                    if col: return midpt,col
+                    else:
+                        if level <= max_levels:
+                            line0,line1 = [line[0],midpt],[midpt,line[1]]
+                            pos,col = find_start(line0,level+1)
+                            if col: return pos,col
+                            else:
+                                pos,col = find_start(line1,level+1)
+                                if col: return pos,col
+                                else: return None,None
+                        else: return None,None
+
+                pos,col = find_start(line)
+            return pos,col,start_type
+
+        def next_corner_column(col,pos,more,cols):
+            """If the line has hit a node, determine a new column containing that node,
+            not already visited."""
+            node_tol = 1.e-12
+            nextcol = None
+            nearnodes = [n for n in col.node if np.linalg.norm(n.pos - pos) < node_tol]
+            if nearnodes: # hit a node
+                nearnode = nearnodes[0]
+                nearcols = nearnode.column - cols
+                if nearcols: nextcol = nearcols.pop()
+                else: more = False
+            return nextcol,more
+
+        def next_neighbour_column(col,more,cols):
+            """Determine a new neighbour column not already visited."""
+            nbrs = col.neighbour - cols
+            if nbrs: return nbrs.pop(),more
+            else: return None, False
+
+        def find_track_segment(linesegment,pos,col):
+            """Finds track segment starting from the specified position and column."""
+            track = []
+            cols, more, inpos, colnbr = set(), True, pos, col.neighbourlist
+            lined=np.linalg.norm(linesegment[1] - linesegment[0])
+            while more:
+                cols.add(col)
+                outpos,ind = furthest_intersection(col.polygon,linesegment)
+                d = np.linalg.norm(outpos - linesegment[0])
+                if d >= lined: # gone past end of line
+                    outpos = linesegment[1]
+                    more = False
+                if np.linalg.norm(outpos - inpos) > 0.: track.append(tuple([col,inpos,outpos]))
+                if more: # find next column
+                    inpos = outpos
+                    nextcol = colnbr[ind]
+                    if nextcol:
+                        if nextcol in cols:
+                            nextcol,more = next_corner_column(col,outpos,more,cols)
+                            if nextcol==None: nextcol,more = next_neighbour_column(col,more,cols)
+                    else: nextcol,more = next_corner_column(col,outpos,more,cols)
+                    col = nextcol
+                    if col: colnbr = col.neighbourlist
+                    else: more = False
+            return track
+
+        def reverse_track(track): return [tuple([tk[0],tk[2],tk[1]]) for tk in track][::-1]
+
+        pos,col,start_type = find_track_start(line)
+        if pos<>None and col:
+            if start_type=='start':
+                track = find_track_segment(line,pos,col)
+            elif start_type=='end':
+                track = find_track_segment(line[::-1],pos,col)
+                track = reverse_track(track)
+            else:
+                track1 = find_track_segment([pos,line[0]],pos,col)
+                track2 = find_track_segment([pos,line[1]],pos,col)
+                # remove arbitrary starting point from middle of track, and join:
+                midtk = tuple([track1[0][0], track1[0][2], track2[0][2]])
+                track = reverse_track(track1)[:-1] + [midtk] +track2[1:]
+            return track
+        else: return []
 
     def layer_plot(self,layer=0,variable=None,variable_name=None,unit=None,column_names=None,node_names=None,column_centres=None,nodes=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='equal',plt=None,subplot=111,title=None,xlabel='x (m)',ylabel='y (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),connections=None,colourbar_limits=None,plot_limits=None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
@@ -1596,78 +1698,70 @@ class mulgrid(object):
                 if not isinstance(block_names,list): block_names=self.block_name_list
             else: block_names=[]
             track=self.column_track(l)
-            if line=='x':
-                x0=track[0][1][0]
-                for tp in track:
-                    tp[1][0]+=x0
-                    tp[2][0]+=x0
-                if xlabel==None: xlabel='x (m)'
+            if track:
+                if xlabel==None:
+                    if line=='x': xlabel='x (m)'
+                    elif line=='y': xlabel='y (m)'
+                    else: xlabel='distance (m)'
                 plt.xlabel(xlabel)
-            elif line=='y':
-                y0=track[0][1][1]
-                for tp in track:
-                    tp[1][1]+=y0
-                    tp[2][1]+=y0
-                if xlabel==None: xlabel='y (m)'
-                plt.xlabel(xlabel)
-            else:
-                if xlabel==None:xlabel='distance (m)'
-                plt.xlabel(xlabel)
-            verts,vals=[],[]
-            if not isinstance(contours,bool): contours=list(contours)
-            if contours<>False: xc,yc=[],[]
-            for trackitem in track:
-                col,points=trackitem[0],trackitem[1:]
-                inpoint=points[0]
-                if len(points)>1: outpoint=points[1]
-                else: outpoint=inpoint
-                din,dout=norm(inpoint-l[0]),norm(outpoint-l[0])
-                for lay in self.layerlist[1:]:
-                    if col.surface>lay.bottom:
-                        blkname=self.block_name(lay.name,col.name)
-                        if variable<>None: val=variable[self.block_name_index[blkname]]
-                        else: val=0
-                        vals.append(val)
-                        top=self.block_surface(lay,col)
-                        verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
-                        if blkname in block_names:
-                            ax.text(0.5*(din+dout),lay.centre,blkname,clip_on=True,horizontalalignment='center')
-                        if contours<>False:
-                            xc.append(0.5*(din+dout))
-                            yc.append(lay.centre)
-            import matplotlib.collections as collections
-            if variable<>None: facecolors=None
-            else: facecolors=[]
-            col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
-            if variable<>None: col.set_array(np.array(vals))
-            if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
-            ax.add_collection(col)
-            if plot_limits<>None:
-                plt.xlim(plot_limits[0])
-                plt.ylim(plot_limits[1])
-            else: ax.autoscale_view()
-            if contours<>False:
-                from matplotlib.mlab import griddata
-                xc,yc=np.array(xc),np.array(yc)
-                valc=np.array(vals)
-                bds=((np.min(xc),np.min(yc)),(np.max(xc),np.max(yc)))
-                xgrid=np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
-                ygrid=np.linspace(bds[0][1],bds[1][1],contour_grid_divisions[1])
-                valgrid=griddata(xc,yc,valc,xgrid,ygrid)
-                if isinstance(contours,list): cvals=contours
-                else: cvals=False
-                CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
-                if contour_label_format<>None: plt.clabel(CS, inline=1,fmt=contour_label_format)
-            plt.ylabel(ylabel)
-            scalelabel=varname
-            if unit: scalelabel+=' ('+unit+')'
-            if variable<>None:
-                cbar=plt.colorbar(col)
-                cbar.set_label(scalelabel)
-                default_title=varname+' in '+default_title
-            if title==None: title=default_title
-            plt.title(title)
-            if loneplot: plt.show()
+                verts,vals=[],[]
+                if not isinstance(contours,bool): contours=list(contours)
+                if contours<>False: xc,yc=[],[]
+                for trackitem in track:
+                    col,points=trackitem[0],trackitem[1:]
+                    inpoint=points[0]
+                    if len(points)>1: outpoint=points[1]
+                    else: outpoint=inpoint
+                    if line=='x': din,dout=inpoint[0],outpoint[0]
+                    elif line=='y': din,dout=inpoint[1],outpoint[1]
+                    else: din,dout=norm(inpoint-l[0]),norm(outpoint-l[0])
+                    for lay in self.layerlist[1:]:
+                        if col.surface>lay.bottom:
+                            blkname=self.block_name(lay.name,col.name)
+                            if variable<>None: val=variable[self.block_name_index[blkname]]
+                            else: val=0
+                            vals.append(val)
+                            top=self.block_surface(lay,col)
+                            verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
+                            if blkname in block_names:
+                                ax.text(0.5*(din+dout),lay.centre,blkname,clip_on=True,horizontalalignment='center')
+                            if contours<>False:
+                                xc.append(0.5*(din+dout))
+                                yc.append(lay.centre)
+                import matplotlib.collections as collections
+                if variable<>None: facecolors=None
+                else: facecolors=[]
+                col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
+                if variable<>None: col.set_array(np.array(vals))
+                if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
+                ax.add_collection(col)
+                if plot_limits<>None:
+                    plt.xlim(plot_limits[0])
+                    plt.ylim(plot_limits[1])
+                else: ax.autoscale_view()
+                if contours<>False:
+                    from matplotlib.mlab import griddata
+                    xc,yc=np.array(xc),np.array(yc)
+                    valc=np.array(vals)
+                    bds=((np.min(xc),np.min(yc)),(np.max(xc),np.max(yc)))
+                    xgrid=np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
+                    ygrid=np.linspace(bds[0][1],bds[1][1],contour_grid_divisions[1])
+                    valgrid=griddata(xc,yc,valc,xgrid,ygrid)
+                    if isinstance(contours,list): cvals=contours
+                    else: cvals=False
+                    CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
+                    if contour_label_format<>None: plt.clabel(CS, inline=1,fmt=contour_label_format)
+                plt.ylabel(ylabel)
+                scalelabel=varname
+                if unit: scalelabel+=' ('+unit+')'
+                if variable<>None:
+                    cbar=plt.colorbar(col)
+                    cbar.set_label(scalelabel)
+                    default_title=varname+' in '+default_title
+                if title==None: title=default_title
+                plt.title(title)
+                if loneplot: plt.show()
+            else: print 'Slice',str(line),'does not intersect the grid.'
 
     def line_values(self,start,end,variable,divisions=100,coordinate=False,qtree=None):
         """Gets values of variable along specified line through geometry.  Returns two arrays for

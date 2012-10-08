@@ -97,12 +97,16 @@ def polygon_area(polygon):
             area+=0.5*(p1[0]*p2[1]-p2[0]*p1[1])
     return area
 
-def line_polygon_intersections(polygon,line):
+def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False):
     """Returns a list of the intersection points at which a line crosses a polygon.  The list is sorted
-    by distance from the start of the line."""
+    by distance from the start of the line.  The parameter bound_line controls whether to limit intersections
+    between the line's start and end points.  If indices is True, also return polygon side indices of intersections."""
     crossings=[]
     ref=polygon[0]
     l1,l2=line[0]-ref,line[1]-ref
+    tol=1.e-12
+    ind={}
+    def in_unit(x): return -tol<=x<=1.0+tol
     for i,p in enumerate(polygon):
         p1=p-ref
         p2=polygon[(i+1)%len(polygon)]-ref
@@ -110,11 +114,17 @@ def line_polygon_intersections(polygon,line):
         A,b=np.array(zip(dp,l1-l2)),l1-p1
         try:
             xi=solve(A,b)
-            if (0.<=xi[0]<=1.0) and (0.<=xi[1]<=1.0): crossings.append(tuple(ref+p1+xi[0]*dp))
+            inline=True
+            if bound_line[0]: inline=inline and (-tol<=xi[1])
+            if bound_line[1]: inline=inline and (xi[1]<=1.0+tol)
+            if in_unit(xi[0]) and inline :
+                c=tuple(ref+p1+xi[0]*dp)
+                ind[c]=i
         except LinAlgError: continue
-    crossings=[np.array(tc) for tc in list(set(crossings))] # remove duplicates and convert to arrays
+    crossings=[np.array(c) for c,i in ind.iteritems()]
     sortindex=np.argsort([norm(c-line[0]) for c in crossings]) # sort by distance from start of line
-    return [crossings[i] for i in sortindex]
+    if indices: return [crossings[i] for i in sortindex], [ind[tuple(crossings[i])] for i in sortindex]
+    else: return [crossings[i] for i in sortindex]
 
 def simplify_polygon(polygon,tolerance=1.e-6):
     """Simplifies a polygon by deleting colinear points.  The tolerance for detecting colinearity of points
