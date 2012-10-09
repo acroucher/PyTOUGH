@@ -2207,9 +2207,9 @@ class mulgrid(object):
         f=open(filename,'w')
         width=(self.layerlist[1].top-self.layerlist[-1].bottom)/aspect
         right=left+width
-        f.write('5,1\n')
         nodefmt='%10.2f,%10.2f\n'
         for layer in self.layerlist:
+            f.write('5,1\n')
             pts=[(left,layer.top),(left,layer.bottom),(right,layer.bottom),(right,layer.top),(left,layer.top)]
             for x,z in pts: f.write(nodefmt%(x,z))
         f.close()
@@ -2218,7 +2218,7 @@ class mulgrid(object):
         """Writes label file for BNA file (containing the column names)."""
         filename=self.filename_base(filename)+'_column_names.csv'
         f=open(filename,'w')
-        fmt='%10.2f,%10.2f,"%s"\n'
+        fmt='%.2f,%.2f,"%s"\n'
         for col in self.columnlist: f.write(fmt%tuple(list(col.centre)+[col.name]))
         f.close()
 
@@ -2231,7 +2231,7 @@ class mulgrid(object):
         labels=['bottom_elevation','centre','name']
         filenames=[base+'_layer_'+label+'s.csv' for label in labels]
         files=dict(zip(labels,[file(filename,'w') for filename in filenames]))
-        fmt=dict(zip(labels,['%10.2f,%10.2f,%10.2f\n']*2+['%10.2f,%10.2f,"%s"\n']))
+        fmt=dict(zip(labels,['%.2f,%.2f,%.2f\n']*2+['%.2f,%.2f,"%s"\n']))
         start=dict(zip(labels,[0,1,1]))
         for label in labels: files[label].write('"X","Y","'+label+'"\n')
         for i,layer in enumerate(self.layerlist):
