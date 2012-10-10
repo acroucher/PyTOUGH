@@ -599,12 +599,24 @@ class mulgrid(object):
         elif self.convention==2: return blockname[0:2]
         else: return None
 
-    def column_name_from_number(self, num, justfn=rjust, casefn=lowercase):
-        """Returns column name based on column number."""
+    def node_col_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+        """Returns node or column name from number."""
         if self.convention==0: name = justfn(IntToLetters(num,casefn=casefn),self.colname_length)
         else: name = rjust(str(num),self.colname_length)
+        return name
+
+    def column_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+        """Returns column name from column number."""
+        name = self.node_col_name_from_number(num, justfn, casefn)
         if len(name) > self.colname_length:
-            raise NamingConventionError("Node or column name is too long for the grid naming convention.")
+            raise NamingConventionError("Column name is too long for the grid naming convention.")
+        return name
+
+    def node_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+        """Returns node name from node number."""
+        name = self.node_col_name_from_number(num, justfn, casefn)
+        if len(name) > self.colname_length:
+            raise NamingConventionError("Node name is too long for the grid naming convention.")
         return name
 
     def column_number_from_name(self,name):
@@ -612,7 +624,7 @@ class mulgrid(object):
         else: return int(name)
 
     def layer_name_from_number(self, num, justfn=rjust, casefn=lowercase):
-        """Returns layer name, based on layer number."""
+        """Returns layer name from layer number."""
         if self.convention==0: name = justfn(str(num),self.layername_length)
         else: name = justfn(IntToLetters(num,casefn=casefn),self.layername_length)
         if len(name) > self.layername_length:
@@ -1115,7 +1127,7 @@ class mulgrid(object):
         y=origin[1]
         for y in yverts:
             for x in xverts:
-                name=grid.column_name_from_number(num,justfn,casefn)
+                name=grid.node_name_from_number(num,justfn,casefn)
                 grid.add_node(node(name,np.array([x,y])))
                 num+=1
         # create columns:
@@ -1124,7 +1136,7 @@ class mulgrid(object):
             for i in xrange(nxb):
                 colname=grid.column_name_from_number(num,justfn,casefn)
                 colverts=[j*nxv+i+1,(j+1)*nxv+i+1,(j+1)*nxv+i+2,j*nxv+i+2]
-                nodenames=[grid.column_name_from_number(v,justfn,casefn) for v in colverts]
+                nodenames=[grid.node_name_from_number(v,justfn,casefn) for v in colverts]
                 colnodes=[grid.node[name] for name in nodenames]
                 grid.add_column(column(colname,colnodes))
                 num+=1
@@ -1176,10 +1188,7 @@ class mulgrid(object):
         for i in xrange(num_nodes):
             items=gmsh.readline().strip().split(' ')
             name,x,y=items[0],float(items[1]),float(items[2])
-            name=[IntToLetters(int(name)),name][convention>0]
-            name=rjust(name,grid.colname_length)
-            if len(name) > grid.colname_length:
-                raise NamingConventionError("Node name is too long for the grid naming convention.")
+            name=self.node_name_from_number(int(name))
             grid.add_node(node(name,np.array([x,y])))
         while not '$Elements' in line: line=gmsh.readline()
         num_elements=int(gmsh.readline().strip())
@@ -1188,10 +1197,7 @@ class mulgrid(object):
             element_type=int(items[1])
             if element_type in [2,3]: # triangle or quadrilateral
                 name=items[0]
-                name=[IntToLetters(int(name)),name][convention>0]
-                name=rjust(name,grid.colname_length)
-                if len(name) > grid.colname_length:
-                    raise NamingConventionError("Column name is too long for the grid naming convention.")
+                name=self.column_name_from_number(int(name))
                 ntags=int(items[2])
                 colnodenumbers=items[3+ntags:]
                 colnodenames=[[IntToLetters(int(nodeno)),nodeno][convention>0] for nodeno in colnodenumbers]
@@ -2425,7 +2431,7 @@ class mulgrid(object):
         def create_mid_node(node1,node2,sidenodes,next_nodeno,justfn,casefn):
             midpos=0.5*(node1.pos+node2.pos)
             nodenames=frozenset((node1.name,node2.name))
-            name=self.column_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
+            name=self.node_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
             self.add_node(node(name,midpos))
             sidenodes[nodenames]=self.nodelist[-1]
             return sidenodes,next_nodeno
@@ -2492,7 +2498,7 @@ class mulgrid(object):
                 nrefined,istart,irange=transition_type(nn,refined_sides)
                 if (col.num_nodes==4) and ((nrefined==4) or ((nrefined==2) and (irange==1))):
                     # create quadrilateral centre node:
-                    name=self.column_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
+                    name=self.node_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
                     self.add_node(node(name,col.centre))
                     centrenodes[col.name]=self.nodelist[-1]
                 for subcol in transition_column[nn][nrefined,irange]:
