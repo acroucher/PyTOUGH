@@ -536,7 +536,7 @@ class mulgrid(object):
     def __repr__(self):
         conventionstr=['3 characters for column, 2 digits for layer','3 characters for layer, 2 digits for column','2 characters for layer, 3 digits for column'][self.convention]
         atmstr=['single atmosphere block','one atmosphere block over each column','no atmosphere blocks'][self.atmosphere_type]
-        return str(self.num_nodes)+' nodes; '+str(self.num_columns)+' columns; '+str(self.num_layers)+' layers; '+str(self.num_blocks)+' blocks; '+str(self.num_wells)+' wells'+'\n'+'Naming convention: '+conventionstr+'\n'+'Atmosphere type: '+atmstr
+        return str(self.num_nodes)+' nodes; '+str(self.num_columns)+' columns; '+str(self.num_layers)+' layers; '+str(self.num_blocks)+' blocks; '+str(self.num_wells)+' wells'+'\n'+'Naming convention: '+str(self.convention)+' ('+conventionstr+')\n'+'Atmosphere type  : '+str(self.atmosphere_type)+' ('+atmstr+')'
 
     def get_default_surface(self):
         return all([col.default_surface for col in self.columnlist])
