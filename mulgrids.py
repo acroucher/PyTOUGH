@@ -1178,6 +1178,8 @@ class mulgrid(object):
             name,x,y=items[0],float(items[1]),float(items[2])
             name=[IntToLetters(int(name)),name][convention>0]
             name=rjust(name,grid.colname_length)
+            if len(name) > grid.colname_length:
+                raise NamingConventionError("Node name is too long for the grid naming convention.")
             grid.add_node(node(name,np.array([x,y])))
         while not '$Elements' in line: line=gmsh.readline()
         num_elements=int(gmsh.readline().strip())
@@ -1188,6 +1190,8 @@ class mulgrid(object):
                 name=items[0]
                 name=[IntToLetters(int(name)),name][convention>0]
                 name=rjust(name,grid.colname_length)
+                if len(name) > grid.colname_length:
+                    raise NamingConventionError("Column name is too long for the grid naming convention.")
                 ntags=int(items[2])
                 colnodenumbers=items[3+ntags:]
                 colnodenames=[[IntToLetters(int(nodeno)),nodeno][convention>0] for nodeno in colnodenumbers]
