@@ -58,6 +58,11 @@ def fortran_float(s):
             v=0.0
     return v
 
+class NamingConventionError(Exception):
+    """Used to raise exceptions when grid naming convention is not respected- e.g. when column
+    or layer names are too long."""
+    pass
+
 class quadtree(object):
     """Quadtree for spatial searching in 2D grids."""
     def __init__(self,bounds,elements,parent=None):
@@ -594,13 +599,25 @@ class mulgrid(object):
         elif self.convention==2: return blockname[0:2]
         else: return None
 
-    def column_name_from_number(self,num,justfn=rjust,casefn=lowercase):
-        """Returns column name based on column number. """
-        if self.convention==0: return justfn(IntToLetters(num,casefn=casefn),self.colname_length)
-        else: return rjust(str(num),self.colname_length)
+    def column_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+        """Returns column name based on column number."""
+        if self.convention==0: name = justfn(IntToLetters(num,casefn=casefn),self.colname_length)
+        else: name = rjust(str(num),self.colname_length)
+        if len(name) > self.colname_length:
+            raise NamingConventionError("Node or column name is too long for the grid naming convention.")
+        return name
+
     def column_number_from_name(self,name):
         if self.convention==0: return LettersToInt(name)
         else: return int(name)
+
+    def layer_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+        """Returns layer name, based on layer number."""
+        if self.convention==0: name = justfn(str(num),self.layername_length)
+        else: name = justfn(IntToLetters(num,casefn=casefn),self.layername_length)
+        if len(name) > self.layername_length:
+            raise NamingConventionError("Layer name is too long for the grid naming convention.")
+        return name
 
     def get_uppercase_names(self):
         """Returns True if character part of block names are uppercase."""
@@ -1134,10 +1151,6 @@ class mulgrid(object):
         """Adds layers of specified thicknesses and top elevation."""
         justfn=[rjust,ljust][justify=='l']
         casefn=[uppercase,lowercase][case=='l']
-        def get_layername(num):
-            """Returns layer name, based on naming convention"""
-            if self.convention==0: return rjust(str(num),self.layername_length)
-            else: return justfn(IntToLetters(num,casefn=casefn),self.layername_length)
         num=0
         z=top_elevation
         surfacelayername=[' 0','atm','at'][self.convention]
@@ -1148,7 +1161,7 @@ class mulgrid(object):
             name=surfacelayername
             while name==surfacelayername: # make sure layer name is different from surface layer name
                 num+=1
-                name=rjust(get_layername(num),self.layername_length)
+                name=self.layer_name_from_number(num,justfn,casefn)
             self.add_layer(layer(name,z,centre))
         self.identify_layer_tops()
 
