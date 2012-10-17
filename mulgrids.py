@@ -2544,6 +2544,7 @@ class mulgrid(object):
         case=['l','u'][self.uppercase_names]
         self.add_layers(thicknesses, top_elevation, justify, case)
         self.rename_layer(self.layerlist[0].name, atm_name) # preserve old atmosphere layer name
+        for col in self.columnlist: self.set_column_num_layers(col)
         self.setup_block_name_index()
 
     def column_neighbour_groups(self,columns):
