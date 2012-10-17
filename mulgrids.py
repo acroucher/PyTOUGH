@@ -2536,8 +2536,7 @@ class mulgrid(object):
         atm_name = self.layerlist[0].name
         thicknesses = []
         for lay in self.layerlist[1:]:
-            if lay in layers:
-                for i in xrange(factor): thicknesses.append(lay.thickness / factor)
+            if lay in layers: thicknesses += [lay.thickness / factor] * factor
             else: thicknesses.append(lay.thickness)
         self.clear_layers()
         justify=['l','r'][self.right_justified_names]
