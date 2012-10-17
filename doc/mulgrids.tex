@@ -190,7 +190,8 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
   \texttt{read} & \texttt{mulgrid} & reads geometry file from disk\\
   \texttt{rectangular} & \texttt{mulgrid} & creates rectangular grid\\
-  \texttt{refine} & -- & refines a specified part of the grid\\
+  \texttt{refine} & -- & refines specified columns in the grid\\
+  \texttt{refine\_layers} & -- & refines specified layers in the grid\\
   \texttt{rename\_layer} & Boolean & renames a layer\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
@@ -830,6 +831,18 @@ The \texttt{bisect\_edge\_columns} parameter can be used to give more desirable 
     Set to \texttt{True} if columns are to be split into two, between their longest sides, instead of four (the default).  Set to `x' or `y' to split columns along the specified axis.
   \item \textbf{bisect\_edge\_columns}: list\\
     List of columns or column names in the transition region (just outside the refinement area) to be bisected prior to the refinement, to improve the aspect ratios of the transition columns.
+\end{itemize}
+
+\subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2)}}
+
+Refines the specified layers in the grid.  If no layers are specified, all layers are refined.  Each layer is refined by the specified integer factor.
+
+\textbf{Parameters:}
+\begin{itemize}
+  \item \textbf{layers}: list\\
+    List of layers or layer names to be refined.
+  \item \textbf{factor}: integer\\
+    Refinement factor: default is 2, which bisects each layer.
 \end{itemize}
 
 \subsubsection{\texttt{rename\_layer(\emph{oldlayername}, \emph{newlayername})}}
