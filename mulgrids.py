@@ -457,6 +457,7 @@ class mulgrid(object):
         """Set naming convention"""
         self._convention=convention
         self.set_secondary_variables()
+        self.setup_block_name_index()
     convention=property(get_convention,set_convention)
 
     def get_atmosphere_type(self):
@@ -466,6 +467,7 @@ class mulgrid(object):
         """Set atmosphere type"""
         self._atmosphere_type=atmos_type
         self.set_secondary_variables()
+        self.setup_block_name_index()
     atmosphere_type=property(get_atmosphere_type,set_atmosphere_type)
 
     def get_unit_type(self):
@@ -576,13 +578,14 @@ class mulgrid(object):
     def setup_block_name_index(self):
         """Sets up list and dictionary of block names and indices for the tough2 grid represented by the geometry."""
         self.block_name_list=[]
-        if self.atmosphere_type==0: # one atmosphere block
-            self.block_name_list.append(self.block_name(self.layerlist[0].name,self.atmosphere_column_name))
-        elif self.atmosphere_type==1: # one atmosphere block per column
-            for col in self.columnlist: self.block_name_list.append(self.block_name(self.layerlist[0].name,col.name))
-        for lay in self.layerlist[1:]:
-            for col in [col for col in self.columnlist if col.surface>lay.bottom]:
-                self.block_name_list.append(self.block_name(lay.name,col.name))
+        if self.num_layers>0:
+            if self.atmosphere_type==0: # one atmosphere block
+                self.block_name_list.append(self.block_name(self.layerlist[0].name,self.atmosphere_column_name))
+            elif self.atmosphere_type==1: # one atmosphere block per column
+                for col in self.columnlist: self.block_name_list.append(self.block_name(self.layerlist[0].name,col.name))
+            for lay in self.layerlist[1:]:
+                for col in [col for col in self.columnlist if col.surface>lay.bottom]:
+                    self.block_name_list.append(self.block_name(lay.name,col.name))
         self.block_name_index=dict([(blk,i) for i,blk in enumerate(self.block_name_list)])
 
     def column_name(self,blockname):
