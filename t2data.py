@@ -1244,6 +1244,10 @@ class t2data(object):
         if self.multi:
             if 'eos' in self.multi: del self.multi['eos']
             self.multi['num_inc']=None
+        if self.lineq:
+            if self.lineq['type']<=1: solver_type = 4
+            else: solver_type = 5
+        else: solver_type = 4
         self.lineq={}
         self.short_output={}
         # convert parameters:
@@ -1255,7 +1259,7 @@ class t2data(object):
         if self.parameter['option'][12]==2:
             self.parameter['option'][12]=0
             warnings.append('MOP(12)=2: piecewise linear well table interpolation')
-        if self.parameter['option'][21]>0: self.parameter['option'][21]=0 # not used in AUTOUGH2, but used in TOUGH2
+        self.parameter['option'][21]= solver_type
         if self.parameter['option'][22]>0:
             self.parameter['option'][22]=0
             warnings.append('MOP(22)>0: USERBC')
