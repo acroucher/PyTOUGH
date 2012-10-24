@@ -190,7 +190,8 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
   \texttt{read} & \texttt{mulgrid} & reads geometry file from disk\\
   \texttt{rectangular} & \texttt{mulgrid} & creates rectangular grid\\
-  \texttt{refine} & -- & refines a specified part of the grid\\
+  \texttt{refine} & -- & refines specified columns in the grid\\
+  \texttt{refine\_layers} & -- & refines specified layers in the grid\\
   \texttt{rename\_layer} & Boolean & renames a layer\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
@@ -569,7 +570,7 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None)}}
 
-Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name, index or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
+Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
 The name and units of the variable can optionally be specified, and the names of the columns and nodes can also optionally be displayed on the plot, as well as the column centres (represented by crosses).  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the title and x- and y-axis labels, and the plot limits.
 
@@ -578,7 +579,7 @@ When a variable is plotted over the grid, contours at specified levels can also 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{layer}: string, integer, float or \texttt{None}\\
-  Name (string) or index (integer) of layer to plot, or elevation (float).  Specifying \texttt{None} gives a surface plot.
+  Name (string) of layer to plot, or elevation (float or integer).  Specifying \texttt{None} gives a surface plot.
 \item \textbf{variable}: list (or \texttt{np.array})\\
   Variable to be plotted, of length equal to the number of blocks or columns in the grid (or \texttt{None} just to plot the grid).
 \item \textbf{variable\_name}: string\\
@@ -830,6 +831,18 @@ The \texttt{bisect\_edge\_columns} parameter can be used to give more desirable 
     Set to \texttt{True} if columns are to be split into two, between their longest sides, instead of four (the default).  Set to `x' or `y' to split columns along the specified axis.
   \item \textbf{bisect\_edge\_columns}: list\\
     List of columns or column names in the transition region (just outside the refinement area) to be bisected prior to the refinement, to improve the aspect ratios of the transition columns.
+\end{itemize}
+
+\subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2)}}
+
+Refines the specified layers in the grid.  If no layers are specified, all layers are refined.  Each layer is refined by the specified integer factor.
+
+\textbf{Parameters:}
+\begin{itemize}
+  \item \textbf{layers}: list\\
+    List of layers or layer names to be refined.
+  \item \textbf{factor}: integer\\
+    Refinement factor: default is 2, which bisects each layer.
 \end{itemize}
 
 \subsubsection{\texttt{rename\_layer(\emph{oldlayername}, \emph{newlayername})}}

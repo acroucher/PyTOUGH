@@ -113,7 +113,7 @@ Python comes with a large number of features already built in, but for specialis
 
 The most important of these is Numerical Python (`numpy'), which you will need to have installed on your computer before you can use PyTOUGH at all \footnote{PyTOUGH will run using Numeric, a now-obsolete predecessor of Numerical Python, though the PyTOUGH plotting functions will not work.  In general it is recommended to use Numerical Python if possible.}.  Numerical Python adds a special \texttt{numpy.array} class for fast multi-dimensional arrays, which PyTOUGH makes heavy use of, and a whole range of other features, e.g. linear algebra routines, Fourier transforms and statistics.
 
-Numerical Python can be freely downloaded from \texttt{http://numpy.scipy.org/} (or simply installed via your package manager on Linux).
+Numerical Python can be freely downloaded from \texttt{http://numpy.scipy.org/} (or simply installed via your package manager on Linux). The latest versions may not yet be available for 64-bit Windows from this site.  However, you can find unofficial builds at \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
 
 \subsubsection{Other libraries}
 
@@ -125,17 +125,13 @@ Some parts of PyTOUGH use other Python libraries.  You do not need these librari
 \item \textbf{VTK} (\texttt{http://www.vtk.org/}), the Visualization Tool Kit (a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.) and \textbf{VTK Python}, the Python interface for VTK.
 \end{itemize}
 
-On Linux systems you can download and install these libraries via your package manager (e.g. on Debian or Debian-based distributions like Ubuntu, \texttt{aptitude install python-matplotlib python-scipy libvtk5.4 python-vtk}).  On Windows you will need to download them from the internet (see links above) or elsewhere.
+On Linux systems you can download and install these libraries via your package manager (e.g. on Debian or Debian-based distributions like Ubuntu, \texttt{aptitude install python-matplotlib python-scipy libvtk5.4 python-vtk}).
+
+On Windows you will need to download and install them yourself from the internet (see links above) or elsewhere.  At the time of writing there is not yet an official 64-bit build of Scientific Python for Windows.  However an unofficial build can be found at \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.  Use of this version of Scientific Python requires that their version of Numerical Python is also used.
 
 \subsubsection{Installing VTK-Python on Windows}
 
-There does not appear to be an official Windows build of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) here:
-
-\texttt{http://cpbotha.net/software/latest-vtk-windows-binaries/}
-
-or here:
-
-\texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}
+There does not appear to be an official Windows build of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) from \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
 
 Make sure you download and install the right version, corresponding to the version of Python you are using.  You will need to add a few things to the environment variables on your system to get it to work.  (If you aren't sure how to edit your environment variables, see section \ref{installing} below.) 
 

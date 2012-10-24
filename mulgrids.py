@@ -457,6 +457,7 @@ class mulgrid(object):
         """Set naming convention"""
         self._convention=convention
         self.set_secondary_variables()
+        self.setup_block_name_index()
     convention=property(get_convention,set_convention)
 
     def get_atmosphere_type(self):
@@ -466,6 +467,7 @@ class mulgrid(object):
         """Set atmosphere type"""
         self._atmosphere_type=atmos_type
         self.set_secondary_variables()
+        self.setup_block_name_index()
     atmosphere_type=property(get_atmosphere_type,set_atmosphere_type)
 
     def get_unit_type(self):
@@ -576,13 +578,14 @@ class mulgrid(object):
     def setup_block_name_index(self):
         """Sets up list and dictionary of block names and indices for the tough2 grid represented by the geometry."""
         self.block_name_list=[]
-        if self.atmosphere_type==0: # one atmosphere block
-            self.block_name_list.append(self.block_name(self.layerlist[0].name,self.atmosphere_column_name))
-        elif self.atmosphere_type==1: # one atmosphere block per column
-            for col in self.columnlist: self.block_name_list.append(self.block_name(self.layerlist[0].name,col.name))
-        for lay in self.layerlist[1:]:
-            for col in [col for col in self.columnlist if col.surface>lay.bottom]:
-                self.block_name_list.append(self.block_name(lay.name,col.name))
+        if self.num_layers>0:
+            if self.atmosphere_type==0: # one atmosphere block
+                self.block_name_list.append(self.block_name(self.layerlist[0].name,self.atmosphere_column_name))
+            elif self.atmosphere_type==1: # one atmosphere block per column
+                for col in self.columnlist: self.block_name_list.append(self.block_name(self.layerlist[0].name,col.name))
+            for lay in self.layerlist[1:]:
+                for col in [col for col in self.columnlist if col.surface>lay.bottom]:
+                    self.block_name_list.append(self.block_name(lay.name,col.name))
         self.block_name_index=dict([(blk,i) for i,blk in enumerate(self.block_name_list)])
 
     def column_name(self,blockname):
@@ -719,6 +722,11 @@ class mulgrid(object):
                 except ValueError: return False # node not in column
         return False
 
+    def clear_layers(self):
+        """Deletes all layers from the grid."""
+        self.layer = {}
+        self.layerlist = []
+
     def add_layer(self,lay=layer()):
         """Adds layer to the grid"""
         self.layerlist.append(lay)
@@ -805,7 +813,7 @@ class mulgrid(object):
 
     def copy_layers_from(self,geo):
         """Copies layer structure from another geometry."""
-        self.layer,self.layerlist={},[]
+        self.clear_layers()
         from copy import deepcopy
         for lay in geo.layerlist: self.add_layer(deepcopy(lay))
         for col in self.columnlist: self.set_column_num_layers(col)
@@ -1164,6 +1172,7 @@ class mulgrid(object):
         justfn=[rjust,ljust][justify=='l']
         casefn=[uppercase,lowercase][case=='l']
         num=0
+        self.clear_layers()
         z=top_elevation
         surfacelayername=[' 0','atm','at'][self.convention]
         self.add_layer(layer(surfacelayername,z,z))
@@ -2517,6 +2526,28 @@ class mulgrid(object):
             self.identify_neighbours()
             self.setup_block_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
+
+    def refine_layers(self, layers=[], factor=2):
+        """Refines selected layers in the grid.  If no layers are specified, all layers are refined.
+        Each layer is refined by the specified factor.  Layer names for all subsurface layers in the grid
+        are regenerated in sequence."""
+        if layers==[]: layers = self.layerlist
+        else: 
+            if isinstance(layers[0],str): layers=[self.layer[lay] for lay in layers]
+        factor = int(factor)
+        top_elevation = self.layerlist[0].top
+        atm_name = self.layerlist[0].name
+        thicknesses = []
+        for lay in self.layerlist[1:]:
+            if lay in layers: thicknesses += [lay.thickness / factor] * factor
+            else: thicknesses.append(lay.thickness)
+        self.clear_layers()
+        justify=['l','r'][self.right_justified_names]
+        case=['l','u'][self.uppercase_names]
+        self.add_layers(thicknesses, top_elevation, justify, case)
+        self.rename_layer(self.layerlist[0].name, atm_name) # preserve old atmosphere layer name
+        for col in self.columnlist: self.set_column_num_layers(col)
+        self.setup_block_name_index()
 
     def column_neighbour_groups(self,columns):
         """Given a list or set of columns, finds sets of columns that are connected together, and
