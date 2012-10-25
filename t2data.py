@@ -1284,6 +1284,7 @@ class t2data(object):
             if self.parameter['option'][20]>0:
                 self.parameter['option'][20]=0
                 warnings.append('MOP(20)>0: Disabling vapour pressure lowering')
+            self.parameter['option'][21]=0
         if warn and len(warnings)>0:
             print 'The following options are not supported in TOUGH2:'
             for warning in warnings: print warning
