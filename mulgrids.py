@@ -1120,8 +1120,10 @@ class mulgrid(object):
         Naming convention, atmosphere type and origin can optionally be specified.
         The optional justify and case parameters specify the format of the character part of the block names
         (whether they are right or left justified, and lower or upper case)."""
-        for item in [xblocks,yblocks,zblocks,origin]:
-            if isinstance(item,(list,tuple)): item=np.array(item)
+        if isinstance(xblocks,(list,tuple)): xblocks=np.array(xblocks)
+        if isinstance(yblocks,(list,tuple)): yblocks=np.array(yblocks)
+        if isinstance(zblocks,(list,tuple)): zblocks=np.array(zblocks)
+        if isinstance(origin,(list,tuple)): origin=np.array(origin)
         grid=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
         grid.empty()
         xverts=np.array([0.]+np.cumsum(xblocks).tolist())+origin[0]
@@ -1798,8 +1800,8 @@ class mulgrid(object):
     def line_values(self,start,end,variable,divisions=100,coordinate=False,qtree=None):
         """Gets values of variable along specified line through geometry.  Returns two arrays for
         distance along line (or specified coordinate) and value at each position."""
-        for item in [start,end]:
-            if isinstance(item,(list,tuple)): item=np.array(item)
+        if isinstance(start,(list,tuple)): start=np.array(start)
+        if isinstance(end,(list,tuple)): end=np.array(end)
         x,y=[],[]
         line_length=norm(end-start)
         if line_length>0.0:
