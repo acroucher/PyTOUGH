@@ -1858,8 +1858,8 @@ class mulgrid(object):
             [start,end]=self.bounds
             default_title='line plot across grid bounds'
         else:
-            for item in [start,end]:
-                if isinstance(item,(list,tuple)): item=np.array(item)
+            if isinstance(start,(list,tuple)): start=np.array(start)
+            if isinstance(end,(list,tuple)): end=np.array(end)
             default_title='line plot from ('+("%7.0f"%start[0]).strip()+','+("%7.0f"%start[1]).strip()+','+("%7.0f"%start[2]).strip()+') to ('+("%7.0f"%end[0]).strip()+','+("%7.0f"%end[1]).strip()+','+("%7.0f"%end[2]).strip()+')'
         x,y=self.line_values(start,end,variable,divisions)
         import matplotlib
