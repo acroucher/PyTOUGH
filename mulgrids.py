@@ -1811,7 +1811,7 @@ class mulgrid(object):
                 dist=xi*line_length
                 blkname=self.block_name_containing_point(pos,qtree=qtree)
                 if blkname:
-                    if coordinate: x.append(pos[coordinate])
+                    if coordinate != None: x.append(pos[coordinate])
                     else: x.append(dist)
                     y.append(variable[self.block_name_index[blkname]])
         return np.array(x),np.array(y)
@@ -1851,7 +1851,27 @@ class mulgrid(object):
                     if p<>None: polyline.append(p)
             return self.polyline_values(polyline,variable,divisions,coordinate,qtree=qtree)
         else: return None
-            
+
+    def column_values(self, col, variable, depth = False):
+        """Gets values of a variable down a specified column in the grid, returning elevation
+        (or depth) and value."""
+        if isinstance(col,str):
+            if col in self.column: col = self.column[col]
+            else: return None
+        itop = self.column_surface_layer_index(col)
+        # atmosphere block:
+        if self.atmosphere_type == 0: blks =[self.block_name_list[0]]
+        elif self.atmosphere_type ==1: blks = [self.block_name(self.layerlist[itop-1].name,col.name)]
+        else: blks = []
+        # indices of subsurface blocks:
+        lays = self.layerlist[itop:]
+        blks += [self.block_name(lay.name, col.name) for lay in lays]
+        blkindex = np.array([self.block_name_index[blk] for blk in blks])
+        val = variable[blkindex]
+        z = np.array([self.layer[self.layer_name(blk)].centre for blk in blks])
+        if depth: return self.layer[self.layer_name(blks[0])].top - z, val
+        else: return z,val
+                    
     def line_plot(self,start=None,end=None,variable=None,variable_name=None,unit=None,divisions=100,plt=None,subplot=111,title='',xlabel='distance (m)'):
         """Produces a line plot of the specified variable through a Mulgraph grid."""
         if (start==None) or (end==None):

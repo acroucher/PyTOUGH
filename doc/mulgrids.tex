@@ -162,6 +162,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{column\_neighbour\_groups} & list & groups connected columns\\ 
   \texttt{column\_quadtree} & quadtree & quadtree structure for searching columns\\ 
   \texttt{column\_surface\_layer} & \texttt{column} & surface layer for a specified column\\
+  \texttt{column\_values} & tuple & values of a variable down a column\\
   \texttt{columns\_in\_polygon} & list & columns inside a specified polygon (or rectangle)\\ 
   \texttt{connects} & Boolean & whether the grid has a connection between two specified columns\\ 
   \texttt{copy\_layers\_from} & -- & copies layer structure from another geometry\\ 
@@ -374,6 +375,22 @@ Returns the layer containing the surface elevation of a specified column.
 \begin{itemize}
 \item \textbf{col}: \texttt{column}\\
   The column for which the surface layer is to be found.
+\end{itemize}
+
+\subsubsection{\texttt{column\_values(\emph{col}, \emph{variable}, \emph{depth} = False)}}
+
+Returns values of a specified variable down a specified column.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.
+
+The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\texttt{d}) containing the elevation (or depth from surface if the \texttt{depth} parameter is set to \texttt{True}), and the second (\texttt{v}) containing the value of the variable at each block in the column.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{col}: \texttt{column} or string\\
+  The column for which values are to be found.
+\item \textbf{variable}: list (or \texttt{np.array})\\
+  Values of variable, of length equal to the number of blocks in the grid.
+\item \textbf{depth}: Boolean\\
+  Set to \texttt{True} to give depths from surface, instead of elevations, as the first returned array.
 \end{itemize}
 
 \subsubsection{\texttt{columns\_in\_polygon(\emph{polygon})}}
