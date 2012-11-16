@@ -257,7 +257,7 @@ def separated_steam_fraction(h, separator_pressure, separator_pressure2 = None):
     def hlhs(p):
         ts = tsat(p)
         return enth(ts,p,cowat), enth(ts,p,supst)
-    if separator_pressure2 == None:
+    if separator_pressure2 is None:
         # if single stage
         hl1,hs1 = hlhs(separator_pressure)
         hl = 1.0/(hs1-hl1)

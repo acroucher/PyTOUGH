@@ -871,10 +871,10 @@ class t2listing(file):
         the last and penultimate sets of results."""
         from copy import deepcopy
         tablename='element'
-        if indexa == None: self.last()
+        if indexa is None: self.last()
         else: self.set_index(indexa)
         results2=deepcopy(self._table[tablename])
-        if indexb == None: self.prev()
+        if indexb is None: self.prev()
         else: self.set_index(indexb)
         results1=self._table[tablename]
         cvg={}
