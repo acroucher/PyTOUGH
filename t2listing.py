@@ -99,7 +99,7 @@ class t2listing(file):
         self.skip_tables=skip_tables
         super(t2listing,self).__init__(filename,'rU')
         self.detect_simulator()
-        if self.simulator==None: print 'Could not detect simulator type.'
+        if self.simulator is None: print 'Could not detect simulator type.'
         else:
             self.setup_short()
             self.setup_pos()
@@ -424,7 +424,7 @@ class t2listing(file):
         self.skip_to_nonblank()
 
     def skip_to_table_TOUGH2(self,tablename,last_tablename,nelt_tables):
-        if last_tablename==None:
+        if last_tablename is None:
             self.skipto('@@@@@')
             self.skip_to_nonblank()
             tname='element'
@@ -434,7 +434,7 @@ class t2listing(file):
             tname=self.next_table_TOUGH2()
 
     def skip_to_table_TOUGHplus(self,tablename,last_tablename,nelt_tables):
-        if last_tablename==None:
+        if last_tablename is None:
             self.skipto('=====',0)
             self.skip_to_nonblank()
             tname='element'
@@ -901,7 +901,7 @@ class t2listing(file):
             name=name.lower()
             return name.startswith('flo') or name.endswith('flo') or name.endswith('flow') or name.endswith('veloc')
         if flows:
-            if flux_matrix==None: flux_matrix=grid.flux_matrix(geo)
+            if flux_matrix is None: flux_matrix=grid.flux_matrix(geo)
             flownames=[name for name in self.connection.column_name if is_flowname(name)]
             for name in flownames: arrays['Block'][name]=vtkFloatArray()
         array_length={'Block':nele,'Node':0}
@@ -957,7 +957,7 @@ class t2listing(file):
         pvd.appendChild(vtkfile)
         collection=pvd.createElement('Collection')
         initial_index=self.index
-        if indices==None: indices=range(self.num_fulltimes)
+        if indices is None: indices=range(self.num_fulltimes)
         timescales={'s':1.0,'h':3600.,'d':3600.*24,'y':3600.*24*365.25}
         if time_unit in timescales: timescale=timescales[time_unit]
         else: timescale=1.0

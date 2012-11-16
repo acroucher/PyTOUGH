@@ -453,7 +453,7 @@ class t2data(object):
             for blk in self.grid.blocklist:
                 blkw=copy(blk.__dict__)
                 blkw['name']=unfix_blockname(blkw['name'])
-                if blk.centre==None: outfile.write_value_line(blkw,'blocks')
+                if blk.centre is None: outfile.write_value_line(blkw,'blocks')
                 else:
                     vals=[blkw['name'],blk.nseq,blk.nadd,blk.rocktype.name,blk.volume,
                           blk.ahtx,blk.pmx]+list(blk.centre)

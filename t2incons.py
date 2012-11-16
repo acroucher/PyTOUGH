@@ -134,7 +134,7 @@ class t2incon(object):
         """Writes initial conditions to file."""
         def list_fmt(x): return ['%20.14e','%20.13e'][abs(x)<1.e-99]
         f=open(filename,'w')
-        if (self.timing==None) or reset:
+        if (self.timing is None) or reset:
             f.write('INCON\n')
         else:
             f.write('%s%5d%s%12.6e\n' % ('INCON -- INITIAL CONDITIONS FOR',self.num_blocks,' ELEMENTS AT TIME  ',self.timing['sumtim']))
@@ -144,7 +144,7 @@ class t2incon(object):
             f.write('\n')
             for v in incon.variable: f.write(list_fmt(v)%v)
             f.write('\n')
-        if (self.timing==None) or reset: f.write('\n\n')
+        if (self.timing is None) or reset: f.write('\n\n')
         else: f.write('%5d%5d%5d%15.9e%15.9e\n'%(self.timing['kcyc'],self.timing['iter'],self.timing['nm'],
                                                  self.timing['tstart'],self.timing['sumtim']))
         f.close()

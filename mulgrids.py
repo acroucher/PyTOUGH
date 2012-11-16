@@ -115,7 +115,7 @@ class quadtree(object):
             return self
         else: return None
     def plot(self,plt=None):
-        if plt==None: import matplotlib.pyplot as plt
+        if plt is None: import matplotlib.pyplot as plt
         x=[self.bounds[0][0],self.bounds[1][0],self.bounds[1][0],self.bounds[0][0],self.bounds[0][0]]
         y=[self.bounds[0][1],self.bounds[0][1],self.bounds[1][1],self.bounds[1][1],self.bounds[0][1]]
         plt.plot(x,y,'.--')
@@ -135,7 +135,7 @@ class column(object):
     def __init__(self,name='   ',node=[],centre=None,surface=None):
         self.name=name
         self.node=node
-        if centre==None:
+        if centre is None:
             self.centre_specified=0
             if self.num_nodes>0: self.centre=self.centroid
             else: self.centre=None
@@ -159,7 +159,7 @@ class column(object):
     def get_surface(self): return self._surface
     def set_surface(self,val):
         self._surface=val
-        if val==None: self.default_surface=True
+        if val is None: self.default_surface=True
         else: self.default_surface=False
     surface=property(get_surface,set_surface)
 
@@ -249,7 +249,7 @@ class column(object):
         'y', the column in bisected across the sides most closely aligned with that direction; otherwise, bisection is done
         for triangles across the two longest sides of the column, and for quadrilaterals across the longest side and its
         opposite."""
-        if direction==None:
+        if direction is None:
             l=self.side_lengths
             isort=np.argsort(l)
             if self.num_nodes==3: return (isort[-1],isort[-2])
@@ -776,7 +776,7 @@ class mulgrid(object):
         delwells=[]
         for well in self.welllist:
             wh=well.pos[0][0:2]
-            if self.column_containing_point(wh)==None: delwells.append(well.name)
+            if self.column_containing_point(wh) is None: delwells.append(well.name)
         for wellname in delwells: self.delete_well(wellname)
 
     def identify_neighbours(self):
@@ -845,7 +845,7 @@ class mulgrid(object):
     def column_quadtree(self,columns=None):
         """Returns a quadtree structure for searching the grid for columns containing particular points.  If the columns
         parameter is specified, a quadtree is returned just for those columns, otherwise it is for all columns."""
-        if columns==None:
+        if columns is None:
             bounds=self.bounds
             columns=self.columnlist
         else: bounds=self.column_bounds(columns)
@@ -996,7 +996,7 @@ class mulgrid(object):
             if self.atmosphere_type==1: return lay.top # atmosphere block
             else: return None
         else:
-            if col.surface==None: return lay.top
+            if col.surface is None: return lay.top
             else:
                 if col.surface<lay.top:
                     if lay.bottom<col.surface: return col.surface # surface layer with surface below layer top
@@ -1364,7 +1364,7 @@ class mulgrid(object):
             else: inbounds=in_polygon(pos,bounds)
         else: inbounds=True
         if inbounds:
-            if columns==None: searchcols=self.columnlist
+            if columns is None: searchcols=self.columnlist
             else: searchcols=columns
             donecols=set([])
             if guess<>None: 
@@ -1552,7 +1552,7 @@ class mulgrid(object):
                     if nextcol:
                         if nextcol in cols:
                             nextcol,more = next_corner_column(col,outpos,more,cols)
-                            if nextcol==None: nextcol,more = next_neighbour_column(col,more,cols)
+                            if nextcol is None: nextcol,more = next_neighbour_column(col,more,cols)
                     else: nextcol,more = next_corner_column(col,outpos,more,cols)
                     col = nextcol
                     if col: colnbr = col.neighbourlist
@@ -1585,7 +1585,7 @@ class mulgrid(object):
        of a layer name, the layer containing that elevation is plotted.  If layer is set to None, then the ground surface
        is plotted (i.e. the surface layer for each column)."""
         import matplotlib
-        if plt==None: 
+        if plt is None: 
             import matplotlib.pyplot as plt
             loneplot=True
         else: loneplot=False
@@ -1596,13 +1596,13 @@ class mulgrid(object):
             if l: layername=l.name
             else: layername=''
             default_title='layer '+layername+' (elevation '+("%4.0f"%float(layer)).strip()+' m)'
-        elif layer==None:
+        elif layer is None:
             layername=''
             default_title='surface layer'
         else:
             layername=layer
             default_title='layer '+layername
-        if (layername in self.layer) or (layer==None):
+        if (layername in self.layer) or (layer is None):
             if variable<>None:
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
@@ -1630,7 +1630,7 @@ class mulgrid(object):
                     colc=[col.centre for col in self.connectionlist[i].column]
                     plt.plot([p[0] for p in colc],[p[1] for p in colc],color=colorConverter.to_rgb(str(1.-c[i])))
             for col in self.columnlist:
-                if layer==None: layername=self.column_surface_layer(col).name
+                if layer is None: layername=self.column_surface_layer(col).name
                 blkname=self.block_name(layername,col.name)
                 if blkname in self.block_name_list:
                     if contours<>False:
@@ -1681,7 +1681,7 @@ class mulgrid(object):
                 cbar=plt.colorbar(col)
                 cbar.set_label(scalelabel)
                 default_title=varname+' in '+default_title
-            if title==None: title=default_title
+            if title is None: title=default_title
             plt.title(title)
             if loneplot: plt.show()
 
@@ -1694,7 +1694,7 @@ class mulgrid(object):
        If a string 'x' or 'y' is passed in instead of a line, a plot is made through the centre of the grid along
        the x- or y-axes, and the coordinate along the slice represents the actual x- or y- coordinate.  If a northing
        (float, in degrees) is passed instead of a line, a plot is made through the centre along the specified northing direction."""
-        if line==None:
+        if line is None:
             l=self.bounds
             default_title='vertical slice across grid bounds'
         elif isinstance(line,str):
@@ -1718,7 +1718,7 @@ class mulgrid(object):
             default_title='vertical slice from ('+("%7.0f"%l[0][0]).strip()+','+("%7.0f"%l[0][1]).strip()+') to ('+("%7.0f"%l[1][0]).strip()+','+("%7.0f"%l[1][1]).strip()+')'
         if norm(l[1]-l[0])>0.0:
             import matplotlib
-            if plt==None:
+            if plt is None:
                 import matplotlib.pyplot as plt
                 loneplot=True
             else: loneplot=False
@@ -1733,7 +1733,7 @@ class mulgrid(object):
             else: block_names=[]
             track=self.column_track(l)
             if track:
-                if xlabel==None:
+                if xlabel is None:
                     if line=='x': xlabel='x (m)'
                     elif line=='y': xlabel='y (m)'
                     else: xlabel='distance (m)'
@@ -1792,7 +1792,7 @@ class mulgrid(object):
                     cbar=plt.colorbar(col)
                     cbar.set_label(scalelabel)
                     default_title=varname+' in '+default_title
-                if title==None: title=default_title
+                if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
             else: print 'Slice',str(line),'does not intersect the grid.'
@@ -1874,7 +1874,7 @@ class mulgrid(object):
                     
     def line_plot(self,start=None,end=None,variable=None,variable_name=None,unit=None,divisions=100,plt=None,subplot=111,title='',xlabel='distance (m)'):
         """Produces a line plot of the specified variable through a Mulgraph grid."""
-        if (start==None) or (end==None):
+        if (start is None) or (end is None):
             [start,end]=self.bounds
             default_title='line plot across grid bounds'
         else:
@@ -1883,7 +1883,7 @@ class mulgrid(object):
             default_title='line plot from ('+("%7.0f"%start[0]).strip()+','+("%7.0f"%start[1]).strip()+','+("%7.0f"%start[2]).strip()+') to ('+("%7.0f"%end[0]).strip()+','+("%7.0f"%end[1]).strip()+','+("%7.0f"%end[2]).strip()+')'
         x,y=self.line_values(start,end,variable,divisions)
         import matplotlib
-        if plt==None:
+        if plt is None:
             import matplotlib.pyplot as plt
             loneplot=True
         else: loneplot=False
@@ -1899,7 +1899,7 @@ class mulgrid(object):
         if unit: ylabel+=' ('+unit+')'
         plt.ylabel(ylabel)
         default_title+=' of '+varname
-        if title==None: title=default_title
+        if title is None: title=default_title
         plt.title(title)
         if loneplot: plt.show()
 
@@ -1911,7 +1911,7 @@ class mulgrid(object):
         Note that an error will result if the connection angle weight and either of the other weights is set to zero- in
         this case there are not enough constraints to fit the parameters.
         If pest is set to True, the PEST parameter estimation software is used to perform the optimization."""
-        if nodenames==None: nodenames=self.node.keys()
+        if nodenames is None: nodenames=self.node.keys()
         # identify which columns are affected:
         colnames=[col.name for col in self.columnlist if (set(nodenames) & set([node.name for node in col.node]))]
         for colname in colnames:
@@ -2139,7 +2139,7 @@ class mulgrid(object):
                 else: extra_node[node.name]=[col.name]
         # create surface nodes
         for node in self.nodelist:
-            if any([(col.surface==None) for col in node.column]):
+            if any([(col.surface is None) for col in node.column]):
                 pos3d=np.array(list(node.pos)+[self.layerlist[0].bottom])
                 node3d[self.layerlist[0].name,node.name]=(index,pos3d)
                 index+=1
@@ -2308,7 +2308,7 @@ class mulgrid(object):
         base=self.filename_base(filename)
         filename=base+'.vtu'
         if wells: self.write_well_vtk(filename)
-        if arrays==None: arrays=self.vtk_data
+        if arrays is None: arrays=self.vtk_data
         vtu=self.get_vtk_grid(arrays)
         writer=vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
