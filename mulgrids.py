@@ -743,6 +743,11 @@ class mulgrid(object):
             i=self.layerlist.index(self.layer[oldlayername])
             self.layerlist[i].name=newlayername
             self.layer[newlayername]=self.layer.pop(oldlayername)
+            # update self.block_name_list:
+            for i,blkname in enumerate(self.block_name_list):
+                if self.layer_name(blkname) == oldlayername:
+                    colname = self.column_name(blkname)
+                    self.block_name_list[i] = self.block_name(newlayername,colname)
             return True
         except ValueError: return False
             
