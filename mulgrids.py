@@ -722,6 +722,20 @@ class mulgrid(object):
                 except ValueError: return False # node not in column
         return False
 
+    def rename_column(self, oldcolname, newcolname):
+        """Renames a column."""
+        try:
+            i = self.columnlist.index(self.column[oldcolname])
+            self.columnlist[i].name = newcolname
+            self.column[newcolname] = self.column.pop(oldcolname)
+            # update self.block_name_list:
+            for i, blkname in enumerate(self.block_name_list):
+                if self.column_name(blkname) == oldcolname:
+                    layname = self.layer_name(blkname)
+                    self.block_name_list[i] = self.block_name(layname, newcolname)
+            return True
+        except ValueError: return False
+
     def clear_layers(self):
         """Deletes all layers from the grid."""
         self.layer = {}
@@ -737,17 +751,17 @@ class mulgrid(object):
         del self.layer[layername]
         self.layerlist.remove(layer)
 
-    def rename_layer(self,oldlayername,newlayername):
+    def rename_layer(self, oldlayername, newlayername):
         """Renames a layer."""
         try:
-            i=self.layerlist.index(self.layer[oldlayername])
-            self.layerlist[i].name=newlayername
-            self.layer[newlayername]=self.layer.pop(oldlayername)
+            i = self.layerlist.index(self.layer[oldlayername])
+            self.layerlist[i].name = newlayername
+            self.layer[newlayername] = self.layer.pop(oldlayername)
             # update self.block_name_list:
-            for i,blkname in enumerate(self.block_name_list):
+            for i, blkname in enumerate(self.block_name_list):
                 if self.layer_name(blkname) == oldlayername:
                     colname = self.column_name(blkname)
-                    self.block_name_list[i] = self.block_name(newlayername,colname)
+                    self.block_name_list[i] = self.block_name(newlayername, colname)
             return True
         except ValueError: return False
             

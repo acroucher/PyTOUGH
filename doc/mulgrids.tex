@@ -193,6 +193,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{rectangular} & \texttt{mulgrid} & creates rectangular grid\\
   \texttt{refine} & -- & refines specified columns in the grid\\
   \texttt{refine\_layers} & -- & refines specified layers in the grid\\
+  \texttt{rename\_column} & Boolean & renames a column\\
   \texttt{rename\_layer} & Boolean & renames a layer\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
   \texttt{rotate} & -- & rotates a grid in the horizontal plane\\
@@ -860,6 +861,18 @@ Refines the specified layers in the grid.  If no layers are specified, all layer
     List of layers or layer names to be refined.
   \item \textbf{factor}: integer\\
     Refinement factor: default is 2, which bisects each layer.
+\end{itemize}
+
+\subsubsection{\texttt{rename\_column(\emph{oldcolname}, \emph{newcolname})}}
+
+Renames a grid column.  Returns \texttt{True} if the column was found and renamed, or \texttt{False} if the specified column does not exist.
+
+\textbf{Parameters:}
+\begin{itemize}
+  \item \textbf{oldcolname}: string\\
+    Name of the column to rename.
+  \item \textbf{newcolname}: string\\
+    New name of the column.
 \end{itemize}
 
 \subsubsection{\texttt{rename\_layer(\emph{oldlayername}, \emph{newlayername})}}
