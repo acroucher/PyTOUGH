@@ -1001,7 +1001,7 @@ class mulgrid(object):
             while more:
                 line=geo.readline().strip()
                 if line:
-                    keyword=line[0:5]
+                    keyword=line[0:5].rstrip()
                     read_fn[keyword](geo)
                 else: more=False
             self.setup_block_name_index()
