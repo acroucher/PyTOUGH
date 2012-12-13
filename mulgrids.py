@@ -2498,7 +2498,7 @@ class mulgrid(object):
             for col in columns: connections=connections | col.connection
         if bisect_edge_columns<>[]:
             if isinstance(bisect_edge_columns[0],str): bisect_edge_columns=[self.column[col] for col in bisect_edge_columns]
-        columns_plus_edge=set(bisect_edge_columns)
+        columns_plus_edge = set(columns) | set(bisect_edge_columns)
         for con in connections: columns_plus_edge=columns_plus_edge | set(con.column)
         if all([col.num_nodes in [3,4] for col in columns_plus_edge]):
             # bisect edge columns if required:
