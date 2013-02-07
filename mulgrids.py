@@ -1704,7 +1704,7 @@ class mulgrid(object):
             plt.title(title)
             if loneplot: plt.show()
 
-    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='auto',plt=None,subplot=111,title=None,xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),colourbar_limits=None,plot_limits=None):
+    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='auto',plt=None,subplot=111,title=None,xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),colourbar_limits=None,plot_limits=None, column_axis = False, layer_axis = False):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1731,7 +1731,7 @@ class mulgrid(object):
             theta=radians(line)
             d=r*np.array([sin(theta),cos(theta)])
             l=[self.centre-d,self.centre+d]
-            default_title='vertical slice '+("%3.0f"%float(line)).strip()+'$^o$N'
+            default_title='vertical slice '+("%3.0f"%float(line)).strip()+'$^\circ$N'
         else:
             l=line
             default_title='vertical slice from ('+("%7.0f"%l[0][0]).strip()+','+("%7.0f"%l[0][1]).strip()+') to ('+("%7.0f"%l[1][0]).strip()+','+("%7.0f"%l[1][1]).strip()+')'
@@ -1742,7 +1742,8 @@ class mulgrid(object):
                 loneplot=True
             else: loneplot=False
             matplotlib.rcParams.update({'mathtext.default': 'regular','figure.figsize':(12,9)})
-            ax=plt.subplot(subplot,aspect=aspect)
+            fig = plt.figure()
+            ax = fig.add_subplot(subplot,aspect=aspect)
             if variable<>None:
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
@@ -1756,9 +1757,14 @@ class mulgrid(object):
                     if line=='x': xlabel='x (m)'
                     elif line=='y': xlabel='y (m)'
                     else: xlabel='distance (m)'
-                plt.xlabel(xlabel)
+                ax.set_xlabel(xlabel)
+                if column_axis: colnames, colcentres = [],[]
+                if layer_axis: laynames, laycentres = [],[]
                 verts,vals=[],[]
                 if not isinstance(contours,bool): contours=list(contours)
+                if layer_axis:
+                    laynames = [lay.name for lay in self.layerlist]
+                    laycentres = [lay.centre for lay in self.layerlist]
                 if contours<>False: xc,yc=[],[]
                 for trackitem in track:
                     col,points=trackitem[0],trackitem[1:]
@@ -1768,6 +1774,8 @@ class mulgrid(object):
                     if line=='x': din,dout=inpoint[0],outpoint[0]
                     elif line=='y': din,dout=inpoint[1],outpoint[1]
                     else: din,dout=norm(inpoint-l[0]),norm(outpoint-l[0])
+                    dcol = 0.5*(din+dout)
+                    if column_axis: colnames.append(col.name); colcentres.append(dcol)
                     for lay in self.layerlist[1:]:
                         if col.surface>lay.bottom:
                             blkname=self.block_name(lay.name,col.name)
@@ -1777,10 +1785,9 @@ class mulgrid(object):
                             top=self.block_surface(lay,col)
                             verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
                             if blkname in block_names:
-                                ax.text(0.5*(din+dout),lay.centre,blkname,clip_on=True,horizontalalignment='center')
+                                ax.text(dcol,lay.centre,blkname,clip_on=True,horizontalalignment='center')
                             if contours<>False:
-                                xc.append(0.5*(din+dout))
-                                yc.append(lay.centre)
+                                xc.append(dcol); yc.append(lay.centre)
                 import matplotlib.collections as collections
                 if variable<>None: facecolors=None
                 else: facecolors=[]
@@ -1789,8 +1796,7 @@ class mulgrid(object):
                 if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
                 ax.add_collection(col)
                 if plot_limits<>None:
-                    plt.xlim(plot_limits[0])
-                    plt.ylim(plot_limits[1])
+                    ax.set_xlim(plot_limits[0]); ax.set_ylim(plot_limits[1])
                 else: ax.autoscale_view()
                 if contours<>False:
                     from matplotlib.mlab import griddata
@@ -1802,15 +1808,43 @@ class mulgrid(object):
                     valgrid=griddata(xc,yc,valc,xgrid,ygrid)
                     if isinstance(contours,list): cvals=contours
                     else: cvals=False
-                    CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
-                    if contour_label_format<>None: plt.clabel(CS, inline=1,fmt=contour_label_format)
-                plt.ylabel(ylabel)
+                    CS=fig.contour(xgrid,ygrid,valgrid,cvals,colors='k')
+                    if contour_label_format<>None: fig.clabel(CS, inline=1,fmt=contour_label_format)
+                ax.set_ylabel(ylabel)
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'
-                if variable<>None:
-                    cbar=plt.colorbar(col)
+                if variable is not None:
+                    cbar=fig.colorbar(col)
                     cbar.set_label(scalelabel)
                     default_title=varname+' in '+default_title
+                if column_axis:
+                    if variable is None: fig.subplots_adjust(bottom=0.15)
+                    else: fig.subplots_adjust(bottom=0.15, right=0.75)
+                    colax = ax.twiny()
+                    colax.set_frame_on(True)
+                    colax.patch.set_visible(False)
+                    colax.xaxis.set_ticks_position('bottom')
+                    colax.xaxis.set_label_position('bottom')
+                    colax.spines['bottom'].set_position(('outward', 40))
+                    colax.set_autoscalex_on(False)
+                    colax.set_xlim(ax.get_xlim())
+                    colax.set_xticks(colcentres)
+                    colax.set_xticklabels(colnames)
+                    colax.set_xlabel('column')
+                if layer_axis:
+                    if variable is None: fig.subplots_adjust(left=0.15)
+                    else: fig.subplots_adjust(left=0.15, right=0.75)
+                    layax = ax.twinx()
+                    layax.set_frame_on(True)
+                    layax.patch.set_visible(False)
+                    layax.yaxis.set_ticks_position('left')
+                    layax.yaxis.set_label_position('left')
+                    layax.spines['left'].set_position(('outward', 80))
+                    layax.set_autoscaley_on(False)
+                    layax.set_ylim(ax.get_ylim())
+                    layax.set_yticks(laycentres)
+                    layax.set_yticklabels(laynames)
+                    layax.set_ylabel('layer')
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
