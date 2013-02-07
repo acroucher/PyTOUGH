@@ -1742,8 +1742,7 @@ class mulgrid(object):
                 loneplot=True
             else: loneplot=False
             matplotlib.rcParams.update({'mathtext.default': 'regular','figure.figsize':(12,9)})
-            fig = plt.figure()
-            ax = fig.add_subplot(subplot,aspect=aspect)
+            ax = plt.subplot(subplot,aspect=aspect)
             if variable<>None:
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
@@ -1759,12 +1758,8 @@ class mulgrid(object):
                     else: xlabel='distance (m)'
                 ax.set_xlabel(xlabel)
                 if column_axis: colnames, colcentres = [],[]
-                if layer_axis: laynames, laycentres = [],[]
                 verts,vals=[],[]
                 if not isinstance(contours,bool): contours=list(contours)
-                if layer_axis:
-                    laynames = [lay.name for lay in self.layerlist]
-                    laycentres = [lay.centre for lay in self.layerlist]
                 if contours<>False: xc,yc=[],[]
                 for trackitem in track:
                     col,points=trackitem[0],trackitem[1:]
@@ -1808,43 +1803,23 @@ class mulgrid(object):
                     valgrid=griddata(xc,yc,valc,xgrid,ygrid)
                     if isinstance(contours,list): cvals=contours
                     else: cvals=False
-                    CS=fig.contour(xgrid,ygrid,valgrid,cvals,colors='k')
-                    if contour_label_format<>None: fig.clabel(CS, inline=1,fmt=contour_label_format)
+                    CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
+                    if contour_label_format<>None: plt.clabel(CS, inline=1,fmt=contour_label_format)
                 ax.set_ylabel(ylabel)
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'
                 if variable is not None:
-                    cbar=fig.colorbar(col)
+                    cbar=plt.colorbar(col)
                     cbar.set_label(scalelabel)
                     default_title=varname+' in '+default_title
                 if column_axis:
-                    if variable is None: fig.subplots_adjust(bottom=0.15)
-                    else: fig.subplots_adjust(bottom=0.15, right=0.75)
-                    colax = ax.twiny()
-                    colax.set_frame_on(True)
-                    colax.patch.set_visible(False)
-                    colax.xaxis.set_ticks_position('bottom')
-                    colax.xaxis.set_label_position('bottom')
-                    colax.spines['bottom'].set_position(('outward', 40))
-                    colax.set_autoscalex_on(False)
-                    colax.set_xlim(ax.get_xlim())
-                    colax.set_xticks(colcentres)
-                    colax.set_xticklabels(colnames)
-                    colax.set_xlabel('column')
+                    ax.set_xticks(colcentres)
+                    ax.set_xticklabels(colnames)
+                    ax.set_xlabel('column')
                 if layer_axis:
-                    if variable is None: fig.subplots_adjust(left=0.15)
-                    else: fig.subplots_adjust(left=0.15, right=0.75)
-                    layax = ax.twinx()
-                    layax.set_frame_on(True)
-                    layax.patch.set_visible(False)
-                    layax.yaxis.set_ticks_position('left')
-                    layax.yaxis.set_label_position('left')
-                    layax.spines['left'].set_position(('outward', 80))
-                    layax.set_autoscaley_on(False)
-                    layax.set_ylim(ax.get_ylim())
-                    layax.set_yticks(laycentres)
-                    layax.set_yticklabels(laynames)
-                    layax.set_ylabel('layer')
+                    ax.set_yticks([lay.centre for lay in self.layerlist])
+                    ax.set_yticklabels([lay.name for lay in self.layerlist])
+                    ax.set_ylabel('layer')
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()

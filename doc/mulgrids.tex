@@ -913,7 +913,7 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{block\_names}=None, \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`auto',\\
     \emph{plt}=None, \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`', \emph{ylabel}=`elevation (m)',\\
     \emph{contours}=False, \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
-    \emph{colourbar\_limits}=None, \emph{plot\_limits}=None)}}
+    \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{column\_axis}=False, \emph{layer\_axis}=False)}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
@@ -963,6 +963,10 @@ When a variable is plotted over the grid, contours at specified levels can also 
   Specify a two-element tuple, list or \texttt{np.array} to set the limits of the colour scale.  Default (\texttt{None}) will auto-scale.
 \item \textbf{plot\_limits}: tuple or list (or \texttt{None})\\
   Specify a two-element tuple (or list) of plot axis ranges, each itself being a tuple (or list) of minimum and maximum values, i.e. ((xmin,xmax),(zmin,zmax)).  Default is \texttt{False} which will auto-scale.
+\item \textbf{column\_axis}: Boolean\\
+  If \texttt{True}, show column names instead of coordinates on the horizontal axis.
+\item \textbf{layer\_axis}: Boolean\\
+  If \texttt{True}, show layer names instead of coordinates on the vertical axis.
 \end{itemize}
 
 \textbf{Example:}
