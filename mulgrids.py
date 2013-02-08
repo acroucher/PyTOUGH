@@ -1888,8 +1888,8 @@ class mulgrid(object):
             else: return None
         itop = self.column_surface_layer_index(col)
         # atmosphere block:
-        if self.atmosphere_type == 0: blks =[self.block_name_list[0]]
-        elif self.atmosphere_type ==1: blks = [self.block_name(self.layerlist[itop-1].name,col.name)]
+        if self.atmosphere_type == 0: blks = [self.block_name(self.layerlist[0].name,self.atmosphere_column_name)]
+        elif self.atmosphere_type ==1: blks = [self.block_name(self.layerlist[0].name,col.name)]
         else: blks = []
         # indices of subsurface blocks:
         lays = self.layerlist[itop:]
