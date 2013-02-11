@@ -150,13 +150,17 @@ When you import a library, you can also change its name.  For example, PyTOUGH i
 
 First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.  On Windows, you may have to add the directory where Python has installed (e.g. \texttt{C:\textbackslash Python26} or similar, depending on which version you have) to your PATH environment variable, before you can access Python from the command line.
 
-From the `Downloads' section of the PyTOUGH website:
+On the PyTOUGH website, click the `Download ZIP' button at the upper left:
 
-\texttt{https://github.com/acroucher/PyTOUGH/downloads}
+\begin{verbatim}
+https://github.com/acroucher/PyTOUGH/archive/master.zip
+\end{verbatim}
 
-under the 'Download packages' section, download PyTOUGH as a .zip file (or .tar.gz if you prefer).  Unzip this to any directory on your computer.  This will create a directory containing a file called \texttt{setup.py}.  At the command line type:
+to download PyTOUGH as a .zip file.  Unzip this to any directory on your computer.  This will create a directory containing a file called \texttt{setup.py}.  At the command line type:
 
-\texttt{python setup.py install}
+\begin{verbatim}
+python setup.py install
+\end{verbatim}
 
 You should now be able to import the PyTOUGH libraries into the Python interactive environment or your Python scripts, from any directory on your computer.  For example, you can import the MULgraph geometry library using \texttt{from mulgrids import *} (see chapter \ref{mulgrids}).
 
