@@ -11,3 +11,14 @@ Click the [Download ZIP](https://github.com/acroucher/PyTOUGH/archive/master.zip
 # More information:
 
 For more detailed information on PyTOUGH, consult the user guide (PDF format, in the 'doc' directory of your PyTOUGH install) and the PyTOUGH [wiki](https://github.com/acroucher/PyTOUGH/wiki/), which has links to published articles on PyTOUGH.
+
+# What's new in PyTOUGH?
+
+* **User guide**: As of PyTOUGH version 1.3.6, the PyTOUGH user guide (PyTOUGH-guide.pdf) is now included in the 'doc' directory of your PyTOUGH install.  Previously this was available separately from the 'Downloads' section on the website, but recently GitHub decided to phase out this 'Downloads' section.
+
+* Added new `column_axis` and `layer_axis` parameters to the `mulgrid.slice_plot()` method, so that column and layer names can be displayed on the axes instead of coordinates
+
+* Added new `mulgrid.rename_column()` method
+ 
+* Fixed bugs in the `mulgrid` `column_values()`, `refine()` and `rename_layer`  methods
+
