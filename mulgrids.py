@@ -31,9 +31,8 @@ def LettersToInt(st):
 
 def fix_blockname(name):
     """Fixes blanks in 4th column of block names, caused by TOUGH2 treating names as (a3,i2)"""
-    if name[2].isdigit() and name[4].isdigit() and name[3]==' ': char4='0'
-    else: char4=name[3]
-    return name[0:3]+char4+name[4:5]
+    if name[2].isdigit() and name[4].isdigit() and name[3]==' ': return '0'.join((name[0:3],name[4:5]))
+    else: return name
 
 def unfix_blockname(name):
     """The inverse of fix_blockname()."""
