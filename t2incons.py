@@ -140,7 +140,7 @@ class t2incon(object):
             f.write('%s%5d%s%12.6e\n' % ('INCON -- INITIAL CONDITIONS FOR',self.num_blocks,' ELEMENTS AT TIME  ',self.timing['sumtim']))
         for incon in self._blocklist:
             f.write('%5s'%unfix_blockname(incon.block))  # TOUGH2 needs mangled block names in the incon file
-            if incon.porosity<>None: f.write('          %15.9e'%incon.porosity)
+            if incon.porosity is not None: f.write('          %15.9e'%incon.porosity)
             f.write('\n')
             for v in incon.variable: f.write(list_fmt(v)%v)
             f.write('\n')

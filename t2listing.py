@@ -773,7 +773,7 @@ class t2listing(file):
                             if revkey in tables[tablename].row_name:
                                 index=tables[tablename]._row[revkey]
                                 reverse=True
-                    if index<>None:
+                    if index is not None:
                         if tables[tablename].row_line: index=tables[tablename].row_line[index] # find line index if needed
                         ishort=None
                         short_keyword=tspec[0].upper()+'SHORT'
@@ -818,7 +818,7 @@ class t2listing(file):
                         line=self.readline()
                         for (itemindex,ishort,colname,reverse,sel_index) in tselect:
                             lineindex=[itemindex,ishort][is_short]
-                            if lineindex<>None:
+                            if lineindex is not None:
                                 for k in xrange(lineindex-index): line=self.readline()
                                 index=lineindex
                                 vals=self.read_table_line(line,ncols,fmt)
@@ -949,7 +949,7 @@ class t2listing(file):
                 else: raise Exception("t2listing.write_vtk(): if flows == True, a t2grid object must be specified.")
             else: raise Exception("t2listing.write_vtk(): if flows == True, block names in the listing file and geometry must match.")
         arrays=geo.vtk_data
-        if grid<>None:
+        if grid is not None:
             grid_arrays=grid.get_vtk_data(geo)
             for array_type,array_dict in arrays.items():
                 array_dict.update(grid_arrays[array_type])

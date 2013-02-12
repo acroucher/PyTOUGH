@@ -846,7 +846,7 @@ class mulgrid(object):
 
     def get_min_surface_block_thickness(self):
         """Returns the minimum surface block thickness, and the column name it occurs in."""
-        surfcols=[col for col in self.columnlist if col.surface<>None]
+        surfcols=[col for col in self.columnlist if col.surface is not None]
         thick=np.array([col.surface-self.column_surface_layer(col).bottom for col in surfcols])
         imin=np.argmin(thick)
         return thick[imin],surfcols[imin].name
@@ -896,21 +896,21 @@ class mulgrid(object):
             if valstr.strip(): return fn(valstr)
             else: return None
         convention=getval(5,6,int)
-        if convention<>None: self.convention=convention
+        if convention is not None: self.convention=convention
         atmosphere_type=getval(6,7,int)
-        if atmosphere_type<>None: self.atmosphere_type=atmosphere_type
+        if atmosphere_type is not None: self.atmosphere_type=atmosphere_type
         volume=getval(7,17,float)
-        if volume<>None: self.atmosphere_volume=volume
+        if volume is not None: self.atmosphere_volume=volume
         atmosdist=getval(17,27,float)
-        if atmosdist<>None: self.atmosphere_connection=atmosdist
+        if atmosdist is not None: self.atmosphere_connection=atmosdist
         unit=getval(27,32,str)
-        if unit<>None: self.unit_type=unit
+        if unit is not None: self.unit_type=unit
         gdcx,gdcy=getval(32,42,float),getval(42,52,float)
-        if gdcx<>None or gdcy<>None: print 'GDCX,GDCY options not supported.'
+        if (gdcx is not None) or (gdcy is not None): print 'GDCX,GDCY options not supported.'
         cntype=getval(52,53,int)
-        if cntype<>None: print 'CNTYPE option not supported.'
+        if cntype is not None: print 'CNTYPE option not supported.'
         permangle=getval(53,63,float)
-        if permangle<>None: self.permeability_angle=permangle
+        if permangle is not None: self.permeability_angle=permangle
 
     def read_nodes(self,geo):
         """Reads grid nodes from file geo"""
@@ -1033,7 +1033,7 @@ class mulgrid(object):
             else: return None
         else:
             surf=self.block_surface(lay,col)
-            if surf<>None: return (surf-lay.bottom)*col.area
+            if surf is not None: return (surf-lay.bottom)*col.area
             else: return None
 
     def block_centre(self,lay,col):
@@ -1249,7 +1249,7 @@ class mulgrid(object):
         for node in self.nodelist: node.pos+=shift[0:2]
         for col in self.columnlist:
             col.centre+=shift[0:2]
-            if col.surface<>None: col.surface+=shift[2]
+            if col.surface is not None: col.surface+=shift[2]
         for layer in self.layerlist: layer.translate(shift[2])
         if wells:
             for well in self.welllist:
@@ -1259,7 +1259,7 @@ class mulgrid(object):
         """Rotates grid horizontally by specified angle (degrees clockwise).
         If centre is not specified, the centre of the grid is used.
         If wells is True, they will also be rotated."""
-        if centre<>None:
+        if centre is not None:
             if isinstance(centre,(list,tuple)): centre=np.array(centre)
             c=centre
         else: c=self.centre
@@ -1378,7 +1378,7 @@ class mulgrid(object):
         this can, for example, be specified as the boundary polygon of the grid.  A quadtree for searching
         the columns can also optionally be specified."""
         target=None
-        if bounds<>None:
+        if bounds is not None:
             if len(bounds)==2: inbounds=in_rectangle(pos,bounds)
             else: inbounds=in_polygon(pos,bounds)
         else: inbounds=True
@@ -1386,7 +1386,7 @@ class mulgrid(object):
             if columns is None: searchcols=self.columnlist
             else: searchcols=columns
             donecols=set([])
-            if guess<>None: 
+            if guess is not None: 
                 if guess.contains_point(pos): return guess
                 else: # search neighbours of guess, sorted by distance from pos:
                     donecols.add(guess)
@@ -1581,7 +1581,7 @@ class mulgrid(object):
         def reverse_track(track): return [tuple([tk[0],tk[2],tk[1]]) for tk in track][::-1]
 
         pos,col,start_type = find_track_start(line)
-        if pos<>None and col:
+        if pos is not None and col:
             if start_type=='start':
                 track = find_track_segment(line,pos,col)
             elif start_type=='end':
@@ -1622,7 +1622,7 @@ class mulgrid(object):
             layername=layer
             default_title='layer '+layername
         if (layername in self.layer) or (layer is None):
-            if variable<>None:
+            if variable is not None:
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
             else: varname='Value'
@@ -1641,7 +1641,7 @@ class mulgrid(object):
             verts,vals=[],[]
             if not isinstance(contours,bool): contours=list(contours)
             if contours<>False: xc,yc=[],[]
-            if connections<>None:
+            if connections is not None:
                 c=np.abs(self.connection_angle_cosine)
                 ithreshold=np.where(c>connections)[0]
                 from matplotlib.colors import colorConverter
@@ -1655,7 +1655,7 @@ class mulgrid(object):
                     if contours<>False:
                         xc.append(col.centre[0])
                         yc.append(col.centre[1])
-                    if variable<>None: val=variable[self.block_name_index[blkname]]
+                    if variable is not None: val=variable[self.block_name_index[blkname]]
                     else: val=0
                     vals.append(val)
                     verts.append(tuple([tuple([p for p in n.pos]) for n in col.node]))
@@ -1670,13 +1670,13 @@ class mulgrid(object):
                     ax.text(node.pos[0],node.pos[1],'+',color='red',clip_on=True,
                             horizontalalignment='center',verticalalignment='center')
             import matplotlib.collections as collections
-            if variable<>None: facecolors=None
+            if variable is not None: facecolors=None
             else: facecolors=[]
             col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
-            if variable<>None: col.set_array(np.array(vals))
-            if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
+            if variable is not None: col.set_array(np.array(vals))
+            if colourbar_limits is not None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
             ax.add_collection(col)
-            if plot_limits<>None:
+            if plot_limits is not None:
                 plt.xlim(plot_limits[0])
                 plt.ylim(plot_limits[1])
             else: ax.autoscale_view()
@@ -1691,12 +1691,12 @@ class mulgrid(object):
                 if isinstance(contours,list): cvals=contours
                 else: cvals=False
                 CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
-                if contour_label_format<>None: plt.clabel(CS, inline=1,fmt=contour_label_format)
+                if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             scalelabel=varname
             if unit: scalelabel+=' ('+unit+')'
-            if variable<>None:
+            if variable is not None:
                 cbar=plt.colorbar(col)
                 cbar.set_label(scalelabel)
                 default_title=varname+' in '+default_title
@@ -1743,7 +1743,7 @@ class mulgrid(object):
             else: loneplot=False
             matplotlib.rcParams.update({'mathtext.default': 'regular','figure.figsize':(12,9)})
             ax = plt.subplot(subplot,aspect=aspect)
-            if variable<>None:
+            if variable is not None:
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
             else: varname='Value'
@@ -1774,7 +1774,7 @@ class mulgrid(object):
                     for lay in self.layerlist[1:]:
                         if col.surface>lay.bottom:
                             blkname=self.block_name(lay.name,col.name)
-                            if variable<>None: val=variable[self.block_name_index[blkname]]
+                            if variable is not None: val=variable[self.block_name_index[blkname]]
                             else: val=0
                             vals.append(val)
                             top=self.block_surface(lay,col)
@@ -1784,13 +1784,13 @@ class mulgrid(object):
                             if contours<>False:
                                 xc.append(dcol); yc.append(lay.centre)
                 import matplotlib.collections as collections
-                if variable<>None: facecolors=None
+                if variable is not None: facecolors=None
                 else: facecolors=[]
                 col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
-                if variable<>None: col.set_array(np.array(vals))
-                if colourbar_limits<>None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
+                if variable is not None: col.set_array(np.array(vals))
+                if colourbar_limits is not None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
                 ax.add_collection(col)
-                if plot_limits<>None:
+                if plot_limits is not None:
                     ax.set_xlim(plot_limits[0]); ax.set_ylim(plot_limits[1])
                 else: ax.autoscale_view()
                 if contours<>False:
@@ -1804,7 +1804,7 @@ class mulgrid(object):
                     if isinstance(contours,list): cvals=contours
                     else: cvals=False
                     CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
-                    if contour_label_format<>None: plt.clabel(CS, inline=1,fmt=contour_label_format)
+                    if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
                 ax.set_ylabel(ylabel)
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'
@@ -1876,7 +1876,7 @@ class mulgrid(object):
                 polyline=[]
                 for layer in self.layerlist:
                     p=well.elevation_pos(layer.centre,extend=extend)
-                    if p<>None: polyline.append(p)
+                    if p is not None: polyline.append(p)
             return self.polyline_values(polyline,variable,divisions,coordinate,qtree=qtree)
         else: return None
 
@@ -1917,7 +1917,7 @@ class mulgrid(object):
         else: loneplot=False
         matplotlib.rcParams.update({'mathtext.default': 'regular','figure.figsize':(12,9)})
         plt.subplot(subplot)
-        if variable<>None:
+        if variable is not None:
             if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
         if variable_name: varname=variable_name
         else: varname='Value'
@@ -2161,7 +2161,7 @@ class mulgrid(object):
                     index+=1
         # identify where 'extra' nodes are needed
         extra_node={}
-        for col in [c for c in self.columnlist if c.surface<>None]:
+        for col in [c for c in self.columnlist if c.surface is not None]:
             for node in col.node:
                 if node.name in extra_node: extra_node[node.name].append(col.name)
                 else: extra_node[node.name]=[col.name]
@@ -2437,7 +2437,7 @@ class mulgrid(object):
                 sys.stdout.flush()
                 if col:
                     xi=col.local_pos(d[0:2])
-                    if xi<>None:
+                    if xi is not None:
                         guess=col
                         psi=col.basis(xi)
                         for i,nodei in enumerate(col.node):

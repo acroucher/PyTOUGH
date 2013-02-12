@@ -99,7 +99,7 @@ class t2grid(object):
     def get_block_centres_defined(self):
         if self.num_atmosphere_blocks==1: istart=1
         else: istart=0
-        return any([blk.centre<>None for blk in self.blocklist[istart:]])
+        return any([blk.centre is not None for blk in self.blocklist[istart:]])
     block_centres_defined=property(get_block_centres_defined)
 
     def calculate_block_centres(self,geo):
@@ -451,7 +451,7 @@ class t2grid(object):
                 blk2name=conname[otherindex]
                 icon=conindex[conname]
                 centre2=self.block[blk2name].centre
-                if centre2<>None:
+                if centre2 is not None:
                     n=centre2-blk.centre
                     n/=np.linalg.norm(n)
                 else: n=np.array([0,0,1]) # assumed connection to atmosphere

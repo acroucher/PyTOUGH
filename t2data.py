@@ -106,7 +106,7 @@ class t2data_parser(file):
         fmt=self.specification[linetype][1]
         strs=[]
         for val,f in zip(vals,fmt):
-            if (val<>None) and (f[-1]<>'x'): valstr=('%%%s'%f) % val
+            if (val is not None) and (f[-1]<>'x'): valstr=('%%%s'%f) % val
             else: valstr=' '*self.spec_width[f[0:-1]] # blank
             strs.append(valstr)
         return ''.join(strs)
@@ -121,7 +121,7 @@ class t2data_parser(file):
         spec=self.specification[linetype]
         vals=self.read_values(linetype)
         for var,val in zip(spec[0],vals):
-            if val<>None: variable[var]=val
+            if val is not None: variable[var]=val
     def write_value_line(self,variable,linetype):
         spec=self.specification[linetype]
         vals=[]
@@ -334,7 +334,7 @@ class t2data(object):
         mops=ljust(self.parameter['_option_str'].rstrip(),24).replace(' ','0')
         self.parameter['option']=np.array([0]+[int(mop) for mop in mops],int8)
         infile.read_value_line(self.parameter,'param2')
-        if (self.parameter['print_block']<>None) and (self.parameter['print_block'].strip()==''):
+        if (self.parameter['print_block'] is not None) and (self.parameter['print_block'].strip()==''):
             self.parameter['print_block']=None
         self.read_timesteps(infile)
         infile.read_value_line(self.parameter,'param3')
@@ -344,7 +344,7 @@ class t2data(object):
         outfile.write('PARAM\n')
         from copy import copy
         paramw=copy(self.parameter)
-        if paramw['print_block']<>None: paramw['print_block']=unfix_blockname(paramw['print_block'])
+        if paramw['print_block'] is not None: paramw['print_block']=unfix_blockname(paramw['print_block'])
         self.parameter['_option_str']=''.join([str(m) for m in self.parameter['option'][1:]])
         spec=['param1','param1_autough2'][self.type=='AUTOUGH2']
         outfile.write_value_line(self.parameter,spec)
@@ -362,7 +362,7 @@ class t2data(object):
             self.parameter['timestep']=[]
             for i in xrange(nlines):
                 for val in infile.read_values('timestep'):
-                    if val<>None: self.parameter['timestep'].append(val)
+                    if val is not None: self.parameter['timestep'].append(val)
 
     def write_timesteps(self,outfile):
         if self.parameter['const_timestep']<0.0:
@@ -439,7 +439,7 @@ class t2data(object):
                     rockindex=int(rockname)-1
                     rocktype=self.grid.rocktypelist[rockindex]
                 except: raise RuntimeError("Unknown rocktype "+rockname+" in block "+name)
-            if (x<>None) and (y<>None) and (z<>None): centre=np.array([x,y,z])
+            if (x is not None) and (y is not None) and (z is not None): centre=np.array([x,y,z])
             else: centre=None
             if nseq==0: nseq=None
             if nadd==0: nadd=None
@@ -514,14 +514,14 @@ class t2data(object):
                 nlines=int(ceil(ntimes/4.))
                 for i in xrange(nlines):
                     for val in infile.read_values('generation_times'): 
-                        if val<>None: time.append(val)
+                        if val is not None: time.append(val)
                 for i in xrange(nlines):
                     for val in infile.read_values('generation_rates'):
-                        if val<>None: rate.append(val)
+                        if val is not None: rate.append(val)
                 if itab.strip():
                     for i in xrange(nlines):
                         for val in infile.read_values('generation_enthalpy'):
-                            if val<>None: enthalpy.append(val)
+                            if val is not None: enthalpy.append(val)
         return t2generator(name=name,block=block,nseq=nseq,nadd=nadd,nads=nads,type=gentype,ltab=ltab,itab=itab,
                            gx=gx,ex=ex,hg=hg,fg=fg,time=time,rate=rate,enthalpy=enthalpy)
 
@@ -573,7 +573,7 @@ class t2data(object):
         nlines=int(ceil(self.output_times['num_times_specified']/8.))
         for i in xrange(nlines):
             for val in infile.read_values('output_times2'): 
-                if val<>None: self.output_times['time'].append(val)
+                if val is not None: self.output_times['time'].append(val)
 
     def write_times(self,outfile):
         if self.output_times:
@@ -860,7 +860,7 @@ class t2data(object):
                 nlines=int(ceil(nrad/8.))
                 for i in xrange(nlines):
                     for val in infile.read_values('radii2'): 
-                        if val<>None: subsection['radii'].append(val)
+                        if val is not None: subsection['radii'].append(val)
             elif keyword=='EQUID': infile.read_value_line(subsection,'equid')
             elif keyword=='LOGAR': infile.read_value_line(subsection,'logar')
             elif keyword=='LAYER': 
@@ -1127,7 +1127,7 @@ class t2data(object):
         if (colmapping=={}) or (mapping=={}): mapping,colmapping=sourcegeo.block_mapping(geo,True)
         bbox=sourcegeo.bounds
         qt=quadtree(bbox,sourcegeo.columnlist)
-        incols=[col for col in geo.columnlist if sourcegeo.column_containing_point(col.centre,qtree=qt)<>None]
+        incols=[col for col in geo.columnlist if sourcegeo.column_containing_point(col.centre,qtree=qt) is not None]
         self.clear_generators()
         col_generator=top_generator+bottom_generator
         for sourcegen in source.generatorlist:
@@ -1191,7 +1191,7 @@ class t2data(object):
         self.grid=t2grid().fromgeo(geo)
         self.simulator=source.simulator
         self.parameter=copy(source.parameter)
-        if self.parameter['print_block']<>None:
+        if self.parameter['print_block'] is not None:
             mappedblocks=[blk for blk in self.grid.blocklist if mapping[blk.name]==self.parameter['print_block']]
             if len(mappedblocks)>0: self.parameter['print_block']=mappedblocks[0].name
             else: self.parameter['print_block']=None
