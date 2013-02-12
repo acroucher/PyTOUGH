@@ -191,6 +191,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \texttt{polyline\_values} & tuple & values of a variable along an arbitrary polyline through the grid\\
   \texttt{read} & \texttt{mulgrid} & reads geometry file from disk\\
   \texttt{rectangular} & \texttt{mulgrid} & creates rectangular grid\\
+  \texttt{reduce} & -- & reduces a grid to contain only specified columns\\
   \texttt{refine} & -- & refines specified columns in the grid\\
   \texttt{refine\_layers} & -- & refines specified layers in the grid\\
   \texttt{rename\_column} & Boolean & renames a column\\
@@ -834,6 +835,16 @@ geo=mulgrid().rectangular([1000]*10,[500]*20,[100]*5+[200]*10,
 \end{verbatim}
 
 creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a rectangular grid of 10 blocks of size 1000 m in the \emph{x}-direction, 20 blocks of size 500 m in the \emph{x}-direction, 5 layers at the top of thickness 100 m and 10 layers underneath of thickness 200 m, and with origin (0,0,2500) m.  The grid will have the default naming convention (0) and atmosphere type (2).
+
+\subsubsection{\texttt{reduce(\emph{columns})}}
+
+Reduces a grid so that it contains only the specified list of columns (or columns with specified names).
+
+\textbf{Parameters:}
+\begin{itemize}
+  \item \textbf{columns}: list\\
+    List of required columns or column names.
+\end{itemize}
 
 \subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False, \emph{bisect\_edge\_columns}=[])}}
 

@@ -2620,3 +2620,14 @@ class mulgrid(object):
                             break
                     if not done: break
         return groups
+
+    def reduce(self, columns):
+        """Reduce the geometry so that it contains only the specified columns."""
+        if len(columns) > 0:
+            if isinstance(columns[0],str): columns = [self.column[col] for col in columns]
+        delete_columns = set(self.columnlist) - set(columns)
+        colnames = [col.name for col in delete_columns]
+        for colname in colnames: self.delete_column(colname)
+        self.check(fix=True, silent=True)
+        self.setup_block_name_index()
+        
