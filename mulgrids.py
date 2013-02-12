@@ -36,7 +36,7 @@ def fix_blockname(name):
 
 def unfix_blockname(name):
     """The inverse of fix_blockname()."""
-    return name[0:3]+"%2d"%int(name[3:5])
+    return "%3s%2d"%(name[0:3],int(name[3:5]))
 
 def valid_blockname(name):
     """Tests if a 5-character string is a valid blockname.  Allows names with the first three characters either letters, numbers,
