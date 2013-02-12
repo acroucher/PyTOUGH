@@ -228,7 +228,7 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 \item \textbf{indices}: list or tuple\\
   Optional specification of time indices to include in the output.  If set to \texttt{None} (the default), all time indices will be included.
 \item \textbf{flows}: Boolean\\
-  Set to \texttt{True} if approximate block-centred flux vectors are to be calculated and written, for visualising flows.  Default is \texttt{False}.
+  Set to \texttt{True} if approximate block-centred flux vectors are to be calculated and written, for visualising flows.  Default is \texttt{False}.  \textbf{Note}: flow vectors can only be calculated if a \textbf{grid} is specified.
 \item \textbf{wells}: Boolean\\
   Set to \texttt{True} if a separate VTK file for the wells in the \texttt{mulgrid} object is to be written.  Default is \texttt{False}.
 \item \textbf{start\_time}: float\\

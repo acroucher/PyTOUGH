@@ -942,7 +942,12 @@ class t2listing(file):
         base,ext=splitext(filename)
         if wells: geo.write_well_vtk()
         geo_matches=geo.block_name_list==self.element.row_name
-        doflows=flows and (self.connection<>None) and (grid<>None) and geo_matches
+        doflows = False
+        if flows and (self.connection is not None):
+            if geo_matches:
+                if grid is not None: doflows = True
+                else: raise Exception("t2listing.write_vtk(): if flows == True, a t2grid object must be specified.")
+            else: raise Exception("t2listing.write_vtk(): if flows == True, block names in the listing file and geometry must match.")
         arrays=geo.vtk_data
         if grid<>None:
             grid_arrays=grid.get_vtk_data(geo)
