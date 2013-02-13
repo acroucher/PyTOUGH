@@ -8,9 +8,9 @@ class fixed_format_file(file):
     in the file.  Each value in the specification dictionary is a list of two lists: first a list
     of the names of variables in the specification, then a list of the corresponding format
     specifications.  The individual format specifications are like those in Python formats,
-    consisting of a value type ('d' for integer, 'f' for float etc.) followed by a width.  The
-    default conversion functions also allow an 'x' specifier for blanks (like fortran), which returns
-    None."""
+    consisting of an integer width value followed by a type ('d' for integer, 'f' for float etc.).
+    The default conversion functions also allow an 'x' specifier for blanks (like fortran), which
+    returns None."""
 
     default_conversion_function = {'d':int, 'f':float, 'e':float, 'g':float,
                                    's':lambda x:x.rstrip('\n'), 'x':lambda x:None}

@@ -121,7 +121,11 @@ class quadtree(object):
         plt.plot(x,y,'.--')
         for child in self.child: child.plot(plt)
 
-mulgrid_format_specification = {'node': [['name','x','y'], ['3s']+['10f']*2]}
+mulgrid_format_specification = {
+    'node': [['name','x','y'], ['3s']+['10f']*2],
+    'header': [['type','_convention','_atmosphere_type','atmosphere_volume','atmosphere_connection',
+                'unit_type','gdcx','gdcy','cntype','permeability_angle'],
+               ['5s','1d','1d','10f','10f','5s','10f','10f','1d','10f']]}
 
 class node(object):
     """Grid node class"""
@@ -442,6 +446,8 @@ class mulgrid(object):
         self.atmosphere_volume=atmos_volume
         self.atmosphere_connection=atmos_connection
         self.unit_type=unit_type
+        self.gdcx, self.gdcy = None, None # not supported
+        self.cntype = None # not supported
         self.permeability_angle=permeability_angle
         self.empty()
         if self.filename: self.read(filename)
@@ -890,29 +896,14 @@ class mulgrid(object):
             isort=np.argsort(d)
             return self.nodelist[isort[0]]
 
-    def read_header(self,header):
+    def read_header(self, geo):
         """Reads grid header info from file geo"""
-        self.type=header[0:5]
-        def getval(i1,i2,fn):
-            valstr=header[i1:i2].replace('\n',' ')
-            if valstr.strip(): return fn(valstr)
-            else: return None
-        convention=getval(5,6,int)
-        if convention is not None: self.convention=convention
-        atmosphere_type=getval(6,7,int)
-        if atmosphere_type is not None: self.atmosphere_type=atmosphere_type
-        volume=getval(7,17,float)
-        if volume is not None: self.atmosphere_volume=volume
-        atmosdist=getval(17,27,float)
-        if atmosdist is not None: self.atmosphere_connection=atmosdist
-        unit=getval(27,32,str)
-        if unit is not None: self.unit_type=unit
-        gdcx,gdcy=getval(32,42,float),getval(42,52,float)
-        if (gdcx is not None) or (gdcy is not None): print 'GDCX,GDCY options not supported.'
-        cntype=getval(52,53,int)
-        if cntype is not None: print 'CNTYPE option not supported.'
-        permangle=getval(53,63,float)
-        if permangle is not None: self.permeability_angle=permangle
+        geo.read_value_line(self.__dict__, 'header')
+        self.convention = self._convention
+        self.atmosphere_type = self._atmosphere_type
+        self.unit_type = self._unit_type
+        if (self.gdcx is not None) or (self.gdcy is not None): print 'GDCX, GDCY options not supported.'
+        if self.cntype is not None: print 'CNTYPE option not supported.'
 
     def read_nodes(self,geo):
         """Reads grid nodes from file geo"""
@@ -994,8 +985,7 @@ class mulgrid(object):
         """Reads MULgraph grid from file"""
         self.empty()
         geo=fixed_format_file(filename, 'rU', mulgrid_format_specification)
-        line=padstring(geo.readline())
-        self.read_header(line)
+        self.read_header(geo)
         if self.type=='GENER':
             read_fn={'VERTI':self.read_nodes, 'GRID': self.read_columns, 'CONNE': self.read_connections,
                      'LAYER': self.read_layers, 'SURFA': self.read_surface, 'SURF': self.read_surface,
