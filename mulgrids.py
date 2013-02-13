@@ -122,10 +122,10 @@ class quadtree(object):
         for child in self.child: child.plot(plt)
 
 mulgrid_format_specification = {
-    'node': [['name','x','y'], ['3s']+['10f']*2],
     'header': [['type','_convention','_atmosphere_type','atmosphere_volume','atmosphere_connection',
                 'unit_type','gdcx','gdcy','cntype','permeability_angle'],
-               ['5s','1d','1d','10f','10f','5s','10f','10f','1d','10f']]}
+               ['5s','1d','1d','10.2e','10.2e','5s','10.2f','10.2f','1d','10.2f']],
+    'node': [['name','x','y'], ['3s']+['10.2f']*2]}
 
 class node(object):
     """Grid node class"""
@@ -1061,9 +1061,9 @@ class mulgrid(object):
 
     def write(self,filename=''):
         """Writes a MULgraph grid to file"""
-        if filename: self.filename=filename
-        if self.filename=='': self.filename='geometry.dat'
-        geo=open(self.filename,'w')
+        if filename: self.filename = filename
+        if self.filename=='': self.filename = 'geometry.dat'
+        geo = fixed_format_file(self.filename,'w', mulgrid_format_specification)
         self.write_header(geo)
         self.write_nodes(geo)
         self.write_columns(geo)
@@ -1076,13 +1076,14 @@ class mulgrid(object):
 
     def write_header(self,geo):
         """Writes MULgraph grid header to file"""
-        geo.write("%5s%1d%1d%10.2e%10.2e%5s%21s%10.2f\n" % (self.type,self.convention,self.atmosphere_type,self.atmosphere_volume,self.atmosphere_connection,self.unit_type,' '*21,self.permeability_angle))
+        geo.write_value_line(self.__dict__, 'header')
 
     def write_nodes(self,geo):
         """Writes MULgraph grid nodes to file"""
         geo.write('VERTICES\n')
         for node in self.nodelist:
-            geo.write("%3s%10.2f%10.2f\n" % (node.name.ljust(3),node.pos[0]/self.unit_scale,node.pos[1]/self.unit_scale))
+            name, pos = node.name.ljust(3), node.pos / self.unit_scale
+            geo.write_values([name, pos[0], pos[1]], 'node')
         geo.write('\n')
         
     def write_columns(self,geo):
