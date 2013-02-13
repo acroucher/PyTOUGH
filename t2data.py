@@ -11,15 +11,15 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
+from fixed_format_file import *
 from t2grids import *
 from t2incons import *
 from math import ceil
 
-class t2data_parser(file):
+class t2data_parser(fixed_format_file):
     """Class for parsing TOUGH2 data file."""
-    def __init__(self,filename,mode):
-        super(t2data_parser,self).__init__(filename,mode)
-        self.specification={
+    def __init__(self, filename, mode):
+        specification = {
             'title':[['title'],['80s']],
             'simulator':[['simulator'],['80s']],
             'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
@@ -76,60 +76,7 @@ class t2data_parser(file):
             'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['4s']+['10.4e']*7],
             'part2' : [['vol']*8,['10.4e']*8]
             }
-        self.conversion_function={'d':int,'f':float,'e':float,'g':float,'s':lambda x:x.rstrip('\n'),'x':lambda x:None}
-        # wrap conversion functions with exception handler to return None on ValueError:
-        def value_error_none(f):
-            def fn(x):
-                try: return f(x)
-                except ValueError: return None
-            return fn
-        self.conversion_function=dict([(typ,value_error_none(f)) for typ,f in self.conversion_function.iteritems()])
-        # pre-process specifications to speed up reading:
-        self.line_spec,self.spec_width={},{}
-        for section,[names,specs] in self.specification.iteritems():
-            self.line_spec[section]=[]
-            pos=0
-            for spec in specs:
-                fmt,typ=spec[:-1],spec[-1]
-                w=int(fmt.partition('.')[0])
-                nextpos=pos+w
-                self.line_spec[section].append(((pos,nextpos),typ))
-                pos=nextpos
-                self.spec_width[fmt]=w
-
-    def parse_string(self,line,linetype):
-        """Parses a string into values according to specified input format (d,f,s, or x for integer, float, string or skip).
-        Blanks are converted to None."""
-        return [self.conversion_function[typ](line[i1:i2]) for (i1,i2),typ in self.line_spec[linetype]]
-    def write_values_to_string(self,vals,linetype):
-        """Inverse of parse_string()"""
-        fmt=self.specification[linetype][1]
-        strs=[]
-        for val,f in zip(vals,fmt):
-            if (val is not None) and (f[-1]<>'x'): valstr=('%%%s'%f) % val
-            else: valstr=' '*self.spec_width[f[0:-1]] # blank
-            strs.append(valstr)
-        return ''.join(strs)
-    def read_values(self,linetype):
-        line=self.readline()
-        return self.parse_string(line,linetype)
-    def write_values(self,vals,linetype):
-        line=self.write_values_to_string(vals,linetype)
-        self.write('%s\n'%line)
-    def read_value_line(self,variable,linetype):
-        """Reads a line of parameter values into dictionary variable. Null values are ignored."""
-        spec=self.specification[linetype]
-        vals=self.read_values(linetype)
-        for var,val in zip(spec[0],vals):
-            if val is not None: variable[var]=val
-    def write_value_line(self,variable,linetype):
-        spec=self.specification[linetype]
-        vals=[]
-        for name in spec[0]:
-            if name in variable: val=variable[name]
-            else: val=None
-            vals.append(val)
-        self.write_values(vals,linetype)
+        super(t2data_parser,self).__init__(filename, mode, specification)
 
 import struct
 class fortran_unformatted_file(file):
