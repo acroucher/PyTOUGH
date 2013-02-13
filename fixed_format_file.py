@@ -1,19 +1,29 @@
 """Reading, parsing and writing fixed format text files."""
 
 class fixed_format_file(file):
-    """Class for fixed format text file."""
 
-    def __init__(self, filename, mode, specification):
+    """Class for fixed format text file.  Values from the file may be parsed into variables, 
+    according to a specification dictionary.  The keys of the specification dictionary are
+    arbitrary and may be assigned for convenience, e.g. referring to specific sections or lines
+    in the file.  Each value in the specification dictionary is a list of two lists: first a list
+    of the names of variables in the specification, then a list of the corresponding format
+    specifications.  The individual format specifications are like those in Python formats,
+    consisting of a value type ('d' for integer, 'f' for float etc.) followed by a width.  The
+    default conversion functions also allow an 'x' specifier for blanks (like fortran), which returns
+    None."""
+
+    default_conversion_function = {'d':int, 'f':float, 'e':float, 'g':float,
+                                   's':lambda x:x.rstrip('\n'), 'x':lambda x:None}
+
+    def __init__(self, filename, mode, specification, conversion_function = default_conversion_function):
         self.specification = specification
-        self.setup_conversion_functions()
+        self.setup_conversion_functions(conversion_function)
         self.preprocess_specification()
         super(fixed_format_file, self).__init__(filename, mode)
 
-    def setup_conversion_functions(self):
-        """Sets up conversion functions for parsing text."""
-        conversion_function = {'d':int, 'f':float, 'e':float, 'g':float,
-                               's':lambda x:x.rstrip('\n'), 'x':lambda x:None}
-        # wrap conversion functions with exception handler to return None on ValueError:
+    def setup_conversion_functions(self, conversion_function):
+        """Sets up conversion functions for parsing text.  The functions are wrapped with an exception handler
+        to return None on ValueError."""
         def value_error_none(f):
             def fn(x):
                 try: return f(x)
