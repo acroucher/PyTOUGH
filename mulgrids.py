@@ -125,7 +125,9 @@ mulgrid_format_specification = {
     'header': [['type','_convention','_atmosphere_type','atmosphere_volume','atmosphere_connection',
                 'unit_type','gdcx','gdcy','cntype','permeability_angle'],
                ['5s','1d','1d','10.2e','10.2e','5s','10.2f','10.2f','1d','10.2f']],
-    'node': [['name','x','y'], ['3s']+['10.2f']*2]}
+    'node': [['name','x','y'], ['3s']+['10.2f']*2],
+    'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d','10.2f','10.2f']],
+    'column_node': [['name'], ['3s']]}
 
 class node(object):
     """Grid node class"""
@@ -909,10 +911,10 @@ class mulgrid(object):
         """Reads grid nodes from file geo"""
         line = padstring(geo.readline())
         while line.strip():
-            [nodename, x, y] = geo.parse_string(line, 'node')
-            nodename = nodename.strip().rjust(self.colname_length)
+            [name, x, y] = geo.parse_string(line, 'node')
+            name = name.strip().rjust(self.colname_length)
             pos = np.array([x, y])*self.unit_scale
-            newnode = node(nodename,pos)
+            newnode = node(name,pos)
             self.add_node(newnode)
             line=geo.readline()
 
@@ -920,16 +922,14 @@ class mulgrid(object):
         """Reads grid columns from file geo"""
         line=padstring(geo.readline())
         while line.strip():
-            colname,centre_specified,nnodes=line[0:3].strip().rjust(self.colname_length),line[3:4].strip(),int(line[4:6])
-            if centre_specified: 
-                if int(centre_specified)>0: centre=np.array([float(line[6:16]),float(line[16:26])])*self.unit_scale
-                else: centre=None
-            else: centre=None
-            nodes=[]
+            [colname, centre_specified, nnodes, centrex, centrey] = geo.parse_string(line, 'column')
+            if centre_specified: centre = np.array([centrex, centrey])*self.unit_scale
+            else: centre = None
+            nodes = []
             for each in xrange(nnodes):
-                line=padstring(geo.readline())
-                nodename=line[0:3].strip().rjust(self.colname_length)
-                colnode=self.node[nodename]
+                [nodename] = geo.read_values('column_node')
+                nodename = nodename.rjust(self.colname_length)
+                colnode = self.node[nodename]
                 nodes.append(colnode)
             self.add_column(column(colname,nodes,centre))
             line=geo.readline()
@@ -1090,11 +1090,13 @@ class mulgrid(object):
         """Writes MULgraph grid columns to file"""
         geo.write('GRID\n')
         for col in self.columnlist:
-            geo.write("%3s%1d%2d" % (col.name.ljust(3),col.centre_specified,col.num_nodes))
-            if col.centre_specified:
-                geo.write("%10.2f%10.2f\n" % (col.centre[0]/self.unit_scale,col.centre[1]/self.unit_scale))
-            else: geo.write('\n')
-            for node in col.node: geo.write("%3s\n" % node.name.ljust(3))
+            name = col.name.ljust(3)
+            vals = [name, col.centre_specified, col.num_nodes]
+            if col.centre_specified: centre = list(col.centre / self.unit_scale)
+            else: centre = [None]*2
+            vals += centre
+            geo.write_values(vals, 'column')
+            for node in col.node: geo.write_values([node.name.ljust(3)], 'column_node')
         geo.write('\n')
             
     def write_connections(self,geo):
