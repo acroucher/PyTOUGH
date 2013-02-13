@@ -13,6 +13,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 from string import ljust,rjust,lowercase,uppercase
 from geometry import *
+from fixed_format_file import *
 
 def padstring(string,length=80): return ljust(string,length)
 def IntToLetters(i,st='',casefn=lowercase):
@@ -119,7 +120,9 @@ class quadtree(object):
         y=[self.bounds[0][1],self.bounds[0][1],self.bounds[1][1],self.bounds[1][1],self.bounds[0][1]]
         plt.plot(x,y,'.--')
         for child in self.child: child.plot(plt)
-    
+
+mulgrid_format_specification = {'node': [['name','x','y'], ['3s']+['10f']*2]}
+
 class node(object):
     """Grid node class"""
     def __init__(self,name='   ',pos=np.array([0.0,0.0])):
@@ -913,11 +916,12 @@ class mulgrid(object):
 
     def read_nodes(self,geo):
         """Reads grid nodes from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            nodename=line[0:3].strip().rjust(self.colname_length)
-            pos=np.array([float(line[3:13]),float(line[13:23])])*self.unit_scale
-            newnode=node(nodename,pos)
+            [nodename, x, y] = geo.parse_string(line, 'node')
+            nodename = nodename.strip().rjust(self.colname_length)
+            pos = np.array([x, y])*self.unit_scale
+            newnode = node(nodename,pos)
             self.add_node(newnode)
             line=geo.readline()
 
@@ -989,7 +993,7 @@ class mulgrid(object):
     def read(self,filename):
         """Reads MULgraph grid from file"""
         self.empty()
-        geo=open(filename,'rU')
+        geo=fixed_format_file(filename, 'rU', mulgrid_format_specification)
         line=padstring(geo.readline())
         self.read_header(line)
         if self.type=='GENER':
