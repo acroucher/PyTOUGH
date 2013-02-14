@@ -78,6 +78,24 @@ class t2data_parser(fixed_format_file):
             }
         super(t2data_parser,self).__init__(filename, mode, specification)
 
+class t2_extra_precision_data_parser(fixed_format_file):
+    """Class for parsing AUTOUGH2 extra-precision auxiliary data file."""
+    def __init__(self, filename, mode):
+        specification = {
+            'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
+                      ['5s','5d']+['15.4e']*7],
+            'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['15.4e']*7],
+            'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+            'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+            'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+            'capillarity':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+            'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
+                         ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['15.4e']*4],
+            'generation_times':[['time']*4,['15.4e']*4],
+            'generation_rates':[['rate']*4,['15.4e']*4],
+            'generation_enthalpy':[['enthalpy']*4,['15.4e']*4]}
+        super(t2_extra_precision_data_parser,self).__init__(filename, mode, specification)
+
 import struct
 class fortran_unformatted_file(file):
     """Class for 'unformatted' binary file written by Fortran.  These are different from plain binary files
@@ -114,46 +132,56 @@ class t2generator(object):
         self.enthalpy=enthalpy
     def __repr__(self): return self.block+':'+self.name
 
-default_parameters={'max_iterations':None, 'print_level':None, 'max_timesteps':None, 'max_duration':None, 'print_interval':None, 
-                    '_option_str':'0'*24,'option':np.zeros(25,int8), 'diff0':None, 'texp':None, 'tstart':0.0, 'tstop':None,
-                    'const_timestep':0.0,'timestep':[], 'max_timestep':None, 'print_block':None, 'gravity':0.0,
-                    'timestep_reduction':None, 'scale':None, 'relative_error':None, 'absolute_error':None, 'pivot':None,
-                    'upstream_weight':None, 'newton_weight':None, 'derivative_increment':None, 'default_incons':[]}
+default_parameters = {'max_iterations':None, 'print_level':None, 'max_timesteps':None, 'max_duration':None, 'print_interval':None, 
+                      '_option_str':'0'*24,'option':np.zeros(25,int8), 'diff0':None, 'texp':None, 'tstart':0.0, 'tstop':None,
+                      'const_timestep':0.0,'timestep':[], 'max_timestep':None, 'print_block':None, 'gravity':0.0,
+                      'timestep_reduction':None, 'scale':None, 'relative_error':None, 'absolute_error':None, 'pivot':None,
+                      'upstream_weight':None, 'newton_weight':None, 'derivative_increment':None, 'default_incons':[]}
 
-t2data_sections=['SIMUL','ROCKS','MESHM','PARAM','START','NOVER','RPCAP','LINEQ','SOLVR','MULTI','TIMES',
-                 'SELEC','DIFFU','ELEME','CONNE','GENER','SHORT','FOFT','COFT','GOFT','INCON','INDOM']
+t2data_sections = ['SIMUL','ROCKS','MESHM','PARAM','START','NOVER','RPCAP','LINEQ','SOLVR','MULTI','TIMES',
+                   'SELEC','DIFFU','ELEME','CONNE','GENER','SHORT','FOFT','COFT','GOFT','INCON','INDOM']
+
+t2_extra_precision_sections = ['ROCKS', 'RPCAP', 'GENER']
 
 class t2data(object):
     """Class for TOUGH2 data"""
-    def __init__(self,filename='',meshfilename=''):
+    def __init__(self, filename = '', meshfilename = ''):
         from copy import copy
-        self.filename=filename
-        self.meshfilename=meshfilename
-        self.title=''
-        self.simulator=''
-        self.parameter=copy(default_parameters)
-        self.multi={}
-        self.start=False
-        self.relative_permeability={}
-        self.capillarity={}
-        self.lineq={}
-        self.output_times={}
-        self.grid=t2grid()
-        self.generatorlist=[]
-        self.generator={}
-        self.short_output={}
-        self.incon={}
-        self.solver={}
-        self.history_block=[]
-        self.history_connection=[]
-        self.history_generator=[]
-        self.indom={}
-        self.noversion=False
-        self.diffusion=[]
-        self.selection={}
-        self.meshmaker=[]
-        self._sections=[]
-        self.end_keyword='ENDCY'
+        self.filename = filename
+        self.meshfilename = meshfilename
+        self.title = ''
+        self.simulator = ''
+        self.parameter = copy(default_parameters)
+        self.multi = {}
+        self.start = False
+        self.relative_permeability = {}
+        self.capillarity = {}
+        self.lineq = {}
+        self.output_times = {}
+        self.grid = t2grid()
+        self.generatorlist = []
+        self.generator = {}
+        self.short_output = {}
+        self.incon = {}
+        self.solver = {}
+        self.history_block = []
+        self.history_connection = []
+        self.history_generator = []
+        self.indom = {}
+        self.noversion = False
+        self.diffusion = []
+        self.selection = {}
+        self.meshmaker = []
+        self._sections = []
+        self.end_keyword = 'ENDCY'
+        self.extra_precision_sections = []
+        self.read_fn = dict(zip(
+                t2data_sections,
+                [self.read_simulator, self.read_rocktypes, self.read_meshmaker, self.read_parameters, self.read_start, 
+                 self.read_noversion, self.read_rpcap, self.read_lineq, self.read_solver, self.read_multi, self.read_times,
+                 self.read_selection, self.read_diffusion, self.read_blocks, self.read_connections,
+                 self.read_generators, self.read_short_output, self.read_history_blocks, 
+                 self.read_history_connections, self.read_history_generators, self.read_incons, self.read_indom]))
         if self.filename: self.read(filename,meshfilename)
 
     def __repr__(self): return self.title
@@ -195,6 +223,15 @@ class t2data(object):
         else: return 'TOUGH2'
     type=property(get_type)
 
+    def get_extra_precision_filename(self):
+        """Returns name of extra precision data file name, based on the name of the data file."""
+        from os.path import splitext
+        base, ext = splitext(self.filename)
+        if base[0].isupper(): pext = 'PDAT'
+        else: pext = 'pdat'
+        return '.'.join((base, pext))
+    extra_precision_filename = property(get_extra_precision_filename)
+
     def get_num_generators(self):
         return len(self.generatorlist)
     num_generators=property(get_num_generators)
@@ -233,8 +270,14 @@ class t2data(object):
         outfile.write(self.title.strip()+'\n')
 
     def read_simulator(self,infile):
-        """Reads simulator and EOS type"""
+        """Reads simulator and EOS type.  If the SIMUL section is present, check for extra precision
+        data in auxiliary file, and modify functions accordingly for reading the main data file."""
         infile.read_value_line(self.__dict__,'simulator')
+        if self.type == 'AUTOUGH2':
+            self.read_extra_precision_sections()
+            skip_fn = dict(zip(t2_extra_precision_sections,
+                               [self.skip_rocktypes, self.skip_rpcap, self.skip_generators]))
+            for section in self.extra_precision_sections: self.read_fn[section] = skip_fn[section]
 
     def write_simulator(self,outfile):
         if self.simulator:
@@ -259,6 +302,10 @@ class t2data(object):
                     self.grid.rocktype[name].capillarity['type']=vals[0]
                     self.grid.rocktype[name].capillarity['parameters']=vals[2:-1]
             line=padstring(infile.readline())
+
+    def skip_rocktypes(self,infile):
+        """Skips rock type section"""
+        while infile.readline().strip(): pass
 
     def write_rocktypes(self,outfile):
         outfile.write('ROCKS\n')
@@ -345,6 +392,10 @@ class t2data(object):
         self.relative_permeability['type'],self.relative_permeability['parameters']=vals[0],vals[2:]
         vals=infile.read_values('capillarity')
         self.capillarity['type'],self.capillarity['parameters']=vals[0],vals[2:]
+
+    def skip_rpcap(self,infile):
+        """Skips relative permeability and capillarity parameter section."""
+        for i in xrange(2): infile.readline()
 
     def write_rpcap(self,outfile):
         if self.relative_permeability:
@@ -505,6 +556,10 @@ class t2data(object):
         while line.strip():
             self.add_generator(self.read_generator(line,infile))
             line=infile.readline()
+
+    def skip_generators(self,infile):
+        """Skips generator section in file"""
+        while infile.readline().strip(): pass
 
     def write_generators(self,outfile):
         if self.generatorlist:
@@ -985,41 +1040,57 @@ class t2data(object):
         fb.writerec('%di'%nel,blkdata[:]['rockindex']+1)
         for var in ['blk1index','blk2index']: fb.writerec('%di'%ncon,condata[:][var]+1)
 
-    def read(self,filename='',meshfilename=''):
-        """Reads data from file.  Mesh data can optionally be read from an auxiliary file."""
-        if filename: self.filename=filename
-        infile=t2data_parser(self.filename,'rU')
-        read_fn=dict(zip(t2data_sections,
-                         [self.read_simulator, self.read_rocktypes, self.read_meshmaker, self.read_parameters, self.read_start, 
-                         self.read_noversion, self.read_rpcap, self.read_lineq, self.read_solver, self.read_multi, self.read_times,
-                         self.read_selection, self.read_diffusion, self.read_blocks, self.read_connections,
-                         self.read_generators, self.read_short_output, self.read_history_blocks, 
-                         self.read_history_connections, self.read_history_generators, self.read_incons, self.read_indom]))
+    def read_extra_precision_sections(self):
+        """Reads extra precision data from auxiliary file, with same base name as the data file name, but
+        with file extension .pdat."""
+        from os.path import exists
+        filename = self.extra_precision_filename
+        if exists(filename):
+            xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'rU')
+            read_fn = dict(zip(t2_extra_precision_sections,
+                               [self.read_rocktypes, self.read_rpcap, self.read_generators]))
+            more = True
+            while more:
+                line = xpfile.readline()
+                if line:
+                    keyword = line[0:5].strip()
+                    if keyword in ['ENDCY','ENDFI']: more = False
+                    elif keyword in read_fn:
+                        self.extra_precision_sections.append(keyword)
+                        read_fn[keyword](xpfile)
+                else: more = False
+            xpfile.close()
+
+    def read(self, filename='', meshfilename=''):
+        """Reads data from file.  Mesh data can optionally be read from an auxiliary file.  Extra precision data
+        will also be read from an associated '.pdat' file, if it exists."""
+        if filename: self.filename = filename
+        infile = t2data_parser(self.filename,'rU')
         self.read_title(infile)
-        self._sections=[]
-        more=True
+        self._sections = []
+        more = True
         while more:
-            line=infile.readline()
+            line = infile.readline()
             if line:
-                keyword=line[0:5].strip()
+                keyword = line[0:5].strip()
                 if keyword in ['ENDCY','ENDFI']:
-                    more=False
-                    self.end_keyword=keyword
+                    more = False
+                    self.end_keyword = keyword
                 elif keyword in t2data_sections:
-                    fn=read_fn[keyword]
-                    if keyword=='SHORT': fn(infile,line)
+                    fn = self.read_fn[keyword]
+                    if keyword == 'SHORT': fn(infile,line)
                     else: fn(infile)
                     self._sections.append(keyword)
-            else: more=False
+            else: more = False
         infile.close()
-        if meshfilename and (self.grid.num_blocks==0):
-            self.meshfilename=meshfilename
+        if meshfilename and (self.grid.num_blocks == 0):
+            self.meshfilename = meshfilename
             if isinstance(meshfilename,str):
-                meshfile=t2data_parser(self.meshfilename,'rU')
+                meshfile = t2data_parser(self.meshfilename,'rU')
                 self.read_meshfile(meshfile)
                 meshfile.close()
             elif isinstance(meshfilename,(list,tuple)):
-                if len(meshfilename)==2: self.read_binary_meshfiles()
+                if len(meshfilename) == 2: self.read_binary_meshfiles()
             else: print 'Mesh filename must be either a string or a two-element tuple or list.'
         return self
 
