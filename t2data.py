@@ -174,7 +174,34 @@ class t2data(object):
         self.meshmaker = []
         self._sections = []
         self.end_keyword = 'ENDCY'
-        self.extra_precision_sections = []
+        self._extra_precision, self._echo_extra_precision = [], True
+        self.update_read_write_functions()
+        if self.filename: self.read(filename,meshfilename)
+
+    def get_extra_precision(self): return self._extra_precision
+    def set_extra_precision(self, value):
+        if value is False: value = []
+        elif value is True: value = t2_extra_precision_sections
+        elif isinstance(value, str): value = [value]
+        # check if removing any extra precision sections:
+        for section in set(self._extra_precision) - set(value): self.insert_section(section)
+        self._extra_precision = value
+        self.update_read_write_functions()
+    extra_precision = property(get_extra_precision, set_extra_precision)
+
+    def get_echo_extra_precision(self): return self._echo_extra_precision
+    def set_echo_extra_precision(self, value):
+        if value <> self._echo_extra_precision:
+            if value is False: # remove previously echoed sections from section list
+                for section in self._extra_precision: self.delete_section(section)
+            else: # add sections previously not echoed to section list
+                for section in self._extra_precision: self.insert_section(section)
+            self._echo_extra_precision = value
+            self.update_read_write_functions()
+    echo_extra_precision = property(get_echo_extra_precision, set_echo_extra_precision)
+
+    def update_read_write_functions(self):
+        """Updates functions for reading and writing sections of data file."""
         self.read_fn = dict(zip(
                 t2data_sections,
                 [self.read_simulator, self.read_rocktypes, self.read_meshmaker, self.read_parameters, self.read_start, 
@@ -182,7 +209,42 @@ class t2data(object):
                  self.read_selection, self.read_diffusion, self.read_blocks, self.read_connections,
                  self.read_generators, self.read_short_output, self.read_history_blocks, 
                  self.read_history_connections, self.read_history_generators, self.read_incons, self.read_indom]))
-        if self.filename: self.read(filename,meshfilename)
+        self.write_fn = dict(zip(
+                t2data_sections,
+                [self.write_simulator, self.write_rocktypes, self.write_meshmaker, self.write_parameters,
+                 self.write_start, self.write_noversion, self.write_rpcap, self.write_lineq, self.write_solver,
+                 self.write_multi, self.write_times, self.write_selection, self.write_diffusion, self.write_blocks,
+                 self.write_connections, self.write_generators, self.write_short_output, self.write_history_blocks,
+                 self.write_history_connections, self.write_history_generators, self.write_incons, self.write_indom]))
+        skip_fn = dict(zip(t2_extra_precision_sections,
+                           [self.skip_rocktypes, self.skip_rpcap, self.skip_generators]))
+        if not self.echo_extra_precision: 
+            for section in self.extra_precision: self.read_fn[section] = skip_fn[section]
+
+    def insert_section(self, section):
+        """Inserts a new section into the internal list of data file sections."""
+        if section not in self._sections:
+            i = self.section_insertion_index(section)
+            self._sections.insert(i, section)
+
+    def delete_section(self, section):
+        """Deletes a section from the internal list of data file sections."""
+        try: self._sections.remove(section)
+        except ValueError: pass
+
+    def section_insertion_index(self, section):
+        """Determines an appropriate position to insert the specified section in the internal list of 
+        data file sections."""
+        try: 
+            if section == 'ROCKS':
+                if self.type == 'AUTOUGH2': return self._sections.index('SIMUL') + 1
+                else: return 0  # just after header for TOUGH2
+            elif section == 'RPCAP':
+                return self._sections.index('PARAM') + 1
+            elif section == 'GENER':
+                return self._sections.index('CONNE') + 1
+            else: return len(self._sections) # at end
+        except ValueError: return len(self._sections)
 
     def __repr__(self): return self.title
 
@@ -273,11 +335,7 @@ class t2data(object):
         """Reads simulator and EOS type.  If the SIMUL section is present, check for extra precision
         data in auxiliary file, and modify functions accordingly for reading the main data file."""
         infile.read_value_line(self.__dict__,'simulator')
-        if self.type == 'AUTOUGH2':
-            self.read_extra_precision_sections()
-            skip_fn = dict(zip(t2_extra_precision_sections,
-                               [self.skip_rocktypes, self.skip_rpcap, self.skip_generators]))
-            for section in self.extra_precision_sections: self.read_fn[section] = skip_fn[section]
+        if self.type == 'AUTOUGH2': self.read_extra_precision()
 
     def write_simulator(self,outfile):
         if self.simulator:
@@ -1040,7 +1098,7 @@ class t2data(object):
         fb.writerec('%di'%nel,blkdata[:]['rockindex']+1)
         for var in ['blk1index','blk2index']: fb.writerec('%di'%ncon,condata[:][var]+1)
 
-    def read_extra_precision_sections(self):
+    def read_extra_precision(self):
         """Reads extra precision data from auxiliary file, with same base name as the data file name, but
         with file extension .pdat."""
         from os.path import exists
@@ -1056,9 +1114,26 @@ class t2data(object):
                     keyword = line[0:5].strip()
                     if keyword in ['ENDCY','ENDFI']: more = False
                     elif keyword in read_fn:
-                        self.extra_precision_sections.append(keyword)
+                        self.extra_precision.append(keyword)
                         read_fn[keyword](xpfile)
                 else: more = False
+            xpfile.close()
+            if self.extra_precision:
+                self.update_read_write_functions()
+                self.echo_extra_precision = any([section in self._sections for section in self.extra_precision])
+            else: self.echo_extra_precision = False
+
+    def write_extra_precision(self, extra_precision = None, echo_extra_precision = None):
+        """Writes AUTOUGH2 extra precision data to auxiliary file."""
+        if extra_precision is not None: self.extra_precision = extra_precision
+        if echo_extra_precision is not None: self.echo_extra_precision = echo_extra_precision
+        if self.extra_precision:
+            xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'w')
+            write_fn = dict(zip(t2_extra_precision_sections,
+                                [self.write_rocktypes, self.write_rpcap, self.write_generators]))
+            for section in self.extra_precision:
+                write_fn[section](xpfile)
+                if section in self._sections and not self.echo_extra_precision: self._sections.remove(section)
             xpfile.close()
 
     def read(self, filename='', meshfilename=''):
@@ -1094,36 +1169,36 @@ class t2data(object):
             else: print 'Mesh filename must be either a string or a two-element tuple or list.'
         return self
 
-    def write(self,filename='',meshfilename=''):
-        """Writes data to file.  Mesh data can optionally be written to an auxiliary file."""
-        if filename: self.filename=filename
-        if self.filename=='': self.filename='t2data.dat'
-        mesh_sections=[]
-        if meshfilename: self.meshfilename=meshfilename
+    def write(self, filename = '', meshfilename = '', extra_precision = None, echo_extra_precision = None):
+        """Writes data to file.  Mesh data can optionally be written to an auxiliary file.  For AUTOUGH2,
+        if extra_precision is True or a list of section names, the corresponding data sections will be written 
+        to an extra precision file; otherwise, the same sections (if any) that were read in as extra precision
+        will also be written out as extra precision.  If echo_extra_precision is True, the extra precision
+        sections will also be written to the main data file."""
+        if filename: self.filename = filename
+        if self.filename =='': self.filename = 't2data.dat'
+        mesh_sections = []
+        if meshfilename: self.meshfilename = meshfilename
         if self.meshfilename:
             if isinstance(self.meshfilename,str):
-                meshfile=t2data_parser(self.meshfilename,'w')
+                meshfile = t2data_parser(self.meshfilename,'w')
                 self.write_blocks(meshfile)
                 self.write_connections(meshfile)
                 meshfile.close()
-                mesh_sections=['ELEME','CONNE']
+                mesh_sections = ['ELEME','CONNE']
             elif isinstance(self.meshfilename,(list,tuple)):
                 if len(self.meshfilename)==2:
                     self.write_binary_meshfiles()
-                    mesh_sections=['ELEME','CONNE']
-        outfile=t2data_parser(self.filename,'w')
-        write_fn=dict(zip(t2data_sections,
-                          [self.write_simulator, self.write_rocktypes, self.write_meshmaker, self.write_parameters,
-                           self.write_start, self.write_noversion, self.write_rpcap, self.write_lineq, self.write_solver,
-                           self.write_multi, self.write_times, self.write_selection, self.write_diffusion, self.write_blocks,
-                           self.write_connections, self.write_generators, self.write_short_output, self.write_history_blocks,
-                           self.write_history_connections, self.write_history_generators, self.write_incons, self.write_indom]))
+                    mesh_sections = ['ELEME','CONNE']
+        if self.type == 'AUTOUGH2': self.write_extra_precision(extra_precision, echo_extra_precision)
+        outfile = t2data_parser(self.filename,'w')
         self.write_title(outfile)
         for keyword in self._sections:
-            if keyword not in mesh_sections: write_fn[keyword](outfile)
-        extra_sections=[keyword for keyword in t2data_sections if not (keyword in self._sections)]
-        for keyword in extra_sections:
-            if keyword not in mesh_sections: write_fn[keyword](outfile)
+            if keyword not in mesh_sections: self.write_fn[keyword](outfile)
+        additional_sections = [keyword for keyword in t2data_sections if 
+                               (keyword not in self._sections) and (keyword not in mesh_sections) and
+                                (self.echo_extra_precision and keyword in self.extra_precision)]
+        for keyword in additional_sections: self.write_fn[keyword](outfile)
         outfile.write(self.end_keyword+'\n')
         outfile.close()
     
