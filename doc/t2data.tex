@@ -621,7 +621,7 @@ Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{m
   Name of auxiliary mesh file(s) to be written.  If this is empty (the default), the object's own \texttt{meshfilename} property is used.  Otherwise, if a single (non-empty) string is given, this in interpreted as the name of a file to write formatted mesh information to (as in the `MESH' files produced by TOUGH2 and TOUGH2\_MP).  If a tuple of two strings is given, this in interpreted as the names of two binary files (as in the `MESHA' and `MESHB' files produced by TOUGH2\_MP).
 \item \textbf{extra\_precision}: list or Boolean\\
   Controls whether to write extra precision data to auxiliary file (AUTOUGH2 only).  If set to \texttt{True}, then all possible sections will be written to the extra precision file.  Currently the possible extra-precision sections are the ROCKS, RPCAP and GENER sections.  If set to \texttt{False} or [], then no extra-precision data will be written.  If set to a list of section names (e.g. [`RPCAP', `GENER']), then only those sections will be written in extra precision.  If set to \texttt{None} (the default), then the value of the data object's \texttt{extra\_precision} property is used.  Otherwise, the value of this property is overwritten by the value specified here.
-\item \textbf{extra\_precision}: Boolean or None\\
+\item \textbf{echo\_extra\_precision}: Boolean or None\\
   Controls whether to echo all extra-precision data sections to the main data file (AUTOUGH2 only).  If \texttt{None}, the value of the data object's \texttt{echo\_extra\_precision} property is used.  Otherwise, the value of this property is overwritten by the value specified here.
 \end{itemize}
 
