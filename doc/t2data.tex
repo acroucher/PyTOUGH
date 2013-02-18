@@ -44,7 +44,9 @@ The details of all the \texttt{t2data} properties are given below.
       \hline
       \texttt{capillarity} & dictionary & capillarity function & RELP\\
       \texttt{diffusion} & list & diffusion coefficients & DIFFU\\
+      \texttt{echo\_extra\_precision} & Boolean & echoing extra precision sections to main data file (AUTOUGH2 only) & --\\
       \texttt{end\_keyword} & string & keyword to end file & ENDCY or ENDFI\\
+      \texttt{extra\_precision} & list & data sections read from extra precision auxiliary file (AUTOUGH2 only) & --\\
       \texttt{filename} & string & file name on disk & --\\
       \texttt{generator} & dictionary & generators (by block name and generator name) & GENER\\
       \texttt{generatorlist} & list & generators (by index) & GENER\\
@@ -98,6 +100,16 @@ A dictionary property specifying the capillarity function used, corresponding to
 \subsubsection{\texttt{diffusion} property}
 
 A list property specifying diffusion coefficients for each mass component simulated, corresponding to the \textbf{DIFFU} input block in the TOUGH2 data file.  The list has length \texttt{multi[`num\_components']} (i.e. NK in TOUGH2 terminology), and each element is a list of the diffusion coefficients for each component (with length \texttt{multi[`num\_phases']}, or NPH).
+
+\subsubsection{\texttt{echo\_extra\_precision} property}
+A Boolean property (AUTOUGH2 only) governing whether data written to an auxiliary extra-precision file is also echoed to the main data file.  If \texttt{True}, all extra-precision data sections are echoed to the main file.
+
+\subsubsection{\texttt{extra\_precision} property}
+A list property determining which data sections will be written to an auxiliary extra-precision file (AUTOUGH2 only).  Recent versions of AUTOUGH2 support an additional data file containing some data written with extra precision.  Possible extra-precision data sections are ROCKS, RPCAP and GENER.  Typical usage of this extra-precision data is for automatic model calibration using PEST or similar software, where calculation of derivatives of model outputs with respect to model parameters requires higher precision than is possible with the standard TOUGH2 data file format.
+
+The \texttt{extra\_precision} parameter may be a list containing names of sections to be written in extra precision (e.g. [`RPCAP', `GENER']), or set to \texttt{False} to disable extra precision (equivalent to []), or to \texttt{True} to specify that all possible sections should be written in extra precision.
+
+The \texttt{read()} method of a \texttt{t2data} object determines whether extra precision data are available by searching for an additional file with the same base name as the data file itself, but with a '.pdat' or '.PDAT' extension (depending on the case of the main data file name).  If no such file exists, then no extra precision data will be read.
 
 \subsubsection{\texttt{filename} property}
 
@@ -596,7 +608,8 @@ Returns an \texttt{np.array} containing the total generation rate in each block 
   Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
 \end{itemize}
 
-\subsubsection{\texttt{write(\emph{filename}=`', \emph{meshfilename}=`')}}
+\subsubsection{\texttt{write(\emph{filename}=`', \emph{meshfilename}=`', \emph{extra\_precision}=None,\
+    \emph{echo\_extra\_precision}=None)}}
 
 Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{meshfilename} parameter is used, mesh information can be written to auxiliary mesh files.
 
@@ -606,6 +619,10 @@ Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{m
   Name of the TOUGH2 data file to be written.  If no file name is specified, the object's own \texttt{filename} property is used.
 \item \textbf{meshfilename}: string or tuple\\
   Name of auxiliary mesh file(s) to be written.  If this is empty (the default), the object's own \texttt{meshfilename} property is used.  Otherwise, if a single (non-empty) string is given, this in interpreted as the name of a file to write formatted mesh information to (as in the `MESH' files produced by TOUGH2 and TOUGH2\_MP).  If a tuple of two strings is given, this in interpreted as the names of two binary files (as in the `MESHA' and `MESHB' files produced by TOUGH2\_MP).
+\item \textbf{extra\_precision}: list or Boolean\\
+  Controls whether to write extra precision data to auxiliary file (AUTOUGH2 only).  If set to \texttt{True}, then all possible sections will be written to the extra precision file.  Currently the possible extra-precision sections are the ROCKS, RPCAP and GENER sections.  If set to \texttt{False} or [], then no extra-precision data will be written.  If set to a list of section names (e.g. [`RPCAP', `GENER']), then only those sections will be written in extra precision.  If set to \texttt{None} (the default), then the value of the data object's \texttt{extra\_precision} property is used.  Otherwise, the value of this property is overwritten by the value specified here.
+\item \textbf{extra\_precision}: Boolean or None\\
+  Controls whether to echo all extra-precision data sections to the main data file (AUTOUGH2 only).  If \texttt{None}, the value of the data object's \texttt{echo\_extra\_precision} property is used.  Otherwise, the value of this property is overwritten by the value specified here.
 \end{itemize}
 
 \section{\texttt{t2generator} objects}
