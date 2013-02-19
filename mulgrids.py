@@ -128,7 +128,8 @@ mulgrid_format_specification = {
     'node': [['name','x','y'], ['3s']+['10.2f']*2],
     'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d','10.2f','10.2f']],
     'column_node': [['name'], ['3s']],
-    'connection': [['name1','name2'], ['3s','3s']]}
+    'connection': [['name1','name2'], ['3s','3s']],
+    'layer': [['name','bottom','centre'], ['3s','10.2f','10.2f']]}
 
 class node(object):
     """Grid node class"""
@@ -949,18 +950,20 @@ class mulgrid(object):
 
     def read_layers(self,geo):
         """Reads grid layers from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            name,bottom=line[0:3].strip().rjust(self.layername_length),float(line[3:13])*self.unit_scale
-            newlayer=layer(name,bottom)
+            name, bottom, centre = geo.parse_string(line, 'layer')
+            name = name.strip().rjust(self.layername_length)
+            bottom *= self.unit_scale
+            newlayer = layer(name,bottom)
             self.add_layer(newlayer)
-            if len(line)>13 and line[13:23].strip(): centre=float(line[13:23])*self.unit_scale
+            if centre: centre *= self.unit_scale
             else:
-                nlayers=len(self.layer)
-                if nlayers>1: centre=0.5*(newlayer.bottom+self.layerlist[nlayers-2].bottom)
-                else: centre=newlayer.bottom
-            newlayer.centre=centre
-            line=geo.readline()
+                nlayers = len(self.layer)
+                if nlayers > 1: centre = 0.5*(newlayer.bottom + self.layerlist[nlayers-2].bottom)
+                else: centre = newlayer.bottom
+            newlayer.centre = centre
+            line = geo.readline()
         self.identify_layer_tops()
         self.set_default_surface()
 
@@ -1114,7 +1117,8 @@ class mulgrid(object):
         """Writes MULgraph grid layers to file"""
         geo.write('LAYERS\n')
         for lay in self.layerlist:
-            geo.write("%3s%10.2f%10.2f\n" % (lay.name.ljust(3),lay.bottom/self.unit_scale,lay.centre/self.unit_scale))
+            vals = [lay.name.ljust(3), lay.bottom/self.unit_scale, lay.centre/self.unit_scale]
+            geo.write_values(vals, 'layer')
         geo.write('\n')
         
     def write_surface(self,geo):
