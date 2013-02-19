@@ -127,7 +127,8 @@ mulgrid_format_specification = {
                ['5s','1d','1d','10.2e','10.2e','5s','10.2f','10.2f','1d','10.2f']],
     'node': [['name','x','y'], ['3s']+['10.2f']*2],
     'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d','10.2f','10.2f']],
-    'column_node': [['name'], ['3s']]}
+    'column_node': [['name'], ['3s']],
+    'connection': [['name1','name2'], ['3s','3s']]}
 
 class node(object):
     """Grid node class"""
@@ -923,12 +924,13 @@ class mulgrid(object):
         line=padstring(geo.readline())
         while line.strip():
             [colname, centre_specified, nnodes, centrex, centrey] = geo.parse_string(line, 'column')
+            colname = colname.strip().rjust(self.colname_length)
             if centre_specified: centre = np.array([centrex, centrey])*self.unit_scale
             else: centre = None
             nodes = []
             for each in xrange(nnodes):
                 [nodename] = geo.read_values('column_node')
-                nodename = nodename.rjust(self.colname_length)
+                nodename = nodename.strip().rjust(self.colname_length)
                 colnode = self.node[nodename]
                 nodes.append(colnode)
             self.add_column(column(colname,nodes,centre))
@@ -936,12 +938,13 @@ class mulgrid(object):
 
     def read_connections(self,geo):
         """Reads grid connections from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            names=[line[0:3].strip().rjust(self.colname_length),line[3:6].strip().rjust(self.colname_length)]
-            cols=[self.column[name] for name in names]
+            names = geo.parse_string(line, 'connection')
+            names = [name.strip().rjust(self.colname_length) for name in names]
+            cols = [self.column[name] for name in names]
             self.add_connection(connection(cols))
-            line=geo.readline()
+            line = geo.readline()
         self.identify_neighbours()
 
     def read_layers(self,geo):
@@ -1103,7 +1106,8 @@ class mulgrid(object):
         """Writes MULgraph grid connections to file"""
         geo.write('CONNECTIONS\n')
         for con in self.connectionlist:
-            geo.write("%3s%3s\n" % (con.column[0].name.ljust(3),con.column[1].name.ljust(3)))
+            names = [col.name.ljust(3) for col in con.column]
+            geo.write_values(names, 'connection')
         geo.write('\n')
 
     def write_layers(self,geo):
