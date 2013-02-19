@@ -126,11 +126,12 @@ mulgrid_format_specification = {
                 'unit_type','gdcx','gdcy','cntype','permeability_angle'],
                ['5s','1d','1d','10.2e','10.2e','5s','10.2f','10.2f','1d','10.2f']],
     'node': [['name','x','y'], ['3s']+['10.2f']*2],
-    'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d','10.2f','10.2f']],
+    'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d']+['10.2f']*2],
     'column_node': [['name'], ['3s']],
     'connection': [['name1','name2'], ['3s','3s']],
-    'layer': [['name','bottom','centre'], ['3s','10.2f','10.2f']],
-    'surface': [['name','elevation'], ['3s','10.2f']]}
+    'layer': [['name','bottom','centre'], ['3s']+['10.2f']*2],
+    'surface': [['name','elevation'], ['3s','10.2f']],
+    'well': [['name','x','y','z'], ['5s']+['10.1f']*3]}
 
 class node(object):
     """Grid node class"""
@@ -982,13 +983,13 @@ class mulgrid(object):
 
     def read_wells(self,geo):
         """Reads grid wells from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            name=line[0:5]
-            p=np.array([float(line[5:15]),float(line[15:25]),float(line[25:35])])*self.unit_scale
+            [name, x, y, z] = geo.parse_string(line, 'well')
+            p = np.array([x,y,z])*self.unit_scale
             if name in self.well: self.well[name].pos.append(p)
             else: self.add_well(well(name,[p]))
-            line=geo.readline()
+            line = geo.readline()
 
     def read(self,filename):
         """Reads MULgraph grid from file"""
@@ -1136,8 +1137,8 @@ class mulgrid(object):
         geo.write('WELLS\n')
         for wl in self.welllist:
             for pos in wl.pos:
-                geo.write("%5s%10.1f%10.1f%10.1f\n" % (wl.name,pos[0]/self.unit_scale,pos[1]/self.unit_scale,
-                                                      pos[2]/self.unit_scale))
+                vals = [wl.name] + list(pos/self.unit_scale)
+                geo.write_values(vals, 'well')
         geo.write('\n')
         
     def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case='l'):
