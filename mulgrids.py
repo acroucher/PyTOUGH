@@ -129,7 +129,8 @@ mulgrid_format_specification = {
     'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d','10.2f','10.2f']],
     'column_node': [['name'], ['3s']],
     'connection': [['name1','name2'], ['3s','3s']],
-    'layer': [['name','bottom','centre'], ['3s','10.2f','10.2f']]}
+    'layer': [['name','bottom','centre'], ['3s','10.2f','10.2f']],
+    'surface': [['name','elevation'], ['3s','10.2f']]}
 
 class node(object):
     """Grid node class"""
@@ -971,11 +972,13 @@ class mulgrid(object):
         """Reads grid surface from file geo"""
         line=padstring(geo.readline())
         while line.strip():
-            name,surface=line[0:3].strip().rjust(self.colname_length),float(line[3:13])*self.unit_scale
-            col=self.column[name]
-            col.surface=surface
+            [name, surface] = geo.parse_string(line, 'surface')
+            name = name.strip().rjust(self.colname_length)
+            surface *= self.unit_scale
+            col = self.column[name]
+            col.surface = surface
             self.set_column_num_layers(col)
-            line=geo.readline()
+            line = geo.readline()
 
     def read_wells(self,geo):
         """Reads grid wells from file geo"""
@@ -1125,7 +1128,7 @@ class mulgrid(object):
         """Writes MULgraph grid surface to file"""
         geo.write('SURFA\n')
         for col in [col for col in self.columnlist if not col.default_surface]:
-            geo.write("%3s%10.2f\n" % (col.name.ljust(3),col.surface/self.unit_scale))
+            geo.write_values([col.name.ljust(3), col.surface/self.unit_scale], 'surface')
         geo.write('\n')
 
     def write_wells(self,geo):
