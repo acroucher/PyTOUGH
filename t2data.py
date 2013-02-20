@@ -1326,68 +1326,72 @@ class t2data(object):
         MULKOM formulation."""
         for rt in self.grid.rocktypelist: rt.conductivity*=(1.-rt.porosity)
 
-    def convert_to_TOUGH2(self,warn=True,MP=False):
+    def convert_to_TOUGH2(self, warn = True, MP = False):
         """Converts an AUTOUGH2 data file to a TOUGH2 data file.  Various MOP parameters are changed to try to make them
         the TOUGH2 simulation give similar results to AUTOUGH2 where possible.  AUTOUGH2-specific input blocks are removed
         and some generator types changed.  If MP is True, the conversion is done to a TOUGH2_MP data file, which treats a 
         few of the parameters differently."""
-        if MP: self.filename='INFILE'
+        if MP: self.filename = 'INFILE'
         # remove AUTOUGH2-specific input blocks:
-        self.simulator=''
+        self.simulator = ''
         if self.multi:
             if 'eos' in self.multi: del self.multi['eos']
             self.multi['num_inc']=None
         if self.lineq:
-            if self.lineq['type']<=1: solver_type = 4
+            if self.lineq['type'] <= 1: solver_type = 4
             else: solver_type = 5
         else: solver_type = 4
-        self.lineq={}
-        self.short_output={}
+        self.lineq = {}
+        self.short_output = {}
         # convert parameters:
-        warnings=[]
-        if self.parameter['option'][10]==2:
-            self.parameter['option'][10]=0
+        warnings = []
+        if self.parameter['option'][10] == 2:
+            self.parameter['option'][10] = 0
             self.convert_mulkom_heat_conductivity()
             warnings.append('MOP(10)=2: MULKOM rock heat conductivities (values have been converted to TOUGH2 equivalents)')
-        if self.parameter['option'][12]==2:
-            self.parameter['option'][12]=0
+        if self.parameter['option'][12] == 2:
+            self.parameter['option'][12] = 0
             warnings.append('MOP(12)=2: piecewise linear well table interpolation')
-        self.parameter['option'][21]= solver_type
-        if self.parameter['option'][22]>0:
-            self.parameter['option'][22]=0
+        self.parameter['option'][21] = solver_type
+        if self.parameter['option'][22] > 0:
+            self.parameter['option'][22] = 0
             warnings.append('MOP(22)>0: USERBC')
-        if self.parameter['option'][23]>0:
-            isat2=self.simulator.startswith('AUTOUGH2') and (not self.simulator.startswith('AUTOUGH2.2'))
-            ismulkom=self.simulator.startswith('MULKOM')
-            mulkom_compatibility=self.parameter['option'][23] in [0,1]
+        if self.parameter['option'][23] > 0:
+            isat2 = self.simulator.startswith('AUTOUGH2') and (not self.simulator.startswith('AUTOUGH2.2'))
+            ismulkom = self.simulator.startswith('MULKOM')
+            mulkom_compatibility = self.parameter['option'][23] in [0,1]
             if (isat2 or ismulkom) and mulkom_compatibility:
                 self.convert_mulkom_heat_conductivity()
                 warnings.append('MOP(23)>0: MULKOM/TOUGH2 backward compatibility')
-            self.parameter['option'][23]=0
-        if self.parameter['option'][24]>0:
-            self.parameter['option'][24]=0
+            self.parameter['option'][23] = 0
+        if self.parameter['option'][24] > 0:
+            self.parameter['option'][24] = 0
             warnings.append('MOP(24)>0: initial printout of tables')
         if MP: # these MOPs mean different things in TOUGH2_MP:
-            if self.parameter['option'][14]>0:
-                self.parameter['option'][14]=0
+            if self.parameter['option'][14] > 0:
+                self.parameter['option'][14] = 0
                 warnings.append('MOP(14)>0: Pivot failure handling')
-            if self.parameter['option'][17]>0:
-                self.parameter['option'][17]=0
+            if self.parameter['option'][17] > 0:
+                self.parameter['option'][17] = 0
                 warnings.append('MOP(17)>0: Jacobian scaling')
-            if self.parameter['option'][20]>0:
-                self.parameter['option'][20]=0
+            if self.parameter['option'][20] > 0:
+                self.parameter['option'][20] = 0
                 warnings.append('MOP(20)>0: Disabling vapour pressure lowering')
-            self.parameter['option'][21]=0
-        if warn and len(warnings)>0:
+            self.parameter['option'][21] = 0
+        if warn and len(warnings) > 0:
             print 'The following options are not supported in TOUGH2:'
             for warning in warnings: print warning
         # convert generator types or delete any that can't be converted:
-        allowed=['HEAT','WATE','AIR ','MASS','DELV']
-        convert={'CO2 ':'COM2'}
-        delgens=[]
+        allowed = ['HEAT','WATE','AIR ','MASS','DELV']
+        convert = {'CO2 ':'COM2'}
+        delgens = []
         for gen in self.generatorlist:
-            if gen.type in convert.keys(): gen.type=convert[gen.type]
+            if gen.type in convert.keys(): gen.type = convert[gen.type]
             elif not ((gen.type in allowed) or gen.type.startswith('COM')): delgens.append((gen.block,gen.name))
-        if warn and len(delgens)>0:
+        if warn and len(delgens) > 0:
             print 'The following generators have types not supported by TOUGH2 and have been deleted:'
             print delgens
+
+    def convert_to_AUTOUGH2(self, eos = 'EOS1'):
+        """Converts a TOUGH2 data file to an AUTOUGH2 data file."""
+        
