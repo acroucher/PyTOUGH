@@ -13,6 +13,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 from string import ljust,rjust,lowercase,uppercase
 from geometry import *
+from fixed_format_file import *
 
 def padstring(string,length=80): return ljust(string,length)
 def IntToLetters(i,st='',casefn=lowercase):
@@ -119,7 +120,19 @@ class quadtree(object):
         y=[self.bounds[0][1],self.bounds[0][1],self.bounds[1][1],self.bounds[1][1],self.bounds[0][1]]
         plt.plot(x,y,'.--')
         for child in self.child: child.plot(plt)
-    
+
+mulgrid_format_specification = {
+    'header': [['type','_convention','_atmosphere_type','atmosphere_volume','atmosphere_connection',
+                'unit_type','gdcx','gdcy','cntype','permeability_angle'],
+               ['5s','1d','1d','10.2e','10.2e','5s','10.2f','10.2f','1d','10.2f']],
+    'node': [['name','x','y'], ['3s']+['10.2f']*2],
+    'column': [['name','centre_specified','num_nodes','xcentre','ycentre'], ['3s','1d','2d']+['10.2f']*2],
+    'column_node': [['name'], ['3s']],
+    'connection': [['name1','name2'], ['3s','3s']],
+    'layer': [['name','bottom','centre'], ['3s']+['10.2f']*2],
+    'surface': [['name','elevation'], ['3s','10.2f']],
+    'well': [['name','x','y','z'], ['5s']+['10.1f']*3]}
+
 class node(object):
     """Grid node class"""
     def __init__(self,name='   ',pos=np.array([0.0,0.0])):
@@ -439,6 +452,8 @@ class mulgrid(object):
         self.atmosphere_volume=atmos_volume
         self.atmosphere_connection=atmos_connection
         self.unit_type=unit_type
+        self.gdcx, self.gdcy = None, None # not supported
+        self.cntype = None # not supported
         self.permeability_angle=permeability_angle
         self.empty()
         if self.filename: self.read(filename)
@@ -887,37 +902,23 @@ class mulgrid(object):
             isort=np.argsort(d)
             return self.nodelist[isort[0]]
 
-    def read_header(self,header):
+    def read_header(self, geo):
         """Reads grid header info from file geo"""
-        self.type=header[0:5]
-        def getval(i1,i2,fn):
-            valstr=header[i1:i2].replace('\n',' ')
-            if valstr.strip(): return fn(valstr)
-            else: return None
-        convention=getval(5,6,int)
-        if convention is not None: self.convention=convention
-        atmosphere_type=getval(6,7,int)
-        if atmosphere_type is not None: self.atmosphere_type=atmosphere_type
-        volume=getval(7,17,float)
-        if volume is not None: self.atmosphere_volume=volume
-        atmosdist=getval(17,27,float)
-        if atmosdist is not None: self.atmosphere_connection=atmosdist
-        unit=getval(27,32,str)
-        if unit is not None: self.unit_type=unit
-        gdcx,gdcy=getval(32,42,float),getval(42,52,float)
-        if (gdcx is not None) or (gdcy is not None): print 'GDCX,GDCY options not supported.'
-        cntype=getval(52,53,int)
-        if cntype is not None: print 'CNTYPE option not supported.'
-        permangle=getval(53,63,float)
-        if permangle is not None: self.permeability_angle=permangle
+        geo.read_value_line(self.__dict__, 'header')
+        self.convention = self._convention
+        self.atmosphere_type = self._atmosphere_type
+        self.unit_type = self._unit_type
+        if (self.gdcx is not None) or (self.gdcy is not None): print 'GDCX, GDCY options not supported.'
+        if self.cntype is not None: print 'CNTYPE option not supported.'
 
     def read_nodes(self,geo):
         """Reads grid nodes from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            nodename=line[0:3].strip().rjust(self.colname_length)
-            pos=np.array([float(line[3:13]),float(line[13:23])])*self.unit_scale
-            newnode=node(nodename,pos)
+            [name, x, y] = geo.parse_string(line, 'node')
+            name = name.strip().rjust(self.colname_length)
+            pos = np.array([x, y])*self.unit_scale
+            newnode = node(name,pos)
             self.add_node(newnode)
             line=geo.readline()
 
@@ -925,44 +926,46 @@ class mulgrid(object):
         """Reads grid columns from file geo"""
         line=padstring(geo.readline())
         while line.strip():
-            colname,centre_specified,nnodes=line[0:3].strip().rjust(self.colname_length),line[3:4].strip(),int(line[4:6])
-            if centre_specified: 
-                if int(centre_specified)>0: centre=np.array([float(line[6:16]),float(line[16:26])])*self.unit_scale
-                else: centre=None
-            else: centre=None
-            nodes=[]
+            [colname, centre_specified, nnodes, centrex, centrey] = geo.parse_string(line, 'column')
+            colname = colname.strip().rjust(self.colname_length)
+            if centre_specified: centre = np.array([centrex, centrey])*self.unit_scale
+            else: centre = None
+            nodes = []
             for each in xrange(nnodes):
-                line=padstring(geo.readline())
-                nodename=line[0:3].strip().rjust(self.colname_length)
-                colnode=self.node[nodename]
+                [nodename] = geo.read_values('column_node')
+                nodename = nodename.strip().rjust(self.colname_length)
+                colnode = self.node[nodename]
                 nodes.append(colnode)
             self.add_column(column(colname,nodes,centre))
             line=geo.readline()
 
     def read_connections(self,geo):
         """Reads grid connections from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            names=[line[0:3].strip().rjust(self.colname_length),line[3:6].strip().rjust(self.colname_length)]
-            cols=[self.column[name] for name in names]
+            names = geo.parse_string(line, 'connection')
+            names = [name.strip().rjust(self.colname_length) for name in names]
+            cols = [self.column[name] for name in names]
             self.add_connection(connection(cols))
-            line=geo.readline()
+            line = geo.readline()
         self.identify_neighbours()
 
     def read_layers(self,geo):
         """Reads grid layers from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            name,bottom=line[0:3].strip().rjust(self.layername_length),float(line[3:13])*self.unit_scale
-            newlayer=layer(name,bottom)
+            name, bottom, centre = geo.parse_string(line, 'layer')
+            name = name.strip().rjust(self.layername_length)
+            bottom *= self.unit_scale
+            newlayer = layer(name,bottom)
             self.add_layer(newlayer)
-            if len(line)>13 and line[13:23].strip(): centre=float(line[13:23])*self.unit_scale
+            if centre: centre *= self.unit_scale
             else:
-                nlayers=len(self.layer)
-                if nlayers>1: centre=0.5*(newlayer.bottom+self.layerlist[nlayers-2].bottom)
-                else: centre=newlayer.bottom
-            newlayer.centre=centre
-            line=geo.readline()
+                nlayers = len(self.layer)
+                if nlayers > 1: centre = 0.5*(newlayer.bottom + self.layerlist[nlayers-2].bottom)
+                else: centre = newlayer.bottom
+            newlayer.centre = centre
+            line = geo.readline()
         self.identify_layer_tops()
         self.set_default_surface()
 
@@ -970,28 +973,29 @@ class mulgrid(object):
         """Reads grid surface from file geo"""
         line=padstring(geo.readline())
         while line.strip():
-            name,surface=line[0:3].strip().rjust(self.colname_length),float(line[3:13])*self.unit_scale
-            col=self.column[name]
-            col.surface=surface
+            [name, surface] = geo.parse_string(line, 'surface')
+            name = name.strip().rjust(self.colname_length)
+            surface *= self.unit_scale
+            col = self.column[name]
+            col.surface = surface
             self.set_column_num_layers(col)
-            line=geo.readline()
+            line = geo.readline()
 
     def read_wells(self,geo):
         """Reads grid wells from file geo"""
-        line=padstring(geo.readline())
+        line = padstring(geo.readline())
         while line.strip():
-            name=line[0:5]
-            p=np.array([float(line[5:15]),float(line[15:25]),float(line[25:35])])*self.unit_scale
+            [name, x, y, z] = geo.parse_string(line, 'well')
+            p = np.array([x,y,z])*self.unit_scale
             if name in self.well: self.well[name].pos.append(p)
             else: self.add_well(well(name,[p]))
-            line=geo.readline()
+            line = geo.readline()
 
     def read(self,filename):
         """Reads MULgraph grid from file"""
         self.empty()
-        geo=open(filename,'rU')
-        line=padstring(geo.readline())
-        self.read_header(line)
+        geo=fixed_format_file(filename, 'rU', mulgrid_format_specification)
+        self.read_header(geo)
         if self.type=='GENER':
             read_fn={'VERTI':self.read_nodes, 'GRID': self.read_columns, 'CONNE': self.read_connections,
                      'LAYER': self.read_layers, 'SURFA': self.read_surface, 'SURF': self.read_surface,
@@ -1067,9 +1071,9 @@ class mulgrid(object):
 
     def write(self,filename=''):
         """Writes a MULgraph grid to file"""
-        if filename: self.filename=filename
-        if self.filename=='': self.filename='geometry.dat'
-        geo=open(self.filename,'w')
+        if filename: self.filename = filename
+        if self.filename=='': self.filename = 'geometry.dat'
+        geo = fixed_format_file(self.filename,'w', mulgrid_format_specification)
         self.write_header(geo)
         self.write_nodes(geo)
         self.write_columns(geo)
@@ -1082,45 +1086,50 @@ class mulgrid(object):
 
     def write_header(self,geo):
         """Writes MULgraph grid header to file"""
-        geo.write("%5s%1d%1d%10.2e%10.2e%5s%21s%10.2f\n" % (self.type,self.convention,self.atmosphere_type,self.atmosphere_volume,self.atmosphere_connection,self.unit_type,' '*21,self.permeability_angle))
+        geo.write_value_line(self.__dict__, 'header')
 
     def write_nodes(self,geo):
         """Writes MULgraph grid nodes to file"""
         geo.write('VERTICES\n')
         for node in self.nodelist:
-            geo.write("%3s%10.2f%10.2f\n" % (node.name.ljust(3),node.pos[0]/self.unit_scale,node.pos[1]/self.unit_scale))
+            name, pos = node.name.ljust(3), node.pos / self.unit_scale
+            geo.write_values([name, pos[0], pos[1]], 'node')
         geo.write('\n')
         
     def write_columns(self,geo):
         """Writes MULgraph grid columns to file"""
         geo.write('GRID\n')
         for col in self.columnlist:
-            geo.write("%3s%1d%2d" % (col.name.ljust(3),col.centre_specified,col.num_nodes))
-            if col.centre_specified:
-                geo.write("%10.2f%10.2f\n" % (col.centre[0]/self.unit_scale,col.centre[1]/self.unit_scale))
-            else: geo.write('\n')
-            for node in col.node: geo.write("%3s\n" % node.name.ljust(3))
+            name = col.name.ljust(3)
+            vals = [name, col.centre_specified, col.num_nodes]
+            if col.centre_specified: centre = list(col.centre / self.unit_scale)
+            else: centre = [None]*2
+            vals += centre
+            geo.write_values(vals, 'column')
+            for node in col.node: geo.write_values([node.name.ljust(3)], 'column_node')
         geo.write('\n')
             
     def write_connections(self,geo):
         """Writes MULgraph grid connections to file"""
         geo.write('CONNECTIONS\n')
         for con in self.connectionlist:
-            geo.write("%3s%3s\n" % (con.column[0].name.ljust(3),con.column[1].name.ljust(3)))
+            names = [col.name.ljust(3) for col in con.column]
+            geo.write_values(names, 'connection')
         geo.write('\n')
 
     def write_layers(self,geo):
         """Writes MULgraph grid layers to file"""
         geo.write('LAYERS\n')
         for lay in self.layerlist:
-            geo.write("%3s%10.2f%10.2f\n" % (lay.name.ljust(3),lay.bottom/self.unit_scale,lay.centre/self.unit_scale))
+            vals = [lay.name.ljust(3), lay.bottom/self.unit_scale, lay.centre/self.unit_scale]
+            geo.write_values(vals, 'layer')
         geo.write('\n')
         
     def write_surface(self,geo):
         """Writes MULgraph grid surface to file"""
         geo.write('SURFA\n')
         for col in [col for col in self.columnlist if not col.default_surface]:
-            geo.write("%3s%10.2f\n" % (col.name.ljust(3),col.surface/self.unit_scale))
+            geo.write_values([col.name.ljust(3), col.surface/self.unit_scale], 'surface')
         geo.write('\n')
 
     def write_wells(self,geo):
@@ -1128,8 +1137,8 @@ class mulgrid(object):
         geo.write('WELLS\n')
         for wl in self.welllist:
             for pos in wl.pos:
-                geo.write("%5s%10.1f%10.1f%10.1f\n" % (wl.name,pos[0]/self.unit_scale,pos[1]/self.unit_scale,
-                                                      pos[2]/self.unit_scale))
+                vals = [wl.name] + list(pos/self.unit_scale)
+                geo.write_values(vals, 'well')
         geo.write('\n')
         
     def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case='l'):
