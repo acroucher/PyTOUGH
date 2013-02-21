@@ -71,6 +71,7 @@ The details of all the \texttt{t2data} properties are given below.
       \texttt{solver} & dictionary & linear equation solver options (TOUGH2 only) & SOLVR\\
       \texttt{start} & Boolean & run initialisation option & START\\
       \texttt{title} & string & simulation title & TITLE\\
+      \texttt{type} & string & simulator type (AUTOUGH2 or TOUGH2) & --\\
       \hline
     \end{tabular}
     \caption{Properties of a \texttt{t2data} object}
@@ -440,6 +441,10 @@ A Boolean property specifying whether the flexible start option is used, corresp
 
 A string property containing the simulation title, corresponding to the \textbf{TITLE} input block in a TOUGH2 data file.
 
+\subsubsection{\texttt{type} property}
+
+A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Changing the value of this property will cause one of the \texttt{convert\_to\_TOUGH2()} or \texttt{convert\_to\_AUTOUGH2()} methods to be executed, with default method parameters.  Hence, changing the \texttt{type} property to `AUTOUGH2' causes the EOS to be set to the default `EW'.  It is also not possible to specify TOUGH2\_MP options when setting \texttt{type}.  For more control over how the conversion is carried out, use the conversion methods directly instead of setting \texttt{type}.
+
 \subsection{Methods}
 
 The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_methods}.  Details of these methods are given below.
@@ -452,6 +457,7 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
       \hline
       \texttt{add\_generator} & -- & adds a generator\\
       \texttt{clear\_generators} & -- & deletes all generators\\
+      \texttt{convert\_to\_AUTOUGH2} & -- & converts from TOUGH2 input to AUTOUGH2\\
       \texttt{convert\_to\_TOUGH2} & -- & converts from AUTOUGH2 input to TOUGH2\\
       \texttt{delete\_generator} & -- & deletes a generator\\
       \texttt{delete\_orphan\_generators} & -- & deletes orphaned generators\\
@@ -479,6 +485,25 @@ Adds a generator to the data file object.
   Generator to be added to the data file object.
 \end{itemize}
 
+\subsubsection{\texttt{convert\_to\_AUTOUGH2(\emph{warn}=True, \emph{MP}=False, \emph{simulator}=`AUTOUGH2.2',\
+    \emph{eos}=`EW')}}
+
+Converts a TOUGH2 (or TOUGH2\_MP) data file for use with AUTOUGH2.  Various parameter options are altered to try to make the AUTOUGH2 simulation give similar results to the original TOUGH2 simulation.  If necessary, the \texttt{filename} property is changed to end in `.dat' (or `.DAT', depending on the case of the base file name), as required by AUTOUGH2.
+
+The simulator and EOS name can also be specified, as AUTOUGH2 data files contain this information in the SIMUL and MULTI sections.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{warn}: Boolean\\
+  If \texttt{True}, warnings will be printed regarding TOUGH2 options used in the original data file which are not supported in AUTOUGH2.
+\item \textbf{MP}: Boolean\\
+  if \texttt{True}, treats the original \texttt{t2data} object as a TOUGH2\_MP data file, which uses some of the parameters differently (e.g. MOP(20)).
+\item \textbf{simulator}: string\\
+  Simulator name, used for the leading part of the AUTOUGH2 SIMUL data section.  Possible values are `MULKOM', `TOUGH2', `TOUGH2.2', `AUTOUGH2' and `AUTOUGH2.2'.
+\item \textbf{eos}: string\\
+  EOS name, used for the trailing part of the AUTOUGH2 SIMUL data section (e.g. `EW', `EWC', `EWA', `EWAV' etc.)
+\end{itemize}
+
 \subsubsection{\texttt{convert\_to\_TOUGH2(\emph{warn}=True, \emph{MP}=False)}}
 
 Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators such as TOUGH2\_MP).  Various parameter options are altered to try to make the TOUGH2 simulation give similar results to the original AUTOUGH2 simulation.  This particularly affects AUTOUGH2 options related to backward compatibility with MULKOM.  In particular, if these are used then the heat conductivities in the ROCKS block have to be altered to give the same results.  Data blocks specific to AUTOUGH2 (e.g. SIMULATOR, LINEQ, and SHORT) are removed, and AUTOUGH2-specific generator types are converted to their TOUGH2 equivalents if possible, or otherwise deleted.
@@ -488,7 +513,7 @@ Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators suc
 \item \textbf{warn}: Boolean\\
   If \texttt{True}, warnings will be printed regarding AUTOUGH2 options used in the original data file which are not supported in TOUGH2.
 \item \textbf{MP}: Boolean\\
-  if \texttt{True}, converts to a TOUGH2\_MP data file, which treats some of the parameters differently (e.g. MOP(20)).
+  if \texttt{True}, converts to a TOUGH2\_MP data file, which treats some of the parameters differently (e.g. MOP(20)).  The \texttt{filename} property is also changed to INFILE, as required by TOUGH2\_MP. 
 \end{itemize}
 
 \subsubsection{\texttt{clear\_generators()}}
