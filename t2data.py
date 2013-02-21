@@ -1351,7 +1351,7 @@ class t2data(object):
             else: solver_type = 5
         else: solver_type = 4
         self.lineq = {}
-        if 'LINEQ' in self._sections: self._sections.remove('LINEQ')
+        self.delete_section('LINEQ')
         # Convert MOPs:
         warnings = []
         if self.parameter['option'][10] == 2:
