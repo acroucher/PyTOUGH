@@ -283,7 +283,15 @@ class t2data(object):
         """Returns type (TOUGH2 or AUTOUGH2) based on whether the simulator has been set."""
         if self.simulator: return 'AUTOUGH2'
         else: return 'TOUGH2'
-    type=property(get_type)
+    def set_type(self, value):
+        """Sets type (TOUGH2 or AUTOUGH2), and runs conversion if needed (with default options)."""
+        if value in ['AUTOUGH2','TOUGH2']:
+            oldtype = self.type
+            if oldtype <> value:
+                if oldtype == 'AUTOUGH2': self.convert_to_TOUGH2()
+                elif oldtype == 'TOUGH2': self.convert_to_AUTOUGH2()
+        else: raise Exception('Data file type '+value+' is not supported.')
+    type = property(get_type, set_type)
 
     def get_extra_precision_filename(self):
         """Returns name of extra precision data file name, based on the name of the data file."""
@@ -1326,24 +1334,20 @@ class t2data(object):
         MULKOM formulation."""
         for rt in self.grid.rocktypelist: rt.conductivity*=(1.-rt.porosity)
 
-    def convert_to_TOUGH2(self, warn = True, MP = False):
-        """Converts an AUTOUGH2 data file to a TOUGH2 data file.  Various MOP parameters are changed to try to make them
-        the TOUGH2 simulation give similar results to AUTOUGH2 where possible.  AUTOUGH2-specific input blocks are removed
-        and some generator types changed.  If MP is True, the conversion is done to a TOUGH2_MP data file, which treats a 
-        few of the parameters differently."""
-        if MP: self.filename = 'INFILE'
-        # remove AUTOUGH2-specific input blocks:
-        self.simulator = ''
+    def convert_AUTOUGH2_parameters_to_TOUGH2(self, warn = True, MP = False):
+        """Converts AUTOUGH2 parameters to TOUGH2 parameters, with optional warnings about options that
+        aren't supported in TOUGH2.  If MP is True, convert to a file suitable for TOUGH2_MP."""
+        # Modify MULTI:
         if self.multi:
             if 'eos' in self.multi: del self.multi['eos']
-            self.multi['num_inc']=None
+            self.multi['num_inc'] = None
+        # Convert LINEQ into corresponding MOP(21) option:
         if self.lineq:
             if self.lineq['type'] <= 1: solver_type = 4
             else: solver_type = 5
         else: solver_type = 4
         self.lineq = {}
-        self.short_output = {}
-        # convert parameters:
+        # Convert MOPs:
         warnings = []
         if self.parameter['option'][10] == 2:
             self.parameter['option'][10] = 0
@@ -1381,17 +1385,110 @@ class t2data(object):
         if warn and len(warnings) > 0:
             print 'The following options are not supported in TOUGH2:'
             for warning in warnings: print warning
-        # convert generator types or delete any that can't be converted:
+
+    def convert_TOUGH2_parameters_to_AUTOUGH2(self, warn = True, MP = False):
+        """Converts TOUGH2 parameters to AUTOUGH2 parameters, with optional warnings about options that
+        aren't supported in AUTOUGH2.  If MP is True, treat the file as a TOUGH2_MP data file."""
+        # modify MULTI:
+        self.multi['num_inc'] = None
+        # convert SOLVR to LINEQ:
+        if 'type' in self.solver: solver_type = self.solver['type']
+        else: solver_type = self.parameter['option'][21]
+        self.lineq['type'] = [2,1,1,2,2,1][solver_type]
+        self.lineq['epsilon'] = None
+        self.lineq['max_iterations'] = None
+        self.lineq['gauss'] = None
+        self.lineq['num_orthog'] = None
+        self.solver = {}
+        # Convert MOPs:
+        warnings = []
+        if self.parameter['option'][12] == 2:
+            self.parameter['option'][12] = 0
+            warnings.append('MOP(12)=2: rigorous step rate well table interpolation')
+        self.parameter['option'][21] = 0 # not used in AUTOUGH2
+        if self.parameter['option'][22] > 0:
+            warnings.append('MOP(22)>0: dispersion module T2DM')
+        self.parameter['option'][22] = 0
+        if self.parameter['option'][23] > 0:
+            warnings.append('MOP(23)>0: dispersion module T2DM')
+        self.parameter['option'][23] = 0
+        if self.parameter['option'][24] > 0:
+            warnings.append('MOP(24)>0:  handling of multiphase diffusive fluxes at interfaces')
+        self.parameter['option'][24] = 0
+        if MP: # these MOPs mean different things in TOUGH2_MP:
+            if self.parameter['option'][14] > 0:
+                self.parameter['option'][14] = 0
+                warnings.append('MOP(14)>0: 8-character element names')
+            if self.parameter['option'][17] > 0:
+                self.parameter['option'][17] = 0
+                warnings.append('MOP(17)>0:  generation of a flow9.dat file for T2R3D')
+            if self.parameter['option'][20] > 0:
+                self.parameter['option'][20] = 0
+                warnings.append('MOP(20)>0: long format for CONNE and GENER indices')
+            if self.parameter['option'][21] > 0:
+                self.parameter['option'][21] = 0
+                warnings.append('MOP(21)>0: perform extra Newton iteration after convergence')
+        if warn and len(warnings) > 0:
+            print 'The following options are not supported in AUTOUGH2:'
+            for warning in warnings: print warning
+
+    def convert_AUTOUGH2_generators_to_TOUGH2(self, warn = True):
+        """Convert AUTOUGH2 generators to TOUGH2 generators, with optional warnings about
+        generator types that aren't supported in TOUGH2 (and will be deleted)."""
         allowed = ['HEAT','WATE','AIR ','MASS','DELV']
         convert = {'CO2 ':'COM2'}
         delgens = []
         for gen in self.generatorlist:
-            if gen.type in convert.keys(): gen.type = convert[gen.type]
+            if gen.type in convert: gen.type = convert[gen.type]
             elif not ((gen.type in allowed) or gen.type.startswith('COM')): delgens.append((gen.block,gen.name))
         if warn and len(delgens) > 0:
             print 'The following generators have types not supported by TOUGH2 and have been deleted:'
             print delgens
 
-    def convert_to_AUTOUGH2(self, eos = 'EOS1'):
-        """Converts a TOUGH2 data file to an AUTOUGH2 data file."""
+    def convert_short_to_history(self):
+        """Converts AUTOUGH2 SHORT output to TOUGH2 history (FOFT, COFT, GOFT)."""
+        if 'block' in self.short_output:
+            self.history_block = self.short_output['block'][:]
+        if 'connection' in self.short_output:
+            self.history_connection = self.short_output['connection'][:]
+        if 'generator' in self.short_output:
+            self.history_generator = self.short_output['generator'][:]
+        self.short_output = {}
+
+    def convert_history_to_short(self):
+        """Converts TOUGH2 history (FOFT, COFT, GOFT) to AUTOUGH2 SHORT output.  Items referring to blocks or
+        connections not present in the grid are discarded."""
+        self.short_output = {}
+        if self.history_block:
+            blks = [blk for blk in self.history_block if isinstance(blk,t2block)]
+            if blks: self.short_output['block'] = blks
+        if self.history_connection:
+            cons = [con for con in self.history_connection if isinstance(con,t2connection)]
+            if cons: self.short_output['connection'] = cons
+        if self.history_generator:
+            gens = [gen for gen in self.history_generator if isinstance(gen,t2generator)]
+            if gens: self.short_output['generator'] = gens
+        self.history_block = []
+        self.history_connection = []
+        self.history_generator = []
+
+    def convert_to_TOUGH2(self, warn = True, MP = False):
+        """Converts an AUTOUGH2 data file to a TOUGH2 data file.  Various MOP parameters are changed to try to make them
+        the TOUGH2 simulation give similar results to AUTOUGH2 where possible.  AUTOUGH2-specific input blocks are removed
+        and some generator types changed.  If MP is True, the conversion is done to a TOUGH2_MP data file, which treats a 
+        few of the parameters differently."""
+        if MP: self.filename = 'INFILE'
+        self.simulator = ''
+        self.convert_AUTOUGH2_parameters_to_TOUGH2(warn, MP)
+        self.convert_AUTOUGH2_generators_to_TOUGH2(warn)
+        self.convert_short_to_history()
         
+    def convert_to_AUTOUGH2(self, warn = True, MP = False, simulator = 'AUTOUGH2.2', eos = 'EW'):
+        """Converts a TOUGH2 data file to an AUTOUGH2 data file."""
+        if not self.filename.lower().endswith('.dat'):
+            if self.filename[0].isupper(): self.filename += '.DAT'
+            else: self.filename += '.dat'
+        self.simulator = simulator + eos
+        self.multi['eos'] = eos
+        self.convert_TOUGH2_parameters_to_AUTOUGH2(warn, MP)
+        self.convert_history_to_short()
