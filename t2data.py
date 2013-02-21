@@ -1405,7 +1405,6 @@ class t2data(object):
         if self.parameter['option'][12] == 2:
             self.parameter['option'][12] = 0
             warnings.append('MOP(12)=2: rigorous step rate well table interpolation')
-        self.parameter['option'][21] = 0 # not used in AUTOUGH2
         if self.parameter['option'][22] > 0:
             warnings.append('MOP(22)>0: dispersion module T2DM')
         self.parameter['option'][22] = 0
@@ -1426,8 +1425,8 @@ class t2data(object):
                 self.parameter['option'][20] = 0
                 warnings.append('MOP(20)>0: long format for CONNE and GENER indices')
             if self.parameter['option'][21] > 0:
-                self.parameter['option'][21] = 0
                 warnings.append('MOP(21)>0: perform extra Newton iteration after convergence')
+        self.parameter['option'][21] = 0 # not used in AUTOUGH2
         if warn and len(warnings) > 0:
             print 'The following options are not supported in AUTOUGH2:'
             for warning in warnings: print warning
