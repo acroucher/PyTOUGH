@@ -236,13 +236,17 @@ class t2data(object):
         """Determines an appropriate position to insert the specified section in the internal list of 
         data file sections."""
         try: 
-            if section == 'ROCKS':
+            if section == 'SIMUL': return 0
+            elif section == 'ROCKS':
                 if self.type == 'AUTOUGH2': return self._sections.index('SIMUL') + 1
                 else: return 0  # just after header for TOUGH2
             elif section == 'RPCAP':
                 return self._sections.index('PARAM') + 1
             elif section == 'GENER':
                 return self._sections.index('CONNE') + 1
+            elif section == 'LINEQ':
+                if 'MULTI' in self._sections: return self._sections.index('MULTI') - 1
+                else: return self._sections.index('PARAM') + 1
             else: return len(self._sections) # at end
         except ValueError: return len(self._sections)
 
@@ -1347,6 +1351,7 @@ class t2data(object):
             else: solver_type = 5
         else: solver_type = 4
         self.lineq = {}
+        if 'LINEQ' in self._sections: self._sections.remove('LINEQ')
         # Convert MOPs:
         warnings = []
         if self.parameter['option'][10] == 2:
@@ -1399,6 +1404,7 @@ class t2data(object):
         self.lineq['max_iterations'] = None
         self.lineq['gauss'] = None
         self.lineq['num_orthog'] = None
+        self.insert_section('LINEQ')
         self.solver = {}
         # Convert MOPs:
         warnings = []
@@ -1478,6 +1484,7 @@ class t2data(object):
         few of the parameters differently."""
         if MP: self.filename = 'INFILE'
         self.simulator = ''
+        self.delete_section('SIMUL')
         self.convert_AUTOUGH2_parameters_to_TOUGH2(warn, MP)
         self.convert_AUTOUGH2_generators_to_TOUGH2(warn)
         self.convert_short_to_history()
@@ -1488,6 +1495,7 @@ class t2data(object):
             if self.filename[0].isupper(): self.filename += '.DAT'
             else: self.filename += '.dat'
         self.simulator = simulator + eos
+        self.insert_section('SIMUL')
         self.multi['eos'] = eos
         self.convert_TOUGH2_parameters_to_AUTOUGH2(warn, MP)
         self.convert_history_to_short()
