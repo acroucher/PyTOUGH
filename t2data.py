@@ -1396,14 +1396,13 @@ class t2data(object):
         aren't supported in AUTOUGH2.  If MP is True, treat the file as a TOUGH2_MP data file."""
         # modify MULTI:
         self.multi['num_inc'] = None
-        # convert SOLVR to LINEQ:
-        if 'type' in self.solver: solver_type = self.solver['type']
-        else: solver_type = self.parameter['option'][21]
-        self.lineq['type'] = [2,1,1,2,2,1][solver_type]
-        self.lineq['epsilon'] = None
-        self.lineq['max_iterations'] = None
-        self.lineq['gauss'] = None
-        self.lineq['num_orthog'] = None
+        # set up LINEQ:
+        if MP: solver_type = 2
+        else:
+            if 'type' in self.solver: solver_type = self.solver['type']
+            else: solver_type = self.parameter['option'][21]
+        self.lineq = {'type': [2,1,2,2,1,2,1][solver_type], 'epsilon': None,
+                      'max_iterations': None, 'gauss': None, 'num_orthog': None}
         self.insert_section('LINEQ')
         self.solver = {}
         # Convert MOPs:
