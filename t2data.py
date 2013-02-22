@@ -146,12 +146,12 @@ t2_extra_precision_sections = ['ROCKS', 'RPCAP', 'GENER']
 class t2data(object):
     """Class for TOUGH2 data"""
     def __init__(self, filename = '', meshfilename = ''):
-        from copy import copy
+        from copy import deepcopy
         self.filename = filename
         self.meshfilename = meshfilename
         self.title = ''
         self.simulator = ''
-        self.parameter = copy(default_parameters)
+        self.parameter = deepcopy(default_parameters)
         self.multi = {}
         self.start = False
         self.relative_permeability = {}
@@ -1292,10 +1292,10 @@ class t2data(object):
         even when a source block is mapped into a set of blocks with a different total volume.  This can however alter the
         distribution of specific generation."""
         mapping,colmapping=sourcegeo.block_mapping(geo,True)
-        from copy import copy
+        from copy import copy, deepcopy
         self.grid=t2grid().fromgeo(geo)
         self.simulator=source.simulator
-        self.parameter=copy(source.parameter)
+        self.parameter=deepcopy(source.parameter)
         if self.parameter['print_block'] is not None:
             mappedblocks=[blk for blk in self.grid.blocklist if mapping[blk.name]==self.parameter['print_block']]
             if len(mappedblocks)>0: self.parameter['print_block']=mappedblocks[0].name
