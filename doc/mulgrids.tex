@@ -587,13 +587,16 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`equal', \emph{plt}=None,\\
     \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
-    \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None)}}
+    \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
+    \emph{wellcolour}=`blue', \emph{show\_outside\_wells}=True)}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
 The name and units of the variable can optionally be specified, and the names of the columns and nodes can also optionally be displayed on the plot, as well as the column centres (represented by crosses).  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the title and x- and y-axis labels, and the plot limits.
 
 When a variable is plotted over the grid, contours at specified levels can also be drawn, and optionally labelled with their values.
+
+Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the wellhead, and cross at the point where the well track intersects the layer centre (if it does).
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -643,6 +646,12 @@ When a variable is plotted over the grid, contours at specified levels can also 
   Specify a two-element tuple, list or \texttt{np.array} to set the limits of the colour scale.  Default (\texttt{None}) will auto-scale.
 \item \textbf{plot\_limits}: tuple or list (or \texttt{None})\\
   Specify a two-element tuple (or list) of plot axis ranges, each itself being a tuple (or list) of minimum and maximum values, i.e. ((xmin,xmax),(ymin,ymax)).  Default is \texttt{False} which will auto-scale.
+\item \textbf{wells}: Boolean or list (or \texttt{None})\\
+  Specify \texttt{True} to plot all well tracks, \texttt{False} or \texttt{None} not to plot them, or a list of wells or well names to specify only particular wells.
+\item \textbf{wellcolour}: string\\
+  Colour to use for drawing the wells.
+\item \textbf{show\_outside\_wells}: Boolean\\
+  Set to \texttt{False} if wells that do not intersect the specified layer are not to be shown.
 \end{itemize}
 
 \textbf{Example:}
