@@ -1607,7 +1607,8 @@ class mulgrid(object):
     def layer_plot(self, layer=0, variable=None, variable_name=None, unit=None, column_names=None, node_names=None, column_centres=None,
                    nodes=None, colourmap=None, linewidth=0.2, linecolour='black', aspect='equal', plt=None, subplot=111, title=None,
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
-                   connections=None, colourbar_limits=None, plot_limits=None, wells = None, wellcolour = 'blue', show_outside_wells = True):
+                   connections=None, colourbar_limits=None, plot_limits=None, wells = None, wellcolour = 'blue', well_names = True,
+                   show_outside_wells = True):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1654,6 +1655,10 @@ class mulgrid(object):
                 elif wells is False or wells is None: wells = []
                 elif isinstance(wells, list):
                     if isinstance(wells[0], str): wells = [self.well[name] for name in wells]
+                if well_names is True: well_names = wells
+                elif well_names is None or well_names is False: well_names = []
+                elif isinstance(well_names, list):
+                    if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
             verts,vals=[],[]
             if not isinstance(contours,bool): contours=list(contours)
             if contours<>False: xc,yc=[],[]
@@ -1709,15 +1714,15 @@ class mulgrid(object):
                 CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
                 if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
             for well in wells:
-                if layer is None: show_well = True
+                if layer is None: centrepos, show_well = None, True
                 else:
                     centrepos = well.elevation_pos(self.layer[layername].centre)
                     show_well = (centrepos is not None) or show_outside_wells
                 if show_well:
                     [xw, yw] = [well.pos_coordinate(i) for i in xrange(2)]
+                    plt.plot(xw[0], yw[0], 'o', color = wellcolour)
                     plt.plot(xw, yw, '-', color = wellcolour)
-                    ax.text(xw[0], yw[1], well.name, clip_on=True, horizontalalignment='center')
-                    plt.plot(xw[0], yw[1], 'o', color = wellcolour)
+                    if well in well_names: ax.text(xw[0], yw[1], well.name, clip_on=True, horizontalalignment='center')
                     if centrepos is not None: plt.plot(centrepos[0], centrepos[1], 'x', color = wellcolour)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
