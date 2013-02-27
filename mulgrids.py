@@ -1759,7 +1759,7 @@ class mulgrid(object):
                    linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
                    plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
-                   hide_wells_outside = True, wellcolour = 'blue', welllinewidth = 1.0):
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1789,7 +1789,8 @@ class mulgrid(object):
             default_title='vertical slice '+("%3.0f"%float(line)).strip()+'$^\circ$N'
         else:
             l=line
-            default_title='vertical slice from ('+("%7.0f"%l[0][0]).strip()+','+("%7.0f"%l[0][1]).strip()+') to ('+("%7.0f"%l[1][0]).strip()+','+("%7.0f"%l[1][1]).strip()+')'
+            default_title='vertical slice from ('+("%7.0f"%l[0][0]).strip()+','+("%7.0f"%l[0][1]).strip()+
+            ') to ('+("%7.0f"%l[1][0]).strip()+','+("%7.0f"%l[1][1]).strip()+')'
         if norm(l[1]-l[0])>0.0:
             import matplotlib
             if plt is None:
@@ -1805,6 +1806,15 @@ class mulgrid(object):
             if block_names:
                 if not isinstance(block_names,list): block_names=self.block_name_list
             else: block_names=[]
+            if wells:
+                if wells is True: wells = self.welllist
+                elif wells is False or wells is None: wells = []
+                elif isinstance(wells, list):
+                    if isinstance(wells[0], str): wells = [self.well[name] for name in wells]
+                if well_names is True: well_names = wells
+                elif well_names is None or well_names is False: well_names = []
+                elif isinstance(well_names, list):
+                    if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
             track=self.column_track(l)
             if track:
                 if xlabel is None:
@@ -1860,6 +1870,23 @@ class mulgrid(object):
                     else: cvals=False
                     CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
                     if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
+                for well in wells:
+                    if hide_wells_outside is False: show_well = True
+                    else:
+                        hpos = [pos[:2] for pos in well.pos]
+                        if hide_wells_outside is True:
+                            trackcols = [tk[0] for tk in track]
+                            show_well = any([polyline_intersects_polygon(hpos,col.polygon) for col in trackcols])
+                        elif isinstance(hide_wells_outside, float):
+                            show_well = polyline_line_distance(hpos, line) <= hide_wells_outside
+                    if show_well:
+                        def slice_project(pos):
+                            """Returns 2-D projection of a 3-D point onto the slice"""
+                            hppos = line_projection(pos[:2], l)
+                            return np.array([np.linalg.norm(hppos - l[0]), pos[2]])
+                        pwellhead = slice_project(well.head)
+                        plt.plot(pwellhead[0], pwellhead[1], 'o', color = wellcolour)
+                        # to be completed ***
                 ax.set_ylabel(ylabel)
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'
