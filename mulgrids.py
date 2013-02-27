@@ -1607,8 +1607,8 @@ class mulgrid(object):
     def layer_plot(self, layer=0, variable=None, variable_name=None, unit=None, column_names=None, node_names=None, column_centres=None,
                    nodes=None, colourmap=None, linewidth=0.2, linecolour='black', aspect='equal', plt=None, subplot=111, title=None,
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
-                   connections=None, colourbar_limits=None, plot_limits=None, wells = None, wellcolour = 'blue', well_names = True,
-                   show_outside_wells = True):
+                   connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
+                   show_outside_wells = True, wellcolour = 'blue', welllinewidth = 1.0):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1721,7 +1721,7 @@ class mulgrid(object):
                 if show_well:
                     [xw, yw] = [well.pos_coordinate(i) for i in xrange(2)]
                     plt.plot(xw[0], yw[0], 'o', color = wellcolour)
-                    plt.plot(xw, yw, '-', color = wellcolour)
+                    plt.plot(xw, yw, '-', color = wellcolour, linewidth = welllinewidth)
                     if well in well_names: ax.text(xw[-1], yw[-1], well.name, clip_on=True, horizontalalignment='center')
                     if centrepos is not None: plt.plot(centrepos[0], centrepos[1], 'x', color = wellcolour)
             plt.xlabel(xlabel)
