@@ -1608,7 +1608,7 @@ class mulgrid(object):
                    nodes=None, colourmap=None, linewidth=0.2, linecolour='black', aspect='equal', plt=None, subplot=111, title=None,
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
                    connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
-                   show_outside_wells = True, wellcolour = 'blue', welllinewidth = 1.0):
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1717,7 +1717,7 @@ class mulgrid(object):
                 if layer is None: centrepos, show_well = None, True # surface plot
                 else:
                     centrepos = well.elevation_pos(self.layer[layername].centre)
-                    show_well = (centrepos is not None) or show_outside_wells
+                    show_well = (centrepos is not None) or not hide_wells_outside
                 if show_well:
                     [xw, yw] = [well.pos_coordinate(i) for i in xrange(2)]
                     plt.plot(xw[0], yw[0], 'o', color = wellcolour)
@@ -1739,8 +1739,8 @@ class mulgrid(object):
     def slice_plot(self, line=None, variable=None, variable_name=None, unit=None, block_names=None, colourmap=None, linewidth=0.2,
                    linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
-                   plot_limits=None, column_axis = False, layer_axis = False, wells = None, wellcolour = 'blue', well_names = True,
-                   show_wells_outside = False):
+                   plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
+                   hide_wells_outside = True, wellcolour = 'blue', welllinewidth = 1.0):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.

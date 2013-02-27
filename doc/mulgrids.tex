@@ -588,7 +588,7 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
-    \emph{well\_names}=True, \emph{show\_outside\_wells}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0)}}
+    \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0)}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
@@ -650,8 +650,8 @@ Well tracks can also optionally be plotted.  Each well is drawn as a line follow
   Specify \texttt{True} to plot all well tracks, \texttt{False} or \texttt{None} not to plot them, or a list of wells or well names to specify only particular wells.
 \item \textbf{well\_names}: Boolean or list (or \texttt{None})\\
   Specify \texttt{True} to label the bottom of each well with its name , \texttt{False} or \texttt{None} not to label them, or a list of wells or well names to label only particular wells.
-\item \textbf{show\_outside\_wells}: Boolean\\
-  Set to \texttt{False} if wells that do not intersect the specified layer are not to be shown.
+\item \textbf{hide\_wells\_outside}: Boolean\\
+  Set to \texttt{True} if wells that do not intersect the specified layer are to be hidden.
 \item \textbf{wellcolour}: string\\
   Colour to use for drawing the wells.
 \item \textbf{welllinewidth}: float\\
