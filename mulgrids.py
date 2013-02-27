@@ -1714,7 +1714,7 @@ class mulgrid(object):
                 CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
                 if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
             for well in wells:
-                if layer is None: centrepos, show_well = None, True
+                if layer is None: centrepos, show_well = None, True # surface plot
                 else:
                     centrepos = well.elevation_pos(self.layer[layername].centre)
                     show_well = (centrepos is not None) or show_outside_wells
@@ -1722,7 +1722,7 @@ class mulgrid(object):
                     [xw, yw] = [well.pos_coordinate(i) for i in xrange(2)]
                     plt.plot(xw[0], yw[0], 'o', color = wellcolour)
                     plt.plot(xw, yw, '-', color = wellcolour)
-                    if well in well_names: ax.text(xw[0], yw[1], well.name, clip_on=True, horizontalalignment='center')
+                    if well in well_names: ax.text(xw[-1], yw[-1], well.name, clip_on=True, horizontalalignment='center')
                     if centrepos is not None: plt.plot(centrepos[0], centrepos[1], 'x', color = wellcolour)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
@@ -1736,7 +1736,11 @@ class mulgrid(object):
             plt.title(title)
             if loneplot: plt.show()
 
-    def slice_plot(self,line=None,variable=None,variable_name=None,unit=None,block_names=None,colourmap=None,linewidth=0.2,linecolour='black',aspect='auto',plt=None,subplot=111,title=None,xlabel=None,ylabel='elevation (m)',contours=False,contour_label_format='%3.0f',contour_grid_divisions=(100,100),colourbar_limits=None,plot_limits=None, column_axis = False, layer_axis = False):
+    def slice_plot(self, line=None, variable=None, variable_name=None, unit=None, block_names=None, colourmap=None, linewidth=0.2,
+                   linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
+                   contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
+                   plot_limits=None, column_axis = False, layer_axis = False, wells = None, wellcolour = 'blue', well_names = True,
+                   show_wells_outside = False):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
