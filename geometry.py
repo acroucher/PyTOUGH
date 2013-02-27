@@ -176,6 +176,19 @@ def line_projection(a,line):
     except ZeroDivisionError: # line ill-defined
         return None
 
+def point_line_distance(a, line):
+    """Finds distance between point a and a line."""
+    return np.linalg.norm(a - line_projection(a,line))
+
+def polyline_line_distance(polyline, line):
+    """Returns minimum distance between a polyline and a line."""
+    dists = []
+    for i,pt in enumerate(polyline):
+        pline = [pt,polyline[(i+1)%len(polyline)]]
+        if line_polygon_intersections(line, pline): return 0.0
+        else: dists.append(min([point_line_distance(p,line) for p in pline]))
+    return min(dists)
+        
 def vector_heading(p):
     """Returns heading angle of a 2-D vector p, in radians clockwise from the y-axis ('north')."""
     from math import asin
