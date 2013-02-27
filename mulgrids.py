@@ -1618,38 +1618,38 @@ class mulgrid(object):
         import matplotlib
         if plt is None: 
             import matplotlib.pyplot as plt
-            loneplot=True
-        else: loneplot=False
+            loneplot = True
+        else: loneplot = False
         matplotlib.rcParams.update({'mathtext.default': 'regular','figure.figsize':(12,9)})
-        ax=plt.subplot(subplot,aspect=aspect)
+        ax = plt.subplot(subplot,aspect = aspect)
         if isinstance(layer,(float,int)):
-            l=self.layer_containing_elevation(float(layer))
-            if l: layername=l.name
-            else: layername=''
-            default_title='layer '+layername+' (elevation '+("%4.0f"%float(layer)).strip()+' m)'
+            l = self.layer_containing_elevation(float(layer))
+            if l: layername = l.name
+            else: layername = ''
+            default_title = 'layer '+layername+' (elevation '+("%4.0f"%float(layer)).strip()+' m)'
         elif layer is None:
-            layername=''
-            default_title='surface layer'
+            layername = ''
+            default_title = 'surface layer'
         else:
-            layername=layer
-            default_title='layer '+layername
+            layername = layer
+            default_title = 'layer '+layername
         if (layername in self.layer) or (layer is None):
             if variable is not None:
-                if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
-            if variable_name: varname=variable_name
-            else: varname='Value'
+                if len(variable)==self.num_columns: variable = self.column_values_to_block(variable)
+            if variable_name: varname = variable_name
+            else: varname = 'Value'
             if column_names:
-                if not isinstance(column_names,list): column_names=self.column.keys()
-            else: column_names=[]
+                if not isinstance(column_names,list): column_names = self.column.keys()
+            else: column_names = []
             if node_names:
-                if not isinstance(node_names,list): node_names=self.node.keys()
-            else: node_names=[]
+                if not isinstance(node_names,list): node_names = self.node.keys()
+            else: node_names = []
             if column_centres:
-                if not isinstance(column_centres,list): column_centres=self.column.keys()
-            else: column_centres=[]
+                if not isinstance(column_centres,list): column_centres = self.column.keys()
+            else: column_centres = []
             if nodes:
-                if not isinstance(nodes,list): nodes=self.node.keys()
-            else: nodes=[]
+                if not isinstance(nodes,list): nodes = self.node.keys()
+            else: nodes = []
             if wells:
                 if wells is True: wells = self.welllist
                 elif wells is False or wells is None: wells = []
@@ -1659,43 +1659,43 @@ class mulgrid(object):
                 elif well_names is None or well_names is False: well_names = []
                 elif isinstance(well_names, list):
                     if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
-            verts,vals=[],[]
-            if not isinstance(contours,bool): contours=list(contours)
-            if contours<>False: xc,yc=[],[]
+            verts,vals = [],[]
+            if not isinstance(contours,bool): contours = list(contours)
+            if contours<>False: xc,yc = [],[]
             if connections is not None:
-                c=np.abs(self.connection_angle_cosine)
-                ithreshold=np.where(c>connections)[0]
+                c = np.abs(self.connection_angle_cosine)
+                ithreshold = np.where(c>connections)[0]
                 from matplotlib.colors import colorConverter
                 for i in ithreshold:
-                    colc=[col.centre for col in self.connectionlist[i].column]
-                    plt.plot([p[0] for p in colc],[p[1] for p in colc],color=colorConverter.to_rgb(str(1.-c[i])))
+                    colc = [col.centre for col in self.connectionlist[i].column]
+                    plt.plot([p[0] for p in colc],[p[1] for p in colc],color = colorConverter.to_rgb(str(1.-c[i])))
             for col in self.columnlist:
-                if layer is None: layername=self.column_surface_layer(col).name
-                blkname=self.block_name(layername,col.name)
+                if layer is None: layername = self.column_surface_layer(col).name
+                blkname = self.block_name(layername,col.name)
                 if blkname in self.block_name_list:
                     if contours<>False:
                         xc.append(col.centre[0])
                         yc.append(col.centre[1])
-                    if variable is not None: val=variable[self.block_name_index[blkname]]
-                    else: val=0
+                    if variable is not None: val = variable[self.block_name_index[blkname]]
+                    else: val = 0
                     vals.append(val)
                     verts.append(tuple([tuple([p for p in n.pos]) for n in col.node]))
                     if col.name in column_names:
-                        ax.text(col.centre[0],col.centre[1],col.name,clip_on=True,horizontalalignment='center')
+                        ax.text(col.centre[0],col.centre[1],col.name,clip_on = True,horizontalalignment = 'center')
                     if col.name in column_centres:
-                        ax.text(col.centre[0],col.centre[1],'+',color='red',clip_on=True,
-                                horizontalalignment='center',verticalalignment='center')
+                        ax.text(col.centre[0],col.centre[1],'+',color = 'red',clip_on = True,
+                                horizontalalignment = 'center',verticalalignment = 'center')
             for node in [self.node[name] for name in node_names]:
-                    ax.text(node.pos[0],node.pos[1],node.name,clip_on=True,horizontalalignment='center')
+                    ax.text(node.pos[0],node.pos[1],node.name,clip_on = True,horizontalalignment = 'center')
             for node in [self.node[name] for name in nodes]:
-                    ax.text(node.pos[0],node.pos[1],'+',color='red',clip_on=True,
-                            horizontalalignment='center',verticalalignment='center')
+                    ax.text(node.pos[0],node.pos[1],'+',color = 'red',clip_on = True,
+                            horizontalalignment = 'center',verticalalignment = 'center')
             import matplotlib.collections as collections
-            if variable is not None: facecolors=None
-            else: facecolors=[]
-            col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
+            if variable is not None: facecolors = None
+            else: facecolors = []
+            col = collections.PolyCollection(verts,cmap = colourmap,linewidth = linewidth,facecolors = facecolors,edgecolors = linecolour)
             if variable is not None: col.set_array(np.array(vals))
-            if colourbar_limits is not None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
+            if colourbar_limits is not None: col.norm.vmin,col.norm.vmax = tuple(colourbar_limits)
             ax.add_collection(col)
             if plot_limits is not None:
                 plt.xlim(plot_limits[0])
@@ -1703,36 +1703,55 @@ class mulgrid(object):
             else: ax.autoscale_view()
             if contours is not False:
                 from matplotlib.mlab import griddata
-                xc,yc=np.array(xc),np.array(yc)
-                valc=np.array(vals)
-                bds=self.bounds
-                xgrid=np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
-                ygrid=np.linspace(bds[0][1],bds[1][1],contour_grid_divisions[1])
-                valgrid=griddata(xc,yc,valc,xgrid,ygrid)
-                if isinstance(contours,list): cvals=contours
-                else: cvals=False
-                CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
-                if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
+                xc,yc = np.array(xc),np.array(yc)
+                valc = np.array(vals)
+                bds = self.bounds
+                xgrid = np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
+                ygrid = np.linspace(bds[0][1],bds[1][1],contour_grid_divisions[1])
+                valgrid = griddata(xc,yc,valc,xgrid,ygrid)
+                if isinstance(contours,list): cvals = contours
+                else: cvals = False
+                CS = plt.contour(xgrid,ygrid,valgrid,cvals,colors = 'k')
+                if contour_label_format is not None: plt.clabel(CS, inline = 1,fmt = contour_label_format)
             for well in wells:
-                if layer is None: centrepos, show_well = None, True # surface plot
+                if layer is None: hitlayer, show_well = False, True # surface plot
                 else:
-                    centrepos = well.elevation_pos(self.layer[layername].centre)
-                    show_well = (centrepos is not None) or not hide_wells_outside
+                    toppos = well.elevation_pos(self.layer[layername].top)
+                    bottompos = well.elevation_pos(self.layer[layername].bottom)
+                    hitlayer = toppos is not None
+                    show_well = hitlayer or not hide_wells_outside
                 if show_well:
-                    [xw, yw] = [well.pos_coordinate(i) for i in xrange(2)]
-                    plt.plot(xw[0], yw[0], 'o', color = wellcolour)
-                    plt.plot(xw, yw, '-', color = wellcolour, linewidth = welllinewidth)
-                    if well in well_names: ax.text(xw[-1], yw[-1], well.name, clip_on=True, horizontalalignment='center')
-                    if centrepos is not None: plt.plot(centrepos[0], centrepos[1], 'x', color = wellcolour)
+                    plt.plot(well.head[0], well.head[1], 'o', color = wellcolour)
+                    wpos = [well.pos_coordinate(i) for i in xrange(3)]
+                    if hitlayer:
+                        above = np.where(wpos[2] > toppos[2])
+                        abovepos = [list(wpos[i][above])+[toppos[i]] for i in xrange(2)]
+                        if bottompos is not None: # well passes through layer
+                            inside = np.where((toppos[2] >= wpos[2]) & (wpos[2] >= bottompos[2]))
+                            insidepos = [[toppos[i]] + list(wpos[i][inside]) + [bottompos[i]] for i in xrange(2)]
+                            below = np.where(wpos[2] < bottompos[2])
+                            belowpos = [[bottompos[i]] + list(wpos[i][below]) for i in xrange(2)]
+                        else: # well stops in layer
+                            inside = np.where(toppos[2] >= wpos[2])
+                            insidepos = [[toppos[i]] + list(wpos[i][inside]) for i in xrange(2)]
+                            belowpos =  np.array([])
+                        if abovepos: plt.plot(abovepos[0], abovepos[1], ':', color = wellcolour, linewidth = welllinewidth)
+                        if insidepos: plt.plot(insidepos[0], insidepos[1], '-', color = wellcolour, linewidth = welllinewidth)
+                        if belowpos: plt.plot(belowpos[0], belowpos[1], ':', color = wellcolour, linewidth = welllinewidth)
+                    else: 
+                        if layer is None: welllinestyle = '-'
+                        else: welllinestyle =':'
+                        plt.plot(wpos[0], wpos[1], welllinestyle, color = wellcolour, linewidth = welllinewidth)
+                    if well in well_names: ax.text(well.bottom[0], well.bottom[1], well.name, clip_on = True, horizontalalignment = 'center')
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
-            scalelabel=varname
-            if unit: scalelabel+=' ('+unit+')'
+            scalelabel = varname
+            if unit: scalelabel += ' ('+unit+')'
             if variable is not None:
-                cbar=plt.colorbar(col)
+                cbar = plt.colorbar(col)
                 cbar.set_label(scalelabel)
-                default_title=varname+' in '+default_title
-            if title is None: title=default_title
+                default_title = varname+' in '+default_title
+            if title is None: title = default_title
             plt.title(title)
             if loneplot: plt.show()
 
