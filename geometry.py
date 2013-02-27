@@ -126,6 +126,13 @@ def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False
     if indices: return [crossings[i] for i in sortindex], [ind[tuple(crossings[i])] for i in sortindex]
     else: return [crossings[i] for i in sortindex]
 
+def polyline_polygon_intersections(polygon, polyline):
+    """Returns a list of intersection points at which a polyline (list of 2-D points) crosses a polygon."""
+    intersections = [line_polygon_intersections(polygon, [pt, polyline[(i+1)%len(polyline)]])
+                     for i,pt in enumerate(polyline)]
+    from itertools import chain # flatten list of lists
+    return list(chain.from_iterable(intersections))
+
 def simplify_polygon(polygon,tolerance=1.e-6):
     """Simplifies a polygon by deleting colinear points.  The tolerance for detecting colinearity of points
     can optionally be specified."""
