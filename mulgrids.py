@@ -1608,7 +1608,7 @@ class mulgrid(object):
                    nodes=None, colourmap=None, linewidth=0.2, linecolour='black', aspect='equal', plt=None, subplot=111, title=None,
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
                    connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
-                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0):
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
        superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1742,7 +1742,10 @@ class mulgrid(object):
                         if layer is None: welllinestyle = '-'
                         else: welllinestyle =':'
                         plt.plot(wpos[0], wpos[1], welllinestyle, color = wellcolour, linewidth = welllinewidth)
-                    if well in well_names: ax.text(well.bottom[0], well.bottom[1], well.name, clip_on = True, horizontalalignment = 'center')
+                    if well in well_names:
+                        if wellname_bottom: namepos = well.bottom
+                        else: namepos = well.head
+                        ax.text(namepos[0], namepos[1], well.name, clip_on = True, horizontalalignment = 'center')
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             scalelabel = varname
@@ -1759,7 +1762,7 @@ class mulgrid(object):
                    linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
                    plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
-                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0):
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1912,9 +1915,11 @@ class mulgrid(object):
                                         plt.plot(wpos[:,0], wpos[:,1], linetype[inside], color = wellcolour,
                                                  linewidth = welllinewidth)
                             if well in well_names:
-                                bottom = slice_project(well.bottom)
-                                ax.text(bottom[0], bottom[1], well.name, clip_on = True,
-                                        horizontalalignment = 'center', verticalalignment = 'top')
+                                if wellname_bottom: namepos, namealign = well.bottom, 'top'
+                                else: namepos, namealign = well.head, 'bottom'
+                                nameposp = slice_project(namepos)
+                                ax.text(nameposp[0], nameposp[1], well.name, clip_on = True,
+                                        horizontalalignment = 'center', verticalalignment = namealign)
                 ax.set_ylabel(ylabel)
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'

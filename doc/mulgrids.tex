@@ -588,7 +588,8 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
-    \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0)}}
+    \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0,\\
+    \emph{wellname\_bottom}=True)}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
@@ -596,7 +597,7 @@ The name and units of the variable can optionally be specified, and the names of
 
 When a variable is plotted over the grid, contours at specified levels can also be drawn, and optionally labelled with their values.
 
-Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom of the well.  For surface plots (\texttt{layer} = \texttt{None}), wells are drawn with solid lines; otherwise, wells are drawn with dotted lines except where they pass through the specified layer, where they are drawn with solid lines.
+Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom (or optionally the top) of the well.  For surface plots (\texttt{layer} = \texttt{None}), wells are drawn with solid lines; otherwise, wells are drawn with dotted lines except where they pass through the specified layer, where they are drawn with solid lines.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -649,13 +650,15 @@ Well tracks can also optionally be plotted.  Each well is drawn as a line follow
 \item \textbf{wells}: Boolean or list (or \texttt{None})\\
   Specify \texttt{True} to plot all well tracks, \texttt{False} or \texttt{None} not to plot them, or a list of wells or well names to specify only particular wells.
 \item \textbf{well\_names}: Boolean or list (or \texttt{None})\\
-  Specify \texttt{True} to label the bottom of each well with its name , \texttt{False} or \texttt{None} not to label them, or a list of wells or well names to label only particular wells.
+  Specify \texttt{True} to label each well with its name , \texttt{False} or \texttt{None} not to label them, or a list of wells or well names to label only particular wells.
 \item \textbf{hide\_wells\_outside}: Boolean\\
   Set to \texttt{True} if wells that do not intersect the specified layer are to be hidden.
 \item \textbf{wellcolour}: string\\
   Colour to use for drawing the wells.
 \item \textbf{welllinewidth}: float\\
   Line width for drawing the wells.
+\item \textbf{wellname\_bottom}: Boolean\\
+  Set to \texttt{False} to label wells at the wellhead rather than the bottom.
 \end{itemize}
 
 \textbf{Example:}
@@ -939,7 +942,7 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{contours}=False, \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{column\_axis}=False, \emph{layer\_axis}=False,\\
     \emph{wells}=None, \emph{well\_names}=True, \emph{hide\_wells\_outside}=False, \emph{wellcolour}=`blue',\\
-    \emph{welllinewidth}=1.0))}}
+    \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=True))}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
@@ -949,7 +952,7 @@ The name and units of the variable can optionally be specified, and the name of 
 
 When a variable is plotted over the grid, contours at specified levels can also be drawn, and optionally labelled with their values.
 
-Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom of the well.  If \texttt{hide\_wells\_outside} is specified as a floating point number, wells that do not pass within the specified distance from the slice line are not shown.  Well tracks are shown as solid lines over sections within the specified distance from the slice line, and dotted lines otherwise.
+Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom (or optionally the top) of the well.  If \texttt{hide\_wells\_outside} is specified as a floating point number, wells that do not pass within the specified distance from the slice line are not shown.  Well tracks are shown as solid lines over sections within the specified distance from the slice line, and dotted lines otherwise.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -998,13 +1001,15 @@ Well tracks can also optionally be plotted.  Each well is drawn as a line follow
 \item \textbf{wells}: Boolean or list (or \texttt{None})\\
   Specify \texttt{True} to plot all well tracks, \texttt{False} or \texttt{None} not to plot them, or a list of wells or well names to specify only particular wells.
 \item \textbf{well\_names}: Boolean or list (or \texttt{None})\\
-  Specify \texttt{True} to label the bottom of each well with its name , \texttt{False} or \texttt{None} not to label them, or a list of wells or well names to label only particular wells.
+  Specify \texttt{True} to label each well with its name , \texttt{False} or \texttt{None} not to label them, or a list of wells or well names to label only particular wells.
 \item \textbf{hide\_wells\_outside}: \texttt{False} or float\\
   Specify distance as a floating point number to hide wells further from the slice line than the specified distance.
 \item \textbf{wellcolour}: string\\
   Colour to use for drawing the wells.
 \item \textbf{welllinewidth}: float\\
   Line width for drawing the wells.
+\item \textbf{wellname\_bottom}: Boolean\\
+  Set to \texttt{False} to label wells at the wellhead rather than the bottom.
 \end{itemize}
 
 \textbf{Example:}
