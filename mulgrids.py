@@ -1758,6 +1758,65 @@ class mulgrid(object):
         plt.title(title)
         if loneplot: plt.show()
 
+    def slice_plot_wells(self, plt, ax, line, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom):
+        """Draws wells on a layer plot, given the plot and axes.  For documentation of the parameters, see slice_plot()."""
+        if wells is True: wells = self.welllist
+        elif wells is False or wells is None: wells = []
+        elif isinstance(wells, list):
+            if isinstance(wells[0], str): wells = [self.well[name] for name in wells]
+            if well_names is True: well_names = wells
+            elif well_names is None or well_names is False: well_names = []
+            elif isinstance(well_names, list):
+                if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
+        if len(wells) > 0:
+            if hide_wells_outside is False:
+                def show_well(well): return True
+            elif isinstance(hide_wells_outside, (float,int)):
+                def show_well(well):
+                    hpos = [pos[:2] for pos in well.pos]
+                    return polyline_line_distance(hpos, line) <= hide_wells_outside
+            else: raise Exception('slice_plot_wells() error: unrecognised value for parameter hide_wells_outside')
+            def slice_project(pos):
+                """Returns 2-D projection of a 3-D point onto the slice plane"""
+                hppos = line_projection(pos[:2], line)
+                return np.array([np.linalg.norm(hppos - line[0]), pos[2]])
+            for well in wells:
+                if show_well(well):
+                    pwellhead = slice_project(well.head)
+                    plt.plot(pwellhead[0], pwellhead[1], 'o', color = wellcolour)
+                    if hide_wells_outside is False:
+                        wpos = np.array([slice_project(pos) for pos in well.pos])
+                        plt.plot(wpos[:,0], wpos[:,1], '-', color = wellcolour, linewidth = welllinewidth)
+                    else: # draw well sections outside as dotted lines
+                        wellsections = {True: [], False: []}
+                        top = well.head
+                        dtop = point_line_distance(top[:2],line)
+                        topinside = dtop <= hide_wells_outside
+                        wellsections[topinside].append([top])
+                        for bot in well.pos[1:]:
+                            dbot = point_line_distance(bot[:2],line)
+                            botinside = dbot <= hide_wells_outside
+                            if botinside == topinside: wellsections[topinside][-1].append(bot)
+                            else:
+                                try: xi = (hide_wells_outside - dtop)/(dbot - dtop)
+                                except ZeroDivisionError: xi = 1.0
+                                cross = (1.-xi)*top + xi*bot
+                                wellsections[topinside][-1].append(cross)
+                                wellsections[botinside].append([cross])
+                            top,dtop,topinside = bot,dbot,botinside
+                        linetype = {True:'-', False:':'}
+                        for inside,sections in wellsections.iteritems():
+                            for section in sections:
+                                wpos = np.array([slice_project(pos) for pos in section])
+                                plt.plot(wpos[:,0], wpos[:,1], linetype[inside], color = wellcolour,
+                                         linewidth = welllinewidth)
+                    if well in well_names:
+                        if wellname_bottom: namepos, namealign = well.bottom, 'top'
+                        else: namepos, namealign = well.head, 'bottom'
+                        nameposp = slice_project(namepos)
+                        ax.text(nameposp[0], nameposp[1], well.name, clip_on = True,
+                                horizontalalignment = 'center', verticalalignment = namealign)
+
     def slice_plot(self, line=None, variable=None, variable_name=None, unit=None, block_names=None, colourmap=None, linewidth=0.2,
                    linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
@@ -1808,15 +1867,6 @@ class mulgrid(object):
             if block_names:
                 if not isinstance(block_names,list): block_names=self.block_name_list
             else: block_names=[]
-            if wells:
-                if wells is True: wells = self.welllist
-                elif wells is False or wells is None: wells = []
-                elif isinstance(wells, list):
-                    if isinstance(wells[0], str): wells = [self.well[name] for name in wells]
-                if well_names is True: well_names = wells
-                elif well_names is None or well_names is False: well_names = []
-                elif isinstance(well_names, list):
-                    if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
             track=self.column_track(l)
             if track:
                 if xlabel is None:
@@ -1872,54 +1922,6 @@ class mulgrid(object):
                     else: cvals=False
                     CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
                     if contour_label_format is not None: plt.clabel(CS, inline=1,fmt=contour_label_format)
-                if len(wells)>0:
-                    if hide_wells_outside is False:
-                        def show_well(well): return True
-                    elif isinstance(hide_wells_outside, float):
-                        def show_well(well):
-                            hpos = [pos[:2] for pos in well.pos]
-                            return polyline_line_distance(hpos, l) <= hide_wells_outside
-                    else: raise Exception('slice_plot() error: unrecognised value for parameter hide_wells_outside')
-                    def slice_project(pos):
-                        """Returns 2-D projection of a 3-D point onto the slice plane"""
-                        hppos = line_projection(pos[:2], l)
-                        return np.array([np.linalg.norm(hppos - l[0]), pos[2]])
-                    for well in wells:
-                        if show_well(well):
-                            pwellhead = slice_project(well.head)
-                            plt.plot(pwellhead[0], pwellhead[1], 'o', color = wellcolour)
-                            if hide_wells_outside is False:
-                                wpos = np.array([slice_project(pos) for pos in well.pos])
-                                plt.plot(wpos[:,0], wpos[:,1], '-', color = wellcolour, linewidth = welllinewidth)
-                            else: # draw well sections outside as dotted lines
-                                wellsections = {True: [], False: []}
-                                top = well.head
-                                dtop = point_line_distance(top[:2],l)
-                                topinside = dtop <= hide_wells_outside
-                                wellsections[topinside].append([top])
-                                for bot in well.pos[1:]:
-                                    dbot = point_line_distance(bot[:2],l)
-                                    botinside = dbot <= hide_wells_outside
-                                    if botinside == topinside: wellsections[topinside][-1].append(bot)
-                                    else:
-                                        try: xi = (hide_wells_outside - dtop)/(dbot - dtop)
-                                        except ZeroDivisionError: xi = 1.0
-                                        cross = (1.-xi)*top + xi*bot
-                                        wellsections[topinside][-1].append(cross)
-                                        wellsections[botinside].append([cross])
-                                    top,dtop,topinside = bot,dbot,botinside
-                                linetype = {True:'-', False:':'}
-                                for inside,sections in wellsections.iteritems():
-                                    for section in sections:
-                                        wpos = np.array([slice_project(pos) for pos in section])
-                                        plt.plot(wpos[:,0], wpos[:,1], linetype[inside], color = wellcolour,
-                                                 linewidth = welllinewidth)
-                            if well in well_names:
-                                if wellname_bottom: namepos, namealign = well.bottom, 'top'
-                                else: namepos, namealign = well.head, 'bottom'
-                                nameposp = slice_project(namepos)
-                                ax.text(nameposp[0], nameposp[1], well.name, clip_on = True,
-                                        horizontalalignment = 'center', verticalalignment = namealign)
                 ax.set_ylabel(ylabel)
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'
@@ -1935,6 +1937,7 @@ class mulgrid(object):
                     ax.set_yticks([lay.centre for lay in self.layerlist])
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
+                self.slice_plot_wells(plt, ax, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
