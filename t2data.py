@@ -1493,7 +1493,7 @@ class t2data(object):
         if not self.filename.lower().endswith('.dat'):
             if self.filename[0].isupper(): self.filename += '.DAT'
             else: self.filename += '.dat'
-        self.simulator = simulator + eos
+        self.simulator = simulator.ljust(10) + eos
         self.insert_section('SIMUL')
         self.multi['eos'] = eos
         self.convert_TOUGH2_parameters_to_AUTOUGH2(warn, MP)
