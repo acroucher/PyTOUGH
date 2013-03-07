@@ -1018,7 +1018,16 @@ Well tracks can also optionally be plotted.  Each well is drawn as a line follow
 geo.slice_plot(45.,t,`Temperature',`$^o$C',contours=[100,200])
 \end{verbatim}
 
-plots the variable \texttt{t} through a SW--NE vertical slice (heading 45$^{\circ}$) through the grid, with the values as Temperature ($^{\circ}C$) and contours drawn at 100$^o$C and 200$^o$C.
+plots the variable \texttt{t} through a SW--NE vertical slice (heading 45$^{\circ}$) through the grid, with the values as Temperature ($^{\circ}$C) and contours drawn at 100$^{\circ}$C and 200$^{\circ}$C.
+
+\begin{verbatim}
+from matplotlib import cm
+cmap = cm.get_cmap(`jet', 10)
+geo.slice_plot(45., t, `Temperature', `$^o$C',
+  colourbar_limits = (0., 250.), colourmap = cmap)
+\end{verbatim}
+
+plots the variable \texttt{t} again, but with a specified discrete colour scale with 10 divisions from zero to 250$^{\circ}$C.
 
 \subsubsection{\texttt{snap\_columns\_to\_layers(\emph{min\_thickness}=1.0, \emph{columns}=[])}}
 
