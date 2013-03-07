@@ -1767,10 +1767,10 @@ class mulgrid(object):
         elif wells is False or wells is None: wells = []
         elif isinstance(wells, list):
             if isinstance(wells[0], str): wells = [self.well[name] for name in wells]
-            if well_names is True: well_names = wells
-            elif well_names is None or well_names is False: well_names = []
-            elif isinstance(well_names, list):
-                if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
+        if well_names is True: well_names = wells
+        elif well_names is None or well_names is False: well_names = []
+        elif isinstance(well_names, list):
+            if isinstance(well_names[0], str): well_names = [self.well[name] for name in well_names]
         if len(wells) > 0:
             if hide_wells_outside is False:
                 def show_well(well): return True
