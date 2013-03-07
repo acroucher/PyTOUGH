@@ -1652,7 +1652,8 @@ class mulgrid(object):
                    nodes=None, colourmap=None, linewidth=0.2, linecolour='black', aspect='equal', plt=None, subplot=111, title=None,
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
                    connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
-                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True):
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
+                   rocktypes = None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
         A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
         superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1703,6 +1704,13 @@ class mulgrid(object):
             for i in ithreshold:
                 colc = [col.centre for col in self.connectionlist[i].column]
                 plt.plot([p[0] for p in colc],[p[1] for p in colc],color = colorConverter.to_rgb(str(1.-c[i])))
+        if rocktypes:
+            variable = rocktypes.rocktype_indices
+            varname = 'Rock type'
+            from matplotlib import cm
+            if colourmap is None: colourmap = 'jet'
+            colourmap = cm.get_cmap(colourmap, rocktypes.num_rocktypes)
+            colourbar_limits = (0,rocktypes.num_rocktypes)
         for col in self.columnlist:
             if layer is None: layername = self.column_surface_layer(col).name
             else: layername = layer.name
@@ -1755,6 +1763,10 @@ class mulgrid(object):
         if variable is not None:
             cbar = plt.colorbar(col)
             cbar.set_label(scalelabel)
+            if rocktypes:
+                cbar.set_ticks([i+0.5 for i in xrange(rocktypes.num_rocktypes)])
+                cbar.set_ticklabels([rt.name for rt in rocktypes.rocktypelist])
+                cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
             default_title = varname+' in '+default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
         if title is None: title = default_title
