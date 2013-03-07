@@ -1673,6 +1673,9 @@ class mulgrid(object):
             else: raise Exception("Layer elevation out of range in layer_plot()")
         elif layer is None: default_title = 'surface layer'
         elif layer in self.layerlist: default_title = 'layer '+layer.name
+        elif layer in self.layer:
+            layer = self.layer[layer]
+            default_title = 'layer '+layer.name
         else: raise Exception("Unknown layer in layer_plot()")
         if variable is not None:
             if len(variable)==self.num_columns: variable = self.column_values_to_block(variable)
