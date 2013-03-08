@@ -1653,7 +1653,7 @@ class mulgrid(object):
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
                    connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
-                   rocktypes = None):
+                   rocktypes = None, allrocks = False):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
         A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
         superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1707,10 +1707,6 @@ class mulgrid(object):
         if rocktypes:
             variable = rocktypes.rocktype_indices
             varname = 'Rock type'
-            from matplotlib import cm
-            if colourmap is None: colourmap = 'jet'
-            colourmap = cm.get_cmap(colourmap, rocktypes.num_rocktypes)
-            colourbar_limits = (0,rocktypes.num_rocktypes)
         for col in self.columnlist:
             if layer is None: layername = self.column_surface_layer(col).name
             else: layername = layer.name
@@ -1736,6 +1732,21 @@ class mulgrid(object):
         import matplotlib.collections as collections
         if variable is not None: facecolors = None
         else: facecolors = []
+        if rocktypes:
+            from matplotlib import cm
+            if colourmap is None: colourmap = 'jet'
+            if allrocks:
+                num_shown_rocks = rocktypes.num_rocktypes
+                rocknames = [rt.name for rt in rocktypes.rocktypelist]
+            else:
+                shown_rocks = list(set(vals))
+                shown_rocks.sort()
+                num_shown_rocks = len(shown_rocks)
+                rockmap = dict(zip(shown_rocks, range(num_shown_rocks)))
+                vals = [rockmap[val] for val in vals]
+                rocknames = [rocktypes.rocktypelist[irock].name for irock in shown_rocks]
+            colourmap = cm.get_cmap(colourmap, num_shown_rocks)
+            colourbar_limits = (0, num_shown_rocks)
         col = collections.PolyCollection(verts,cmap = colourmap,linewidth = linewidth,facecolors = facecolors,edgecolors = linecolour)
         if variable is not None: col.set_array(np.array(vals))
         if colourbar_limits is not None: col.norm.vmin,col.norm.vmax = tuple(colourbar_limits)
@@ -1764,8 +1775,8 @@ class mulgrid(object):
             cbar = plt.colorbar(col)
             cbar.set_label(scalelabel)
             if rocktypes:
-                cbar.set_ticks([i+0.5 for i in xrange(rocktypes.num_rocktypes)])
-                cbar.set_ticklabels([rt.name for rt in rocktypes.rocktypelist])
+                cbar.set_ticks([i+0.5 for i in xrange(num_shown_rocks)])
+                cbar.set_ticklabels(rocknames)
                 cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
             default_title = varname+' in '+default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
