@@ -1731,9 +1731,7 @@ class mulgrid(object):
             for i in ithreshold:
                 colc = [col.centre for col in self.connectionlist[i].column]
                 plt.plot([p[0] for p in colc],[p[1] for p in colc],color = colorConverter.to_rgb(str(1.-c[i])))
-        if rocktypes:
-            variable = rocktypes.rocktype_indices
-            varname = 'Rock type'
+        if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
         for col in self.columnlist:
             if layer is None: layername = self.column_surface_layer(col).name
             else: layername = layer.name
@@ -1861,7 +1859,8 @@ class mulgrid(object):
                    linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
                    plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
-                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True):
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
+                   rocktypes = None, allrocks = False, rockgroup = None):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1904,6 +1903,7 @@ class mulgrid(object):
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
             else: varname='Value'
+            if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
             if block_names:
                 if not isinstance(block_names,list): block_names=self.block_name_list
             else: block_names=[]
@@ -1943,6 +1943,8 @@ class mulgrid(object):
                 import matplotlib.collections as collections
                 if variable is not None: facecolors=None
                 else: facecolors=[]
+                if rocktypes: vals, rocknames, colourmap, colourbar_limits = \
+                        self.setup_rocktype_plot(rocktypes, vals, colourmap, allrocks, rockgroup)
                 col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
                 if variable is not None: col.set_array(np.array(vals))
                 if colourbar_limits is not None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
@@ -1968,6 +1970,10 @@ class mulgrid(object):
                 if variable is not None:
                     cbar=plt.colorbar(col)
                     cbar.set_label(scalelabel)
+                    if rocktypes:
+                        cbar.set_ticks([i+0.5 for i in range(len(rocknames))])
+                        cbar.set_ticklabels(rocknames)
+                        cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
                     default_title=varname+' in '+default_title
                 if column_axis:
                     ax.set_xticks(colcentres)
