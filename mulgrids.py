@@ -1796,7 +1796,8 @@ class mulgrid(object):
         plt.title(title)
         if loneplot: plt.show()
 
-    def slice_plot_wells(self, plt, ax, line, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom):
+    def slice_plot_wells(self, plt, ax, linespec, line, wells, well_names, hide_wells_outside,
+                         wellcolour, welllinewidth, wellname_bottom):
         """Draws wells on a layer plot, given the plot and axes.  For documentation of the parameters, see slice_plot()."""
         if wells is True: wells = self.welllist
         elif wells is False or wells is None: wells = []
@@ -1818,12 +1819,16 @@ class mulgrid(object):
                 """Returns 2-D projection of a 3-D point onto the slice plane"""
                 hppos = line_projection(pos[:2], line)
                 return np.array([np.linalg.norm(hppos - line[0]), pos[2]])
+            def slice_translate(pos):
+                if linespec == 'x': pos += np.array([line[0][0], 0.])
+                elif linespec == 'y': pos += np.array([line[0][1], 0.])
+                return pos
             for well in wells:
                 if show_well(well):
-                    pwellhead = slice_project(well.head)
+                    pwellhead = slice_translate(slice_project(well.head))
                     plt.plot(pwellhead[0], pwellhead[1], 'o', color = wellcolour)
                     if hide_wells_outside is False:
-                        wpos = np.array([slice_project(pos) for pos in well.pos])
+                        wpos = slice_translate(np.array([slice_project(pos) for pos in well.pos]))
                         plt.plot(wpos[:,0], wpos[:,1], '-', color = wellcolour, linewidth = welllinewidth)
                     else: # draw well sections outside as dotted lines
                         wellsections = {True: [], False: []}
@@ -1845,13 +1850,13 @@ class mulgrid(object):
                         linetype = {True:'-', False:':'}
                         for inside,sections in wellsections.iteritems():
                             for section in sections:
-                                wpos = np.array([slice_project(pos) for pos in section])
+                                wpos = slice_translate(np.array([slice_project(pos) for pos in section]))
                                 plt.plot(wpos[:,0], wpos[:,1], linetype[inside], color = wellcolour,
                                          linewidth = welllinewidth)
                     if well in well_names:
                         if wellname_bottom: namepos, namealign = well.bottom, 'top'
                         else: namepos, namealign = well.head, 'bottom'
-                        nameposp = slice_project(namepos)
+                        nameposp = slice_translate(slice_project(namepos))
                         ax.text(nameposp[0], nameposp[1], well.name, clip_on = True,
                                 horizontalalignment = 'center', verticalalignment = namealign)
 
@@ -1983,7 +1988,7 @@ class mulgrid(object):
                     ax.set_yticks([lay.centre for lay in self.layerlist])
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
-                self.slice_plot_wells(plt, ax, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
+                self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
