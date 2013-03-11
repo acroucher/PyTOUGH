@@ -1864,7 +1864,7 @@ class mulgrid(object):
                    linecolour='black', aspect='auto', plt=None, subplot=111, title=None, xlabel=None, ylabel='elevation (m)',
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
                    plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
-                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
+                   hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = False,
                    rocktypes = None, allrocks = False, rockgroup = None):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 

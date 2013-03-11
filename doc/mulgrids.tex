@@ -950,7 +950,7 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{contours}=False, \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{column\_axis}=False, \emph{layer\_axis}=False,\\
     \emph{wells}=None, \emph{well\_names}=True, \emph{hide\_wells\_outside}=False, \emph{wellcolour}=`blue',\\
-    \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \\
+    \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=False, \emph{rocktypes}=None, \emph{allrocks}=False, \\
     \emph{rockgroup}=None))}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
@@ -961,7 +961,7 @@ The name and units of the variable can optionally be specified, and the name of 
 
 When a variable is plotted over the grid, contours at specified levels can also be drawn, and optionally labelled with their values.
 
-Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom (or optionally the top) of the well.  If \texttt{hide\_wells\_outside} is specified as a floating point number, wells that do not pass within the specified distance from the slice line are not shown.  Well tracks are shown as solid lines over sections within the specified distance from the slice line, and dotted lines otherwise.
+Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the top (or optionally the bottom) of the well.  If \texttt{hide\_wells\_outside} is specified as a floating point number, wells that do not pass within the specified distance from the slice line are not shown.  Well tracks are shown as solid lines over sections within the specified distance from the slice line, and dotted lines otherwise.
 
 Rock types can be shown on the slice plot by specifying a \texttt{t2grid} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
 
@@ -1020,7 +1020,7 @@ Rock types can be shown on the slice plot by specifying a \texttt{t2grid} object
 \item \textbf{welllinewidth}: float\\
   Line width for drawing the wells.
 \item \textbf{wellname\_bottom}: Boolean\\
-  Set to \texttt{False} to label wells at the wellhead rather than the bottom.
+  Set to \texttt{True} to label wells at the bottom rather than the wellhead.
 \item \textbf{rocktypes}: \texttt{t2grid} (or \texttt{None})\\
   To plot rock types, specify a \texttt{t2grid} object containing rock types for the grid.  If \texttt{None}, no rock types will be plotted.
 \item \textbf{allrocks}: Boolean\\
