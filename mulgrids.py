@@ -50,13 +50,12 @@ def valid_blockname(name):
 def fortran_float(s):
     """Returns float of a string written by Fortran.  Sometimes when Fortran writes out very small values,
     and encounters underflow, it appears to drop the 'E' exponent. This functions traps such errors."""
-    try: v=float(s)
+    try: return float(s)
     except ValueError:
         try: # underflow in exponent sometimes deletes 'e':
-            v=float(s.replace('-','e-'))
-        except ValueError: # give up
-            v=0.0
-    return v
+            return float(s.replace('-','e-'))
+        except ValueError: return np.nan
+    except: return np.nan
 
 class NamingConventionError(Exception):
     """Used to raise exceptions when grid naming convention is not respected- e.g. when column
