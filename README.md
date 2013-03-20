@@ -14,11 +14,13 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
+* Ability to plot well tracks on mulgrid layer_plot() and slice_plot() plots
+
+* Ability to plot rock types on mulgrid layer_plot() and slice_plot() plots
+
+* New t2data convert_to_AUTOUGH2() method for converting TOUGH2 input data files to AUTOUGH2
+
+* Support for AUTOUGH2 extended precision auxiliary input
+
 * **User guide**: As of PyTOUGH version 1.3.6, the PyTOUGH user guide (PyTOUGH-guide.pdf) is now included in the 'doc' directory of your PyTOUGH install.  Previously this was available separately from the 'Downloads' section on the website, but recently GitHub decided to phase out this 'Downloads' section.
-
-* Added new `column_axis` and `layer_axis` parameters to the `mulgrid.slice_plot()` method, so that column and layer names can be displayed on the axes instead of coordinates
-
-* Added new `mulgrid.rename_column()` method
- 
-* Fixed bugs in the `mulgrid` `column_values()`, `refine()` and `rename_layer`  methods
 
