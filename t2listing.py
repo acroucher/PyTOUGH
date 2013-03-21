@@ -419,7 +419,7 @@ class t2listing(file):
         if self._short[self._index]: keyword=tablename[0].upper()+'SHORT'
         else: keyword=tablename[0].upper()*5
         self.skipto(keyword)
-        if tablename<>'element': self.skipto(keyword)
+        if last_tablename is not None: self.skipto(keyword)
         self.skip_to_blank()
         self.skip_to_nonblank()
 
