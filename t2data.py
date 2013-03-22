@@ -1209,7 +1209,8 @@ class t2data(object):
             if keyword not in mesh_sections: self.write_fn[keyword](outfile)
         additional_sections = [keyword for keyword in t2data_sections if 
                                (keyword not in self._sections) and (keyword not in mesh_sections) and
-                                (self.echo_extra_precision and keyword in self.extra_precision)]
+                               ((keyword not in self.extra_precision) or
+                                (keyword in self.extra_precision and self.echo_extra_precision))]
         for keyword in additional_sections: self.write_fn[keyword](outfile)
         outfile.write(self.end_keyword+'\n')
         outfile.close()
