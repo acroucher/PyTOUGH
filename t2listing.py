@@ -87,6 +87,24 @@ class listingtable(object):
                 else: return []
             combine=[all,any][match_any]
             return [self[key] for key in self.row_name if combine([search(p,n) for p,n in zip(pattern,key)])]
+    def __add__(self, other):
+        """Adds two listing tables together."""
+        if self.column_name == other.column_name and self.row_name == other.row_name:
+            from copy import copy
+            result = listingtable(copy(self.column_name), copy(self.row_name), num_keys = self.num_keys,
+                                  allow_reverse_keys = self.allow_reverse_keys)
+            result._data = self._data + other._data
+            return result
+        else: raise Exception("Incompatible tables: can't be added together.")
+    def __sub__(self, other):
+        """Subtracts one listing table from another."""
+        if self.column_name == other.column_name and self.row_name == other.row_name:
+            from copy import copy
+            result = listingtable(copy(self.column_name), copy(self.row_name), num_keys = self.num_keys,
+                                  allow_reverse_keys = self.allow_reverse_keys)
+            result._data = self._data - other._data
+            return result
+        else: raise Exception("Incompatible tables: can't be subtracted.")
 
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
