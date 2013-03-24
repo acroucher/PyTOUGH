@@ -883,10 +883,10 @@ class t2listing(file):
     reductions=property(get_reductions)
 
     def get_difference(self,indexa=None,indexb=None):
-        """Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.
-        If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the
-        result is the difference between the given index and the one before that.  If neither are given, the result is the difference between
-        the last and penultimate sets of results."""
+        """Returns dictionary of maximum differences, and locations of difference, of all element table properties between
+        two sets of results.  If both indexa and indexb are provided, the result is the difference between these two result indices.
+        If only one index is given, the result is the difference between the given index and the one before that.
+        If neither are given, the result is the difference between the last and penultimate sets of results."""
         from copy import deepcopy
         tablename='element'
         if indexa is None: self.last()
