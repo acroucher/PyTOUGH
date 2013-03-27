@@ -53,10 +53,11 @@ def fortran_float(s):
     drop the 'E' exponent. This functions traps such errors."""
     try: return float(s)
     except ValueError:
-        if not s.strip(): return 0.0
+        s = s.strip()
+        if not s: return 0.0
         else:
             try: # underflow in exponent sometimes deletes 'e':
-                return float(s.replace('-','e-'))
+                return float(''.join([s[0],s[1:].replace('-','e-')]))
             except ValueError: return np.nan
     except: return np.nan
 
