@@ -48,13 +48,16 @@ def valid_blockname(name):
     return all([s in letter_digit_space_punct for s in name[0:3]]) and (name[3] in digit_space) and (name[4] in digits)
 
 def fortran_float(s):
-    """Returns float of a string written by Fortran.  Sometimes when Fortran writes out very small values,
-    and encounters underflow, it appears to drop the 'E' exponent. This functions traps such errors."""
+    """Returns float of a string written by Fortran.  Blank strings will return a zero value.
+    Sometimes when Fortran writes out very small values, and encounters underflow, it appears to
+    drop the 'E' exponent. This functions traps such errors."""
     try: return float(s)
     except ValueError:
-        try: # underflow in exponent sometimes deletes 'e':
-            return float(s.replace('-','e-'))
-        except ValueError: return np.nan
+        if not s.strip(): return 0.0
+        else:
+            try: # underflow in exponent sometimes deletes 'e':
+                return float(s.replace('-','e-'))
+            except ValueError: return np.nan
     except: return np.nan
 
 class NamingConventionError(Exception):
