@@ -87,6 +87,24 @@ class listingtable(object):
                 else: return []
             combine=[all,any][match_any]
             return [self[key] for key in self.row_name if combine([search(p,n) for p,n in zip(pattern,key)])]
+    def __add__(self, other):
+        """Adds two listing tables together."""
+        if self.column_name == other.column_name and self.row_name == other.row_name:
+            from copy import copy
+            result = listingtable(copy(self.column_name), copy(self.row_name), num_keys = self.num_keys,
+                                  allow_reverse_keys = self.allow_reverse_keys)
+            result._data = self._data + other._data
+            return result
+        else: raise Exception("Incompatible tables: can't be added together.")
+    def __sub__(self, other):
+        """Subtracts one listing table from another."""
+        if self.column_name == other.column_name and self.row_name == other.row_name:
+            from copy import copy
+            result = listingtable(copy(self.column_name), copy(self.row_name), num_keys = self.num_keys,
+                                  allow_reverse_keys = self.allow_reverse_keys)
+            result._data = self._data - other._data
+            return result
+        else: raise Exception("Incompatible tables: can't be subtracted.")
 
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
@@ -865,10 +883,10 @@ class t2listing(file):
     reductions=property(get_reductions)
 
     def get_difference(self,indexa=None,indexb=None):
-        """Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.
-        If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the
-        result is the difference between the given index and the one before that.  If neither are given, the result is the difference between
-        the last and penultimate sets of results."""
+        """Returns dictionary of maximum differences, and locations of difference, of all element table properties between
+        two sets of results.  If both indexa and indexb are provided, the result is the difference between these two result indices.
+        If only one index is given, the result is the difference between the given index and the one before that.
+        If neither are given, the result is the difference between the last and penultimate sets of results."""
         from copy import deepcopy
         tablename='element'
         if indexa is None: self.last()

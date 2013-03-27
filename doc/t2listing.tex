@@ -282,6 +282,8 @@ The properties of a \texttt{listingtable} object are given in Table \ref{tb:list
   \end{center}
 \end{table}
 
+It is possible to perform addition and subtraction operations on \texttt{listingtable} objects.  Subtraction can be useful, for example, when comparing results from different runs.  These operations can only be carried out when the row and column names of the two tables are identical.  The resulting table will have the same row and column names as the original tables, but will contain the element-wise sums or differences.
+
 \texttt{listingtable} objects have one method as described below.
 
 \subsubsection{\texttt{rows\_matching(\emph{pattern}, \emph{index}=0, \emph{match\_any}=False)}}
