@@ -407,18 +407,26 @@ class t2listing(file):
         return self.table_type(keyword)
 
     def next_table_TOUGH2(self):
-        line='\n'
-        while not ((line.strip().startswith('KCYC') and 'ITER' in line) or line==''): line=self.readline()
-        if line=='': return None
-        else:
-            pos=self.tell()
-            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
-                if pos>=self._fullpos[self.index+1]: return None
-            self.skip_to_nonblank()
-            headpos=self.tell()
-            headers=tuple(self.readline().strip().split()[0:3])
-            self.seek(headpos)
-            return self.table_type(headers)
+        found = False
+        while not found:
+            line = '\n'
+            while not ((line.strip().startswith('KCYC') and 'ITER' in line) or line == ''): line = self.readline()
+            if line == '': return None
+            else:
+                pos=self.tell()
+                if (self.num_fulltimes > 1) and (self.index < self.num_fulltimes-1):
+                    if pos >= self._fullpos[self.index+1]: return None
+                self.skip_to_nonblank()
+                headpos = self.tell()
+                line = self.readline().strip()
+                if line == 'MASS FLOW RATES (KG/S) FROM DIFFUSION':
+                    # skip over extra mass flow rate table in EOS7c listings:
+                    self.skipto('@@@@@')
+                else: 
+                    headers = tuple(line.strip().split()[0:3])
+                    self.seek(headpos)
+                    found = True
+                    return self.table_type(headers)
 
     def next_table_TOUGHplus(self):
         if self.skipto('_____',0):
