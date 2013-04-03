@@ -731,8 +731,9 @@ class t2listing(file):
             key=self._table[tablename].key_from_line(line)
             self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
             line=self.readline()
-            if line.startswith('\f') or line==headline:
-                line=self.readline()
+            lf = line.startswith('\f')
+            if lf or line==headline:
+                if lf: line = self.readline()
                 if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
                 else: # extra headers in the middle of TOUGH2 listings
                     self.skip_over_next_blank()
