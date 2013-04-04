@@ -2640,7 +2640,7 @@ class mulgrid(object):
                 self.set_column_num_layers(col)
             self.snap_columns_to_layers(layer_snap,columns)
             self.setup_block_name_index()
-        else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
+        else: raise Exception('Grid selection contains columns with more than 4 nodes: not supported.')
 
     def refine(self,columns=[],bisect=False,bisect_edge_columns=[]):
         """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
