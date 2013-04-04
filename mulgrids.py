@@ -2630,8 +2630,9 @@ class mulgrid(object):
                         J=node_index[nodej.name]
                         A[I,J]+=smooth[col.num_nodes][i,j]
             A=A.tocsr()
-            from scipy.sparse.linalg import spsolve
-            z=spsolve(A,b)
+            from scipy.sparse.linalg import spsolve, use_solver
+            use_solver(useUmfpack = False)
+            z = spsolve(A, b)
             # assign nodal elevations to columns:
             for col in columns:
                 nodez=[z[node_index[node.name]] for node in col.node]
