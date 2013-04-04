@@ -2570,7 +2570,7 @@ class mulgrid(object):
                     col.num_layers-=1
             self.setup_block_name_index()
 
-    def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False, layer_snap=0.0):
+    def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False, layer_snap=0.0, silent = False):
         """Fits column surface elevations to the grid from the data, using least-squares bilinear finite element fitting with
         Sobolev smoothing.  The parameter data should be in the form of a 3-column array with x,y,z data in each row.
         The smoothing parameters alpha and beta control the first and second derivatives of the surface.
@@ -2604,9 +2604,10 @@ class mulgrid(object):
             for idata,d in enumerate(data):
                 col=self.column_containing_point(d[0:2],columns,guess,bounds,qtree)
                 percent=100.*idata/nd
-                ps='fit_surface %3.0f%% done'% percent
-                sys.stdout.write('%s\r' % ps)
-                sys.stdout.flush()
+                if not silent:
+                    ps='fit_surface %3.0f%% done'% percent
+                    sys.stdout.write('%s\r' % ps)
+                    sys.stdout.flush()
                 if col:
                     xi=col.local_pos(d[0:2])
                     if xi is not None:
