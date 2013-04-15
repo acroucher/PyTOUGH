@@ -589,7 +589,7 @@ class t2listing(file):
                 indexstr=s
                 nkeys=strs.index(s)
                 break
-        found, header_skiplines = False, 0
+        found, header_skiplines = False, 1
         while not found:
             pos = self.tell()
             line = self.readline().strip()
@@ -626,7 +626,7 @@ class t2listing(file):
                     while not is_header(line):
                         line,count = count_read(count)
                         if line.strip()==self.title: return '' # some TOUGH2_MP output ends with \f
-                    for i in xrange(header_skiplines+1): line,count = count_read(count)
+                    for i in xrange(header_skiplines): line,count = count_read(count)
             # sort rows (needed for TOUGH2_MP):
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
@@ -745,10 +745,7 @@ class t2listing(file):
     def read_table_TOUGH2(self,tablename):
         table = self._table[tablename]
         ncols = table.num_columns
-        cols = table.column_name
-        def is_header(line): return all([col in line for col in cols])
         fmt = table.row_format
-        headline = self.readline().strip()
         self.skiplines(table.header_skiplines)
         line = self.readline()
         while line.strip() and not line[1:].startswith('@@@@@'):
@@ -759,9 +756,6 @@ class t2listing(file):
 
     def skip_table_TOUGH2(self,tablename):
         table = self._table[tablename]
-        cols = table.column_name
-        def is_header(line): return all([col in line for col in cols])
-        headline = self.readline().strip()
         self.skiplines(table.header_skiplines)
         line = self.readline()
         while line.strip() and not line[1:].startswith('@@@@@'):
@@ -775,7 +769,7 @@ class t2listing(file):
             while not table.is_header(line):
                 line = self.readline()
                 if line.strip()==self.title: return '' # some TOUGH2_MP output ends with \f
-            for i in xrange(table.header_skiplines+1): line = self.readline()
+            for i in xrange(table.header_skiplines): line = self.readline()
         return line
 
     def history(self,selection,short=True):
