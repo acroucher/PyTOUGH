@@ -1678,7 +1678,7 @@ class mulgrid(object):
         colourbar_limits = (0, num_shown_rocks)
         return vals, rocknames, colourmap, colourbar_limits
 
-    def layer_plot_flows(self, plt, X, Y, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos):
+    def plot_flows(self, plt, X, Y, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos):
         """Draws flows (and a key) on a layer or slice plot."""
         if len(X) > 0:
             maxq = max([np.linalg.norm(np.array([u,v])) for u,v in zip(U,V)])
@@ -1826,7 +1826,7 @@ class mulgrid(object):
                 cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
             default_title = varname+' in '+default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-        self.layer_plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
+        self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
         if title is None: title = default_title
         plt.title(title)
         if loneplot: plt.show()
