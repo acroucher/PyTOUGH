@@ -1767,6 +1767,7 @@ class mulgrid(object):
                 grid = t2grid().fromgeo(self)
             if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
             blkflow = flux_matrix * flow
+            natm = self.num_atmosphere_blocks
             U,V = [],[]
 
         for col in self.columnlist:
@@ -1786,11 +1787,12 @@ class mulgrid(object):
                 if col.name in column_centres:
                     ax.text(col.centre[0],col.centre[1],'+',color = 'red',clip_on = True,
                             horizontalalignment = 'center',verticalalignment = 'center')
-                blkindex = self.block_name_index[blkname]
-                bi3 = 3*blkindex
-                q = blkflow[bi3:bi3+3]
-                U.append(q[0])
-                V.append(q[1])
+                if flow is not None:
+                    blkindex = self.block_name_index[blkname]
+                    bi3 = 3*blkindex - natm
+                    q = blkflow[bi3:bi3+3]
+                    U.append(q[0])
+                    V.append(q[1])
 
         for node in [self.node[name] for name in node_names]:
                 ax.text(node.pos[0],node.pos[1],node.name,clip_on = True,horizontalalignment = 'center')
@@ -1905,7 +1907,8 @@ class mulgrid(object):
                    contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100), colourbar_limits=None,
                    plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = False,
-                   rocktypes = None, allrocks = False, rockgroup = None):
+                   rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
+                   flow_variable_name = None, flow_unit = None, flow_scale = None, flow_key_pos = (0.5, 0.02)):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1952,8 +1955,10 @@ class mulgrid(object):
             if block_names:
                 if not isinstance(block_names,list): block_names=self.block_name_list
             else: block_names=[]
+
             track=self.column_track(l)
             if track:
+
                 if xlabel is None:
                     if line=='x': xlabel='x (m)'
                     elif line=='y': xlabel='y (m)'
@@ -1962,7 +1967,20 @@ class mulgrid(object):
                 if column_axis: colnames, colcentres = [],[]
                 verts,vals=[],[]
                 if not isinstance(contours,bool): contours=list(contours)
-                if contours<>False: xc,yc=[],[]
+                if contours != False or flow is not None: xc,yc=[],[]
+                if flow is not None:
+                    if flow_variable_name is None: flow_variable_name = 'Flow'
+                    if flow_unit is None: flow_unit = 'units'
+                    if grid is None:
+                        from t2grids import t2grid
+                        grid = t2grid().fromgeo(self)
+                    if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
+                    blkflow = flux_matrix * flow
+                    natm = self.num_atmosphere_blocks
+                    U,V = [],[]
+                    slice_dirn = (l[1] - l[0]).T
+                    slice_dirn /= np.linalg.norm(slice_dirn) # normal vector in slice direction
+
                 for trackitem in track:
                     col,points=trackitem[0],trackitem[1:]
                     inpoint=points[0]
@@ -1983,8 +2001,16 @@ class mulgrid(object):
                             verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
                             if blkname in block_names:
                                 ax.text(dcol,lay.centre,blkname,clip_on=True,horizontalalignment='center')
-                            if contours<>False:
+                            if contours != False or flow is not None:
                                 xc.append(dcol); yc.append(lay.centre)
+                            if flow is not None:
+                                blkindex = self.block_name_index[blkname] - natm
+                                bi3 = 3*blkindex
+                                q = blkflow[bi3:bi3+3]
+                                qslice = np.dot(slice_dirn, q[:2])
+                                U.append(qslice)
+                                V.append(q[2])
+
                 import matplotlib.collections as collections
                 if variable is not None: facecolors=None
                 else: facecolors=[]
@@ -2025,6 +2051,7 @@ class mulgrid(object):
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
+                self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
