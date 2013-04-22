@@ -1678,12 +1678,27 @@ class mulgrid(object):
         colourbar_limits = (0, num_shown_rocks)
         return vals, rocknames, colourmap, colourbar_limits
 
+    def layer_plot_flows(self, plt, X, Y, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos):
+        """Draws flows (and a key) on a layer or slice plot."""
+        if len(X) > 0:
+            maxq = max([np.linalg.norm(np.array([u,v])) for u,v in zip(U,V)])
+            if flow_scale is None:
+                if maxq > 0.:
+                    from math import log10
+                    flow_scale = 10**(int(round(log10(maxq)))) # order of magnitude
+                else: flow_scale = 1.e-9
+            flow_scale_factor = flow_scale * 10.
+            Q = plt.quiver(X, Y, U, V, units = 'width', pivot = 'middle', scale = flow_scale_factor, scale_units = 'width')
+            qk = plt.quiverkey(Q, flow_key_pos[0], flow_key_pos[1], flow_scale,
+                               flow_variable_name + '/area = ' + str(flow_scale) + ' ' +flow_unit + '/$m^2$')
+
     def layer_plot(self, layer=0, variable=None, variable_name=None, unit=None, column_names=None, node_names=None, column_centres=None,
                    nodes=None, colourmap=None, linewidth=0.2, linecolour='black', aspect='equal', plt=None, subplot=111, title=None,
                    xlabel='x (m)', ylabel='y (m)', contours=False, contour_label_format='%3.0f', contour_grid_divisions=(100,100),
                    connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
-                   rocktypes = None, allrocks = False, rockgroup = None):
+                   rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
+                   flow_variable_name = None, flow_unit = None, flow_scale = None, flow_key_pos = (0.5, 0.02)):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
         A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
         superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1726,7 +1741,7 @@ class mulgrid(object):
         else: nodes = []
         verts,vals = [],[]
         if not isinstance(contours,bool): contours = list(contours)
-        if contours<>False: xc,yc = [],[]
+        if contours != False or flow is not None: xc,yc = [],[]
         if connections is not None:
             c = np.abs(self.connection_angle_cosine)
             ithreshold = np.where(c>connections)[0]
@@ -1735,12 +1750,22 @@ class mulgrid(object):
                 colc = [col.centre for col in self.connectionlist[i].column]
                 plt.plot([p[0] for p in colc],[p[1] for p in colc],color = colorConverter.to_rgb(str(1.-c[i])))
         if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
+        if flow is not None:
+            if flow_variable_name is None: flow_variable_name = 'Flow'
+            if flow_unit is None: flow_unit = 'units'
+            if grid is None:
+                from t2grids import t2grid
+                grid = t2grid().fromgeo(self)
+            if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
+            blkflow = flux_matrix * flow
+            U,V = [],[]
+
         for col in self.columnlist:
             if layer is None: layername = self.column_surface_layer(col).name
             else: layername = layer.name
             blkname = self.block_name(layername,col.name)
             if blkname in self.block_name_list:
-                if contours<>False:
+                if contours != False or flow is not None:
                     xc.append(col.centre[0])
                     yc.append(col.centre[1])
                 if variable is not None: val = variable[self.block_name_index[blkname]]
@@ -1752,6 +1777,12 @@ class mulgrid(object):
                 if col.name in column_centres:
                     ax.text(col.centre[0],col.centre[1],'+',color = 'red',clip_on = True,
                             horizontalalignment = 'center',verticalalignment = 'center')
+                blkindex = self.block_name_index[blkname]
+                bi3 = 3*blkindex
+                q = blkflow[bi3:bi3+3]
+                U.append(q[0])
+                V.append(q[1])
+
         for node in [self.node[name] for name in node_names]:
                 ax.text(node.pos[0],node.pos[1],node.name,clip_on = True,horizontalalignment = 'center')
         for node in [self.node[name] for name in nodes]:
@@ -1795,6 +1826,7 @@ class mulgrid(object):
                 cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
             default_title = varname+' in '+default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
+        self.layer_plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
         if title is None: title = default_title
         plt.title(title)
         if loneplot: plt.show()
