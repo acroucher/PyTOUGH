@@ -1678,6 +1678,15 @@ class mulgrid(object):
         colourbar_limits = (0, num_shown_rocks)
         return vals, rocknames, colourmap, colourbar_limits
 
+    def plot_colourbar(self, plt, col, scalelabel, rocktypes, rocknames):
+        """Draws colour bar on a layer or slice plot."""
+        cbar = plt.colorbar(col)
+        cbar.set_label(scalelabel)
+        if rocktypes:
+            cbar.set_ticks([i+0.5 for i in range(len(rocknames))])
+            cbar.set_ticklabels(rocknames)
+            cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
+
     def plot_flows(self, plt, X, Y, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos):
         """Draws flows (and a key) on a layer or slice plot."""
         if len(X) > 0:
@@ -1793,6 +1802,7 @@ class mulgrid(object):
         else: facecolors = []
         if rocktypes: vals, rocknames, colourmap, colourbar_limits = \
                 self.setup_rocktype_plot(rocktypes, vals, colourmap, allrocks, rockgroup)
+        else: rocknames, rocktypes = None, None
         col = collections.PolyCollection(verts,cmap = colourmap,linewidth = linewidth,facecolors = facecolors,edgecolors = linecolour)
         if variable is not None: col.set_array(np.array(vals))
         if colourbar_limits is not None: col.norm.vmin,col.norm.vmax = tuple(colourbar_limits)
@@ -1818,13 +1828,8 @@ class mulgrid(object):
         scalelabel = varname
         if unit: scalelabel += ' ('+unit+')'
         if variable is not None:
-            cbar = plt.colorbar(col)
-            cbar.set_label(scalelabel)
-            if rocktypes:
-                cbar.set_ticks([i+0.5 for i in range(len(rocknames))])
-                cbar.set_ticklabels(rocknames)
-                cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
-            default_title = varname+' in '+default_title
+            self.plot_colourbar(plt, col, scalelabel, rocktypes, rocknames)
+            default_title = varname + ' in ' + default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
         self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
         if title is None: title = default_title
@@ -1985,6 +1990,7 @@ class mulgrid(object):
                 else: facecolors=[]
                 if rocktypes: vals, rocknames, colourmap, colourbar_limits = \
                         self.setup_rocktype_plot(rocktypes, vals, colourmap, allrocks, rockgroup)
+                else: rocknames, rocktypes = None, None
                 col=collections.PolyCollection(verts,cmap=colourmap,linewidth=linewidth,facecolors=facecolors,edgecolors=linecolour)
                 if variable is not None: col.set_array(np.array(vals))
                 if colourbar_limits is not None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
@@ -2008,12 +2014,7 @@ class mulgrid(object):
                 scalelabel=varname
                 if unit: scalelabel+=' ('+unit+')'
                 if variable is not None:
-                    cbar=plt.colorbar(col)
-                    cbar.set_label(scalelabel)
-                    if rocktypes:
-                        cbar.set_ticks([i+0.5 for i in range(len(rocknames))])
-                        cbar.set_ticklabels(rocknames)
-                        cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
+                    self.plot_colourbar(plt, col, scalelabel, rocktypes, rocknames)
                     default_title=varname+' in '+default_title
                 if column_axis:
                     ax.set_xticks(colcentres)
