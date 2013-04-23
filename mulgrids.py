@@ -1788,8 +1788,8 @@ class mulgrid(object):
                     ax.text(col.centre[0],col.centre[1],'+',color = 'red',clip_on = True,
                             horizontalalignment = 'center',verticalalignment = 'center')
                 if flow is not None:
-                    blkindex = self.block_name_index[blkname]
-                    bi3 = 3*blkindex - natm
+                    blkindex = self.block_name_index[blkname] - natm
+                    bi3 = 3*blkindex
                     q = blkflow[bi3:bi3+3]
                     U.append(q[0])
                     V.append(q[1])
@@ -1997,12 +1997,13 @@ class mulgrid(object):
                             if variable is not None: val=variable[self.block_name_index[blkname]]
                             else: val=0
                             vals.append(val)
-                            top=self.block_surface(lay,col)
+                            top = self.block_surface(lay,col)
+                            centre = self.block_centre(lay,col)
                             verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
                             if blkname in block_names:
-                                ax.text(dcol,lay.centre,blkname,clip_on=True,horizontalalignment='center')
+                                ax.text(dcol, centre[2], blkname, clip_on = True, horizontalalignment = 'center')
                             if contours != False or flow is not None:
-                                xc.append(dcol); yc.append(lay.centre)
+                                xc.append(dcol); yc.append(centre[2])
                             if flow is not None:
                                 blkindex = self.block_name_index[blkname] - natm
                                 bi3 = 3*blkindex
