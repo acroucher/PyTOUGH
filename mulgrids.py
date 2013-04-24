@@ -786,7 +786,7 @@ class mulgrid(object):
         """Adds connection to the grid"""
         self.connectionlist.append(con)
         self.connection[(con.column[0].name,con.column[1].name)]=self.connectionlist[-1]
-        self.connectionlist[-1].node=list(set(con.column[0].node).intersection(set(con.column[1].node)))
+        self.connectionlist[-1].node = [n for n in con.column[0].node if n in con.column[1].node]
         for col in self.connectionlist[-1].column: col.connection.add(self.connectionlist[-1])
 
     def delete_connection(self,colnames):
