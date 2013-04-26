@@ -1833,7 +1833,7 @@ class mulgrid(object):
             self.plot_colourbar(plt, col, scalelabel, rocktypes, rocknames)
             default_title = varname + ' in ' + default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-        self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
+        if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
         if title is None: title = default_title
         plt.title(title)
         if loneplot: plt.show()
@@ -2052,7 +2052,7 @@ class mulgrid(object):
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-                self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
+                if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
