@@ -115,6 +115,32 @@ class t2grid(object):
             col=geo.column[colname]
             blk.centre=geo.block_centre(lay,col)
 
+    def calculate_connection_centres(self, geo):
+        """Calculates centre (and normal vector) for each connection face."""
+        layindex = dict([(lay.name,i) for i,lay in enumerate(geo.layerlist)])
+        for con in self.connectionlist:
+            layernames = [geo.layer_name(blk.name) for blk in con.block]
+            if layernames[0] == layernames[1]: # horizontal connection
+                lay = geo.layer[layernames[0]]
+                colnames = tuple([geo.column_name(blk.name) for blk in con.block])
+                geocon = geo.connection[colnames]
+                vcentre = 0.5 * min([lay.bottom + geo.block_surface(lay,c) for c in geocon.column])
+                dpos = geocon.node[1].pos - geocon.node[0].pos
+                hcentre = 0.5 * (geocon.node[0].pos + geocon.node[1].pos)
+                con.normal = np.array([dpos[1], -dpos[0], 0.]) / np.linalg.norm(dpos)
+            else: # vertical connection
+                colnames = [geo.column_name(blk.name) for blk in con.block]
+                colname = [colname for colname in colnames if colname != geo.atmosphere_column_name][0]
+                col = geo.column[colname]
+                hcentre = col.centre
+                layindices = [layindex[layname] for layname in layernames]
+                if layindices[0] > layindices[1]: ilower,sgn = 0,1.
+                else: ilower,sgn = 1,-1.
+                lay = geo.layerlist[layindices[ilower]]
+                vcentre = geo.block_surface(lay,col)
+                con.normal = np.array([0., 0., sgn])
+            con.centre = np.hstack((hcentre, np.array([vcentre])))
+
     def rocktype_frequency(self,rockname):
         """Returns how many times the rocktype with given name is used in the grid."""
         return [blk.rocktype.name for blk in self.blocklist].count(rockname)
