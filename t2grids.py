@@ -135,15 +135,14 @@ class t2grid(object):
                 hcentre = 0.5 * (geocon.node[0].pos + geocon.node[1].pos)
                 con.normal = np.array([dpos[1], -dpos[0], 0.]) / np.linalg.norm(dpos)
             else: # vertical connection
-                colnames = [geo.column_name(blk.name) for blk in con.block]
-                colname = [colname for colname in colnames if colname != geo.atmosphere_column_name][0]
+                layindices = np.array([layindex[layname] for layname in layernames])
+                ilower = np.argmax(layindices)
+                colname = geo.column_name(con.block[ilower].name)
                 col = geo.column[colname]
                 hcentre = col.centre
-                layindices = [layindex[layname] for layname in layernames]
-                if layindices[0] > layindices[1]: ilower,sgn = 0,1.
-                else: ilower,sgn = 1,-1.
-                lay = geo.layerlist[layindices[ilower]]
+                lay = geo.layer[layernames[ilower]]
                 vcentre = geo.block_surface(lay,col)
+                sgn = [1.,-1.][ilower]
                 con.normal = np.array([0., 0., sgn])
             con.centre = np.hstack((hcentre, np.array([vcentre])))
 
