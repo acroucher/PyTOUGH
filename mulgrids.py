@@ -1687,7 +1687,7 @@ class mulgrid(object):
             cbar.set_ticklabels(rocknames)
             cbar.ax.invert_yaxis() # to get in same top-down order as in the data file
 
-    def plot_flows(self, plt, X, Y, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos):
+    def plot_flows(self, plt, X, Y, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos, arrow_width):
         """Draws flows (and a key) on a layer or slice plot."""
         if len(X) > 0:
             maxq = max([np.linalg.norm(np.array([u,v])) for u,v in zip(U,V)])
@@ -1697,7 +1697,8 @@ class mulgrid(object):
                     flow_scale = 10**(int(round(log10(maxq)))) # order of magnitude
                 else: flow_scale = 1.e-9
             flow_scale_factor = flow_scale * 10.
-            Q = plt.quiver(X, Y, U, V, units = 'width', pivot = 'middle', scale = flow_scale_factor, scale_units = 'width')
+            Q = plt.quiver(X, Y, U, V, units = 'width', pivot = 'middle', scale = flow_scale_factor,
+                           scale_units = 'width', width = arrow_width)
             qk = plt.quiverkey(Q, flow_key_pos[0], flow_key_pos[1], flow_scale,
                                flow_variable_name + '/area = ' + str(flow_scale) + ' ' +flow_unit + '/$m^2$')
 
@@ -1707,7 +1708,8 @@ class mulgrid(object):
                    connections=None, colourbar_limits=None, plot_limits=None, wells = None, well_names = True,
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
                    rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
-                   flow_variable_name = None, flow_unit = None, flow_scale = None, flow_key_pos = (0.5, 0.02)):
+                   flow_variable_name = None, flow_unit = None, flow_scale = None, flow_key_pos = (0.5, 0.02),
+                   flow_arrow_width = None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
         A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
         superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1767,6 +1769,7 @@ class mulgrid(object):
                 grid = t2grid().fromgeo(self)
             if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
             blkflow = flux_matrix * flow
+            blkflow = blkflow.reshape((self.num_underground_blocks,3))
             natm = self.num_atmosphere_blocks
             U,V = [],[]
 
@@ -1789,8 +1792,7 @@ class mulgrid(object):
                             horizontalalignment = 'center',verticalalignment = 'center')
                 if flow is not None:
                     blkindex = self.block_name_index[blkname] - natm
-                    bi3 = 3*blkindex
-                    q = blkflow[bi3:bi3+3]
+                    q = blkflow[blkindex]
                     U.append(q[0])
                     V.append(q[1])
 
@@ -1833,7 +1835,8 @@ class mulgrid(object):
             self.plot_colourbar(plt, col, scalelabel, rocktypes, rocknames)
             default_title = varname + ' in ' + default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-        if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
+        if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos,
+                                             flow_arrow_width)
         if title is None: title = default_title
         plt.title(title)
         if loneplot: plt.show()
@@ -1908,7 +1911,8 @@ class mulgrid(object):
                    plot_limits=None, column_axis = False, layer_axis = False, wells = None, well_names = True,
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = False,
                    rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
-                   flow_variable_name = None, flow_unit = None, flow_scale = None, flow_key_pos = (0.5, 0.02)):
+                   flow_variable_name = None, flow_unit = None, flow_scale = None, flow_key_pos = (0.5, 0.02),
+                   flow_arrow_width = None):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1976,6 +1980,7 @@ class mulgrid(object):
                         grid = t2grid().fromgeo(self)
                     if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
                     blkflow = flux_matrix * flow
+                    blkflow = blkflow.reshape((self.num_underground_blocks,3))
                     natm = self.num_atmosphere_blocks
                     U,V = [],[]
                     slice_dirn = (l[1] - l[0]).T
@@ -2006,8 +2011,7 @@ class mulgrid(object):
                                 xc.append(dcol); yc.append(centre[2])
                             if flow is not None:
                                 blkindex = self.block_name_index[blkname] - natm
-                                bi3 = 3*blkindex
-                                q = blkflow[bi3:bi3+3]
+                                q = blkflow[blkindex]
                                 qslice = np.dot(slice_dirn, q[:2])
                                 U.append(qslice)
                                 V.append(q[2])
@@ -2052,7 +2056,8 @@ class mulgrid(object):
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-                if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_key_pos)
+                if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale,
+                                                     flow_key_pos, flow_arrow_width)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
