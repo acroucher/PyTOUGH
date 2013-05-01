@@ -969,7 +969,8 @@ class t2listing(file):
                         arrays[array_type][name].SetValue(iblk,data[iblk])
         return arrays
 
-    def write_vtk(self,geo,filename,grid=None,indices=None,flows=False,wells=False,start_time=0.0,time_unit='s'):
+    def write_vtk(self, geo, filename, grid = None, indices = None, flows = False, wells = False, start_time = 0.0,
+                  time_unit = 's', flux_matrix = None):
         """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the listing data,
         with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
         data as well.  A list of the required time indices can optionally be specified.  If a grid is specified, flows is True,
@@ -991,8 +992,7 @@ class t2listing(file):
             grid_arrays=grid.get_vtk_data(geo)
             for array_type,array_dict in arrays.items():
                 array_dict.update(grid_arrays[array_type])
-        if doflows: flux_matrix=grid.flux_matrix(geo)
-        else: flux_matrix=None
+        if doflows and flux_matrix is None: flux_matrix = grid.flux_matrix(geo)
         import xml.dom.minidom
         pvd=xml.dom.minidom.Document()
         vtkfile=pvd.createElement('VTKFile')

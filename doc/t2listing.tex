@@ -207,7 +207,7 @@ Navigates to the previous set of full results in the listing file.  Returns \tex
 
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{flows}=False,
 \emph{wells}=False,\\
-\emph{start\_time}=0, \emph{time\_unit}=`s')}}
+\emph{start\_time}=0, \emph{time\_unit}=`s', \emph{flux\_matrix}=None)}}
 
 Writes a \texttt{t2listing} object to a set of VTK files on disk, for visualisation with VTK, Paraview, Mayavi etc.  The results in the listing object are written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written correspond to the variables given in the columns of the element table of the \texttt{t2listing} object.  (For TOUGH+ results, variables from the additional element tables are also included.) In addition, data arrays from an associated \texttt{mulgrid} and (optionally) \texttt{t2grid} objects can be included.
 
@@ -235,6 +235,8 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
   Optional start time of the simulation, i.e. time associated with the first set of results.  Default is zero.
 \item \textbf{time\_unit}: string\\
   Optional time unit for the output.  TOUGH2 results are given at times in seconds, but this option allows them to be converted to other units.  Options are: `s', `h', `d' and `y', for seconds, hours, days and years respectively.  Default is `s'.
+\item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix}\\
+  Sparse matrix that multiplies a vector of connection values to produce a partition vector of 3-D block average flows at the (underground) block centres.  One of these can be produced using the \texttt{t2grid.flux\_matrix()} method, and a corresponding \texttt{mulgrid} object.  A flux matrix will be calculated internally if not supplied.
 \end{itemize}
 
 \section{\texttt{listingtable} objects}
