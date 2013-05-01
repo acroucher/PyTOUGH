@@ -65,6 +65,8 @@ class t2connection(object):
         self.dircos=dircos # direction cosine
         self.sigma=sigma # radiant emittance factor (TOUGH2)
         self.nseq,self.nad1,self.nad2=nseq,nad1,nad2
+        self.centre = None
+        self.normal = None
     def __repr__(self):
         return self.block[0].name+':'+self.block[1].name
 
@@ -101,6 +103,10 @@ class t2grid(object):
         else: istart=0
         return any([blk.centre is not None for blk in self.blocklist[istart:]])
     block_centres_defined=property(get_block_centres_defined)
+
+    def get_connection_centres_defined(self):
+        return any([con.centre is not None for con in self.connectionlist])
+    connection_centres_defined = property(get_connection_centres_defined)
 
     def calculate_block_centres(self,geo):
         """Calculates block centres from geometry object."""
@@ -464,25 +470,27 @@ class t2grid(object):
     def flux_matrix(self,geo):
         """Returns a sparse matrix which can be used to multiply a vector of connection table values for underground
         blocks, to give approximate average fluxes of those values at the block centres."""
-        natm=geo.num_atmosphere_blocks
-        nele=geo.num_underground_blocks
-        conindex=dict([((c.block[0].name,c.block[1].name),i) for i,c in enumerate(self.connectionlist)])
+        natm = geo.num_atmosphere_blocks
+        nele = geo.num_underground_blocks
+        conindex = dict([((c.block[0].name,c.block[1].name),i) for i,c in enumerate(self.connectionlist)])
         from scipy import sparse
-        A=sparse.lil_matrix((3*nele,self.num_connections))
+        A = sparse.lil_matrix((3*nele, self.num_connections))
         if not self.block_centres_defined: self.calculate_block_centres(geo)
+        if not self.connection_centres_defined: self.calculate_connection_centres(geo)
         for iblk,blk in enumerate(self.blocklist[natm:]):
-            ncons=blk.num_connections
-            for conname in blk.connection_name:
-                otherindex,sgn=[(0,-1),(1,1)][conname[0]==blk.name]
-                blk2name=conname[otherindex]
-                icon=conindex[conname]
-                centre2=self.block[blk2name].centre
-                if centre2 is not None:
-                    n=centre2-blk.centre
-                    n/=np.linalg.norm(n)
-                else: n=np.array([0,0,1]) # assumed connection to atmosphere
-                for i,ni in enumerate(n):
-                    A[3*iblk+i,icon]=-sgn*ni/(ncons*self.connection[conname].area)
+            ncons = blk.num_connections
+            if ncons > 0:
+                M,icons = [],[]
+                for conname in blk.connection_name:
+                    con = self.connection[conname]
+                    row = list(con.normal * con.area) # fit constant flows
+                    if ncons >= 6: row += list((con.centre - blk.centre) * con.normal * con.area) # fit linear flows
+                    M.append(row)
+                    icons.append(conindex[conname])
+                Ablk = -np.linalg.pinv(np.array(M))
+                ib3 = iblk*3
+                for ic in xrange(ncons):
+                    for ip in xrange(3): A[ib3+ip,icons[ic]] = Ablk[ip,ic]
         return A
 
     def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=np.array([0.,0.]),justify='r',case='l',dimension=2):
