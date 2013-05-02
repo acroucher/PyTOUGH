@@ -591,7 +591,9 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
     \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0,\\
-    \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None)}}
+    \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None),\\
+    \emph{flow}=None, \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
+    \emph{flow\_arrow\_width}=None}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
@@ -602,6 +604,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
 Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom (or optionally the top) of the well.  For surface plots (\texttt{layer} = \texttt{None}), wells are drawn with solid lines; otherwise, wells are drawn with dotted lines except where they pass through the specified layer, where they are drawn with solid lines.
 
 Rock types can be shown on the layer plot by specifying a \texttt{t2grid} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
+
+Flows can be shown on the layer by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the layer.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -669,6 +673,22 @@ Rock types can be shown on the layer plot by specifying a \texttt{t2grid} object
   If \texttt{False} (the default), only rock types present on the specified layer will be shown in the colour bar; others will be omitted.  If \texttt{True}, all rocks present in the model grid will be shown on the colour bar, regardless of whether they appear in the specified layer.
 \item \textbf{rockgroup}: tuple, list, string (or \texttt{None})\\
   To group similar rock types into one colour, specify a tuple or list of integers, representing the significant characters of the rock type names.  For example, to group rock types having the same first two characters, specify (0,1).  Alternatively, specify a 5-character string mask containing asterisks in positions that are not significant, and any other characters in the significant positions (e.g. `++***').
+\item \textbf{flow}: \texttt{np.array} (or \texttt{None})\\
+  To plot flows, specify an array of connection flow values (one floating point value for each connection in the grid).  These may for example be extracted from the columns of the connection table in a \texttt{t2listing} object.
+\item \textbf{grid}: \texttt{t2grid} (or \texttt{None})\\
+  Specify a \texttt{t2grid} object associated with the grid, to be used to calculate the `flux matrix' which converts the connection flow values to block-average fluxes.  If this is not specified (and neither is the \texttt{flux\_matrix} parameter), then a \texttt{t2grid} object will be created internally.
+\item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix} (or \texttt{None})\\
+  A sparse matrix used to convert the connection flow values to block-average fluxes.  Such a matrix can be created using the \texttt{flux\_matrix()} method of a \texttt{t2grid} object and an appropriate \texttt{mulgrid} object.  If no flux matrix is specified, one will be created internally.  This can be time-consuming for large grids, so for multiple flow plots it is faster to pre-calculate a flux matrix in your script and pass it via this parameter.  If this parameter is specified, there is no need also to specify the \texttt{grid} parameter.
+\item \textbf{flow\_variable\_name}: string (or \texttt{None})\\
+  Name of the flow variable (as it will appear on the scale of the plot).
+\item \textbf{flow\_unit}: string (or \texttt{None})\\
+  Units of the flow variable (as it will appear on the scale of the plot, divided by area).
+\item \textbf{flow\_scale}: string (or \texttt{None})\\
+  Length of flow scale arrow.  If not specified, this will be calculated.
+\item \textbf{flow\_scale\_pos}: tuple\\
+  Position of the flow scale on the plot, in units of dimensionless plot size.  The default (0.5, 0.02) draws the flow scale in the horizontal centre of the plot, slightly above the bottom axis.  If you want the flow scale below the bottom axis (so it doesn't get mixed up with the actual flow arrows), specify this parameter with a small negative second component, e.g. (0.8, -0.1).
+\item \textbf{flow\_arrow\_width}: float (or \texttt{None})\\
+  Width of the flow arrows, in units of dimensionless plot width.  If not specified, this will be calculated internally.
 \end{itemize}
 
 \textbf{Example:}
@@ -953,7 +973,8 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{column\_axis}=False, \emph{layer\_axis}=False,\\
     \emph{wells}=None, \emph{well\_names}=True, \emph{hide\_wells\_outside}=False, \emph{wellcolour}=`blue',\\
     \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=False, \emph{rocktypes}=None, \emph{allrocks}=False, \\
-    \emph{rockgroup}=None))}}
+    \emph{rockgroup}=None, \emph{flow}=None, \emph{flow\_unit}=None, \emph{flow\_scale}=None, \\
+    \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None)}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
@@ -966,6 +987,8 @@ When a variable is plotted over the grid, contours at specified levels can also 
 Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the top (or optionally the bottom) of the well.  If \texttt{hide\_wells\_outside} is specified as a floating point number, wells that do not pass within the specified distance from the slice line are not shown.  Well tracks are shown as solid lines over sections within the specified distance from the slice line, and dotted lines otherwise.
 
 Rock types can be shown on the slice plot by specifying a \texttt{t2grid} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
+
+Flows can be shown on the slice by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the slice.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -1029,6 +1052,22 @@ Rock types can be shown on the slice plot by specifying a \texttt{t2grid} object
   If \texttt{False} (the default), only rock types present on the specified slice will be shown in the colour bar; others will be omitted.  If \texttt{True}, all rocks present in the model grid will be shown on the colour bar, regardless of whether they appear in the specified slice.
 \item \textbf{rockgroup}: tuple, list, string (or \texttt{None})\\
   To group similar rock types into one colour, specify a tuple or list of integers, representing the significant characters of the rock type names.  For example, to group rock types having the same first two characters, specify (0,1).  Alternatively, specify a 5-character string mask containing asterisks in positions that are not significant, and any other characters in the significant positions (e.g. `++***').
+\item \textbf{flow}: \texttt{np.array} (or \texttt{None})\\
+  To plot flows, specify an array of connection flow values (one floating point value for each connection in the grid).  These may for example be extracted from the columns of the connection table in a \texttt{t2listing} object.
+\item \textbf{grid}: \texttt{t2grid} (or \texttt{None})\\
+  Specify a \texttt{t2grid} object associated with the grid, to be used to calculate the `flux matrix' which converts the connection flow values to block-average fluxes.  If this is not specified (and neither is the \texttt{flux\_matrix} parameter), then a \texttt{t2grid} object will be created internally.
+\item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix} (or \texttt{None})\\
+  A sparse matrix used to convert the connection flow values to block-average fluxes.  Such a matrix can be created using the \texttt{flux\_matrix()} method of a \texttt{t2grid} object and an appropriate \texttt{mulgrid} object.  If no flux matrix is specified, one will be created internally.  This can be time-consuming for large grids, so for multiple flow plots it is faster to pre-calculate a flux matrix in your script and pass it via this parameter.  If this parameter is specified, there is no need also to specify the \texttt{grid} parameter.
+\item \textbf{flow\_variable\_name}: string (or \texttt{None})\\
+  Name of the flow variable (as it will appear on the scale of the plot).
+\item \textbf{flow\_unit}: string (or \texttt{None})\\
+  Units of the flow variable (as it will appear on the scale of the plot, divided by area).
+\item \textbf{flow\_scale}: string (or \texttt{None})\\
+  Length of flow scale arrow.  If not specified, this will be calculated.
+\item \textbf{flow\_scale\_pos}: tuple\\
+  Position of the flow scale on the plot, in units of dimensionless plot size.  The default (0.5, 0.02) draws the flow scale in the horizontal centre of the plot, slightly above the bottom axis.  If you want the flow scale below the bottom axis (so it doesn't get mixed up with the actual flow arrows), specify this parameter with a small negative second component, e.g. (0.8, -0.1).
+\item \textbf{flow\_arrow\_width}: float (or \texttt{None})\\
+  Width of the flow arrows, in units of dimensionless plot width.  If not specified, this will be calculated internally.
 \end{itemize}
 
 \textbf{Example:}
