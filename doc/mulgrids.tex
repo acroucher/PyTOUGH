@@ -592,7 +592,8 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
     \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0,\\
     \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None),\\
-    \emph{flow}=None, \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
+    \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \emph{flow\_variable\_name}=None, \\
+    \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
     \emph{flow\_arrow\_width}=None}}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
@@ -973,7 +974,8 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{column\_axis}=False, \emph{layer\_axis}=False,\\
     \emph{wells}=None, \emph{well\_names}=True, \emph{hide\_wells\_outside}=False, \emph{wellcolour}=`blue',\\
     \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=False, \emph{rocktypes}=None, \emph{allrocks}=False, \\
-    \emph{rockgroup}=None, \emph{flow}=None, \emph{flow\_unit}=None, \emph{flow\_scale}=None, \\
+    \emph{rockgroup}=None, \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \\
+    \emph{flow\_variable\_name}=None,\emph{flow\_unit}=None, \emph{flow\_scale}=None, \\
     \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None)}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
