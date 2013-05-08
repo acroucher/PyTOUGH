@@ -475,6 +475,7 @@ class mulgrid(object):
         self._convention=convention
         self.set_secondary_variables()
         self.setup_block_name_index()
+        self.setup_block_connection_name_index()
     convention=property(get_convention,set_convention)
 
     def get_atmosphere_type(self):
@@ -485,6 +486,7 @@ class mulgrid(object):
         self._atmosphere_type=atmos_type
         self.set_secondary_variables()
         self.setup_block_name_index()
+        self.setup_block_connection_name_index()
     atmosphere_type=property(get_atmosphere_type,set_atmosphere_type)
 
     def get_unit_type(self):
@@ -523,6 +525,11 @@ class mulgrid(object):
         return self.num_blocks-self.num_atmosphere_blocks
     num_underground_blocks=property(get_num_underground_blocks)
 
+    def get_num_block_connections(self):
+        """Returns number of connections between blocks in the TOUGH2 grid represented by the geometry."""
+        return len(self.block_connection_name_list)
+    num_block_connections = property(get_num_block_connections)
+
     def get_column_angle_ratio(self):
         """Returns an array of angle ratios for each column."""
         return np.array([col.angle_ratio for col in self.columnlist])
@@ -551,6 +558,7 @@ class mulgrid(object):
         self.connection={}
         self.well={}
         self.block_name_list,self.block_name_index=[],{}
+        self.block_connection_name_list,self.block_connection_name_index=[],{}
 
     def __repr__(self):
         conventionstr=['3 characters for column, 2 digits for layer','3 characters for layer, 2 digits for column','2 characters for layer, 3 digits for column'][self.convention]
@@ -604,6 +612,30 @@ class mulgrid(object):
                 for col in [col for col in self.columnlist if col.surface>lay.bottom]:
                     self.block_name_list.append(self.block_name(lay.name,col.name))
         self.block_name_index=dict([(blk,i) for i,blk in enumerate(self.block_name_list)])
+
+    def setup_block_connection_name_index(self):
+        """Sets up list and dictionary of connection names and indices for blocks in the TOUGH2 grid represented by the geometry."""
+        self.block_connection_name_list = []
+        for ilay,lay in enumerate(self.layerlist[1:]):
+            layercols = [col for col in self.columnlist if col.surface > lay.bottom]
+            for col in layercols: # vertical connections
+                thisblkname = self.block_name(lay.name, col.name)
+                if (ilay == 0) or (col.surface <= lay.top): # connection to atmosphere
+                    abovelayer = self.layerlist[0]
+                    if self.atmosphere_type == 0:
+                        aboveblkname = self.block_name_list[0]
+                    elif self.atmosphere_type == 1:
+                        aboveblkname = self.block_name(abovelayer.name,col.name)
+                    else: continue
+                else:
+                    abovelayer = self.layerlist[ilay]
+                    aboveblkname = self.block_name(abovelayer.name,col.name)
+                self.block_connection_name_list.append((thisblkname, aboveblkname))
+            layercolset = set(layercols) # horizontal connections:
+            for con in [con for con in self.connectionlist if set(con.column).issubset(layercolset)]:
+                conblocknames = tuple([self.block_name(lay.name,concol.name) for concol in con.column])
+                self.block_connection_name_list.append(conblocknames)
+        self.block_connection_name_index = dict([(con,i) for i,con in enumerate(self.block_connection_name_list)])
 
     def column_name(self,blockname):
         """Returns column name of block name."""
@@ -735,6 +767,7 @@ class mulgrid(object):
                     self.add_column(col2)
                     self.add_connection(connection([col,col2]))
                     self.setup_block_name_index()
+                    self.setup_block_connection_name_index()
                     return True
                 except ValueError: return False # node not in column
         return False
@@ -745,11 +778,8 @@ class mulgrid(object):
             i = self.columnlist.index(self.column[oldcolname])
             self.columnlist[i].name = newcolname
             self.column[newcolname] = self.column.pop(oldcolname)
-            # update self.block_name_list:
-            for i, blkname in enumerate(self.block_name_list):
-                if self.column_name(blkname) == oldcolname:
-                    layname = self.layer_name(blkname)
-                    self.block_name_list[i] = self.block_name(layname, newcolname)
+            self.setup_block_name_index()
+            self.setup_block_connection_name_index()
             return True
         except ValueError: return False
 
@@ -774,11 +804,8 @@ class mulgrid(object):
             i = self.layerlist.index(self.layer[oldlayername])
             self.layerlist[i].name = newlayername
             self.layer[newlayername] = self.layer.pop(oldlayername)
-            # update self.block_name_list:
-            for i, blkname in enumerate(self.block_name_list):
-                if self.layer_name(blkname) == oldlayername:
-                    colname = self.column_name(blkname)
-                    self.block_name_list[i] = self.block_name(newlayername, colname)
+            self.setup_block_name_index()
+            self.setup_block_connection_name_index()
             return True
         except ValueError: return False
             
@@ -854,6 +881,7 @@ class mulgrid(object):
         for lay in geo.layerlist: self.add_layer(deepcopy(lay))
         for col in self.columnlist: self.set_column_num_layers(col)
         self.setup_block_name_index()
+        self.setup_block_connection_name_index()
 
     def copy_wells_from(self,geo):
         """Copies wells from another geometry."""
@@ -1011,6 +1039,7 @@ class mulgrid(object):
                     read_fn[keyword](geo)
                 else: more=False
             self.setup_block_name_index()
+            self.setup_block_connection_name_index()
         else: print 'Grid type',self.type,'not supported.'
         geo.close()
         return self
@@ -1197,6 +1226,7 @@ class mulgrid(object):
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
+        grid.setup_block_connection_name_index()
         return grid
 
     def add_layers(self,thicknesses,top_elevation=0,justify='r',case='l'):
@@ -1251,6 +1281,7 @@ class mulgrid(object):
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
+        grid.setup_block_connection_name_index()
         return grid
 
     def translate(self,shift,wells=False):
@@ -2635,6 +2666,7 @@ class mulgrid(object):
                     col.surface=toplayer.bottom
                     col.num_layers-=1
             self.setup_block_name_index()
+            self.setup_block_connection_name_index()
 
     def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False, layer_snap=0.0, silent = False):
         """Fits column surface elevations to the grid from the data, using least-squares bilinear finite element fitting with
@@ -2707,6 +2739,7 @@ class mulgrid(object):
                 self.set_column_num_layers(col)
             self.snap_columns_to_layers(layer_snap,columns)
             self.setup_block_name_index()
+            self.setup_block_connection_name_index()
         else: raise Exception('Grid selection contains columns with more than 4 nodes: not supported.')
 
     def refine(self,columns=[],bisect=False,bisect_edge_columns=[]):
@@ -2815,6 +2848,7 @@ class mulgrid(object):
             for con in self.missing_connections: self.add_connection(con)
             self.identify_neighbours()
             self.setup_block_name_index()
+            self.setup_block_connection_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 
     def refine_layers(self, layers=[], factor=2):
@@ -2838,6 +2872,7 @@ class mulgrid(object):
         self.rename_layer(self.layerlist[0].name, atm_name) # preserve old atmosphere layer name
         for col in self.columnlist: self.set_column_num_layers(col)
         self.setup_block_name_index()
+        self.setup_block_connection_name_index()
 
     def column_neighbour_groups(self,columns):
         """Given a list or set of columns, finds sets of columns that are connected together, and
@@ -2871,4 +2906,5 @@ class mulgrid(object):
         for colname in colnames: self.delete_column(colname)
         self.check(fix=True, silent=True)
         self.setup_block_name_index()
+        self.setup_block_connection_name_index()
         
