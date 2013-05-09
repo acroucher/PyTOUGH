@@ -62,11 +62,11 @@ TOUGH2, TOUGH2\_MP and TOUGH+ do not support short output.
 
 \subsubsection{Navigating in time using \texttt{time}, \texttt{index} and \texttt{step}}
 
-The \texttt{time} property returns the time (in seconds) corresponding to the current set of results.  It is also possible to set the \texttt{time} property to navigate to a specific set of full results.  For example, \texttt{lst.time=1.e9} navigates to the first set of full results for which \texttt{lst.time} is at least $10^9$s.
+The \texttt{time} property returns the time (in seconds) corresponding to the current set of results.  It is also possible to set the \texttt{time} property to navigate to a specific set of full results.  For example, \texttt{lst.time=1.e9} navigates to the set of full results with time closest to $10^9$s.
 
 The \texttt{index} property gives the index of the current set of results, and can take any value between 0 and \texttt{num\_fulltimes}-1.  The value of \texttt{index} can also be set to change to a different set of results in the listing file (e.g. \texttt{lst.index=12}).  It can be incremented and decremented like any other Python integer variable, e.g. \texttt{lst.index+=1} or \texttt{lst.index-=2} to go to the next set of results, or the second to last set respectively.
 
-The \texttt{step} property gives the time step number for the current set of results.  This is the number of time steps carried out in the simulation up to the current set of results (recall that results are not necessarily written to the listing file at every time step).  Again, its value can be set to navigate through the results, e.g. \texttt{lst.step=100} navigates to the first set of full results at which the time step number is at least 100.
+The \texttt{step} property gives the time step number for the current set of results.  This is the number of time steps carried out in the simulation up to the current set of results (recall that results are not necessarily written to the listing file at every time step).  Again, its value can be set to navigate through the results, e.g. \texttt{lst.step=100} navigates to the set of full results with time step number nearest to 100.
 
 The \texttt{times} property returns an \texttt{np.array} of all times at which results (including short output) are given in the listing file.  It has length equal to \texttt{num\_times}.  The \texttt{fulltimes} property returns an \texttt{np.array} of times at which full results are given (not including short output), and has length equal to \texttt{num\_fulltimes}.
 

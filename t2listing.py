@@ -149,8 +149,8 @@ class t2listing(file):
         if t<self.fulltimes[0]: self.index=0
         elif t>self.fulltimes[-1]: self.index=-1
         else:
-            i=[j for j,tj in enumerate(self.fulltimes) if tj>=t]
-            if len(i)>0: self.index=i[0]
+            dt = np.abs(self.fulltimes - t)
+            self.index = np.argmin(dt)
     time=property(get_time,set_time)
 
     def get_num_times(self): return len(self.times)
@@ -163,8 +163,8 @@ class t2listing(file):
         if step<self.fullsteps[0]: self.index=0
         elif step>self.fullsteps[-1]: self.index=-1
         else:
-            i=[j for j,sj in enumerate(self.fullsteps) if sj>=step]
-            if len(i)>0: self.index=i[0]
+            dstep = np.abs(self.fullsteps - step)
+            self.index = np.argmin(dstep)
     step=property(get_step,set_step)
 
     def get_table_names(self):
