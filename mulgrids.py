@@ -11,7 +11,7 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
-from string import ljust,rjust,lowercase,uppercase, ascii_lowercase, ascii_uppercase
+from string import ljust, rjust, ascii_lowercase, ascii_uppercase
 from geometry import *
 from fixed_format_file import *
 
@@ -1179,8 +1179,8 @@ class mulgrid(object):
                 geo.write_values(vals, 'well')
         geo.write('\n')
         
-    def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case='l', 
-                    letters = None):
+    def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case = None, 
+                    letters = ascii_lowercase):
         """Returns a rectangular MULgraph grid with specified block sizes.
         The arguments are arrays of the block sizes in each dimension (x,y,z).
         Naming convention, atmosphere type and origin can optionally be specified.
@@ -1197,10 +1197,11 @@ class mulgrid(object):
         nxv=len(xverts)
         nxb,nyb=len(xblocks),len(yblocks)
         justfn=[rjust,ljust][justify=='l']
-        if letters is None:
-            if case == 'l': letters = ascii_lowercase
-            elif case == 'u': letters = ascii_uppercase
-        else: letters = uniqstring(letters)
+        if case is not None:
+            from string import upper, lower
+            casefn = [upper,lower][case=='l']
+            letters = casefn(letters)
+        letters = uniqstring(letters)
         # create nodes:
         num=1
         y=origin[1]
