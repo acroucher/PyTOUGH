@@ -1279,11 +1279,11 @@ class mulgrid(object):
             element_type=int(items[1])
             if element_type in [2,3]: # triangle or quadrilateral
                 name=items[0]
-                name=self.column_name_from_number(int(name), letters)
+                name=self.column_name_from_number(int(name), letters = letters)
                 ntags=int(items[2])
-                colnodenumbers=items[3+ntags:]
-                colnodenames=[[IntToLetters(int(nodeno),letters),nodeno][convention>0] for nodeno in colnodenumbers]
-                colnodes=[grid.node[rjust(v,grid.colname_length)] for v in colnodenames]
+                colnodenumbers = [int(item) for item in items[3+ntags:]]
+                colnodenames = [[self.node_name_from_number(nodeno,letters = letters),nodeno][convention>0] for nodeno in colnodenumbers]
+                colnodes=[grid.node[v] for v in colnodenames]
                 grid.add_column(column(name,colnodes))
         gmsh.close()
         for con in grid.missing_connections: grid.add_connection(con)
