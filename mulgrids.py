@@ -11,24 +11,30 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
-from string import ljust,rjust,lowercase,uppercase
+from string import ljust,rjust,lowercase,uppercase, ascii_lowercase, ascii_uppercase
 from geometry import *
 from fixed_format_file import *
 
 def padstring(string,length=80): return ljust(string,length)
-def IntToLetters(i,st='',casefn=lowercase):
-    """Converts a number into a string of letters, either lower or upper case."""
+
+def IntToLetters(i, st = '', letters = ascii_lowercase):
+    """Converts a number into a string of letters, using the specified letters."""
     if i==0: return st
-    else: return IntToLetters((i-1)/26,casefn[(i-1)%26]+st,casefn)
-def LettersToInt(st):
-    """Converts a string into a number equivalent- the inverse of IntToLetters."""
-    lst=st.lower()
-    ord0=ord('a')-1
-    def myord(s):
-        if s==' ': return 0
-        else: return ord(s)-ord0
-    n=len(st)
-    return sum([myord(s)*(26**(n-i-1)) for i,s in enumerate(lst)])
+    else:
+        n = len(letters)
+        return IntToLetters((i-1)/n, ''.join([letters[(i-1)%n],st]), letters)
+
+def new_dict_key(d, istart = 0, justfn = rjust, length = 5, letters = ascii_lowercase):
+    """Returns an unused key for dictionary d, using the specified letters, plus the corresponding next starting index."""
+    i = istart
+    used = True
+    while used:
+        i += 1
+        name = justfn(IntToLetters(i, letters = letters), length)
+        used = name in d
+    return name,i
+
+def uniqstring(s): return ''.join(sorted(set(s), key=s.index))
 
 def fix_blockname(name):
     """Fixes blanks in 4th column of block names, caused by TOUGH2 treating names as (a3,i2)"""
@@ -651,34 +657,30 @@ class mulgrid(object):
         elif self.convention==2: return blockname[0:2]
         else: return None
 
-    def node_col_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+    def node_col_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
         """Returns node or column name from number."""
-        if self.convention==0: name = justfn(IntToLetters(num,casefn=casefn),self.colname_length)
+        if self.convention==0: name = justfn(IntToLetters(num, letters = letters), self.colname_length)
         else: name = rjust(str(num),self.colname_length)
         return name
 
-    def column_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+    def column_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
         """Returns column name from column number."""
-        name = self.node_col_name_from_number(num, justfn, casefn)
+        name = self.node_col_name_from_number(num, justfn, letters)
         if len(name) > self.colname_length:
             raise NamingConventionError("Column name is too long for the grid naming convention.")
         return name
 
-    def node_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+    def node_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
         """Returns node name from node number."""
-        name = self.node_col_name_from_number(num, justfn, casefn)
+        name = self.node_col_name_from_number(num, justfn, letters)
         if len(name) > self.colname_length:
             raise NamingConventionError("Node name is too long for the grid naming convention.")
         return name
 
-    def column_number_from_name(self,name):
-        if self.convention==0: return LettersToInt(name)
-        else: return int(name)
-
-    def layer_name_from_number(self, num, justfn=rjust, casefn=lowercase):
+    def layer_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
         """Returns layer name from layer number."""
         if self.convention==0: name = justfn(str(num),self.layername_length)
-        else: name = justfn(IntToLetters(num,casefn=casefn),self.layername_length)
+        else: name = justfn(IntToLetters(num, letters = letters), self.layername_length)
         if len(name) > self.layername_length:
             raise NamingConventionError("Layer name is too long for the grid naming convention.")
         return name
@@ -692,6 +694,11 @@ class mulgrid(object):
         """Returns True if character part of block names are right-justified."""
         return all([(blkname[0:3]==blkname[0:3].rjust(3)) for blkname in self.block_name_list])
     right_justified_names=property(get_right_justified_names)
+
+    def new_node_name(self, istart = 0, justfn = rjust, letters = ascii_lowercase):
+        return new_dict_key(self.node, istart, justfn, self.colname_length, letters)
+    def new_column_name(self, istart = 0, justfn = rjust, letters = ascii_lowercase):
+        return new_dict_key(self.column, istart, justfn, self.colname_length, letters)
 
     def column_bounds(self,columns):
         """Returns horizontal bounding box for a list of columns."""
@@ -729,9 +736,11 @@ class mulgrid(object):
         del self.column[colname]
         self.columnlist.remove(col)
 
-    def split_column(self,colname,nodename):
+    def split_column(self,colname,nodename, letters = ascii_lowercase):
         """Splits the specified quadrilateral column into two triangles, splitting at the specified node.  Returns
         True if the operation was successful."""
+        letters = uniqstring(letters)
+        justfn = [ljust,rjust][self.right_justified_names]
         if colname in self.column:
             col=self.column[colname]
             nn=col.num_nodes
@@ -740,10 +749,7 @@ class mulgrid(object):
                 try:
                     i0=nodenames.index(nodename)
                     i=[(i0+j)%nn for j in xrange(nn)]
-                    next_colno=max([self.column_number_from_name(c.name) for c in self.columnlist])+1
-                    justfn=[ljust,rjust][self.right_justified_names]
-                    casefn=[lowercase,uppercase][self.uppercase_names]
-                    colname2=self.column_name_from_number(next_colno,justfn,casefn)
+                    colname2, iname = self.new_column_name(justfn = justfn, letters = letters)
                     col2=column(colname2,node=[col.node[i[2]],col.node[i[3]],col.node[i[0]]],surface=col.surface)
                     # switch connections and neighbours from col to col2 as needed:
                     n3=col.node[i[3]]
@@ -1173,7 +1179,8 @@ class mulgrid(object):
                 geo.write_values(vals, 'well')
         geo.write('\n')
         
-    def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case='l'):
+    def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case='l', 
+                    letters = None):
         """Returns a rectangular MULgraph grid with specified block sizes.
         The arguments are arrays of the block sizes in each dimension (x,y,z).
         Naming convention, atmosphere type and origin can optionally be specified.
@@ -1190,22 +1197,25 @@ class mulgrid(object):
         nxv=len(xverts)
         nxb,nyb=len(xblocks),len(yblocks)
         justfn=[rjust,ljust][justify=='l']
-        casefn=[uppercase,lowercase][case=='l']
+        if letters is None:
+            if case == 'l': letters = ascii_lowercase
+            elif case == 'u': letters = ascii_uppercase
+        else: letters = uniqstring(letters)
         # create nodes:
         num=1
         y=origin[1]
         for y in yverts:
             for x in xverts:
-                name=grid.node_name_from_number(num,justfn,casefn)
+                name=grid.node_name_from_number(num,justfn,letters)
                 grid.add_node(node(name,np.array([x,y])))
                 num+=1
         # create columns:
         num=1
         for j in xrange(nyb):
             for i in xrange(nxb):
-                colname=grid.column_name_from_number(num,justfn,casefn)
+                colname=grid.column_name_from_number(num,justfn,letters)
                 colverts=[j*nxv+i+1,(j+1)*nxv+i+1,(j+1)*nxv+i+2,j*nxv+i+2]
-                nodenames=[grid.node_name_from_number(v,justfn,casefn) for v in colverts]
+                nodenames=[grid.node_name_from_number(v,justfn,letters) for v in colverts]
                 colnodes=[grid.node[name] for name in nodenames]
                 grid.add_column(column(colname,colnodes))
                 num+=1
@@ -1213,26 +1223,26 @@ class mulgrid(object):
         for j in xrange(nyb):
             for i in xrange(nxb-1):
                 num1,num2=j*nxb+i+1,j*nxb+i+2
-                name1,name2=grid.column_name_from_number(num1,justfn,casefn),grid.column_name_from_number(num2,justfn,casefn)
+                name1,name2=grid.column_name_from_number(num1,justfn,letters),grid.column_name_from_number(num2,justfn,letters)
                 grid.add_connection(connection([grid.column[name1],grid.column[name2]]))
         # y-connections:
         for i in xrange(nxb):
             for j in xrange(nyb-1):
                 num1,num2=j*nxb+i+1,(j+1)*nxb+i+1
-                name1,name2=grid.column_name_from_number(num1,justfn,casefn),grid.column_name_from_number(num2,justfn,casefn)
+                name1,name2=grid.column_name_from_number(num1,justfn,letters),grid.column_name_from_number(num2,justfn,letters)
                 grid.add_connection(connection([grid.column[name1],grid.column[name2]]))
         # create layers:
-        grid.add_layers(zblocks,origin[2],justify,case)
+        grid.add_layers(zblocks,origin[2],justify,letters)
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
         grid.setup_block_connection_name_index()
         return grid
 
-    def add_layers(self,thicknesses,top_elevation=0,justify='r',case='l'):
+    def add_layers(self,thicknesses,top_elevation=0,justify='r',letters = ascii_lowercase):
         """Adds layers of specified thicknesses and top elevation."""
         justfn=[rjust,ljust][justify=='l']
-        casefn=[uppercase,lowercase][case=='l']
+        letters = uniqstring(letters)
         num=0
         self.clear_layers()
         z=top_elevation
@@ -1244,22 +1254,23 @@ class mulgrid(object):
             name=surfacelayername
             while name==surfacelayername: # make sure layer name is different from surface layer name
                 num+=1
-                name=self.layer_name_from_number(num,justfn,casefn)
+                name=self.layer_name_from_number(num,justfn,letters)
             self.add_layer(layer(name,z,centre))
         self.identify_layer_tops()
 
-    def from_gmsh(self,filename,layers,convention=0,atmos_type=2,top_elevation=0):
+    def from_gmsh(self,filename,layers,convention=0,atmos_type=2,top_elevation=0, letters = ascii_lowercase):
         """Returns a MULgraph grid constructed from a 2D gmsh grid and the specified layer structure."""
         grid=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
         grid.empty()
         gmsh=open(filename,'rU')
         line=''
+        letters = uniqstring(letters)
         while not '$Nodes' in line: line=gmsh.readline()
         num_nodes=int(gmsh.readline().strip())
         for i in xrange(num_nodes):
             items=gmsh.readline().strip().split(' ')
             name,x,y=items[0],float(items[1]),float(items[2])
-            name=self.node_name_from_number(int(name))
+            name=self.node_name_from_number(int(name), letters = letters)
             grid.add_node(node(name,np.array([x,y])))
         while not '$Elements' in line: line=gmsh.readline()
         num_elements=int(gmsh.readline().strip())
@@ -1268,16 +1279,16 @@ class mulgrid(object):
             element_type=int(items[1])
             if element_type in [2,3]: # triangle or quadrilateral
                 name=items[0]
-                name=self.column_name_from_number(int(name))
+                name=self.column_name_from_number(int(name), letters)
                 ntags=int(items[2])
                 colnodenumbers=items[3+ntags:]
-                colnodenames=[[IntToLetters(int(nodeno)),nodeno][convention>0] for nodeno in colnodenumbers]
+                colnodenames=[[IntToLetters(int(nodeno),letters),nodeno][convention>0] for nodeno in colnodenumbers]
                 colnodes=[grid.node[rjust(v,grid.colname_length)] for v in colnodenames]
                 grid.add_column(column(name,colnodes))
         gmsh.close()
         for con in grid.missing_connections: grid.add_connection(con)
         grid.delete_orphans()
-        grid.add_layers(layers,top_elevation)
+        grid.add_layers(layers,top_elevation,letters)
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
@@ -2742,7 +2753,7 @@ class mulgrid(object):
             self.setup_block_connection_name_index()
         else: raise Exception('Grid selection contains columns with more than 4 nodes: not supported.')
 
-    def refine(self,columns=[],bisect=False,bisect_edge_columns=[]):
+    def refine(self,columns=[],bisect=False,bisect_edge_columns=[], letters = ascii_lowercase):
         """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
         Refinement is carried out by splitting: each column is divided into four, unless the bisect parameter is 'x' or 'y',
         in which case they are divided in the specified direction, or unless bisect is True, in which case they are divided
@@ -2756,17 +2767,16 @@ class mulgrid(object):
             if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
         connections=set([])
         sidenodes={}
-        next_nodeno=max([self.column_number_from_name(n.name) for n in self.nodelist])+1
-        next_colno=max([self.column_number_from_name(col.name) for col in self.columnlist])+1
-        casefn=[lowercase,uppercase][self.uppercase_names]
-        justfn=[ljust,rjust][self.right_justified_names]
-        def create_mid_node(node1,node2,sidenodes,next_nodeno,justfn,casefn):
+        letters = uniqstring(letters)
+        nodenumber, colnumber  = 0, 0
+        justfn = [ljust,rjust][self.right_justified_names]
+        def create_mid_node(node1,node2,sidenodes,nodenumber):
             midpos=0.5*(node1.pos+node2.pos)
             nodenames=frozenset((node1.name,node2.name))
-            name=self.node_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
+            name,nodenumber = self.new_node_name(nodenumber, justfn, letters)
             self.add_node(node(name,midpos))
             sidenodes[nodenames]=self.nodelist[-1]
-            return sidenodes,next_nodeno
+            return sidenodes,nodenumber
         if bisect:
             if bisect==True: direction=None
             else: direction=bisect
@@ -2775,7 +2785,7 @@ class mulgrid(object):
                     n1,n2=col.node[i],col.node[(i+1)%col.num_nodes]
                     con=self.connection_with_nodes([n1,n2])
                     if con: connections.add(con)
-                    else: sidenodes,next_nodeno=create_mid_node(n1,n2,sidenodes,next_nodeno,justfn,casefn)
+                    else: sidenodes,nodenumber = create_mid_node(n1,n2,sidenodes,nodenumber)
         else: 
             for col in columns: connections=connections | col.connection
         if bisect_edge_columns<>[]:
@@ -2789,7 +2799,7 @@ class mulgrid(object):
                     if all([concol in bisect_edge_columns for concol in con.column]): connections.add(con)
             # create midside nodes at connections:
             for con in connections:
-                sidenodes,next_nodeno=create_mid_node(con.node[0],con.node[1],sidenodes,next_nodeno,justfn,casefn)
+                sidenodes,nodenumber=create_mid_node(con.node[0],con.node[1],sidenodes,nodenumber)
             if not bisect:
                 # create midside nodes on grid boundaries in the refinement area:
                 bdy=self.boundary_nodes
@@ -2798,7 +2808,7 @@ class mulgrid(object):
                     for i,corner in enumerate(col.node):
                         next_corner=col.node[(i+1)%nn]
                         if (corner in bdy) and (next_corner in bdy):
-                            sidenodes,next_nodeno=create_mid_node(corner,next_corner,sidenodes,next_nodeno,justfn,casefn)
+                            sidenodes,nodenumber=create_mid_node(corner,next_corner,sidenodes,nodenumber)
             def transition_type(nn,sides):
                 # returns transition type- classified by how many refined sides, starting side, and range
                 nref=len(sides)
@@ -2830,11 +2840,11 @@ class mulgrid(object):
                 nrefined,istart,irange=transition_type(nn,refined_sides)
                 if (col.num_nodes==4) and ((nrefined==4) or ((nrefined==2) and (irange==1))):
                     # create quadrilateral centre node:
-                    name=self.node_name_from_number(next_nodeno,justfn,casefn); next_nodeno+=1
+                    name,nodenumber = self.new_node_name(nodenumber, justfn, letters)
                     self.add_node(node(name,col.centre))
                     centrenodes[col.name]=self.nodelist[-1]
                 for subcol in transition_column[nn][nrefined,irange]:
-                    name=self.column_name_from_number(next_colno,justfn,casefn); next_colno+=1
+                    name,colnumber = self.new_column_name(colnumber, justfn, letters)
                     nodes=[]
                     for vert in subcol:
                         if isinstance(vert,int): n=col.node[(istart+vert)%nn]
@@ -2851,10 +2861,11 @@ class mulgrid(object):
             self.setup_block_connection_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 
-    def refine_layers(self, layers=[], factor=2):
+    def refine_layers(self, layers=[], factor=2, letters = ascii_lowercase):
         """Refines selected layers in the grid.  If no layers are specified, all layers are refined.
         Each layer is refined by the specified factor.  Layer names for all subsurface layers in the grid
         are regenerated in sequence."""
+        letters = uniqstring(letters)
         if layers==[]: layers = self.layerlist
         else: 
             if isinstance(layers[0],str): layers=[self.layer[lay] for lay in layers]
@@ -2867,8 +2878,7 @@ class mulgrid(object):
             else: thicknesses.append(lay.thickness)
         self.clear_layers()
         justify=['l','r'][self.right_justified_names]
-        case=['l','u'][self.uppercase_names]
-        self.add_layers(thicknesses, top_elevation, justify, case)
+        self.add_layers(thicknesses, top_elevation, justify, letters)
         self.rename_layer(self.layerlist[0].name, atm_name) # preserve old atmosphere layer name
         for col in self.columnlist: self.set_column_num_layers(col)
         self.setup_block_name_index()
