@@ -539,7 +539,7 @@ Fits column surface elevations from data, using bilinear least-squares finite el
 \end{itemize}
 
 \subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
-    \emph{top\_elevation}=0, \emph{letters} = ascii\_lowercase)}}
+    \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase)}}
 
 Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is grid generation program (see \texttt{http://geuz.org/gmsh/}).  The horizontal structure of the geometry object is created from the \texttt{gmsh} mesh, while the layer structure is specified via the \texttt{layers} parameter, a list of layer thicknesses.  The elevation of the top surface can also be specified, as well as the naming convention and atmosphere type.
 
@@ -555,7 +555,7 @@ Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is grid 
   Type of atmosphere.
 \item \textbf{top\_elevation}: float\\
   Elevation of the top surface of the model (default is zero).
-\item \textbf{letters}: string\\
+\item \textbf{chars}: string\\
   Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
 \end{itemize}
 
@@ -859,9 +859,9 @@ geo=mulgrid(filename)
 \end{verbatim}
 
 \subsubsection{\texttt{rectangular(\emph{xblocks}, \emph{yblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
-    \emph{origin}=[0,0,0], \emph{justify}=`r', \emph{case}=None, \emph{letters}=ascii\_lowercase)}}
+    \emph{origin}=[0,0,0], \emph{justify}=`r', \emph{case}=None, \emph{chars}=ascii\_lowercase)}}
 
-Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{letters} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
+Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{chars} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -876,9 +876,9 @@ Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid
 \item \textbf{justify}: string\\
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{case}: string\\
-  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.  Now deprecated- using the \texttt{letters} parameter is more flexible.
-\item \textbf{letters}: string\\
-  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{letters} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.  Now deprecated- using the \texttt{chars} parameter is more flexible.
+\item \textbf{chars}: string\\
+  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \end{itemize}
 
 \textbf{Example:}
@@ -901,7 +901,7 @@ Reduces a grid so that it contains only the specified list of columns (or column
 \end{itemize}
 
 \subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False, \emph{bisect\_edge\_columns}=[],\\
-    \emph{letters} = ascii\_lowercase)}}
+    \emph{chars} = ascii\_lowercase)}}
 
 Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \texttt{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \texttt{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \texttt{bisect} is \texttt{True}, between its longest sides.
 
@@ -915,11 +915,11 @@ The \texttt{bisect\_edge\_columns} parameter can be used to give more desirable 
     Set to \texttt{True} if columns are to be split into two, between their longest sides, instead of four (the default).  Set to `x' or `y' to split columns along the specified axis.
   \item \textbf{bisect\_edge\_columns}: list\\
     List of columns or column names in the transition region (just outside the refinement area) to be bisected prior to the refinement, to improve the aspect ratios of the transition columns.
-  \item \textbf{letters}: string\\
+  \item \textbf{chars}: string\\
     Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
 \end{itemize}
 
-\subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2, \emph{letters} = ascii\_lowercase)}}
+\subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2, \emph{chars} = ascii\_lowercase)}}
 
 Refines the specified layers in the grid.  If no layers are specified, all layers are refined.  Each layer is refined by the specified integer factor.
 
@@ -929,7 +929,7 @@ Refines the specified layers in the grid.  If no layers are specified, all layer
     List of layers or layer names to be refined.
   \item \textbf{factor}: integer\\
     Refinement factor: default is 2, which bisects each layer.
-  \item \textbf{letters}: string\\
+  \item \textbf{chars}: string\\
     Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
 \end{itemize}
 
@@ -1113,7 +1113,7 @@ Snaps column surfaces to the bottom of their layers, if the surface block thickn
   List of columns to process.  If empty (the default), process all columns.
 \end{itemize}
 
-\subsubsection{\texttt{split\_column(\emph{colname}, \emph{nodename}, \emph{letters} = ascii\_lowercase)}}
+\subsubsection{\texttt{split\_column(\emph{colname}, \emph{nodename}, \emph{chars} = ascii\_lowercase)}}
 
 Splits a quadrilateral column with specified name into two triangular columns.  The direction of the split is determined
 by specifying the name of one of the splitting nodes.  The method returns \texttt{True} if the split was carried out successfully.
@@ -1124,7 +1124,7 @@ by specifying the name of one of the splitting nodes.  The method returns \textt
   Name of the quadrilateral column to be split.  If the column is not quadrilateral, the method returns \texttt{False} and nothing is done to the column.
 \item \textbf{nodename}: string\\
   Name of one of the splitting nodes.  The column is split across this node and the one on the opposite side of the column.  If the specified node is not in the column, the method returns \texttt{False} and nothing is done to the column.
-\item \textbf{letters}: string\\
+\item \textbf{chars}: string\\
   Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
 \end{itemize}
 

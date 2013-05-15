@@ -17,20 +17,20 @@ from fixed_format_file import *
 
 def padstring(string,length=80): return ljust(string,length)
 
-def int_to_chars(i, st = '', letters = ascii_lowercase):
-    """Converts a number into a string of letters, using the specified letters."""
+def int_to_chars(i, st = '', chars = ascii_lowercase):
+    """Converts a number into a string of characters, using the specified characters."""
     if i==0: return st
     else:
-        n = len(letters)
-        return int_to_chars((i-1)/n, ''.join([letters[(i-1)%n],st]), letters)
+        n = len(chars)
+        return int_to_chars((i-1)/n, ''.join([chars[(i-1)%n],st]), chars)
 
-def new_dict_key(d, istart = 0, justfn = rjust, length = 5, letters = ascii_lowercase):
-    """Returns an unused key for dictionary d, using the specified letters, plus the corresponding next starting index."""
+def new_dict_key(d, istart = 0, justfn = rjust, length = 5, chars = ascii_lowercase):
+    """Returns an unused key for dictionary d, using the specified characters, plus the corresponding next starting index."""
     i = istart
     used = True
     while used:
         i += 1
-        name = justfn(int_to_chars(i, letters = letters), length)
+        name = justfn(int_to_chars(i, chars = chars), length)
         used = name in d
     return name,i
 
@@ -657,30 +657,30 @@ class mulgrid(object):
         elif self.convention==2: return blockname[0:2]
         else: return None
 
-    def node_col_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
+    def node_col_name_from_number(self, num, justfn=rjust, chars = ascii_lowercase):
         """Returns node or column name from number."""
-        if self.convention==0: name = justfn(int_to_chars(num, letters = letters), self.colname_length)
+        if self.convention==0: name = justfn(int_to_chars(num, chars = chars), self.colname_length)
         else: name = rjust(str(num),self.colname_length)
         return name
 
-    def column_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
+    def column_name_from_number(self, num, justfn=rjust, chars = ascii_lowercase):
         """Returns column name from column number."""
-        name = self.node_col_name_from_number(num, justfn, letters)
+        name = self.node_col_name_from_number(num, justfn, chars)
         if len(name) > self.colname_length:
             raise NamingConventionError("Column name is too long for the grid naming convention.")
         return name
 
-    def node_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
+    def node_name_from_number(self, num, justfn=rjust, chars = ascii_lowercase):
         """Returns node name from node number."""
-        name = self.node_col_name_from_number(num, justfn, letters)
+        name = self.node_col_name_from_number(num, justfn, chars)
         if len(name) > self.colname_length:
             raise NamingConventionError("Node name is too long for the grid naming convention.")
         return name
 
-    def layer_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
+    def layer_name_from_number(self, num, justfn=rjust, chars = ascii_lowercase):
         """Returns layer name from layer number."""
         if self.convention==0: name = justfn(str(num),self.layername_length)
-        else: name = justfn(int_to_chars(num, letters = letters), self.layername_length)
+        else: name = justfn(int_to_chars(num, chars = chars), self.layername_length)
         if len(name) > self.layername_length:
             raise NamingConventionError("Layer name is too long for the grid naming convention.")
         return name
@@ -695,10 +695,10 @@ class mulgrid(object):
         return all([(blkname[0:3]==blkname[0:3].rjust(3)) for blkname in self.block_name_list])
     right_justified_names=property(get_right_justified_names)
 
-    def new_node_name(self, istart = 0, justfn = rjust, letters = ascii_lowercase):
-        return new_dict_key(self.node, istart, justfn, self.colname_length, letters)
-    def new_column_name(self, istart = 0, justfn = rjust, letters = ascii_lowercase):
-        return new_dict_key(self.column, istart, justfn, self.colname_length, letters)
+    def new_node_name(self, istart = 0, justfn = rjust, chars = ascii_lowercase):
+        return new_dict_key(self.node, istart, justfn, self.colname_length, chars)
+    def new_column_name(self, istart = 0, justfn = rjust, chars = ascii_lowercase):
+        return new_dict_key(self.column, istart, justfn, self.colname_length, chars)
 
     def column_bounds(self,columns):
         """Returns horizontal bounding box for a list of columns."""
@@ -736,10 +736,10 @@ class mulgrid(object):
         del self.column[colname]
         self.columnlist.remove(col)
 
-    def split_column(self,colname,nodename, letters = ascii_lowercase):
+    def split_column(self,colname,nodename, chars = ascii_lowercase):
         """Splits the specified quadrilateral column into two triangles, splitting at the specified node.  Returns
         True if the operation was successful."""
-        letters = uniqstring(letters)
+        chars = uniqstring(chars)
         justfn = [ljust,rjust][self.right_justified_names]
         if colname in self.column:
             col=self.column[colname]
@@ -749,7 +749,7 @@ class mulgrid(object):
                 try:
                     i0=nodenames.index(nodename)
                     i=[(i0+j)%nn for j in xrange(nn)]
-                    colname2, iname = self.new_column_name(justfn = justfn, letters = letters)
+                    colname2, iname = self.new_column_name(justfn = justfn, chars = chars)
                     col2=column(colname2,node=[col.node[i[2]],col.node[i[3]],col.node[i[0]]],surface=col.surface)
                     # switch connections and neighbours from col to col2 as needed:
                     n3=col.node[i[3]]
@@ -1180,7 +1180,7 @@ class mulgrid(object):
         geo.write('\n')
         
     def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case = None, 
-                    letters = ascii_lowercase):
+                    chars = ascii_lowercase):
         """Returns a rectangular MULgraph grid with specified block sizes.
         The arguments are arrays of the block sizes in each dimension (x,y,z).
         Naming convention, atmosphere type and origin can optionally be specified.
@@ -1200,23 +1200,23 @@ class mulgrid(object):
         if case is not None:
             from string import upper, lower
             casefn = [upper,lower][case=='l']
-            letters = casefn(letters)
-        letters = uniqstring(letters)
+            chars = casefn(chars)
+        chars = uniqstring(chars)
         # create nodes:
         num=1
         y=origin[1]
         for y in yverts:
             for x in xverts:
-                name=grid.node_name_from_number(num,justfn,letters)
+                name=grid.node_name_from_number(num,justfn,chars)
                 grid.add_node(node(name,np.array([x,y])))
                 num+=1
         # create columns:
         num=1
         for j in xrange(nyb):
             for i in xrange(nxb):
-                colname=grid.column_name_from_number(num,justfn,letters)
+                colname=grid.column_name_from_number(num,justfn,chars)
                 colverts=[j*nxv+i+1,(j+1)*nxv+i+1,(j+1)*nxv+i+2,j*nxv+i+2]
-                nodenames=[grid.node_name_from_number(v,justfn,letters) for v in colverts]
+                nodenames=[grid.node_name_from_number(v,justfn,chars) for v in colverts]
                 colnodes=[grid.node[name] for name in nodenames]
                 grid.add_column(column(colname,colnodes))
                 num+=1
@@ -1224,26 +1224,26 @@ class mulgrid(object):
         for j in xrange(nyb):
             for i in xrange(nxb-1):
                 num1,num2=j*nxb+i+1,j*nxb+i+2
-                name1,name2=grid.column_name_from_number(num1,justfn,letters),grid.column_name_from_number(num2,justfn,letters)
+                name1,name2=grid.column_name_from_number(num1,justfn,chars),grid.column_name_from_number(num2,justfn,chars)
                 grid.add_connection(connection([grid.column[name1],grid.column[name2]]))
         # y-connections:
         for i in xrange(nxb):
             for j in xrange(nyb-1):
                 num1,num2=j*nxb+i+1,(j+1)*nxb+i+1
-                name1,name2=grid.column_name_from_number(num1,justfn,letters),grid.column_name_from_number(num2,justfn,letters)
+                name1,name2=grid.column_name_from_number(num1,justfn,chars),grid.column_name_from_number(num2,justfn,chars)
                 grid.add_connection(connection([grid.column[name1],grid.column[name2]]))
         # create layers:
-        grid.add_layers(zblocks,origin[2],justify,letters)
+        grid.add_layers(zblocks,origin[2],justify,chars)
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
         grid.setup_block_connection_name_index()
         return grid
 
-    def add_layers(self,thicknesses,top_elevation=0,justify='r',letters = ascii_lowercase):
+    def add_layers(self,thicknesses,top_elevation=0,justify='r',chars = ascii_lowercase):
         """Adds layers of specified thicknesses and top elevation."""
         justfn=[rjust,ljust][justify=='l']
-        letters = uniqstring(letters)
+        chars = uniqstring(chars)
         num=0
         self.clear_layers()
         z=top_elevation
@@ -1255,23 +1255,23 @@ class mulgrid(object):
             name=surfacelayername
             while name==surfacelayername: # make sure layer name is different from surface layer name
                 num+=1
-                name=self.layer_name_from_number(num,justfn,letters)
+                name=self.layer_name_from_number(num,justfn,chars)
             self.add_layer(layer(name,z,centre))
         self.identify_layer_tops()
 
-    def from_gmsh(self,filename,layers,convention=0,atmos_type=2,top_elevation=0, letters = ascii_lowercase):
+    def from_gmsh(self,filename,layers,convention=0,atmos_type=2,top_elevation=0, chars = ascii_lowercase):
         """Returns a MULgraph grid constructed from a 2D gmsh grid and the specified layer structure."""
         grid=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
         grid.empty()
         gmsh=open(filename,'rU')
         line=''
-        letters = uniqstring(letters)
+        chars = uniqstring(chars)
         while not '$Nodes' in line: line=gmsh.readline()
         num_nodes=int(gmsh.readline().strip())
         for i in xrange(num_nodes):
             items=gmsh.readline().strip().split(' ')
             name,x,y=items[0],float(items[1]),float(items[2])
-            name=self.node_name_from_number(int(name), letters = letters)
+            name=self.node_name_from_number(int(name), chars = chars)
             grid.add_node(node(name,np.array([x,y])))
         while not '$Elements' in line: line=gmsh.readline()
         num_elements=int(gmsh.readline().strip())
@@ -1280,16 +1280,16 @@ class mulgrid(object):
             element_type=int(items[1])
             if element_type in [2,3]: # triangle or quadrilateral
                 name=items[0]
-                name=self.column_name_from_number(int(name), letters = letters)
+                name=self.column_name_from_number(int(name), chars = chars)
                 ntags=int(items[2])
                 colnodenumbers = [int(item) for item in items[3+ntags:]]
-                colnodenames = [[self.node_name_from_number(nodeno,letters = letters),nodeno][convention>0] for nodeno in colnodenumbers]
+                colnodenames = [[self.node_name_from_number(nodeno,chars = chars),nodeno][convention>0] for nodeno in colnodenumbers]
                 colnodes=[grid.node[v] for v in colnodenames]
                 grid.add_column(column(name,colnodes))
         gmsh.close()
         for con in grid.missing_connections: grid.add_connection(con)
         grid.delete_orphans()
-        grid.add_layers(layers,top_elevation,letters)
+        grid.add_layers(layers,top_elevation,chars)
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
@@ -2754,7 +2754,7 @@ class mulgrid(object):
             self.setup_block_connection_name_index()
         else: raise Exception('Grid selection contains columns with more than 4 nodes: not supported.')
 
-    def refine(self,columns=[],bisect=False,bisect_edge_columns=[], letters = ascii_lowercase):
+    def refine(self,columns=[],bisect=False,bisect_edge_columns=[], chars = ascii_lowercase):
         """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
         Refinement is carried out by splitting: each column is divided into four, unless the bisect parameter is 'x' or 'y',
         in which case they are divided in the specified direction, or unless bisect is True, in which case they are divided
@@ -2768,13 +2768,13 @@ class mulgrid(object):
             if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
         connections=set([])
         sidenodes={}
-        letters = uniqstring(letters)
+        chars = uniqstring(chars)
         nodenumber, colnumber  = 0, 0
         justfn = [ljust,rjust][self.right_justified_names]
         def create_mid_node(node1,node2,sidenodes,nodenumber):
             midpos=0.5*(node1.pos+node2.pos)
             nodenames=frozenset((node1.name,node2.name))
-            name,nodenumber = self.new_node_name(nodenumber, justfn, letters)
+            name,nodenumber = self.new_node_name(nodenumber, justfn, chars)
             self.add_node(node(name,midpos))
             sidenodes[nodenames]=self.nodelist[-1]
             return sidenodes,nodenumber
@@ -2841,11 +2841,11 @@ class mulgrid(object):
                 nrefined,istart,irange=transition_type(nn,refined_sides)
                 if (col.num_nodes==4) and ((nrefined==4) or ((nrefined==2) and (irange==1))):
                     # create quadrilateral centre node:
-                    name,nodenumber = self.new_node_name(nodenumber, justfn, letters)
+                    name,nodenumber = self.new_node_name(nodenumber, justfn, chars)
                     self.add_node(node(name,col.centre))
                     centrenodes[col.name]=self.nodelist[-1]
                 for subcol in transition_column[nn][nrefined,irange]:
-                    name,colnumber = self.new_column_name(colnumber, justfn, letters)
+                    name,colnumber = self.new_column_name(colnumber, justfn, chars)
                     nodes=[]
                     for vert in subcol:
                         if isinstance(vert,int): n=col.node[(istart+vert)%nn]
@@ -2862,11 +2862,11 @@ class mulgrid(object):
             self.setup_block_connection_name_index()
         else: print 'Grid selection contains columns with more than 4 nodes: not supported.'
 
-    def refine_layers(self, layers=[], factor=2, letters = ascii_lowercase):
+    def refine_layers(self, layers=[], factor=2, chars = ascii_lowercase):
         """Refines selected layers in the grid.  If no layers are specified, all layers are refined.
         Each layer is refined by the specified factor.  Layer names for all subsurface layers in the grid
         are regenerated in sequence."""
-        letters = uniqstring(letters)
+        chars = uniqstring(chars)
         if layers==[]: layers = self.layerlist
         else: 
             if isinstance(layers[0],str): layers=[self.layer[lay] for lay in layers]
@@ -2879,7 +2879,7 @@ class mulgrid(object):
             else: thicknesses.append(lay.thickness)
         self.clear_layers()
         justify=['l','r'][self.right_justified_names]
-        self.add_layers(thicknesses, top_elevation, justify, letters)
+        self.add_layers(thicknesses, top_elevation, justify, chars)
         self.rename_layer(self.layerlist[0].name, atm_name) # preserve old atmosphere layer name
         for col in self.columnlist: self.set_column_num_layers(col)
         self.setup_block_name_index()
