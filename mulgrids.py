@@ -17,12 +17,12 @@ from fixed_format_file import *
 
 def padstring(string,length=80): return ljust(string,length)
 
-def IntToLetters(i, st = '', letters = ascii_lowercase):
+def int_to_chars(i, st = '', letters = ascii_lowercase):
     """Converts a number into a string of letters, using the specified letters."""
     if i==0: return st
     else:
         n = len(letters)
-        return IntToLetters((i-1)/n, ''.join([letters[(i-1)%n],st]), letters)
+        return int_to_chars((i-1)/n, ''.join([letters[(i-1)%n],st]), letters)
 
 def new_dict_key(d, istart = 0, justfn = rjust, length = 5, letters = ascii_lowercase):
     """Returns an unused key for dictionary d, using the specified letters, plus the corresponding next starting index."""
@@ -30,7 +30,7 @@ def new_dict_key(d, istart = 0, justfn = rjust, length = 5, letters = ascii_lowe
     used = True
     while used:
         i += 1
-        name = justfn(IntToLetters(i, letters = letters), length)
+        name = justfn(int_to_chars(i, letters = letters), length)
         used = name in d
     return name,i
 
@@ -659,7 +659,7 @@ class mulgrid(object):
 
     def node_col_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
         """Returns node or column name from number."""
-        if self.convention==0: name = justfn(IntToLetters(num, letters = letters), self.colname_length)
+        if self.convention==0: name = justfn(int_to_chars(num, letters = letters), self.colname_length)
         else: name = rjust(str(num),self.colname_length)
         return name
 
@@ -680,7 +680,7 @@ class mulgrid(object):
     def layer_name_from_number(self, num, justfn=rjust, letters = ascii_lowercase):
         """Returns layer name from layer number."""
         if self.convention==0: name = justfn(str(num),self.layername_length)
-        else: name = justfn(IntToLetters(num, letters = letters), self.layername_length)
+        else: name = justfn(int_to_chars(num, letters = letters), self.layername_length)
         if len(name) > self.layername_length:
             raise NamingConventionError("Layer name is too long for the grid naming convention.")
         return name
