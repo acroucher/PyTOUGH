@@ -625,7 +625,7 @@ class t2listing(file):
                 if line.startswith('\f') or is_header(line): # handle internal headers
                     while not is_header(line):
                         line,count = count_read(count)
-                        if line.strip()==self.title: return '' # some TOUGH2_MP output ends with \f
+                        if line.strip() == self.title: break # some TOUGH2_MP output ends with \f
                     for i in xrange(header_skiplines): line,count = count_read(count)
             # sort rows (needed for TOUGH2_MP):
             indices=rowdict.keys(); indices.sort()
