@@ -596,10 +596,10 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
     \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0,\\
-    \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None),\\
+    \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None,\\
     \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \emph{flow\_variable\_name}=None, \\
     \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
-    \emph{flow\_arrow\_width}=None}}
+    \emph{flow\_arrow\_width}=None})}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
