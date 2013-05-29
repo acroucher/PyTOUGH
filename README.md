@@ -14,13 +14,19 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-* Ability to plot well tracks on mulgrid layer_plot() and slice_plot() plots
+The latest stable version is 1.3.8, which has:
 
-* Ability to plot rock types on mulgrid layer_plot() and slice_plot() plots
+* Ability to plot block-averaged flow vectors on layer and slice plots
 
-* New t2data convert_to_AUTOUGH2() method for converting TOUGH2 input data files to AUTOUGH2
+* Support for TOUGHREACT SAVE/INCON files
 
-* Support for AUTOUGH2 extended precision auxiliary input
+* Ability to specify characters to use for node and column names when creating mulgrid objects (allows creation of larger grids)
 
-* **User guide**: As of PyTOUGH version 1.3.6, the PyTOUGH user guide (PyTOUGH-guide.pdf) is now included in the 'doc' directory of your PyTOUGH install.  Previously this was available separately from the 'Downloads' section on the website, but recently GitHub decided to phase out this 'Downloads' section.
+* More accurate calculation of flux matrices (used for generating block-averaged flow vectors for visualization) 
+
+as well as various bug fixes and other minor enhancements.
+
+# Where's the user guide?
+
+Since PyTOUGH version 1.3.6, the PyTOUGH user guide (PyTOUGH-guide.pdf) is now included in the 'doc' directory of your PyTOUGH install.  Previously this was available separately from the 'Downloads' section on the website, but GitHub decided to phase out this 'Downloads' section.
 
