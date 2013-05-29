@@ -24,7 +24,7 @@ class listingtable(object):
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
     e.g. table[i] returns the ith row (as a dictionary), table[rowname] returns the row with the specified name,
     and table[colname] returns the column with the specified name."""
-    def __init__(self,cols,rows,row_format=None,row_line=None,num_keys=1,allow_reverse_keys=False):
+    def __init__(self,cols,rows,row_format=None,row_line=None,num_keys=1,allow_reverse_keys=False, header_skiplines = 0):
         """The row_format parameter is a dictionary with three keys, 'key','index' and 'values'.  These contain the positions,
         in each row of the table, of the start of the keys, index and data fields.  The row_line parameter is a list containing,
         for each row of the table, the number of lines before it in the listing file, from the start of the table.  This is
@@ -35,6 +35,7 @@ class listingtable(object):
         self.row_line=row_line
         self.num_keys=num_keys
         self.allow_reverse_keys=allow_reverse_keys
+        self.header_skiplines = header_skiplines
         self._col=dict([(c,i) for i,c in enumerate(cols)])
         self._row=dict([(r,i) for i,r in enumerate(rows)])
         self._data=np.zeros((len(rows),len(cols)),float64)
@@ -105,6 +106,11 @@ class listingtable(object):
             result._data = self._data - other._data
             return result
         else: raise Exception("Incompatible tables: can't be subtracted.")
+    def is_header(self, line):
+        """Returns True if all column headers in the table are present in the given line.  Used for
+        detecting internal table headers in TOUGH2 listings.  Some internal header lines have different
+        spacings from the top header, so a simple string comparison doesn't always work."""
+        return all([col in line for col in self.column_name])
 
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
@@ -143,8 +149,8 @@ class t2listing(file):
         if t<self.fulltimes[0]: self.index=0
         elif t>self.fulltimes[-1]: self.index=-1
         else:
-            i=[j for j,tj in enumerate(self.fulltimes) if tj>=t]
-            if len(i)>0: self.index=i[0]
+            dt = np.abs(self.fulltimes - t)
+            self.index = np.argmin(dt)
     time=property(get_time,set_time)
 
     def get_num_times(self): return len(self.times)
@@ -157,8 +163,8 @@ class t2listing(file):
         if step<self.fullsteps[0]: self.index=0
         elif step>self.fullsteps[-1]: self.index=-1
         else:
-            i=[j for j,sj in enumerate(self.fullsteps) if sj>=step]
-            if len(i)>0: self.index=i[0]
+            dstep = np.abs(self.fullsteps - step)
+            self.index = np.argmin(dstep)
     step=property(get_step,set_step)
 
     def get_table_names(self):
@@ -407,18 +413,26 @@ class t2listing(file):
         return self.table_type(keyword)
 
     def next_table_TOUGH2(self):
-        line='\n'
-        while not ((line.strip().startswith('KCYC') and 'ITER' in line) or line==''): line=self.readline()
-        if line=='': return None
-        else:
-            pos=self.tell()
-            if (self.num_fulltimes>1) and (self.index<self.num_fulltimes-1):
-                if pos>=self._fullpos[self.index+1]: return None
-            self.skip_to_nonblank()
-            headpos=self.tell()
-            headers=tuple(self.readline().strip().split()[0:3])
-            self.seek(headpos)
-            return self.table_type(headers)
+        found = False
+        while not found:
+            line = '\n'
+            while not ((line.strip().startswith('KCYC') and 'ITER' in line) or line == ''): line = self.readline()
+            if line == '': return None
+            else:
+                pos=self.tell()
+                if (self.num_fulltimes > 1) and (self.index < self.num_fulltimes-1):
+                    if pos >= self._fullpos[self.index+1]: return None
+                self.skip_to_nonblank()
+                headpos = self.tell()
+                line = self.readline().strip()
+                if line == 'MASS FLOW RATES (KG/S) FROM DIFFUSION':
+                    # skip over extra mass flow rate table in EOS7c listings:
+                    self.skipto('@@@@@')
+                else: 
+                    headers = tuple(line.strip().split()[0:3])
+                    self.seek(headpos)
+                    found = True
+                    return self.table_type(headers)
 
     def next_table_TOUGHplus(self):
         if self.skipto('_____',0):
@@ -567,15 +581,22 @@ class t2listing(file):
         # Read column names (joining flow items to previous names):
         if self.simulator in ['TOUGH2','TOUGH2_MP']: flow_headers=['RATE']
         else: flow_headers=['Flow','Veloc']
-        headline=self.readline()
-        strs=headline.strip().split()
+        headline = self.readline().strip()
+        strs = headline.split()
         indexstrs=['INDEX','IND.'] # for EWASG
         for s in indexstrs:
             if s in strs:
                 indexstr=s
                 nkeys=strs.index(s)
                 break
-        self.skip_over_next_blank()
+        found, header_skiplines = False, 1
+        while not found:
+            pos = self.tell()
+            line = self.readline().strip()
+            unitline = '(' in line and ')' in line
+            found = (line != '') and not unitline and (line != '_'*len(line))
+            if found: self.seek(pos)
+            else: header_skiplines += 1
         rows,cols=[],[]
         for s in strs[nkeys+1:]:
             if s in flow_headers: cols[-1]+=' '+s
@@ -590,6 +611,7 @@ class t2listing(file):
             rowdict={}
             count,index=0,-1
             def count_read(count): return self.readline(),count+1
+            def is_header(line): return all([col in line for col in cols])
             while line.strip() and not line[1:].startswith('@@@@@'):
                 keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
                 if len(keyval)>1: keyval=tuple(keyval)
@@ -600,12 +622,11 @@ class t2listing(file):
                 rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
                 if len(line.strip())>len(longest_line): longest_line=line
                 line,count=count_read(count)
-                if line.startswith('\f') or line==headline:
-                    line,count=count_read(count)
-                    if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
-                    else: # extra headers in the middle of TOUGH2 listings
-                        while line.strip(): line,count=count_read(count)
-                        line,count=count_read(count)
+                if line.startswith('\f') or is_header(line): # handle internal headers
+                    while not is_header(line):
+                        line,count = count_read(count)
+                        if line.strip() == self.title: break # some TOUGH2_MP output ends with \f
+                    for i in xrange(header_skiplines): line,count = count_read(count)
             # sort rows (needed for TOUGH2_MP):
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
@@ -613,7 +634,8 @@ class t2listing(file):
             numpos=self.parse_table_line(longest_line,start)
             row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
             allow_rev=tablename=='connection'
-            self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys,allow_reverse_keys=allow_rev)
+            self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys, allow_reverse_keys=allow_rev,
+                                                header_skiplines = header_skiplines)
         else: print 'Error parsing '+tablename+' table keys: table not created.'
 
     def read_header_AUTOUGH2(self):
@@ -721,36 +743,34 @@ class t2listing(file):
         return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(nvals)]+[0.0]*(num_columns-nvals)
         
     def read_table_TOUGH2(self,tablename):
-        ncols=self._table[tablename].num_columns
-        fmt=self._table[tablename].row_format
-        headline=self.readline()
-        self.skip_to_blank()
-        self.skip_to_nonblank()
-        line=self.readline()
+        table = self._table[tablename]
+        ncols = table.num_columns
+        fmt = table.row_format
+        self.skiplines(table.header_skiplines)
+        line = self.readline()
         while line.strip() and not line[1:].startswith('@@@@@'):
-            key=self._table[tablename].key_from_line(line)
-            self._table[tablename][key]=self.read_table_line_TOUGH2(line,ncols,fmt)
-            line=self.readline()
-            if line.startswith('\f') or line==headline:
-                line=self.readline()
-                if line.strip()==self.title: break # some TOUGH2_MP output ends with \f
-                else: # extra headers in the middle of TOUGH2 listings
-                    self.skip_over_next_blank()
-                    line=self.readline()
+            key = table.key_from_line(line)
+            table[key] = self.read_table_line_TOUGH2(line,ncols,fmt)
+            line = self.readline()
+            line = self.skip_internal_table_header_TOUGH2(table, line)
 
     def skip_table_TOUGH2(self,tablename):
-        headline=self.readline()
-        self.skip_to_blank()
-        self.skip_to_nonblank()
-        line=self.readline()
+        table = self._table[tablename]
+        self.skiplines(table.header_skiplines)
+        line = self.readline()
         while line.strip() and not line[1:].startswith('@@@@@'):
-            line=self.readline()
-            if line.startswith('\f') or line==headline:
-                line=self.readline()
-                if line.strip()==self.title: break
-                else:
-                    self.skip_over_next_blank()
-                    line=self.readline()
+            line = self.readline()
+            line = self.skip_internal_table_header_TOUGH2(table, line)
+
+    def skip_internal_table_header_TOUGH2(self, table, line):
+        """For TOUGH2 listings, returns next line after an internal table header, if one has
+        been encountered."""
+        if line.startswith('\f') or table.is_header(line):
+            while not table.is_header(line):
+                line = self.readline()
+                if line.strip()==self.title: return '' # some TOUGH2_MP output ends with \f
+            for i in xrange(table.header_skiplines): line = self.readline()
+        return line
 
     def history(self,selection,short=True):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
@@ -949,7 +969,8 @@ class t2listing(file):
                         arrays[array_type][name].SetValue(iblk,data[iblk])
         return arrays
 
-    def write_vtk(self,geo,filename,grid=None,indices=None,flows=False,wells=False,start_time=0.0,time_unit='s'):
+    def write_vtk(self, geo, filename, grid = None, indices = None, flows = False, wells = False, start_time = 0.0,
+                  time_unit = 's', flux_matrix = None):
         """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the listing data,
         with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
         data as well.  A list of the required time indices can optionally be specified.  If a grid is specified, flows is True,
@@ -971,8 +992,7 @@ class t2listing(file):
             grid_arrays=grid.get_vtk_data(geo)
             for array_type,array_dict in arrays.items():
                 array_dict.update(grid_arrays[array_type])
-        if doflows: flux_matrix=grid.flux_matrix(geo)
-        else: flux_matrix=None
+        if doflows and flux_matrix is None: flux_matrix = grid.flux_matrix(geo)
         import xml.dom.minidom
         pvd=xml.dom.minidom.Document()
         vtkfile=pvd.createElement('VTKFile')

@@ -565,6 +565,13 @@ Runs an AUTOUGH2 or TOUGH2 (but not TOUGH2\_MP) simulation using the data file c
 
 For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable must be specified via the \texttt{simulator} parameter.  However, the \texttt{save\_filename} and \texttt{incon\_filename} parameters do not need to be specified.  Initial conditions will be read from the file INCON and final results written to SAVE.  The listing file name will be the same as the data file name, but with the extension changed to *.listing.
 
+Running TOUGH2\_MP is generally done via MPI rather than directly, and the exact syntax for doing so may vary with different implementations of MPI (OpenMPI, MPICH2 etc.)  It is also necessary to specify the number of processors to use.  However it is still possible to run TOUGH2\_MP from a Python script using a system call, e.g.:
+
+\begin{verbatim}
+from os import system
+system("mpirun -np 16 t2eos1_mp")
+\end{verbatim}
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{save\_filename}: string\\

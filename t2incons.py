@@ -15,20 +15,23 @@ from mulgrids import *
 
 class t2blockincon(object):
     """Class for a single set of initial conditions at one block."""
-    def __init__(self,variable,block='',porosity=None):
-        self.block=block
-        self.variable=list(variable)
-        self.porosity=porosity
+    def __init__(self, variable, block = '', porosity = None, permeability = None):
+        self.block = block
+        self.variable = list(variable)
+        self.porosity = porosity
+        self.permeability = permeability
     def __getitem__(self,key): return self.variable[key]
     def __setitem__(self,key,value): self.variable[key]=value
     def __repr__(self):
         result=self.block+':'+str(self.variable)
         if self.porosity: result+=' '+str(self.porosity)
+        if self.permeability: result += ' ' + str(self.permeability)
         return result
 
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
     def __init__(self,filename=''):
+        self.simulator = 'TOUGH2'
         self.empty()
         if filename: self.read(filename)
 
@@ -41,7 +44,7 @@ class t2incon(object):
         if value.block<>key: value.block=key
         self.add_incon(value)
 
-    def __repr__(self): return 'Initial conditions for '+str(self.num_blocks)+' blocks'
+    def __repr__(self): return self.simulator + ' initial conditions for '+str(self.num_blocks)+' blocks'
 
     def empty(self):
         self._block={}
@@ -71,10 +74,30 @@ class t2incon(object):
         if isinstance(por,np.ndarray):
             if len(por)==self.num_blocks: 
                 for i,p in enumerate(por): self._blocklist[i].porosity=p
-            else: print 'Porosity array is the wrong length (',len(por),').'
+            else: raise Exception('Porosity array is the wrong length ('+str(len(por))+').')
         elif isinstance(por,float) or (por==None):
             for blk in self._blocklist: blk.porosity=por
     porosity=property(get_porosity,set_porosity)
+
+    def get_permeability(self):
+        """Returns an array of permeabilities for each block."""
+        return np.array([inc.permeability for inc in self._blocklist])
+    def set_permeability(self, perm):
+        if isinstance(perm, np.ndarray):
+            shape = np.shape(perm)
+            if shape == (3,):
+                from copy import copy
+                for blk in self._blocklist: blk.permeability = copy(perm)
+            elif shape == (self.num_blocks,3):
+                for i,p in enumerate(perm): self._blocklist[i].permeability = p
+            else: raise Exception('Permeability array is the wrong shape ('+str(shape)+').')
+        elif isinstance(perm, float):
+            for blk in self._blocklist: blk.permeability = perm*np.ones(3)
+        elif perm == None:
+            for blk in self._blocklist: blk.permeability = None
+
+    porosity = property(get_porosity,set_porosity)
+    permeability = property(get_permeability, set_permeability)
 
     def get_blocklist(self):
         """Returns an ordered list of blocks."""
@@ -118,17 +141,25 @@ class t2incon(object):
                     blkname=fix_blockname(line[0:5])
                     if len(line)>=30: porosity=fortran_float(line[15:30])
                     else: porosity=None
+                    if len(line)>=75:
+                        permeability = np.array([fortran_float(line[i:i+15]) for i in [30,45,60]])
+                        self.simulator = 'TOUGHREACT'
+                    else: permeability = None
                     line=f.readline()
                     linestrs=[line[i*20:(i+1)*20] for i in xrange(len(line)/20)]
                     vals=tuple([fortran_float(s) for s in linestrs])
-                    incon=t2blockincon(vals,blkname,porosity)
+                    incon = t2blockincon(vals, blkname, porosity, permeability)
                     self.add_incon(incon)
             else: finished=True
-        self.timing=None
+        self.timing = None
         if timing:
             line=f.readline().rstrip()
-            if len(line)>=45: self.timing={'kcyc':int(line[0:5]),'iter':int(line[5:10]),'nm':int(line[10:15]),
-                                  'tstart':float(line[15:30]),'sumtim':float(line[30:45])}
+            if len(line)>=45:
+                self.timing = {'tstart':float(line[15:30]),'sumtim':float(line[30:45])}
+                if self.simulator == 'TOUGH2':
+                    self.timing.update({'kcyc':int(line[0:5]),'iter':int(line[5:10]),'nm':int(line[10:15])})
+                else: # TOUGHREACT
+                    self.timing.update({'kcyc':int(line[0:6]),'iter':int(line[6:12]),'nm':int(line[12:15])})
 
     def write(self,filename,reset=True):
         """Writes initial conditions to file."""
@@ -141,12 +172,18 @@ class t2incon(object):
         for incon in self._blocklist:
             f.write('%5s'%unfix_blockname(incon.block))  # TOUGH2 needs mangled block names in the incon file
             if incon.porosity is not None: f.write('          %15.9e'%incon.porosity)
+            if self.simulator == 'TOUGHREACT' and incon.permeability is not None:
+                f.write(' %14.8e %14.8e %14.8e'%tuple(incon.permeability))
             f.write('\n')
             for v in incon.variable: f.write(list_fmt(v)%v)
             f.write('\n')
         if (self.timing is None) or reset: f.write('\n\n')
-        else: f.write('%5d%5d%5d%15.9e%15.9e\n'%(self.timing['kcyc'],self.timing['iter'],self.timing['nm'],
-                                                 self.timing['tstart'],self.timing['sumtim']))
+        else:
+            f.write('+++\n')
+            if self.simulator == 'TOUGH2': time_fmt = '%5d%5d%5d%15.9e%15.9e\n'
+            else: time_fmt = '%6d%6d%3d%15.9e%15.9e\n' # TOUGHREACT
+            f.write(time_fmt%(self.timing['kcyc'],self.timing['iter'],self.timing['nm'],
+                              self.timing['tstart'],self.timing['sumtim']))
         f.close()
 
     def transfer_from(self,sourceinc,sourcegeo,geo,mapping={},colmapping={}):

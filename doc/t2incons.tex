@@ -8,7 +8,7 @@ The \texttt{t2incons} library in PyTOUGH contains classes and routines for readi
    from t2incons import *
 \end{verbatim}
 
-The initial conditions files used by TOUGH2 and AUTOUGH2 have the same format.
+The initial conditions files used by TOUGH2 and AUTOUGH2 have the same format.  PyTOUGH also supports TOUGHREACT initial conditions files, which have a slightly different format- permeabilities are included for each block, and timing information at the bottom of the file is formatted differently.
 
 \section{\texttt{t2incon} objects}
 
@@ -68,7 +68,11 @@ inc.variable=v
 
 The \texttt{porosity} property may be set to assign values of porosity to all blocks.  The assigned value may be an \texttt{np.array} with a value for each block, or a scalar float (in which case the same value is assigned to all blocks), or \texttt{None} which assigns the value in each block to \texttt{None}.
 
+Similarly, for TOUGHREACT initial conditions files, the \texttt{permeability} property can be used to read or assign permeabilities for all blocks.  When assigning this property, the value can be an \texttt{np.array} of shape (\texttt{num\_blocks}, 3), (i.e. a row for each block), or a single \texttt{np.array} with 3 elements, to be applied to all blocks, a single scalar float (to assign isotropic permeabilities to all blocks) or \texttt{None} which assigns \texttt{None} to all block permeabilities.
+
 The \texttt{timing} property of a \texttt{t2incon} object contains the optional timing information at the end of the file.  This is a dictionary property with keys \texttt{`kcyc'}, \texttt{`iter'}, \texttt{`nm'}, \texttt{`tstart'} and \texttt{`sumtim'}, corresponding to the values stored on this line.
+
+The \texttt{simulator} string property is `TOUGH2' by default, and is set to `TOUGHREACT' if permeabilities are detected while reading from file.  Setting this property back to `TOUGH2' will cause the file to be written out in TOUGH2 format (no permeabilities, and different format for timing information) if the \texttt{write()} method is executed.
 
 \begin{table}
   \begin{center}
@@ -79,7 +83,9 @@ The \texttt{timing} property of a \texttt{t2incon} object contains the optional 
       \texttt{blocklist} & list & ordered list of block names in the initial conditions file\\
       \texttt{num\_blocks} & integer & number of blocks at which conditions are specified \\
       \texttt{num\_variables} & integer & number of thermodynamic variables specified at each block\\
+      \texttt{permeability} & \texttt{np.array} & array of permeability values specified at each block (TOUGHREACT only)\\
       \texttt{porosity} & \texttt{np.array} & array of porosity values specified at each block\\
+      \texttt{simulator} & string & simulator type (`TOUGH2' or `TOUGHREACT')\\
       \texttt{timing} & dictionary & additional timing information for restarting\\
       \texttt{variable} & \texttt{np.array} & two-dimensional array of thermodynamic variable values at each block\\
       \hline
@@ -193,7 +199,7 @@ Writes initial conditions to file.
 \section{\texttt{t2blockincon} objects}
 \label{t2blockincons}
 
-A \texttt{t2blockincon} object represents the initial conditions for a particular block.  A \texttt{t2blockincon} object has no methods, and three properties: \texttt{variable}, \texttt{block} and \texttt{porosity}.  These are respectively list, string and float properties which hold the variable values, the block name and the (optional) porosity value for each block.  If no value is given for porosity, its value is \texttt{None}.
+A \texttt{t2blockincon} object represents the initial conditions for a particular block.  A \texttt{t2blockincon} object has no methods, and four properties: \texttt{variable}, \texttt{block}, \texttt{porosity} and \texttt{permeability}.  These are respectively list, string, float and \texttt{np.array} properties which hold the variable values, the block name, the (optional) porosity value and the permeability (TOUGHREACT only) for each block.  If no values are given for porosity or permeability, their values are \texttt{None}.
 
 The \texttt{variable} property of a \texttt{t2blockincon} can be more easily accessed simply by adding the required (zero-based) variable index after the object.  For example, for a \texttt{t2blockincon} object \texttt{b}, the value of the second variable is given simply by \texttt{b[1]}.
 

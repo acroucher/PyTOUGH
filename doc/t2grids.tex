@@ -80,6 +80,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \texttt{delete\_rocktype} & -- & deletes a rock type from the grid\\
       \texttt{embed} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
       \texttt{empty} & -- & empties contents of grid\\
+      \texttt{flux\_matrix} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
       \texttt{fromgeo} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
       \texttt{incons} & \texttt{t2incon} & constructs initial conditions for the grid\\
       \texttt{radial} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
@@ -238,6 +239,18 @@ Returns a grid with a subgrid embedded inside one of its blocks.  The connection
 \subsubsection{\texttt{empty}()}
 
 Empties the grid of all its blocks, rock types and connections.
+
+\subsubsection{\texttt{flux\_matrix(\emph{geo})}}
+
+Takes the grid and a corresponding \texttt{mulgrid} object, and constructs a sparse matrix (of type \texttt{scipy.sparse.lil\_matrix}) which can be used to convert connection flow values on the grid to block-average fluxes (flows per unit area).  Specifically, if an array of connection flow values (one for each connection in the grid) is multiplied by this sparse matrix, the result is a partitioned array containing the 3-component block-average flux for each of the (non-atmosphere) blocks.
+
+The method for constructing the matrix is as follows.  For each block, a distribution of flux is fitted to agree as closely as possible with the connection flow values.  This distribution is either constant or linear, depending on how many connections the block has (linear for blocks with at least 6 connections).  Fitting the connection values results in a small linear system to solve, which may be under- or over-determined, depending on the number of connections and the type of flux distribution.  A pseudo-inverse matrix is calculated which will find the least-squares solution of this system.  The total matrix is formed by assembling these matrices for each of the blocks into a global matrix.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \texttt{mulgrid}\\
+  The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
+\end{itemize}
 
 \subsubsection{\texttt{fromgeo(\emph{geo})}}
 
