@@ -118,8 +118,9 @@ class t2listing(file):
        given by element['aa100']['Pressure'].)  It is possible to navigate through time in the listing by 
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
-    def __init__(self,filename=None,skip_tables=[]):
+    def __init__(self,filename=None,skip_tables=[],cache_lim=2):
         self._cache = {}
+        self._cache_hist, self._cache_limit = [], max(0,cache_lim)
         self.filename=filename
         self.skip_tables=skip_tables
         super(t2listing,self).__init__(filename,'rU')
@@ -145,13 +146,14 @@ class t2listing(file):
         if self._index in self._cache:
             self._table = self._cache[i]
             self.set_table_attributes()
-            return
-        # make sure the cache isn't overwritten
-        from copy import deepcopy
-        self._table = deepcopy(self._table)
-        self.set_table_attributes()
-        self.read_tables()
-        self._cache[self._index] = self._table
+        else:
+            # make sure the cache isn't overwritten
+            from copy import deepcopy
+            self._table = deepcopy(self._table)
+            self.set_table_attributes()
+            self.read_tables()
+            self._cache[self._index] = self._table
+        self.update_cache_hist(self._index)
     index=property(get_index,set_index)
 
     def get_time(self): return self._time
@@ -200,6 +202,20 @@ class t2listing(file):
         more=self.index>0
         if more: self.index-=1
         return more
+
+    def update_cache_hist(self, new_idx = None, new_lim = None):
+        """ record the history of accessing steps, the size of history 
+        along with self._cache will be kept under self._cache_limit """
+        if new_lim:
+            self._cache_limit = max(0,new_lim)
+        if new_idx:
+            if new_idx in self._cache_hist:
+                self._cache_hist.remove(new_idx)
+            self._cache_hist.append(new_idx)
+        while len(self._cache_hist) > self._cache_limit:
+            i = self._cache_hist.pop(0)
+            del self._cache[i]
+        return self._cache_hist
 
     def skiplines(self,number=1):
         """Skips specified number of lines in listing file"""
