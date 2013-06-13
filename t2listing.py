@@ -119,6 +119,7 @@ class t2listing(file):
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
     def __init__(self,filename=None,skip_tables=[]):
+        self._cache = {}
         self.filename=filename
         self.skip_tables=skip_tables
         super(t2listing,self).__init__(filename,'rU')
@@ -141,7 +142,16 @@ class t2listing(file):
         self.seek(self._fullpos[i])
         self._index=i
         if self._index<0: self._index+=self.num_fulltimes
+        if self._index in self._cache:
+            self._table = self._cache[i]
+            self.set_table_attributes()
+            return
+        # make sure the cache isn't overwritten
+        from copy import deepcopy
+        self._table = deepcopy(self._table)
+        self.set_table_attributes()
         self.read_tables()
+        self._cache[self._index] = self._table
     index=property(get_index,set_index)
 
     def get_time(self): return self._time
