@@ -167,14 +167,17 @@ def polygon_boundary(this,other,polygon):
         except LinAlgError: continue
     return v
 
-def line_projection(a,line):
-    """Finds projection of point a onto a line (defined by two vectors)"""
-    d=line[1]-line[0]
+def line_projection(a, line, return_xi = False):
+    """Finds projection of point a onto a line (defined by two vectors).  Optionally
+    return the non-dimensional distance xi between the line start and end."""
+    d = line[1]-line[0]
     try:
-        xi=np.dot(a-line[0],d)/np.dot(d,d)
-        return line[0]+d*xi
+        xi = np.dot(a - line[0], d) / np.dot(d, d)
+        p = line[0] + d * xi
     except ZeroDivisionError: # line ill-defined
-        return None
+        p, xi = None, None
+    if return_xi: return p, xi
+    else: return p
 
 def point_line_distance(a, line):
     """Finds distance between point a and a line."""
