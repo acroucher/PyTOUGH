@@ -245,6 +245,14 @@ class t2grid(object):
             del self.block[blockname]
             if blk in self.blocklist: self.blocklist.remove(blk)
 
+    def demote_block(self, blockname):
+        """Shifts blocks with specified names to the end of the block list.  The blockname
+        parameter can be a block name or a list of them."""
+        if isinstance(blockname, str): blockname = [blockname]
+        for name in blockname:
+            i = self.block_index(name)
+            self.blocklist.append(self.blocklist.pop(i))
+
     def add_connection(self,newconnection=t2connection()):
         """Adds a connection to the grid"""
         conname=tuple([blk.name for blk in newconnection.block])
