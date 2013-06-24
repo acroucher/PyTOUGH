@@ -125,14 +125,17 @@ class t2listing(file):
         self.detect_simulator()
         if self.simulator is None: print 'Could not detect simulator type.'
         else:
-            self.setup_short()
+            self.setup_short_types()
             self.setup_pos()
             if self.num_fulltimes>0:
                 self._index=0
                 self.setup_tables()
                 self.set_table_attributes()
+                self.setup_short_indices()
                 self.first()
-            else: print 'No full results found in listing file.'
+            else:
+                self.setup_short_indices()
+                print 'No full results found in listing file.'
 
     def __repr__(self): return self.title
 
@@ -280,33 +283,58 @@ class t2listing(file):
             if headers in keytable: return keytable[headers]
         return None
         
-    def setup_short(self):
-        """Sets up short_types and short_indices, for handling short output."""
-        self.short_types=[]
-        self.short_indices={}
-        self.seek(0)
-        if self.simulator=='AUTOUGH2':
-            done=False
+    def setup_short_types(self):
+        """Sets up short_types, for handling short output."""
+        self.short_types = []
+        if self.simulator == 'AUTOUGH2':
+            startpos = self.tell()
+            self.seek(0)
+            done = False
             while not done:
-                shortkw=self.skipto(['ESHORT','CSHORT','GSHORT'])
-                if (shortkw in self.short_types) or not shortkw: done=True
+                shortkw = self.skipto(['ESHORT','CSHORT','GSHORT'])
+                if (shortkw in self.short_types) or not shortkw: done = True
                 else:
                     self.short_types.append(shortkw)
-                    self.short_indices[shortkw]={}
                     self.skipto(shortkw)
-                    self.skiplines(2)
-                    indexpos=self.readline().index('INDEX')
-                    self.skiplines()
-                    endtable=False
-                    lineindex=0
-                    while not endtable:
-                        line=self.readline()
-                        if line[1:].startswith(shortkw): endtable=True
-                        else:
-                            index=int(line[indexpos:indexpos+5])-1
-                            self.short_indices[shortkw][index]=lineindex
-                        lineindex+=1
+                    self.skipto(shortkw) # to end of short table
+            self.seek(startpos)
         # (no SHORT output for TOUGH2 or TOUGH+)
+
+    def setup_short_indices(self):
+        """Sets up short_indices (indices of main table items in short tables)."""
+        self.short_indices = {}
+        if self.simulator == 'AUTOUGH2':
+            startpos = self.tell()
+            shortpos = [pos for pos,short in zip(self._pos, self._short) if short]
+            if len(shortpos) > 0:
+                self.seek(shortpos[0])
+                for itable,table in enumerate(self.short_types):
+                    fulltable_keyword = table[0].upper()*5
+                    fulltable = self.table_type(fulltable_keyword)
+                    if itable > 0: self.skipto(table)
+                    self.short_indices[table] = {}
+                    self.skipto(table)
+                    self.skip_to_blank()
+                    self.skip_to_nonblank()
+                    if fulltable in self._table:
+                        def rowindex(line): # can get row indices from full table
+                            key = self._table[fulltable].key_from_line(line)
+                            return self._table[fulltable]._row[key]
+                        self.skip_to_blank()
+                    else: # have to get row index from index in table (possibly not necessarily reliable)
+                        indexpos = self.readline().index('INDEX')
+                        def rowindex(line): return int(line[indexpos:indexpos+5])-1
+                    self.skip_to_nonblank()
+                    endtable = False
+                    lineindex = 0
+                    while not endtable:
+                        line = self.readline()
+                        if line[1:].startswith(table): endtable = True
+                        else:
+                            index = rowindex(line)
+                            self.short_indices[table][index] = lineindex
+                        lineindex += 1
+            self.seek(startpos)
 
     def setup_pos_AUTOUGH2(self):
         """Sets up _pos list for AUTOUGH2 listings, containing file position at the start of each set of results.
@@ -542,7 +570,7 @@ class t2listing(file):
                     else: keyval=keyval[0]
                     rows.append(keyval)
                     line=self.readline()
-                row_format={'values':[start]}
+                row_format={'key':keypos, 'values':[start]}
                 allow_rev=tablename=='connection'
                 self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys,allow_reverse_keys=allow_rev)
                 self.readline()
