@@ -448,10 +448,12 @@ class t2listing(file):
 
     def skip_to_table_AUTOUGH2(self,tablename,last_tablename,nelt_tables):
         """Skips forwards to headers of table with specified name at the current time."""
-        if self._short[self._index]: keyword=tablename[0].upper()+'SHORT'
-        else: keyword=tablename[0].upper()*5
+        tablechar = tablename[0].upper()
+        if self._short[self._index]: keyword, first_tablechar = tablechar+'SHORT', self.short_types[0][0]
+        else: keyword, first_tablechar = tablechar*5, 'E'
+        if tablechar <> first_tablechar: self.skipto(keyword)
+        self.skipto('OUTPUT')
         self.skipto(keyword)
-        if last_tablename is not None: self.skipto(keyword)
         self.skip_to_blank()
         self.skip_to_nonblank()
 

@@ -78,6 +78,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \texttt{delete\_block} & -- & deletes a block from the grid\\
       \texttt{delete\_connection} & -- & deletes a connection from the grid\\
       \texttt{delete\_rocktype} & -- & deletes a rock type from the grid\\
+      \texttt{demote\_block} & -- & shifts a block (or blocks) to the end of the blocklist\\
       \texttt{embed} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
       \texttt{empty} & -- & empties contents of grid\\
       \texttt{flux\_matrix} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
@@ -222,6 +223,16 @@ Deletes a rock type from the grid.
 \begin{itemize}
 \item \textbf{rocktypename}: string\\
   Name of the rock type to be deleted from the grid.
+\end{itemize}
+
+\subsubsection{\texttt{demote\_block(\emph{blockname})}}
+
+Shifts a block (or blocks) to the end of the blocklist.  This can be useful for making blocks inactive- by setting their volumes to zero or negative, and then shifting them to the end of the list (to avoid all blocks below them also being treated as inactive).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{blockname}: string or list of strings\\
+  Name(s) of the block(s) to be shifted to the end of the blocklist.
 \end{itemize}
 
 \subsubsection{\texttt{embed(\emph{subgrid}, \emph{connection})}}
