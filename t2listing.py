@@ -141,7 +141,7 @@ class t2listing(file):
     def get_index(self): return self._index
     def set_index(self,i):
         self.seek(self._fullpos[i])
-        if i<0: i = self._index + self.num_fulltimes
+        if i<0: i = i + self.num_fulltimes
         self._index=i
         if self._index in self._cache:
             self._table = self._cache[i]
