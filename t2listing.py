@@ -796,10 +796,11 @@ class t2listing(file):
             else: return None
 
         def ordered_selection(selection,tables,short_types,short_indices):
-            """Given the initial history selection, returns a list of tuples of table name and table selection.  The tables
-            are in the same order as they appear in the listing file.  The table selection is a list of tuples of 
-            (row index, column name, selection index, short row index) for each table, ordered by row index.  This ordering
-            means all data can be read sequentially to make it more efficient.""" 
+            """Given the initial history selection, returns a list of tuples of table name and table selections.  The tables
+            are in the same order as they appear in the listing file.  Each table selection is a list of tuples of 
+            (table row index, column name, reversed, selection index) for each table, ordered by table row index.  This ordering
+            means all data can be read sequentially to make it more efficient.  There is a table selection each for full and
+            short output, to account for possible differences in ordering between them.""" 
             converted_selection=[]
             for sel_index,(tspec,key,h) in enumerate(selection):  # convert keys to indices as necessary, and expand table names
                 tablename=tablename_from_specification(tspec)
@@ -823,11 +824,14 @@ class t2listing(file):
             tables=list(set([sel[0] for sel in converted_selection]))
             # need to retain table order as in the file:
             tables=[tname for tname in ['element','element1','connection','primary','element2','generation'] if tname in tables]
-            tableselection=[]
+            tableselection, short_tableselection = [],[]
             for table in tables:
-                tselect=[(i,ishort,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in converted_selection if tname==table]
+                tselect = [(i,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in converted_selection if tname==table]
                 tselect.sort()
-                tableselection.append((table,tselect))
+                tselect_short = [(ishort,h,rev,sel_index) for (tname,i,ishort,h,rev,sel_index) in converted_selection \
+                                   if tname==table and ishort is not None]
+                tselect_short.sort()
+                tableselection.append((table, tselect, tselect_short))
             return tableselection
 
         old_index=self.index
@@ -844,7 +848,7 @@ class t2listing(file):
             if not (is_short and not short):
                 last_tname=None
                 nelt_tables=-1
-                for (tname,tselect) in tableselection:
+                for (tname, tselect, tselect_short) in tableselection:
                     if is_short: tablename=tname[0].upper()+'SHORT'
                     else: tablename=tname
                     if not (is_short and not (tablename in self.short_types)):
@@ -856,8 +860,8 @@ class t2listing(file):
                         fmt=self._table[tname].row_format
                         index=0
                         line=self.readline()
-                        for (itemindex,ishort,colname,reverse,sel_index) in tselect:
-                            lineindex=[itemindex,ishort][is_short]
+                        ts = tselect_short if is_short else tselect
+                        for (lineindex,colname,reverse,sel_index) in ts:
                             if lineindex is not None:
                                 for k in xrange(lineindex-index): line=self.readline()
                                 index=lineindex
