@@ -621,6 +621,7 @@ class mulgrid(object):
 
     def setup_block_connection_name_index(self):
         """Sets up list and dictionary of connection names and indices for blocks in the TOUGH2 grid represented by the geometry."""
+        self.block_top_connection_name_index = {}
         self.block_connection_name_list = []
         for ilay,lay in enumerate(self.layerlist[1:]):
             layercols = [col for col in self.columnlist if col.surface > lay.bottom]
@@ -637,6 +638,7 @@ class mulgrid(object):
                     abovelayer = self.layerlist[ilay]
                     aboveblkname = self.block_name(abovelayer.name,col.name)
                 self.block_connection_name_list.append((thisblkname, aboveblkname))
+                self.block_top_connection_name_index[thisblkname] = len(self.block_connection_name_list) -1
             layercolset = set(layercols) # horizontal connections:
             for con in [con for con in self.connectionlist if set(con.column).issubset(layercolset)]:
                 conblocknames = tuple([self.block_name(lay.name,concol.name) for concol in con.column])
