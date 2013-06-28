@@ -6,7 +6,7 @@ PyTOUGH (Python TOUGH) is a Python library for simplifying, extending and automa
 
 First, make sure you have [Python](http://www.python.org) and the [Numerical Python](http://numpy.scipy.org/) library installed on your machine.  (For some features you will need other libraries such as [Scientific Python](http://www.scipy.org/) or [Matplotlib](http://matplotlib.sourceforge.net/)- consult the user guide for details.)
 
-Click the [Download ZIP](https://github.com/acroucher/PyTOUGH/archive/master.zip) button at the upper left of the PyTOUGH web page, and save the .zip file to your computer.  Unzip this to any directory on your computer.  This will create a directory containing a file called `setup.py`.  At the command line type `python setup.py install`.
+Click the [Download ZIP](https://github.com/acroucher/PyTOUGH/archive/master.zip) button at the right of the PyTOUGH web page, and save the .zip file to your computer.  Unzip this to any directory on your computer.  This will create a directory containing a file called `setup.py`.  At the command line type `python setup.py install`.
 
 # More information:
 
