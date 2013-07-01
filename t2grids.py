@@ -122,17 +122,25 @@ class t2grid(object):
             blk.centre=geo.block_centre(lay,col)
 
     def calculate_connection_centres(self, geo):
-        """Calculates centre (and normal vector) for each connection face."""
+        """Calculates centre (and normal vector) for each connection face.  Note that the 'centre'
+        depends on which block the connection is approached from- in the case where the connection
+        face is not orthogonal to the line between the block centres."""
         layindex = dict([(lay.name,i) for i,lay in enumerate(geo.layerlist)])
         for con in self.connectionlist:
+            con.centre = {}
             layernames = [geo.layer_name(blk.name) for blk in con.block]
             if layernames[0] == layernames[1]: # horizontal connection
                 lay = geo.layer[layernames[0]]
                 colnames = tuple([geo.column_name(blk.name) for blk in con.block])
                 geocon = geo.connection[colnames]
-                vcentre = 0.5 * min([lay.bottom + geo.block_surface(lay,c) for c in geocon.column])
-                dpos = geocon.node[1].pos - geocon.node[0].pos
-                hcentre = 0.5 * (geocon.node[0].pos + geocon.node[1].pos)
+                nodepos = [node.pos for node in geocon.node]
+                dpos = nodepos[1] - nodepos[0]
+                for colname,blk in zip(colnames, con.block):
+                    col = geo.column[colname]
+                    if blk.centre is not None: vcentre = blk.centre[2]
+                    else: vcentre = geo.block_centre(lay,col)[2]
+                    hcentre = line_projection(col.centre, nodepos)
+                    con.centre[blk.name] = np.hstack((hcentre, np.array([vcentre])))
                 con.normal = np.array([dpos[1], -dpos[0], 0.]) / np.linalg.norm(dpos)
             else: # vertical connection
                 layindices = np.array([layindex[layname] for layname in layernames])
@@ -144,7 +152,8 @@ class t2grid(object):
                 vcentre = geo.block_surface(lay,col)
                 sgn = [1.,-1.][ilower]
                 con.normal = np.array([0., 0., sgn])
-            con.centre = np.hstack((hcentre, np.array([vcentre])))
+                centre = np.hstack((hcentre, np.array([vcentre])))
+                for blk in con.block: con.centre[blk.name] = centre
 
     def rocktype_frequency(self,rockname):
         """Returns how many times the rocktype with given name is used in the grid."""
@@ -491,7 +500,7 @@ class t2grid(object):
                 for conname in blk.connection_name:
                     con = self.connection[conname]
                     row = list(con.normal * con.area) # fit constant flows
-                    if ncons >= 6: row += list((con.centre - blk.centre) * con.normal * con.area) # fit linear flows
+                    if ncons >= 6: row += list((con.centre[blk.name] - blk.centre) * con.normal * con.area) # fit linear flows
                     M.append(row)
                     icons.append(conindex[conname])
                 Ablk = -np.linalg.pinv(np.array(M))
