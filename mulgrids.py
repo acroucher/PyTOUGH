@@ -1855,6 +1855,8 @@ class mulgrid(object):
                     U.append(q[0])
                     V.append(q[1])
 
+        xc,yc = np.array(xc),np.array(yc)
+        U,V = np.array(U),np.array(V)
         for node in [self.node[name] for name in node_names]:
                 ax.text(node.pos[0],node.pos[1],node.name,clip_on = True,horizontalalignment = 'center')
         for node in [self.node[name] for name in nodes]:
@@ -1876,7 +1878,6 @@ class mulgrid(object):
         else: ax.autoscale_view()
         if contours is not False:
             from matplotlib.mlab import griddata
-            xc,yc = np.array(xc),np.array(yc)
             valc = np.array(vals)
             bds = self.bounds
             xgrid = np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
@@ -1894,8 +1895,10 @@ class mulgrid(object):
             self.plot_colourbar(plt, col, scalelabel, rocktypes, rocknames)
             default_title = varname + ' in ' + default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-        if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_scale_pos,
-                                             flow_arrow_width)
+        if flow is not None:
+            ishow = [ind for ind,col in enumerate(self.columnlist) if col.num_nodes >= 3]
+            self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale, flow_scale_pos,
+                            flow_arrow_width)
         if title is None: title = default_title
         plt.title(title)
         if loneplot: plt.show()
@@ -2021,7 +2024,6 @@ class mulgrid(object):
 
             track=self.column_track(l)
             if track:
-
                 if xlabel is None:
                     if line=='x': xlabel='x (m)'
                     elif line=='y': xlabel='y (m)'
@@ -2045,6 +2047,7 @@ class mulgrid(object):
                     slice_dirn = (l[1] - l[0]).T
                     slice_dirn /= np.linalg.norm(slice_dirn) # normal vector in slice direction
 
+                ind, ishow = 0, []
                 for trackitem in track:
                     col,points=trackitem[0],trackitem[1:]
                     inpoint=points[0]
@@ -2074,7 +2077,11 @@ class mulgrid(object):
                                 qslice = np.dot(slice_dirn, q[:2])
                                 U.append(qslice)
                                 V.append(q[2])
+                            if col.num_nodes >= 3: ishow.append(ind)
+                            ind += 1
 
+                xc,yc = np.array(xc), np.array(yc)
+                U,V = np.array(U), np.array(V)
                 import matplotlib.collections as collections
                 if variable is not None: facecolors=None
                 else: facecolors=[]
@@ -2090,7 +2097,6 @@ class mulgrid(object):
                 else: ax.autoscale_view()
                 if contours<>False:
                     from matplotlib.mlab import griddata
-                    xc,yc=np.array(xc),np.array(yc)
                     valc=np.array(vals)
                     bds=((np.min(xc),np.min(yc)),(np.max(xc),np.max(yc)))
                     xgrid=np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
@@ -2115,8 +2121,9 @@ class mulgrid(object):
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-                if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale,
-                                                     flow_scale_pos, flow_arrow_width)
+                if flow is not None:
+                    self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale,
+                                    flow_scale_pos, flow_arrow_width)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
