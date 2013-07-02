@@ -673,7 +673,8 @@ class t2listing(file):
         self.read_title()
         line=self.readline()
         istart,iend=string.find(line,'AFTER')+5,string.find(line,'TIME STEPS')
-        self._step=int(line[istart:iend])
+        try: self._step = int(line[istart:iend])
+        except ValueError: self._step = -1 # to handle overflow
         istart=iend+10
         iend=string.find(line,'SECONDS')
         self._time=fortran_float(line[istart:iend])
