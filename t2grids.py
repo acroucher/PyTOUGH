@@ -499,8 +499,9 @@ class t2grid(object):
                 M,icons = [],[]
                 for conname in blk.connection_name:
                     con = self.connection[conname]
-                    row = list(con.normal * con.area) # fit constant flows
-                    if ncons >= 6: row += list((con.centre[blk.name] - blk.centre) * con.normal * con.area) # fit linear flows
+                    anormal = con.normal * con.area
+                    row = list(anormal) # fit constant flows
+                    if ncons >= 6: row += list((con.centre[blk.name] - blk.centre) * anormal) # fit linear flows
                     M.append(row)
                     icons.append(conindex[conname])
                 Ablk = -np.linalg.pinv(np.array(M))
