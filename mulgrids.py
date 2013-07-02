@@ -1855,8 +1855,6 @@ class mulgrid(object):
                     U.append(q[0])
                     V.append(q[1])
 
-        xc,yc = np.array(xc),np.array(yc)
-        U,V = np.array(U),np.array(V)
         for node in [self.node[name] for name in node_names]:
                 ax.text(node.pos[0],node.pos[1],node.name,clip_on = True,horizontalalignment = 'center')
         for node in [self.node[name] for name in nodes]:
@@ -1896,6 +1894,8 @@ class mulgrid(object):
             default_title = varname + ' in ' + default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
         if flow is not None:
+            xc,yc = np.array(xc),np.array(yc)
+            U,V = np.array(U),np.array(V)
             ishow = [ind for ind,col in enumerate(self.columnlist) if col.num_nodes >= 3]
             self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale, flow_scale_pos,
                             flow_arrow_width)
@@ -2080,8 +2080,6 @@ class mulgrid(object):
                             if col.num_nodes >= 3: ishow.append(ind)
                             ind += 1
 
-                xc,yc = np.array(xc), np.array(yc)
-                U,V = np.array(U), np.array(V)
                 import matplotlib.collections as collections
                 if variable is not None: facecolors=None
                 else: facecolors=[]
@@ -2122,6 +2120,8 @@ class mulgrid(object):
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
                 if flow is not None:
+                    xc,yc = np.array(xc), np.array(yc)
+                    U,V = np.array(U), np.array(V)
                     self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale,
                                     flow_scale_pos, flow_arrow_width)
                 if title is None: title=default_title
