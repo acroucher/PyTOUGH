@@ -2360,12 +2360,15 @@ class mulgrid(object):
                 x,y=float(dat[2*i][0:20]),float(dat[2*i+1][0:20])
                 self.node[nodename].pos=np.array([x,y])
             for colname in colnames:
-                self.column[colname].centre=self.column[colname].centroid
+                self.column[colname].centre = self.column[colname].centroid
+                self.column[colname].get_area()
         else:
             from scipy.optimize import leastsq
             def update_grid(xnode):
                 for xn,nodename in zip(xnode,nodenames): self.node[nodename].pos=xn
-                for colname in colnames: self.column[colname].centre=self.column[colname].centroid
+                for colname in colnames:
+                    self.column[colname].centre = self.column[colname].centroid
+                    self.column[colname].get_area()
             def f(x):
                 xpos=[np.array([x[2*i],x[2*i+1]]) for i in xrange(len(nodenames))]
                 update_grid(xpos)
