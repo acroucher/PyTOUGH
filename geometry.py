@@ -86,16 +86,28 @@ def rect_to_poly(rect):
 
 def polygon_area(polygon):
     """Calculates the area of an arbitrary polygon."""
-    area=0.0
-    n=len(polygon)
-    if n>0:
-        p=polygon[0]
-        for j,each in enumerate(polygon):
-            p1=each-p
-            k=(j+1)%n
-            p2=polygon[k]-p
-            area+=0.5*(p1[0]*p2[1]-p2[0]*p1[1])
-    return area
+    area = 0.0
+    n = len(polygon)
+    if n > 0:
+        polygon -= polygon[0]
+        for j,p1 in enumerate(polygon):
+            p2 = polygon[(j+1)%n]
+            area += p1[0]*p2[1] - p2[0]*p1[1]
+    return 0.5 * area
+
+def polygon_centroid(polygon):
+    """Calculates the centroid of an arbitrary polygon."""
+    c,area = np.zeros(2), 0.
+    n = len(polygon)
+    shift = polygon[0]
+    polygon -= shift # shift to reduce roundoff for large coordinates
+    for j,p1 in enumerate(polygon):
+        p2 = polygon[(j+1)%n]
+        t = p1[0]*p2[1] - p2[0]*p1[1]
+        area += t
+        c += (p1 + p2) * t
+    area *= 0.5
+    return c / (6.*area) + shift
 
 def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False):
     """Returns a list of the intersection points at which a line crosses a polygon.  The list is sorted

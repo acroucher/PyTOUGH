@@ -199,8 +199,8 @@ class column(object):
 
     def get_centroid(self):
         """Returns column centroid"""
-        return sum(self.polygon)/self.num_nodes
-    centroid=property(get_centroid)
+        return polygon_centroid(self.polygon)
+    centroid = property(get_centroid)
 
     def get_bounding_box(self):
         """Returns (horizontal) bounding box of the column."""
