@@ -199,8 +199,8 @@ class column(object):
 
     def get_centroid(self):
         """Returns column centroid"""
-        return sum(self.polygon)/self.num_nodes
-    centroid=property(get_centroid)
+        return polygon_centroid(self.polygon)
+    centroid = property(get_centroid)
 
     def get_bounding_box(self):
         """Returns (horizontal) bounding box of the column."""
@@ -818,9 +818,24 @@ class mulgrid(object):
     def add_connection(self,con=connection()):
         """Adds connection to the grid"""
         self.connectionlist.append(con)
-        self.connection[(con.column[0].name,con.column[1].name)]=self.connectionlist[-1]
-        self.connectionlist[-1].node = [n for n in con.column[0].node if n in con.column[1].node]
+        self.connection[(con.column[0].name,con.column[1].name)] = self.connectionlist[-1]
+        self.connectionlist[-1].node = self.connection_nodes(con.column)
         for col in self.connectionlist[-1].column: col.connection.add(self.connectionlist[-1])
+
+    def connection_nodes(self, cols):
+        """Identifies nodes on the connection between a pair of two columns.  The node ordering
+        in the first column is preserved."""
+        connodes = None
+        if cols[0].num_nodes > 2: a,b = 0,1
+        elif cols[1].num_nodes > 2: a,b = 1,0
+        else: return None
+        for i,n in enumerate(cols[a].node):
+            nextn = cols[a].node[(i+1)%cols[a].num_nodes]
+            if n in cols[b].node and nextn in cols[b].node:
+                connodes = [n,nextn]
+                break
+        if a == 0: return connodes
+        else: return connodes[::-1] if connodes else connodes
 
     def delete_connection(self,colnames):
         """Deletes a connection from the grid."""
@@ -1861,7 +1876,6 @@ class mulgrid(object):
         else: ax.autoscale_view()
         if contours is not False:
             from matplotlib.mlab import griddata
-            xc,yc = np.array(xc),np.array(yc)
             valc = np.array(vals)
             bds = self.bounds
             xgrid = np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
@@ -1879,8 +1893,12 @@ class mulgrid(object):
             self.plot_colourbar(plt, col, scalelabel, rocktypes, rocknames)
             default_title = varname + ' in ' + default_title
         self.layer_plot_wells(plt, ax, layer, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-        if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale, flow_scale_pos,
-                                             flow_arrow_width)
+        if flow is not None:
+            xc,yc = np.array(xc),np.array(yc)
+            U,V = np.array(U),np.array(V)
+            ishow = [ind for ind,col in enumerate(self.columnlist) if col.num_nodes >= 3]
+            self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale, flow_scale_pos,
+                            flow_arrow_width)
         if title is None: title = default_title
         plt.title(title)
         if loneplot: plt.show()
@@ -2006,7 +2024,6 @@ class mulgrid(object):
 
             track=self.column_track(l)
             if track:
-
                 if xlabel is None:
                     if line=='x': xlabel='x (m)'
                     elif line=='y': xlabel='y (m)'
@@ -2030,6 +2047,7 @@ class mulgrid(object):
                     slice_dirn = (l[1] - l[0]).T
                     slice_dirn /= np.linalg.norm(slice_dirn) # normal vector in slice direction
 
+                ind, ishow = 0, []
                 for trackitem in track:
                     col,points=trackitem[0],trackitem[1:]
                     inpoint=points[0]
@@ -2059,6 +2077,8 @@ class mulgrid(object):
                                 qslice = np.dot(slice_dirn, q[:2])
                                 U.append(qslice)
                                 V.append(q[2])
+                            if col.num_nodes >= 3: ishow.append(ind)
+                            ind += 1
 
                 import matplotlib.collections as collections
                 if variable is not None: facecolors=None
@@ -2075,7 +2095,6 @@ class mulgrid(object):
                 else: ax.autoscale_view()
                 if contours<>False:
                     from matplotlib.mlab import griddata
-                    xc,yc=np.array(xc),np.array(yc)
                     valc=np.array(vals)
                     bds=((np.min(xc),np.min(yc)),(np.max(xc),np.max(yc)))
                     xgrid=np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
@@ -2100,8 +2119,11 @@ class mulgrid(object):
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
-                if flow is not None: self.plot_flows(plt, xc, yc, U, V, flow_variable_name, flow_unit, flow_scale,
-                                                     flow_scale_pos, flow_arrow_width)
+                if flow is not None:
+                    xc,yc = np.array(xc), np.array(yc)
+                    U,V = np.array(U), np.array(V)
+                    self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale,
+                                    flow_scale_pos, flow_arrow_width)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
@@ -2338,12 +2360,15 @@ class mulgrid(object):
                 x,y=float(dat[2*i][0:20]),float(dat[2*i+1][0:20])
                 self.node[nodename].pos=np.array([x,y])
             for colname in colnames:
-                self.column[colname].centre=self.column[colname].centroid
+                self.column[colname].centre = self.column[colname].centroid
+                self.column[colname].get_area()
         else:
             from scipy.optimize import leastsq
             def update_grid(xnode):
                 for xn,nodename in zip(xnode,nodenames): self.node[nodename].pos=xn
-                for colname in colnames: self.column[colname].centre=self.column[colname].centroid
+                for colname in colnames:
+                    self.column[colname].centre = self.column[colname].centroid
+                    self.column[colname].get_area()
             def f(x):
                 xpos=[np.array([x[2*i],x[2*i+1]]) for i in xrange(len(nodenames))]
                 update_grid(xpos)
