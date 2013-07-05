@@ -66,6 +66,7 @@ class t2connection(object):
         self.sigma=sigma # radiant emittance factor (TOUGH2)
         self.nseq,self.nad1,self.nad2=nseq,nad1,nad2
         self.centre = None
+        self.midpoint = None
         self.normal = None
     def __repr__(self):
         return self.block[0].name+':'+self.block[1].name
@@ -124,7 +125,8 @@ class t2grid(object):
     def calculate_connection_centres(self, geo):
         """Calculates centre (and normal vector) for each connection face.  Note that the 'centre'
         depends on which block the connection is approached from- in the case where the connection
-        face is not orthogonal to the line between the block centres."""
+        face is not orthogonal to the line between the block centres.  Hence there are two 'centres'.
+        The mipoint is just midway between the connection face nodes."""
         layindex = dict([(lay.name,i) for i,lay in enumerate(geo.layerlist)])
         for con in self.connectionlist:
             con.centre = {}
@@ -142,6 +144,7 @@ class t2grid(object):
                     hcentre = line_projection(col.centre, nodepos)
                     con.centre[blk.name] = np.hstack((hcentre, np.array([vcentre])))
                 con.normal = np.array([dpos[1], -dpos[0], 0.]) / np.linalg.norm(dpos)
+                con.midpoint = np.hstack((0.5 * sum(nodepos), min([centre[2] for centre in con.centre])))
             else: # vertical connection
                 layindices = np.array([layindex[layname] for layname in layernames])
                 ilower = np.argmax(layindices)
@@ -152,8 +155,8 @@ class t2grid(object):
                 vcentre = geo.block_surface(lay,col)
                 sgn = [1.,-1.][ilower]
                 con.normal = np.array([0., 0., sgn])
-                centre = np.hstack((hcentre, np.array([vcentre])))
-                for blk in con.block: con.centre[blk.name] = centre
+                con.midpoint = np.hstack((hcentre, np.array([vcentre])))
+                for blk in con.block: con.centre[blk.name] = con.midpoint
 
     def rocktype_frequency(self,rockname):
         """Returns how many times the rocktype with given name is used in the grid."""
