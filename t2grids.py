@@ -144,7 +144,7 @@ class t2grid(object):
                     hcentre = line_projection(col.centre, nodepos)
                     con.centre[blk.name] = np.hstack((hcentre, np.array([vcentre])))
                 con.normal = np.array([dpos[1], -dpos[0], 0.]) / np.linalg.norm(dpos)
-                con.midpoint = np.hstack((0.5 * sum(nodepos), min([centre[2] for centre in con.centre])))
+                con.midpoint = np.hstack((0.5 * sum(nodepos), min([pos[2] for name,pos in con.centre.iteritems()])))
             else: # vertical connection
                 layindices = np.array([layindex[layname] for layname in layernames])
                 ilower = np.argmax(layindices)
