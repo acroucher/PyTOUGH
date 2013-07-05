@@ -599,7 +599,7 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None,\\
     \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \emph{flow\_variable\_name}=None, \\
     \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
-    \emph{flow\_arrow\_width}=None})}
+    \emph{flow\_arrow\_width}=None, \emph{connection\_flows}=False})}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
@@ -611,7 +611,7 @@ Well tracks can also optionally be plotted.  Each well is drawn as a line follow
 
 Rock types can be shown on the layer plot by specifying a \texttt{t2grid} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
 
-Flows can be shown on the layer by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the layer.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)
+Flows can be shown on the layer by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the layer.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)  Alternatively, flows through the connection faces can be plotted by setting the \texttt{connection\_flows} parameter to \texttt{True}.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -695,6 +695,8 @@ Flows can be shown on the layer by specifying an array of connection flow values
   Position of the flow scale on the plot, in units of dimensionless plot size.  The default (0.5, 0.02) draws the flow scale in the horizontal centre of the plot, slightly above the bottom axis.  If you want the flow scale below the bottom axis (so it doesn't get mixed up with the actual flow arrows), specify this parameter with a small negative second component, e.g. (0.8, -0.1).
 \item \textbf{flow\_arrow\_width}: float (or \texttt{None})\\
   Width of the flow arrows, in units of dimensionless plot width.  If not specified, this will be calculated internally.
+\item \textbf{connection\_flows}: Boolean\\
+  Set to \texttt{True} to plot flows through connection faces, rather than block-averaged fluxes.  In this case, usually the \texttt{grid} parameter should also be specified (but not \texttt{flux\_matrix}), otherwise a grid will be calculated internally.
 \end{itemize}
 
 \textbf{Example:}
@@ -988,7 +990,7 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=False, \emph{rocktypes}=None, \emph{allrocks}=False, \\
     \emph{rockgroup}=None, \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \\
     \emph{flow\_variable\_name}=None,\emph{flow\_unit}=None, \emph{flow\_scale}=None, \\
-    \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None)}}
+    \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None, \emph{connection\_flows}=False)}}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
@@ -1002,7 +1004,7 @@ Well tracks can also optionally be plotted.  Each well is drawn as a line follow
 
 Rock types can be shown on the slice plot by specifying a \texttt{t2grid} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
 
-Flows can be shown on the slice by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the slice.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)
+Flows can be shown on the slice by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the slice.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)  Alternatively, flows through the connection faces can be plotted by setting the \texttt{connection\_flows} parameter to \texttt{True}.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -1082,6 +1084,8 @@ Flows can be shown on the slice by specifying an array of connection flow values
   Position of the flow scale on the plot, in units of dimensionless plot size.  The default (0.5, 0.02) draws the flow scale in the horizontal centre of the plot, slightly above the bottom axis.  If you want the flow scale below the bottom axis (so it doesn't get mixed up with the actual flow arrows), specify this parameter with a small negative second component, e.g. (0.8, -0.1).
 \item \textbf{flow\_arrow\_width}: float (or \texttt{None})\\
   Width of the flow arrows, in units of dimensionless plot width.  If not specified, this will be calculated internally.
+\item \textbf{connection\_flows}: Boolean\\
+  Set to \texttt{True} to plot flows through connection faces, rather than block-averaged fluxes.  In this case, usually the \texttt{grid} parameter should also be specified (but not \texttt{flux\_matrix}), otherwise a grid will be calculated internally.
 \end{itemize}
 
 \textbf{Example:}
