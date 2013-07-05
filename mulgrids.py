@@ -1837,7 +1837,7 @@ class mulgrid(object):
                 if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
                 blkflow = flux_matrix * flow
                 blkflow = blkflow.reshape((self.num_underground_blocks,3))
-                natm = self.num_atmosphere_blocks
+            natm = self.num_atmosphere_blocks
             U,V = [],[]
 
         for col in self.columnlist:
@@ -1993,7 +1993,7 @@ class mulgrid(object):
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = False,
                    rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
                    flow_variable_name = None, flow_unit = None, flow_scale = None, flow_scale_pos = (0.5, 0.02),
-                   flow_arrow_width = None):
+                   flow_arrow_width = None, connection_flows = False):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -2051,22 +2051,24 @@ class mulgrid(object):
                 if column_axis: colnames, colcentres = [],[]
                 verts,vals=[],[]
                 if not isinstance(contours,bool): contours=list(contours)
-                if contours != False or flow is not None: xc,yc=[],[]
+                xc,yc = [],[]
                 if flow is not None:
                     if flow_variable_name is None: flow_variable_name = 'Flow'
                     if flow_unit is None: flow_unit = 'units'
                     if grid is None:
                         from t2grids import t2grid
                         grid = t2grid().fromgeo(self)
-                    if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
-                    blkflow = flux_matrix * flow
-                    blkflow = blkflow.reshape((self.num_underground_blocks,3))
+                    if not grid.connection_centres_defined: grid.calculate_connection_centres(self)
+                    if not connection_flows:
+                        if flux_matrix is None: flux_matrix = grid.flux_matrix(self)
+                        blkflow = flux_matrix * flow
+                        blkflow = blkflow.reshape((self.num_underground_blocks,3))
                     natm = self.num_atmosphere_blocks
                     U,V = [],[]
                     slice_dirn = (l[1] - l[0]).T
                     slice_dirn /= np.linalg.norm(slice_dirn) # normal vector in slice direction
 
-                ind, ishow = 0, []
+                ind, ishow, sliceblocks, coldist = 0, [], set(), {}
                 for trackitem in track:
                     col,points=trackitem[0],trackitem[1:]
                     inpoint=points[0]
@@ -2075,11 +2077,13 @@ class mulgrid(object):
                     if line=='x': din,dout=inpoint[0],outpoint[0]
                     elif line=='y': din,dout=inpoint[1],outpoint[1]
                     else: din,dout=norm(inpoint-l[0]),norm(outpoint-l[0])
+                    coldist[col.name] = (din,dout)
                     dcol = 0.5*(din+dout)
                     if column_axis: colnames.append(col.name); colcentres.append(dcol)
                     for lay in self.layerlist[1:]:
                         if col.surface>lay.bottom:
-                            blkname=self.block_name(lay.name,col.name)
+                            blkname = self.block_name(lay.name,col.name)
+                            sliceblocks.add(blkname)
                             if variable is not None: val=variable[self.block_name_index[blkname]]
                             else: val=0
                             vals.append(val)
@@ -2088,9 +2092,8 @@ class mulgrid(object):
                             verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
                             if blkname in block_names:
                                 ax.text(dcol, centre[2], blkname, clip_on = True, horizontalalignment = 'center')
-                            if contours != False or flow is not None:
-                                xc.append(dcol); yc.append(centre[2])
-                            if flow is not None:
+                            xc.append(dcol); yc.append(centre[2])
+                            if flow is not None and not connection_flows:
                                 blkindex = self.block_name_index[blkname] - natm
                                 q = blkflow[blkindex]
                                 qslice = np.dot(slice_dirn, q[:2])
@@ -2139,10 +2142,35 @@ class mulgrid(object):
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
                 if flow is not None:
-                    xc,yc = np.array(xc), np.array(yc)
-                    U,V = np.array(U), np.array(V)
-                    self.plot_flows(plt, xc[ishow], yc[ishow], U[ishow], V[ishow], flow_variable_name, flow_unit, flow_scale,
-                                    flow_scale_pos, flow_arrow_width)
+                    if connection_flows:
+                        xflow,yflow = [],[]
+                        sliceblocks = sliceblocks | set(self.block_name_list[:natm])
+                        slicecons = [con for con in self.block_connection_name_list if all([blkname in sliceblocks for blkname in con])]
+                        for conblknames in slicecons:
+                            con = grid.connection[conblknames]
+                            conlays = [self.layer_name(blkname) for blkname in conblknames]
+                            concols = [self.column_name(blkname) for blkname in conblknames]
+                            if conlays[0] == conlays[1]: # horizontal
+                                segments = [coldist[concol] for concol in concols]
+                                if segments[0][0] > segments[1][0]: d = segments[1][1]
+                                else: d = segments[0][1]
+                            else: # vertical
+                                iblk = [i for i,blkname in enumerate(conblknames) if self.block_name_index[blkname] >= natm][0]
+                                col = concols[iblk]
+                                segment = coldist[col]
+                                d = 0.5 * (segment[0] + segment[1])
+                            xflow.append(d)
+                            yflow.append(con.midpoint[2])
+                            con_index = self.block_connection_name_index[conblknames]
+                            nflow = -flow[con_index]*con.normal
+                            qslice = np.dot(slice_dirn, nflow[:2])
+                            U.append(qslice)
+                            V.append(nflow[2])
+                    else:
+                        xflow,yflow = np.array(xc)[ishow], np.array(yc)[ishow]
+                        U,V = np.array(U)[ishow], np.array(V)[ishow]
+                    self.plot_flows(plt, xflow, yflow, U, V, flow_variable_name, flow_unit, flow_scale,
+                                    flow_scale_pos, flow_arrow_width, connection_flows)
                 if title is None: title=default_title
                 plt.title(title)
                 if loneplot: plt.show()
