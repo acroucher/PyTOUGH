@@ -779,11 +779,14 @@ class mulgrid(object):
         return False
 
     def rename_column(self, oldcolname, newcolname):
-        """Renames a column."""
+        """Renames a column or list of columns."""
+        if isinstance(oldcolname, str) and isinstance(newcolname, str):
+            oldcolname, newcolname = [oldcolname], [newcolname]
         try:
-            i = self.columnlist.index(self.column[oldcolname])
-            self.columnlist[i].name = newcolname
-            self.column[newcolname] = self.column.pop(oldcolname)
+            for olditem, newitem in zip(oldcolname, newcolname):
+                i = self.columnlist.index(self.column[olditem])
+                self.columnlist[i].name = newitem
+                self.column[newitem] = self.column.pop(olditem)
             self.setup_block_name_index()
             self.setup_block_connection_name_index()
             return True
@@ -805,11 +808,14 @@ class mulgrid(object):
         self.layerlist.remove(layer)
 
     def rename_layer(self, oldlayername, newlayername):
-        """Renames a layer."""
+        """Renames a layer or list of layers."""
+        if isinstance(oldlayername, str) and isinstance(newlayername, str):
+            oldlayername, newlayername = [oldlayername], [newlayername]
         try:
-            i = self.layerlist.index(self.layer[oldlayername])
-            self.layerlist[i].name = newlayername
-            self.layer[newlayername] = self.layer.pop(oldlayername)
+            for olditem, newitem in zip(oldlayername, newlayername):
+                i = self.layerlist.index(self.layer[olditem])
+                self.layerlist[i].name = newitem
+                self.layer[newitem] = self.layer.pop(olditem)
             self.setup_block_name_index()
             self.setup_block_connection_name_index()
             return True
