@@ -2542,20 +2542,13 @@ class mulgrid(object):
         for ilayer,lay in enumerate(self.layerlist[1:]):
             for col in [c for c in self.columnlist if c.surface>lay.bottom]:
                 elt=[]
-                if col.num_nodes>4: # funny-shaped columns- remove nodes with largest angles
-                    angles=np.array(col.interior_angles)
-                    bad_index=list(np.argsort(-angles))[0:col.num_nodes-4] # indices of corners to remove
-                    icorner=range(col.num_nodes)
-                    for a in bad_index: icorner.remove(a)
-                    corners=[col.node[ic] for ic in icorner]
-                else: corners=col.node
-                for node in corners: elt.append(node3d[lay.name,node.name][0])
+                for node in col.node: elt.append(node3d[lay.name,node.name][0])
                 if ilayer==self.column_surface_layer_index(col)-1: # top block
-                    for node in corners:
+                    for node in col.node:
                         if node.name in extra_node: elt.append(node3d[atmlayer.name,node.name,col.name][0])
                         else: elt.append(node3d[atmlayer.name,node.name][0])
                 else:
-                    for node in corners: elt.append(node3d[self.layerlist[ilayer].name,node.name][0])
+                    for node in col.node: elt.append(node3d[self.layerlist[ilayer].name,node.name][0])
                 elt3d.append((lay,col,elt))
         return node3d,extra_node,elt3d
     grid3d=property(get_grid3d)
@@ -2563,7 +2556,8 @@ class mulgrid(object):
     def get_vtk_grid(self,arrays={}):
         """Returns a vtkUnstructuredGrid object (for visualisation with VTK) corresponding to the grid in 3D. 
         VTK data arrays may optionally be added."""
-        from vtk import vtkUnstructuredGrid,vtkPoints,vtkIdList
+        from vtk import vtkUnstructuredGrid, vtkPoints, vtkIdList, \
+            vtkWedge, vtkHexahedron, vtkPentagonalPrism, vtkHexagonalPrism, vtkConvexPointSet
         node3d,extra_node,elt3d=self.grid3d
         # construct the vtk grid
         grid=vtkUnstructuredGrid()
@@ -2572,12 +2566,16 @@ class mulgrid(object):
         for (key,(i,node)) in node3d.items(): pts.SetPoint(i,node)
         grid.SetPoints(pts)
         # create and add cells
-        VTK_HEXAHEDRON,VTK_WEDGE=12,13
-        celltype={6:VTK_WEDGE,8:VTK_HEXAHEDRON}
+        celltype = {6: vtkWedge, 8: vtkHexahedron, 10: vtkPentagonalPrism, 12: vtkHexagonalPrism}
         for ielt,(lay,col,elt) in enumerate(elt3d):
-            ids=vtkIdList()
-            for i in elt: ids.InsertNextId(i)
-            grid.InsertNextCell(celltype[len(elt)],ids)
+            n = len(elt)
+            if n in celltype:
+                cell = celltype[n]()
+                for i,j in enumerate(elt): cell.GetPointIds().SetId(i,j)
+            else:
+                cell = vtkConvexPointSet()
+                for i,j in enumerate(elt): cell.GetPointIds().InsertId(i,j)
+            grid.InsertNextCell(cell.GetCellType(), cell.GetPointIds())
         for array_type,array_dict in arrays.items():
             sortedkeys=array_dict.keys()
             sortedkeys.sort()
