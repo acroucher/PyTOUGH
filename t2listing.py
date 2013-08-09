@@ -18,7 +18,8 @@ try:
 except ImportError: # try importing Numeric on old installs
     import Numeric as np
     from Numeric import Float64 as float64
-from mulgrids import fix_blockname, valid_blockname, fortran_float
+from mulgrids import fix_blockname, valid_blockname
+from fixed_format_file import fortran_float, fortran_int
 
 class listingtable(object):
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
@@ -323,7 +324,7 @@ class t2listing(file):
                         self.skip_to_blank()
                     else: # have to get row index from index in table (possibly not necessarily reliable)
                         indexpos = self.readline().index('INDEX')
-                        def rowindex(line): return int(line[indexpos:indexpos+5])-1
+                        def rowindex(line): return fortran_int(line[indexpos:indexpos+5])-1
                     self.skip_to_nonblank()
                     endtable = False
                     lineindex = 0
@@ -673,7 +674,7 @@ class t2listing(file):
         self.read_title()
         line=self.readline()
         istart,iend=string.find(line,'AFTER')+5,string.find(line,'TIME STEPS')
-        try: self._step = int(line[istart:iend])
+        try: self._step = fortran_int(line[istart:iend])
         except ValueError: self._step = -1 # to handle overflow
         istart=iend+10
         iend=string.find(line,'SECONDS')
@@ -683,7 +684,7 @@ class t2listing(file):
     def read_header_TOUGH2(self):
         """Reads header info (time data) for one set of TOUGH2 listing results."""
         strs=self.readline().split()
-        self._time,self._step=fortran_float(strs[0]),int(strs[1])
+        self._time,self._step=fortran_float(strs[0]),fortran_int(strs[1])
         marker=['@@@@@','====='][self.simulator=='TOUGH+']
         self.skipto(marker)
         self.skip_to_nonblank()
@@ -929,7 +930,7 @@ class t2listing(file):
                     else: space=8
                     blockname=fix_blockname(lastline[eltindex+space:eltindex+space+5])
                     brackindex,comindex=line.find('('),line.find(',')
-                    timestep=int(line[brackindex+1:comindex])
+                    timestep = fortran_int(line[brackindex+1:comindex])
                     rl.append((timestep,blockname))
                 lastline=line
                 line=self.readline()
@@ -1274,14 +1275,14 @@ class t2historyfile(object):
         for line in lines:
             items=line.strip().split(',')
             if items[-1]=='': del items[-1]
-            time_index=int(items.pop(0))
+            time_index = fortran_int(items.pop(0))
             time=float(items.pop(0))
             self.times.append(time)
             nc1=self.num_columns+1
             nsets=len(items)/nc1
             for i in xrange(nsets):
                 setvals=items[i*nc1:(i+1)*nc1]
-                key=(int(setvals[0]),)
+                key = (fortran_int(setvals[0]),)
                 vals=[fortran_float(val) for val in setvals[1:]]
                 self.row_name.append(key+(time,))
                 if not key in self.keys:
@@ -1340,7 +1341,7 @@ class t2historyfile(object):
                 nsets=(len(items)-2)/nc1
                 for i in xrange(nsets):
                     setvals=items[2+i*nc1:2+(i+1)*nc1]
-                    key=(int(setvals[0]),)
+                    key = (fortran_int(setvals[0]),)
                     if key[0]>0:
                         vals=[fortran_float(val) for val in setvals[1:]]
                         self.row_name.append(key+(time,))

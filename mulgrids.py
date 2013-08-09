@@ -53,20 +53,6 @@ def valid_blockname(name):
     letter_digit_space_punct=ascii_letters+digit_space+punctuation
     return all([s in letter_digit_space_punct for s in name[0:3]]) and (name[3] in digit_space) and (name[4] in digits)
 
-def fortran_float(s):
-    """Returns float of a string written by Fortran.  Blank strings will return a zero value.
-    Sometimes when Fortran writes out very small values, and encounters underflow, it appears to
-    drop the 'E' exponent. This functions traps such errors."""
-    try: return float(s)
-    except ValueError:
-        s = s.strip()
-        if not s: return 0.0
-        else:
-            try: # underflow in exponent sometimes deletes 'e':
-                return float(''.join([s[0],s[1:].replace('-','e-')]))
-            except ValueError: return np.nan
-    except: return np.nan
-
 class NamingConventionError(Exception):
     """Used to raise exceptions when grid naming convention is not respected- e.g. when column
     or layer names are too long."""

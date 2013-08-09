@@ -11,6 +11,49 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
+from numpy import nan
+
+def fortran_float(s, blank_value = 0.0):
+    """Returns float of a string written by Fortran.  Its behaviour is different from the float() function
+    in the following ways:
+    - a blank string will return the specified blank value (default zero)
+    - embedded spaces are ignored
+    - 'd' specifier will be treated the same as 'e'
+    - underflow or overflow in exponent, with the 'e' omitted, are treated as if the 'e' was present
+    If any other errors are encountered, np.nan is returned."""
+    try: return float(s)
+    except ValueError:
+        s = s.strip()
+        if not s: return blank_value
+        else:
+            try:
+                s = s.lower().replace('d','e').replace(' ', '')
+                return float(s)
+            except:
+                try:
+                    return float(''.join([s[0],s[1:].replace('-','e-')]))
+                except ValueError:
+                    try:
+                        return float(''.join([s[0],s[1:].replace('+','e')]))
+                    except ValueError: return nan
+    except: return nan
+
+def fortran_int(s, blank_value = 0):
+    """Returns float of a string written by Fortran.  Its behaviour is different from the float() function
+    in the following ways:
+    - a blank string will return the specified blank value (default zero)
+    - embedded spaces are ignored
+    If any other errors are encountered, None is returned."""
+    try: return int(s)
+    except ValueError:
+        s = s.strip()
+        if not s: return blank_value
+        else:
+            try:
+              s = s.replace(' ', '')
+              return int(s)
+            except: return None
+
 class fixed_format_file(file):
 
     """Class for fixed format text file.  Values from the file may be parsed into variables, 
@@ -23,24 +66,18 @@ class fixed_format_file(file):
     The default conversion functions also allow an 'x' specifier for blanks (like fortran), which
     returns None."""
 
-    default_conversion_function = {'d':int, 'f':float, 'e':float, 'g':float,
+    from functools import partial
+    fortran_float_none = partial(fortran_float, blank_value = None)
+    fortran_int_none = partial(fortran_int, blank_value = None)
+    default_conversion_function = {'d':fortran_int_none, 'f':fortran_float_none,
+                                   'e':fortran_float_none, 'g':fortran_float_none,
                                    's':lambda x:x.rstrip('\n'), 'x':lambda x:None}
 
     def __init__(self, filename, mode, specification, conversion_function = default_conversion_function):
         self.specification = specification
-        self.setup_conversion_functions(conversion_function)
+        self.conversion_function = conversion_function
         self.preprocess_specification()
         super(fixed_format_file, self).__init__(filename, mode)
-
-    def setup_conversion_functions(self, conversion_function):
-        """Sets up conversion functions for parsing text.  The functions are wrapped with an exception handler
-        to return None on ValueError."""
-        def value_error_none(f):
-            def fn(x):
-                try: return f(x)
-                except ValueError: return None
-            return fn
-        self.conversion_function = dict([(typ, value_error_none(f)) for typ,f in conversion_function.iteritems()])
 
     def preprocess_specification(self):
         """Pre-process specifications to speed up parsing."""

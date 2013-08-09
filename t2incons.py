@@ -12,6 +12,7 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
 from mulgrids import *
+from fixed_format_file import fortran_float, fortran_int
 
 class t2blockincon(object):
     """Class for a single set of initial conditions at one block."""
@@ -157,9 +158,11 @@ class t2incon(object):
             if len(line)>=45:
                 self.timing = {'tstart':float(line[15:30]),'sumtim':float(line[30:45])}
                 if self.simulator == 'TOUGH2':
-                    self.timing.update({'kcyc':int(line[0:5]),'iter':int(line[5:10]),'nm':int(line[10:15])})
+                    self.timing.update({'kcyc':fortran_int(line[0:5]),'iter':fortran_int(line[5:10]),
+                                        'nm':fortran_int(line[10:15])})
                 else: # TOUGHREACT
-                    self.timing.update({'kcyc':int(line[0:6]),'iter':int(line[6:12]),'nm':int(line[12:15])})
+                    self.timing.update({'kcyc':fortran_int(line[0:6]),'iter':fortran_int(line[6:12]),
+                                        'nm':fortran_int(line[12:15])})
 
     def write(self,filename,reset=True):
         """Writes initial conditions to file."""
