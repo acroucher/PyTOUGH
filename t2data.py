@@ -18,7 +18,7 @@ from math import ceil
 
 class t2data_parser(fixed_format_file):
     """Class for parsing TOUGH2 data file."""
-    def __init__(self, filename, mode):
+    def __init__(self, filename, mode, read_function):
         specification = {
             'title':[['title'],['80s']],
             'simulator':[['simulator'],['80s']],
@@ -76,11 +76,11 @@ class t2data_parser(fixed_format_file):
             'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['4s']+['10.4e']*7],
             'part2' : [['vol']*8,['10.4e']*8]
             }
-        super(t2data_parser,self).__init__(filename, mode, specification)
+        super(t2data_parser,self).__init__(filename, mode, specification, read_function)
 
 class t2_extra_precision_data_parser(fixed_format_file):
     """Class for parsing AUTOUGH2 extra-precision auxiliary data file."""
-    def __init__(self, filename, mode):
+    def __init__(self, filename, mode, read_function):
         specification = {
             'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
                       ['5s','5d']+['15.4e']*7],
@@ -94,7 +94,7 @@ class t2_extra_precision_data_parser(fixed_format_file):
             'generation_times':[['time']*4,['15.4e']*4],
             'generation_rates':[['rate']*4,['15.4e']*4],
             'generation_enthalpy':[['enthalpy']*4,['15.4e']*4]}
-        super(t2_extra_precision_data_parser,self).__init__(filename, mode, specification)
+        super(t2_extra_precision_data_parser,self).__init__(filename, mode, specification, read_function)
 
 import struct
 class fortran_unformatted_file(file):
@@ -145,7 +145,7 @@ t2_extra_precision_sections = ['ROCKS', 'RPCAP', 'GENER']
 
 class t2data(object):
     """Class for TOUGH2 data"""
-    def __init__(self, filename = '', meshfilename = ''):
+    def __init__(self, filename = '', meshfilename = '', read_function = default_read_function):
         from copy import deepcopy
         self.filename = filename
         self.meshfilename = meshfilename
@@ -176,7 +176,8 @@ class t2data(object):
         self.end_keyword = 'ENDCY'
         self._extra_precision, self._echo_extra_precision = [], True
         self.update_read_write_functions()
-        if self.filename: self.read(filename,meshfilename)
+        self.read_function = read_function
+        if self.filename: self.read(filename, meshfilename)
 
     def get_extra_precision(self): return self._extra_precision
     def set_extra_precision(self, value):
@@ -1116,7 +1117,8 @@ class t2data(object):
         from os.path import exists
         filename = self.extra_precision_filename
         if exists(filename):
-            xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'rU')
+            xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'rU',
+                                                    read_function = self.read_function)
             read_fn = dict(zip(t2_extra_precision_sections,
                                [self.read_rocktypes, self.read_rpcap, self.read_generators]))
             more = True
@@ -1152,7 +1154,7 @@ class t2data(object):
         """Reads data from file.  Mesh data can optionally be read from an auxiliary file.  Extra precision data
         will also be read from an associated '.pdat' file, if it exists."""
         if filename: self.filename = filename
-        infile = t2data_parser(self.filename,'rU')
+        infile = t2data_parser(self.filename, 'rU', read_function = self.read_function)
         self.read_title(infile)
         self._sections = []
         more = True
@@ -1173,7 +1175,7 @@ class t2data(object):
         if meshfilename and (self.grid.num_blocks == 0):
             self.meshfilename = meshfilename
             if isinstance(meshfilename,str):
-                meshfile = t2data_parser(self.meshfilename,'rU')
+                meshfile = t2data_parser(self.meshfilename, 'rU', read_function = self.read_function)
                 self.read_meshfile(meshfile)
                 meshfile.close()
             elif isinstance(meshfilename,(list,tuple)):

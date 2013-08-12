@@ -436,7 +436,9 @@ class well(object):
 
 class mulgrid(object):
     """MULgraph grid class"""
-    def __init__(self,filename='',type='GENER',convention=0,atmos_type=0,atmos_volume=1.e25,atmos_connection=1.e-6,unit_type='',permeability_angle=0.0):
+    def __init__(self, filename = '', type = 'GENER', convention = 0, atmos_type = 0, atmos_volume = 1.e25,
+                 atmos_connection = 1.e-6, unit_type = '', permeability_angle = 0.0,
+                 read_function = default_read_function):
         self.filename=filename
         self.type=type  # geometry type- only GENER supported
         self._convention=convention  # naming convention
@@ -450,6 +452,7 @@ class mulgrid(object):
         self.gdcx, self.gdcy = None, None # not supported
         self.cntype = None # not supported
         self.permeability_angle=permeability_angle
+        self.read_function = read_function
         self.empty()
         if self.filename: self.read(filename)
 
@@ -1038,7 +1041,7 @@ class mulgrid(object):
     def read(self,filename):
         """Reads MULgraph grid from file"""
         self.empty()
-        geo=fixed_format_file(filename, 'rU', mulgrid_format_specification)
+        geo = fixed_format_file(filename, 'rU', mulgrid_format_specification, self.read_function)
         self.read_header(geo)
         if self.type=='GENER':
             read_fn={'VERTI':self.read_nodes, 'GRID': self.read_columns, 'CONNE': self.read_connections,

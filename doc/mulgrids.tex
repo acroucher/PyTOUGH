@@ -37,7 +37,7 @@ Connections are slightly different from nodes, columns etc. in that they are not
 
 The elements of these lists and dictionaries are of type \texttt{node}, \texttt{column}, \texttt{connection}, \texttt{layer} and \texttt{well} respectively.  These are additional object classes to represent nodes, columns, connections, layers and wells, defined in the \texttt{mulgrids} library (see section \ref{other_mulgrid_objects}).
 
-\subsection{Naming conventions and atmosphere types}
+\subsubsection{Naming conventions and atmosphere types}
 
 The grid block naming convention and atmosphere type used in the \texttt{mulgrid} object, specified by the \texttt{convention} and \texttt{atmosphere\_type} parameters, are both integers which can be given the value 0, 1 or 2.  The meanings of these values are shown in Table \ref{tb:mulgrid_conventions} and \ref{tb:mulgrid_atmosphere_types}.
 
@@ -78,6 +78,18 @@ There is also a \texttt{connection\_angle\_cosine} property, which returns an \t
 The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, \texttt{extra\_connections} and \texttt{orphans} properties return actual problems with the grid which should be fixed.  A summary of all these problems is given by the \texttt{check} method (see section \ref{mulgridmethods}).
 
 Blocks at the ground surface that have very small vertical thickness can sometimes cause problems.  The \texttt{min\_surface\_block\_thickness} property gives a tuple containing the minimum surface block thickness and the name of the column in which it occurs.  Thin surface blocks of this type can be eliminated using the \texttt{snap\_columns\_to\_layers()} method.
+
+\subsubsection{Functions for reading data from file}
+
+A \texttt{mulgrid} object has a \texttt{read\_function} property which controls how data are read from file.  This property is a dictionary with six keys: `d', `f', `e', `g', `s' and `x', denoting respectively integer, float, exponential, general, string and blank.  Each item in the dictionary is a function which converts a string from the file on disk into the appropriate value.  For example, \texttt{read\_function[`f']} converts a string to a floating point value.  By default, the built-in Python \texttt{float} function is used for this (although it is modified slightly so that it returns \texttt{None} if the input string is blank).  There is a dictionary of default reading functions included in PyTOUGH, called \texttt{default\_read\_function}.
+
+However, the user can specify other functions if needed.  In particular, files produced from Fortran programs sometimes have formatting that is not readable by the default functions, if some more exotic Fortran formatting options have been used.   For example, a `d' can also be used to represent an exponent (like `e'), or spaces can be included within a number, or the exponent identifier (e.g. `e') can be omitted.  PyTOUGH includes a second set of reading functions, called \texttt{fortran\_read\_function}, for handling Fortran formatting.  These are slightly slower than the default reading functions.
+
+The reading functions for a \texttt{mulgrid} object can be specified when the object is being created, e.g.:
+
+\begin{verbatim}
+geo = mulgrid(`geom.dat', read_function = fortran_read_function)
+\end{verbatim}
 
 \begin{center}
   \begin{longtable}{|l|l|p{75mm}|}
@@ -127,6 +139,7 @@ Blocks at the ground surface that have very small vertical thickness can sometim
     \texttt{num\_wells} & integer & number of wells\\
     \texttt{orphans} & set & orphaned nodes (nodes not belonging to any column)\\
     \texttt{permeability\_angle} & float & rotation angle (degrees anticlockwise) of first horizontal permeability direction \\
+    \texttt{read\_function} & dictionary & dictionary of functions used to read data from file\\
     \texttt{type} & string  & type of geometry (currently only `GENER' supported)\\
     \texttt{unit\_type} & string & distance unit (blank for metres, `FEET' for ft)\\
     \texttt{welllist} & list & wells (by index)\\

@@ -54,6 +54,32 @@ def fortran_int(s, blank_value = 0):
               return int(s)
             except: return None
 
+def value_error_none(f):
+    """Wraps a function with a handler to return None on a ValueError exception."""
+    def fn(x):
+        try: return f(x)
+        except ValueError: return None
+    return fn
+default_read_float = value_error_none(float)
+default_read_int = value_error_none(int)
+default_read_str = value_error_none(lambda x:x.rstrip('\n'))
+default_read_space = lambda x: None
+
+from functools import partial
+fortran_read_float = partial(fortran_float, blank_value = None)
+fortran_read_int = partial(fortran_int, blank_value = None)
+
+def read_function_dict(floatfn = default_read_float, intfn = default_read_int,
+                             strfn = default_read_str, spacefn = default_read_space):
+    """Returns a conversion function dictionary using the specified functions for float,
+    int, string and space."""
+    result = {'s': strfn, 'x': spacefn, 'd': intfn}
+    for typ in ['f','e','g']: result[typ] = floatfn
+    return result
+
+default_read_function = read_function_dict()
+fortran_read_function = read_function_dict(fortran_read_float, fortran_read_int)
+
 class fixed_format_file(file):
 
     """Class for fixed format text file.  Values from the file may be parsed into variables, 
@@ -66,16 +92,9 @@ class fixed_format_file(file):
     The default conversion functions also allow an 'x' specifier for blanks (like fortran), which
     returns None."""
 
-    from functools import partial
-    fortran_float_none = partial(fortran_float, blank_value = None)
-    fortran_int_none = partial(fortran_int, blank_value = None)
-    default_conversion_function = {'d':fortran_int_none, 'f':fortran_float_none,
-                                   'e':fortran_float_none, 'g':fortran_float_none,
-                                   's':lambda x:x.rstrip('\n'), 'x':lambda x:None}
-
-    def __init__(self, filename, mode, specification, conversion_function = default_conversion_function):
+    def __init__(self, filename, mode, specification, read_function = default_read_function):
         self.specification = specification
-        self.conversion_function = conversion_function
+        self.read_function = read_function
         self.preprocess_specification()
         super(fixed_format_file, self).__init__(filename, mode)
 
@@ -96,7 +115,7 @@ class fixed_format_file(file):
     def parse_string(self, line, linetype):
         """Parses a string into values according to specified input format (d,f,s, or x for integer, float, string or skip).
         Blanks are converted to None."""
-        return [self.conversion_function[typ](line[i1:i2]) for (i1,i2),typ in self.line_spec[linetype]]
+        return [self.read_function[typ](line[i1:i2]) for (i1,i2),typ in self.line_spec[linetype]]
 
     def write_values_to_string(self, vals, linetype):
         """Inverse of parse_string()."""
