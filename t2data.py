@@ -18,7 +18,7 @@ from math import ceil
 
 class t2data_parser(fixed_format_file):
     """Class for parsing TOUGH2 data file."""
-    def __init__(self, filename, mode, read_function):
+    def __init__(self, filename, mode, read_function = default_read_function):
         specification = {
             'title':[['title'],['80s']],
             'simulator':[['simulator'],['80s']],
@@ -80,7 +80,7 @@ class t2data_parser(fixed_format_file):
 
 class t2_extra_precision_data_parser(fixed_format_file):
     """Class for parsing AUTOUGH2 extra-precision auxiliary data file."""
-    def __init__(self, filename, mode, read_function):
+    def __init__(self, filename, mode, read_function = default_read_function):
         specification = {
             'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
                       ['5s','5d']+['15.4e']*7],
