@@ -2107,9 +2107,6 @@ class mulgrid(object):
                 if variable is not None: col.set_array(np.array(vals))
                 if colourbar_limits is not None: col.norm.vmin,col.norm.vmax=tuple(colourbar_limits)
                 ax.add_collection(col)
-                if plot_limits is not None:
-                    ax.set_xlim(plot_limits[0]); ax.set_ylim(plot_limits[1])
-                else: ax.autoscale_view()
                 if contours<>False:
                     from matplotlib.mlab import griddata
                     valc=np.array(vals)
@@ -2136,6 +2133,9 @@ class mulgrid(object):
                     ax.set_yticklabels([lay.name for lay in self.layerlist])
                     ax.set_ylabel('layer')
                 self.slice_plot_wells(plt, ax, line, l, wells, well_names, hide_wells_outside, wellcolour, welllinewidth, wellname_bottom)
+                if plot_limits is not None:
+                    ax.set_xlim(plot_limits[0]); ax.set_ylim(plot_limits[1])
+                else: ax.autoscale_view()
                 if flow is not None:
                     if connection_flows:
                         xflow,yflow = [],[]
