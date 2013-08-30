@@ -14,15 +14,21 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.3.8, which has:
+The latest stable version is 1.3.9, which has:
 
-* Ability to plot block-averaged flow vectors on layer and slice plots
+* Better support for exporting grids containing columns with more than four sides to VTK
 
-* Support for TOUGHREACT SAVE/INCON files
+* Ability to plot connection flow arrows on mulgrid layer and slice plots
 
-* Ability to specify characters to use for node and column names when creating mulgrid objects (allows creation of larger grids)
+* Improved calculation of column centroids
 
-* More accurate calculation of flux matrices (used for generating block-averaged flow vectors for visualization) 
+* Improved calculation of connection geometry parameters and flux matrices
+
+* new demote_block() method for t2grids- to move blocks to the end of the block list
+
+* improved reading of some AUTOUGH2 listing files
+
+* improved reading of some exotically-formatted Fortran floating point data
 
 as well as various bug fixes and other minor enhancements.
 
