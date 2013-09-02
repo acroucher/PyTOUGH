@@ -160,67 +160,67 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hline
   \textbf{Method} & \textbf{Type} & \textbf{Description}\\
   \hline
-  \hyperref[sec:add_column]{\texttt{add\_column}} & -- & adds a column to the grid\\ 
-  \hyperref[sec:add_connection]{\texttt{add\_connection}} & -- & adds a connection to the grid\\ 
-  \hyperref[sec:add_layer]{\texttt{add\_layer}} & -- & adds a layer to the grid\\ 
-  \hyperref[sec:add_node]{\texttt{add\_node}} & -- & adds a node to the grid\\ 
-  \hyperref[sec:add_well]{\texttt{add\_well}} & -- & adds a well to the grid\\ 
-  \hyperref[sec:block_contains_point]{\texttt{block\_contains\_point}} & Boolean & whether a block contains a 3D point\\
-  \hyperref[sec:block_mapping]{\texttt{block\_mapping}} & dictionary & mapping from the blocks of another \texttt{mulgrid} object\\
-  \hyperref[sec:block_name]{\texttt{block\_name}} & string & name of block at given layer and column\\
-  \hyperref[sec:block_name_containing_point]{\texttt{block\_name\_containing\_point}} & string & name of block containing specified point\\
-  \hyperref[sec:check]{\texttt{check}} & Boolean & checks grid for errors (and optionally fixes them)\\ 
-  \hyperref[sec:column_boundary_nodes]{\texttt{column\_boundary\_nodes}} & list & nodes around the outer boundary of a group of columns\\ 
-  \hyperref[sec:column_bounds]{\texttt{column\_bounds}} & list & bounding rectangle around a list of columns\\ 
-  \hyperref[sec:column_containing_point]{\texttt{column\_containing\_point}} & column & column containing specified horizontal point\\ 
-  \hyperref[sec:column_mapping]{\texttt{column\_mapping}} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
-  \hyperref[sec:column_name]{\texttt{column\_name}} & string & column name of a block name\\ 
-  \hyperref[sec:column_neighbour_groups]{\texttt{column\_neighbour\_groups}} & list & groups connected columns\\ 
-  \hyperref[sec:column_quadtree]{\texttt{column\_quadtree}} & quadtree & quadtree structure for searching columns\\ 
-  \hyperref[sec:column_surface_layer]{\texttt{column\_surface\_layer}} & \texttt{column} & surface layer for a specified column\\
-  \hyperref[sec:column_values]{\texttt{column\_values}} & tuple & values of a variable down a column\\
-  \hyperref[sec:columns_in_polygon]{\texttt{columns\_in\_polygon}} & list & columns inside a specified polygon (or rectangle)\\ 
-  \hyperref[sec:connects]{\texttt{connects}} & Boolean & whether the grid has a connection between two specified columns\\ 
-  \hyperref[sec:copy_layers_from]{\texttt{copy\_layers\_from}} & -- & copies layer structure from another geometry\\ 
-  \hyperref[sec:copy_wells_from]{\texttt{copy\_wells\_from}} & -- & copies wells from another geometry\\ 
-  \hyperref[sec:delete_column]{\texttt{delete\_column}} & -- & deletes a column from the grid\\ 
-  \hyperref[sec:delete_connection]{\texttt{delete\_connection}} & -- & deletes a connection from the grid\\ 
-  \hyperref[sec:delete_layer]{\texttt{delete\_layer}} & -- & deletes a layer from the grid\\ 
-  \hyperref[sec:delete_node]{\texttt{delete\_node}} & -- & deletes a node from the grid\\ 
-  \hyperref[sec:delete_orphans]{\texttt{delete\_orphans}} & -- & deletes any orphaned nodes from the grid\\ 
-  \hyperref[sec:delete_orphan_wells]{\texttt{delete\_orphan\_wells}} & -- & deletes any orphaned wells from the grid\\ 
-  \hyperref[sec:delete_well]{\texttt{delete\_well}} & -- & deletes a well from the grid\\ 
-  \hyperref[sec:empty]{\texttt{empty}} & --  & empties contents of grid\\
-  \hyperref[sec:export_surfer]{\texttt{export\_surfer}} & -- & exports to various files on disk for visualization in Surfer\\ 
-  \hyperref[sec:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
-  \hyperref[sec:from_gmsh]{\texttt{from\_gmsh}} & \texttt{mulgrid} & imports a grid from a \texttt{gmsh} mesh\\ 
-  \hyperref[sec:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
-  \hyperref[sec:layer_mapping]{\texttt{layer\_mapping}} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
-  \hyperref[sec:layer_name]{\texttt{layer\_name}} & string & layer name of a block name\\ 
-  \hyperref[sec:layer_plot]{\texttt{layer\_plot}} & -- & plots a variable over a layer of the grid\\
-  \hyperref[sec:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
-  \hyperref[sec:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
-  \hyperref[sec:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
-  \hyperref[sec:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
-  \hyperref[sec:node_nearest_to]{\texttt{node\_nearest\_to}} & \texttt{node} & node nearest to a specified point\\ 
-  \hyperref[sec:optimize]{\texttt{optimize}} & -- & adjusts node positions to optimize grid quality\\
-  \hyperref[sec:polyline_values]{\texttt{polyline\_values}} & tuple & values of a variable along an arbitrary polyline through the grid\\
-  \hyperref[sec:read]{\texttt{read}} & \texttt{mulgrid} & reads geometry file from disk\\
-  \hyperref[sec:rectangular]{\texttt{rectangular}} & \texttt{mulgrid} & creates rectangular grid\\
-  \hyperref[sec:reduce]{\texttt{reduce}} & -- & reduces a grid to contain only specified columns\\
-  \hyperref[sec:refine]{\texttt{refine}} & -- & refines specified columns in the grid\\
-  \hyperref[sec:refine_layers]{\texttt{refine\_layers}} & -- & refines specified layers in the grid\\
-  \hyperref[sec:rename_column]{\texttt{rename\_column}} & Boolean & renames a column\\
-  \hyperref[sec:rename_layer]{\texttt{rename\_layer}} & Boolean & renames a layer\\
-  \hyperref[sec:rotate]{\texttt{rotate}} & -- & rotates a grid in the horizontal plane\\
-  \hyperref[sec:slice_plot]{\texttt{slice\_plot}} & -- & plots a variable over a vertical slice through the grid\\
-  \hyperref[sec:snap_columns_to_layers]{\texttt{snap\_columns\_to\_layers}} & -- & snaps column surfaces to layer bottoms\\
-  \hyperref[sec:split_column]{\texttt{split\_column}} & Boolean & splits a quadrilateral column into two triangles\\ 
-  \hyperref[sec:translate]{\texttt{translate}} & -- & moves a grid by simple translation in 3D\\
-  \hyperref[sec:well_values]{\texttt{well\_values}} & tuple & values of a variable down a well\\
-  \hyperref[sec:write]{\texttt{write}} & -- & writes to geometry file on disk\\
-  \hyperref[sec:write_bna]{\texttt{write\_bna}} & -- & writes to Atlas BNA file on disk\\ 
-  \hyperref[sec:write_vtk]{\texttt{write\_vtk}} &  -- & writes to VTK file on disk\\
+  \hyperref[sec:mulgrid:add_column]{\texttt{add\_column}} & -- & adds a column to the grid\\ 
+  \hyperref[sec:mulgrid:add_connection]{\texttt{add\_connection}} & -- & adds a connection to the grid\\ 
+  \hyperref[sec:mulgrid:add_layer]{\texttt{add\_layer}} & -- & adds a layer to the grid\\ 
+  \hyperref[sec:mulgrid:add_node]{\texttt{add\_node}} & -- & adds a node to the grid\\ 
+  \hyperref[sec:mulgrid:add_well]{\texttt{add\_well}} & -- & adds a well to the grid\\ 
+  \hyperref[sec:mulgrid:block_contains_point]{\texttt{block\_contains\_point}} & Boolean & whether a block contains a 3D point\\
+  \hyperref[sec:mulgrid:block_mapping]{\texttt{block\_mapping}} & dictionary & mapping from the blocks of another \texttt{mulgrid} object\\
+  \hyperref[sec:mulgrid:block_name]{\texttt{block\_name}} & string & name of block at given layer and column\\
+  \hyperref[sec:mulgrid:block_name_containing_point]{\texttt{block\_name\_containing\_point}} & string & name of block containing specified point\\
+  \hyperref[sec:mulgrid:check]{\texttt{check}} & Boolean & checks grid for errors (and optionally fixes them)\\ 
+  \hyperref[sec:mulgrid:column_boundary_nodes]{\texttt{column\_boundary\_nodes}} & list & nodes around the outer boundary of a group of columns\\ 
+  \hyperref[sec:mulgrid:column_bounds]{\texttt{column\_bounds}} & list & bounding rectangle around a list of columns\\ 
+  \hyperref[sec:mulgrid:column_containing_point]{\texttt{column\_containing\_point}} & column & column containing specified horizontal point\\ 
+  \hyperref[sec:mulgrid:column_mapping]{\texttt{column\_mapping}} & dictionary & mapping from the columns of another \texttt{mulgrid} object\\
+  \hyperref[sec:mulgrid:column_name]{\texttt{column\_name}} & string & column name of a block name\\ 
+  \hyperref[sec:mulgrid:column_neighbour_groups]{\texttt{column\_neighbour\_groups}} & list & groups connected columns\\ 
+  \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree}} & quadtree & quadtree structure for searching columns\\ 
+  \hyperref[sec:mulgrid:column_surface_layer]{\texttt{column\_surface\_layer}} & \texttt{column} & surface layer for a specified column\\
+  \hyperref[sec:mulgrid:column_values]{\texttt{column\_values}} & tuple & values of a variable down a column\\
+  \hyperref[sec:mulgrid:columns_in_polygon]{\texttt{columns\_in\_polygon}} & list & columns inside a specified polygon (or rectangle)\\ 
+  \hyperref[sec:mulgrid:connects]{\texttt{connects}} & Boolean & whether the grid has a connection between two specified columns\\ 
+  \hyperref[sec:mulgrid:copy_layers_from]{\texttt{copy\_layers\_from}} & -- & copies layer structure from another geometry\\ 
+  \hyperref[sec:mulgrid:copy_wells_from]{\texttt{copy\_wells\_from}} & -- & copies wells from another geometry\\ 
+  \hyperref[sec:mulgrid:delete_column]{\texttt{delete\_column}} & -- & deletes a column from the grid\\ 
+  \hyperref[sec:mulgrid:delete_connection]{\texttt{delete\_connection}} & -- & deletes a connection from the grid\\ 
+  \hyperref[sec:mulgrid:delete_layer]{\texttt{delete\_layer}} & -- & deletes a layer from the grid\\ 
+  \hyperref[sec:mulgrid:delete_node]{\texttt{delete\_node}} & -- & deletes a node from the grid\\ 
+  \hyperref[sec:mulgrid:delete_orphans]{\texttt{delete\_orphans}} & -- & deletes any orphaned nodes from the grid\\ 
+  \hyperref[sec:mulgrid:delete_orphan_wells]{\texttt{delete\_orphan\_wells}} & -- & deletes any orphaned wells from the grid\\ 
+  \hyperref[sec:mulgrid:delete_well]{\texttt{delete\_well}} & -- & deletes a well from the grid\\ 
+  \hyperref[sec:mulgrid:empty]{\texttt{empty}} & --  & empties contents of grid\\
+  \hyperref[sec:mulgrid:export_surfer]{\texttt{export\_surfer}} & -- & exports to various files on disk for visualization in Surfer\\ 
+  \hyperref[sec:mulgrid:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
+  \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \texttt{mulgrid} & imports a grid from a \texttt{gmsh} mesh\\ 
+  \hyperref[sec:mulgrid:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
+  \hyperref[sec:mulgrid:layer_mapping]{\texttt{layer\_mapping}} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
+  \hyperref[sec:mulgrid:layer_name]{\texttt{layer\_name}} & string & layer name of a block name\\ 
+  \hyperref[sec:mulgrid:layer_plot]{\texttt{layer\_plot}} & -- & plots a variable over a layer of the grid\\
+  \hyperref[sec:mulgrid:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
+  \hyperref[sec:mulgrid:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
+  \hyperref[sec:mulgrid:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
+  \hyperref[sec:mulgrid:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
+  \hyperref[sec:mulgrid:node_nearest_to]{\texttt{node\_nearest\_to}} & \texttt{node} & node nearest to a specified point\\ 
+  \hyperref[sec:mulgrid:optimize]{\texttt{optimize}} & -- & adjusts node positions to optimize grid quality\\
+  \hyperref[sec:mulgrid:polyline_values]{\texttt{polyline\_values}} & tuple & values of a variable along an arbitrary polyline through the grid\\
+  \hyperref[sec:mulgrid:read]{\texttt{read}} & \texttt{mulgrid} & reads geometry file from disk\\
+  \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular}} & \texttt{mulgrid} & creates rectangular grid\\
+  \hyperref[sec:mulgrid:reduce]{\texttt{reduce}} & -- & reduces a grid to contain only specified columns\\
+  \hyperref[sec:mulgrid:refine]{\texttt{refine}} & -- & refines specified columns in the grid\\
+  \hyperref[sec:mulgrid:refine_layers]{\texttt{refine\_layers}} & -- & refines specified layers in the grid\\
+  \hyperref[sec:mulgrid:rename_column]{\texttt{rename\_column}} & Boolean & renames a column\\
+  \hyperref[sec:mulgrid:rename_layer]{\texttt{rename\_layer}} & Boolean & renames a layer\\
+  \hyperref[sec:mulgrid:rotate]{\texttt{rotate}} & -- & rotates a grid in the horizontal plane\\
+  \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot}} & -- & plots a variable over a vertical slice through the grid\\
+  \hyperref[sec:mulgrid:snap_columns_to_layers]{\texttt{snap\_columns\_to\_layers}} & -- & snaps column surfaces to layer bottoms\\
+  \hyperref[sec:mulgrid:split_column]{\texttt{split\_column}} & Boolean & splits a quadrilateral column into two triangles\\ 
+  \hyperref[sec:mulgrid:translate]{\texttt{translate}} & -- & moves a grid by simple translation in 3D\\
+  \hyperref[sec:mulgrid:well_values]{\texttt{well\_values}} & tuple & values of a variable down a well\\
+  \hyperref[sec:mulgrid:write]{\texttt{write}} & -- & writes to geometry file on disk\\
+  \hyperref[sec:mulgrid:write_bna]{\texttt{write\_bna}} & -- & writes to Atlas BNA file on disk\\ 
+  \hyperref[sec:mulgrid:write_vtk]{\texttt{write\_vtk}} &  -- & writes to VTK file on disk\\
   \hline
   \caption{Methods of a \texttt{mulgrid} object}
   \label{tb:mulgrid_methods}
@@ -228,32 +228,32 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
 \end{center}
 
 \subsubsection{\texttt{add\_column(\emph{col})}}
-\label{sec:add_column}
+\label{sec:mulgrid:add_column}
 
 Adds a \texttt{column} object \texttt{col} to the grid.
 
 \subsubsection{\texttt{add\_connection(\emph{con})}}
-\label{sec:add_connection}
+\label{sec:mulgrid:add_connection}
 
 Adds a \texttt{connection} object \texttt{con} to the grid.
 
 \subsubsection{\texttt{add\_layer(\emph{lay})}}
-\label{sec:add_layer}
+\label{sec:mulgrid:add_layer}
 
 Adds a \texttt{layer} object \texttt{lay} to the grid.
 
 \subsubsection{\texttt{add\_node(\emph{n})}}
-\label{sec:add_node}
+\label{sec:mulgrid:add_node}
 
 Adds a \texttt{node} object \texttt{n} to the grid.
 
 \subsubsection{\texttt{add\_well(\emph{w})}}
-\label{sec:add_well}
+\label{sec:mulgrid:add_well}
 
 Adds a \texttt{well} object \texttt{w} to the grid.
 
 \subsubsection{\texttt{block\_contains\_point(\emph{blockname}, \emph{pos})}}
-\label{sec:block_contains_point}
+\label{sec:mulgrid:block_contains_point}
 
 Returns \texttt{True} if the grid block with the given name contains the 3D point \texttt{pos}.
 
@@ -266,7 +266,7 @@ Returns \texttt{True} if the grid block with the given name contains the 3D poin
 \end{itemize}
 
 \subsubsection{\texttt{block\_mapping(\emph{geo}, \emph{column\_mapping}=\texttt{False})}}
-\label{sec:block_mapping}
+\label{sec:mulgrid:block_mapping}
 
 Returns a dictionary mapping each block name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest block in the object's own geometry.  Can optionally also return the associated column mapping.
 
@@ -279,7 +279,7 @@ Returns a dictionary mapping each block name in the \texttt{mulgrid} object \tex
 \end{itemize}
 
 \subsubsection{\texttt{block\_name(\emph{layer\_name}, \emph{column\_name})}}
-\label{sec:block_name}
+\label{sec:mulgrid:block_name}
 
 Gives the name of the block corresponding to the specified layer and column names, according to the naming convention of the grid.
 
@@ -290,7 +290,7 @@ Gives the name of the block corresponding to the specified layer and column name
 \end{itemize}
 
 \subsubsection{\texttt{block\_name\_containing\_point(\emph{pos}, \emph{qtree}=None)}}
-\label{sec:block_name_containing_point}
+\label{sec:mulgrid:block_name_containing_point}
 
 Gives the name of the block containing a specified 3-D position in the grid (returns \texttt{None} if the point lies outside the grid).
 
@@ -303,7 +303,7 @@ Gives the name of the block containing a specified 3-D position in the grid (ret
 \end{itemize}
 
 \subsubsection{\texttt{check(\emph{fix}=False,\emph{silent}=False)}}
-\label{sec:check}
+\label{sec:mulgrid:check}
 
 Checks a grid for errors and optionally fixes them.  Errors checked for are: missing connections, extra connections, orphaned nodes, and columns and layers that do not contain their own centres.  Returns \texttt{True} if no errors were found, and \texttt{False} otherwise.  If \texttt{fix} is \texttt{True}, any identified problems will be fixed.  If \texttt{silent} is \texttt{True}, there is no printout (only really useful if \texttt{fix} is \texttt{True}).
 
@@ -316,7 +316,7 @@ Checks a grid for errors and optionally fixes them.  Errors checked for are: mis
 \end{itemize}
 
 \subsubsection{\texttt{column\_boundary\_nodes(\emph{columns})}}
-\label{sec:column_boundary_nodes}
+\label{sec:mulgrid:column_boundary_nodes}
 
 Returns the nodes around the outer boundary of a list of columns.  The list is ordered, in a counter-clockwise direction.
 
@@ -327,7 +327,7 @@ Returns the nodes around the outer boundary of a list of columns.  The list is o
 \end{itemize}
 
 \subsubsection{\texttt{column\_bounds(\emph{columns})}}
-\label{sec:column_bounds}
+\label{sec:mulgrid:column_bounds}
 
 Returns a bounding rectangle around a list of columns.
 
@@ -339,7 +339,7 @@ Returns a bounding rectangle around a list of columns.
 
 \subsubsection{\texttt{column\_containing\_point(\emph{pos}, \emph{columns}=None, \emph{guess}=None, \emph{bounds}=None,\\
 \emph{qtree}=None)}}
-\label{sec:column_containing_point}
+\label{sec:mulgrid:column_containing_point}
 
 Returns the grid column containing the specified horizontal point.  If \texttt{columns} is specified, only columns in the given list will be searched.  An initial \texttt{guess} column can optionally be specified.  If \texttt{bounds} is specified, points outside the given polygon will always return \texttt{None}.  A quadtree structure can also be specified to speed up searching.
 
@@ -358,7 +358,7 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
 \end{itemize}
 
 \subsubsection{\texttt{column\_mapping(\emph{geo})}}
-\label{sec:column_mapping}
+\label{sec:mulgrid:column_mapping}
 
 Returns a dictionary mapping each column name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest column in the object's own geometry.  If the SciPy library is available, a KDTree structure is used to speed searching.
 
@@ -369,7 +369,7 @@ Returns a dictionary mapping each column name in the \texttt{mulgrid} object \te
 \end{itemize}
 
 \subsubsection{\texttt{column\_name(\emph{block\_name})}}
-\label{sec:column_name}
+\label{sec:mulgrid:column_name}
 
 Gives the name of the column corresponding to the specified block name, according to the naming convention of the grid.
 
@@ -380,7 +380,7 @@ Gives the name of the column corresponding to the specified block name, accordin
 \end{itemize}
 
 \subsubsection{\texttt{column\_neighbour\_groups(\emph{columns})}}
-\label{sec:column_neighbour_groups}
+\label{sec:mulgrid:column_neighbour_groups}
 
 From the given list or set of columns, finds sets of columns that are connected together, and returns a list of them.
 
@@ -391,7 +391,7 @@ From the given list or set of columns, finds sets of columns that are connected 
 \end{itemize}
 
 \subsubsection{\texttt{column\_quadtree(\emph{columns}=None)}}
-\label{sec:column_quadtree}
+\label{sec:mulgrid:column_quadtree}
 
 Returns a quadtree structure for fast searching of grid columns, to find which column a given point lies in.  This can then be passed into various other \texttt{mulgrid} methods that do such searching, e.g. \texttt{block\_name\_containing\_point()} or \texttt{well\_values}, to speed them up (useful for large grids).
 
@@ -402,7 +402,7 @@ Returns a quadtree structure for fast searching of grid columns, to find which c
 \end{itemize}
 
 \subsubsection{\texttt{column\_surface\_layer(\emph{col})}}
-\label{sec:column_surface_layer}
+\label{sec:mulgrid:column_surface_layer}
 
 Returns the layer containing the surface elevation of a specified column.
 
@@ -413,7 +413,7 @@ Returns the layer containing the surface elevation of a specified column.
 \end{itemize}
 
 \subsubsection{\texttt{column\_values(\emph{col}, \emph{variable}, \emph{depth} = False)}}
-\label{sec:column_values}
+\label{sec:mulgrid:column_values}
 
 Returns values of a specified variable down a specified column.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.
 
@@ -430,7 +430,7 @@ The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\t
 \end{itemize}
 
 \subsubsection{\texttt{columns\_in\_polygon(\emph{polygon})}}
-\label{sec:columns_in_polygon}
+\label{sec:mulgrid:columns_in_polygon}
 
 Returns a list of all columns with centres inside the specified polygon or rectangle.
 
@@ -441,7 +441,7 @@ Returns a list of all columns with centres inside the specified polygon or recta
 \end{itemize}
 
 \subsubsection{\texttt{connects(\emph{column1, column2})}}
-\label{sec:connects}
+\label{sec:mulgrid:connects}
 
 Returns \texttt{True} if the geometry contains a connection connecting the two specified columns.
 
@@ -452,7 +452,7 @@ Returns \texttt{True} if the geometry contains a connection connecting the two s
 \end{itemize}
 
 \subsubsection{\texttt{copy\_layers\_from(\emph{geo})}}
-\label{sec:copy_layers_from}
+\label{sec:mulgrid:copy_layers_from}
 
 Copies the layer structure from the geometry \texttt{geo} (deleting any existing layers first).
 
@@ -463,7 +463,7 @@ Copies the layer structure from the geometry \texttt{geo} (deleting any existing
 \end{itemize}
 
 \subsubsection{\texttt{copy\_wells\_from(\emph{geo})}}
-\label{sec:copy_wells_from}
+\label{sec:mulgrid:copy_wells_from}
 
 Copies the wells from the geometry \texttt{geo} (deleting any existing wells first).
 
@@ -474,7 +474,7 @@ Copies the wells from the geometry \texttt{geo} (deleting any existing wells fir
 \end{itemize}
 
 \subsubsection{\texttt{delete\_column(\emph{colname})}}
-\label{sec:delete_column}
+\label{sec:mulgrid:delete_column}
 
 Deletes the column with the specified name from the grid.
 
@@ -485,7 +485,7 @@ Deletes the column with the specified name from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_connection(\emph{colnames})}}
-\label{sec:delete_connection}
+\label{sec:mulgrid:delete_connection}
 
 Deletes the connection between the specified columns from the grid.
 
@@ -496,7 +496,7 @@ Deletes the connection between the specified columns from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_layer(\emph{layername})}}
-\label{sec:delete_layer}
+\label{sec:mulgrid:delete_layer}
 
 Deletes the layer with the specified name from the grid.
 
@@ -507,7 +507,7 @@ Deletes the layer with the specified name from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_node(\emph{nodename})}}
-\label{sec:delete_node}
+\label{sec:mulgrid:delete_node}
 
 Deletes the node with the specified name from the grid.
 
@@ -518,17 +518,17 @@ Deletes the node with the specified name from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_orphans()}}
-\label{sec:delete_orphans}
+\label{sec:mulgrid:delete_orphans}
 
 Deletes any orphaned nodes (those not belonging to any column) from the grid.
 
 \subsubsection{\texttt{delete\_orphan\_wells()}}
-\label{sec:delete_orphan_wells}
+\label{sec:mulgrid:delete_orphan_wells}
 
 Deletes any orphaned wells (those with wellheads outside the grid).
 
 \subsubsection{\texttt{delete\_well(\emph{wellname})}}
-\label{sec:delete_well}
+\label{sec:mulgrid:delete_well}
 
 Deletes the well with the specified name from the grid.
 
@@ -539,12 +539,12 @@ Deletes the well with the specified name from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{empty()}}
-\label{sec:empty}
+\label{sec:mulgrid:empty}
 
 Empties the grid of all its nodes, columns, layers, wells and connections.  Other properties are unaffected.
 
 \subsubsection{\texttt{export\_surfer(\emph{filename}='', \emph{aspect}=8.0, \emph{left}=0.0)}}
-\label{sec:export_surfer}
+\label{sec:mulgrid:export_surfer}
 
 Exports the grid to files on disk useful for visualization in Surfer.  Six files are written out:
 
@@ -569,7 +569,7 @@ Exports the grid to files on disk useful for visualization in Surfer.  Six files
 
 \subsubsection{\texttt{fit\_surface(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
     \emph{grid\_boundary}=False, \emph{layer\_snap}=0.0, \emph{silent}=False)}}
-\label{sec:fit_surface}
+\label{sec:mulgrid:fit_surface}
 
 Fits column surface elevations from data, using bilinear least-squares finite element fitting with Sobolev smoothing.  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points).
 
@@ -595,7 +595,7 @@ Fits column surface elevations from data, using bilinear least-squares finite el
 
 \subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
     \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase)}}
-\label{sec:from_gmsh}
+\label{sec:mulgrid:from_gmsh}
 
 Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is grid generation program (see \texttt{http://geuz.org/gmsh/}).  The horizontal structure of the geometry object is created from the \texttt{gmsh} mesh, while the layer structure is specified via the \texttt{layers} parameter, a list of layer thicknesses.  The elevation of the top surface can also be specified, as well as the naming convention and atmosphere type.
 
@@ -616,7 +616,7 @@ Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is grid 
 \end{itemize}
 
 \subsubsection{\texttt{layer\_containing\_elevation(\emph{elevation})}}
-\label{sec:layer_containing_elevation}
+\label{sec:mulgrid:layer_containing_elevation}
 
 Returns the grid layer containing the specified vertical elevation.
 
@@ -627,7 +627,7 @@ Returns the grid layer containing the specified vertical elevation.
 \end{itemize}
 
 \subsubsection{\texttt{layer\_mapping(\emph{geo})}}
-\label{sec:layer_mapping}
+\label{sec:mulgrid:layer_mapping}
 
 Returns a dictionary mapping each layer name in the \texttt{mulgrid} object \texttt{geo} to the name of the nearest layer in the object's own geometry.  (Note: this mapping takes no account of the grid surface, which may alter which layer is nearest in a given column.)
 
@@ -638,7 +638,7 @@ Returns a dictionary mapping each layer name in the \texttt{mulgrid} object \tex
 \end{itemize}
 
 \subsubsection{\texttt{layer\_name(\emph{block\_name})}}
-\label{sec:layer_name}
+\label{sec:mulgrid:layer_name}
 
 Gives the name of the layer corresponding to the specified block name, according to the naming convention of the grid.
 
@@ -659,7 +659,7 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \emph{flow\_variable\_name}=None, \\
     \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
     \emph{flow\_arrow\_width}=None, \emph{connection\_flows}=False})}
-\label{sec:layer_plot}
+\label{sec:mulgrid:layer_plot}
 
 Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
@@ -768,7 +768,7 @@ geo.layer_plot(-500.,t,`Temperature',`$^o$C', contours=np.arange(100,200,25))
 plots the variable \texttt{t} at elevation -500 m over the grid, with the values as Temperature ($^{\circ}$C), and with contours drawn from 100$^o$C to 200$^o$C with a contour interval of 25$^o$C.
 
 \subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False}, \emph{qtree}=None)}}
-\label{sec:line_values}
+\label{sec:mulgrid:line_values}
 
 Returns values of a specified variable along an arbitrary line through the grid.  The start and end points of the line (\texttt{start} and \texttt{end}) are 3-element lists, tuples or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
 
@@ -791,7 +791,7 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
 \subsubsection{\texttt{line\_plot(\emph{start}=None, \emph{end}=None, \emph{variable}, \emph{variable\_name}=None,\\
 \emph{unit}=None, \emph{divisions}=100, \emph{plt}=None, \emph{subplot}=111, \emph{title}=`',\\
 \emph{xlabel}=`distance (m)')}}
-\label{sec:line_plot}
+\label{sec:mulgrid:line_plot}
 
 Plots a variable along a line through the grid, using the \texttt{matplotlib} plotting library. The line is specified by its start and end points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.  The name and units of the variable can optionally be specified, as well as the number of divisions the line is divided into (default 100), the plot title and the axis labels.
 
@@ -826,7 +826,7 @@ geo.line_plot([0.,0.,500.],[1000.,0.,500.],t,`Temperature',`$^o$C')
 plots the variable \texttt{t} along a line from (0,0,500) to (1000,0,500) through the grid, with the values as Temperature ($^{\circ}$C).
 
 \subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}
-\label{sec:nodes_in_columns}
+\label{sec:mulgrid:nodes_in_columns}
 
 Returns a list of all nodes in a specified list of columns.
 
@@ -837,7 +837,7 @@ Returns a list of all nodes in a specified list of columns.
 \end{itemize}
 
 \subsubsection{\texttt{nodes\_in\_polygon(\emph{polygon})}}
-\label{sec:nodes_in_polygon}
+\label{sec:mulgrid:nodes_in_polygon}
 
 Returns a list of all nodes inside the specified polygon or rectangle.
 
@@ -848,7 +848,7 @@ Returns a list of all nodes inside the specified polygon or rectangle.
 \end{itemize}
 
 \subsubsection{\texttt{node\_nearest\_to(\emph{point}, \emph{kdtree}=None)}}
-\label{sec:node_nearest_to}
+\label{sec:mulgrid:node_nearest_to}
 
 Returns the node nearest to a specified point.  An optional kd-tree structure can be specified to speed searching- useful if searching for many points.
 
@@ -862,7 +862,7 @@ Returns the node nearest to a specified point.  An optional kd-tree structure ca
 
 \subsubsection{\texttt{optimize(\emph{nodenames}=None, \emph{connection\_angle\_weight}=1.0, \emph{column\_aspect\_weight}=0.0,\\
     \emph{column\_skewness\_weight}=0.0, \emph{pest}=False)}}
-\label{sec:optimize}
+\label{sec:mulgrid:optimize}
 
 Adjusts positions of the specified nodes to optimize grid quality.  If no nodes are specified, all node positions are optimized.  Grid quality can be defined as a combination of connection angle cosine, column aspect ratio and column skewness.  Increasing the weight for any of these increases its importance in the evaluation of grid quality.
 
@@ -885,7 +885,7 @@ If the \texttt{pest} parameter is set to \texttt{True}, the PEST parameter estim
 \end{itemize}
 
 \subsubsection{\texttt{polyline\_values(\emph{polyline}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False}, \emph{qtree}=None)}}
-\label{sec:polyline_values}
+\label{sec:mulgrid:polyline_values}
 
 Returns values of a specified variable along an arbitrary polyline through the grid, defined as a list of 3-element lists or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
 
@@ -906,7 +906,7 @@ The routine returns a tuple of two arrays (\texttt{l},\texttt{v}), the first (\t
 \end{itemize}
 
 \subsubsection{\texttt{read(\emph{filename})}}
-\label{sec:read}
+\label{sec:mulgrid:read}
 
 Reads a \texttt{mulgrid} object from a MULgraph geometry file on disk.
 
@@ -930,7 +930,7 @@ geo=mulgrid(filename)
 
 \subsubsection{\texttt{rectangular(\emph{xblocks}, \emph{yblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
     \emph{origin}=[0,0,0], \emph{justify}=`r', \emph{case}=None, \emph{chars}=ascii\_lowercase)}}
-\label{sec:rectangular}
+\label{sec:mulgrid:rectangular}
 
 Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{chars} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
 
@@ -962,7 +962,7 @@ geo=mulgrid().rectangular([1000]*10,[500]*20,[100]*5+[200]*10,
 creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a rectangular grid of 10 blocks of size 1000 m in the \emph{x}-direction, 20 blocks of size 500 m in the \emph{x}-direction, 5 layers at the top of thickness 100 m and 10 layers underneath of thickness 200 m, and with origin (0,0,2500) m.  The grid will have the default naming convention (0) and atmosphere type (2).
 
 \subsubsection{\texttt{reduce(\emph{columns})}}
-\label{sec:reduce}
+\label{sec:mulgrid:reduce}
 
 Reduces a grid so that it contains only the specified list of columns (or columns with specified names).
 
@@ -974,7 +974,7 @@ Reduces a grid so that it contains only the specified list of columns (or column
 
 \subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False, \emph{bisect\_edge\_columns}=[],\\
     \emph{chars} = ascii\_lowercase)}}
-\label{sec:refine}
+\label{sec:mulgrid:refine}
 
 Refines the specified columns in the grid.  Appropriate transition columns are created around the refined region.  If no columns are specified, all columns are refined.  All columns in the region to be refined (and in the transition region) must be either triangular or quadrilateral.  Each column in split into four, unless the \texttt{bisect} parameter is \texttt{True}, in which case each column in split into two.  If \texttt{bisect} is `x' or `y', columns are split in the closest direction to the axis specified; or if \texttt{bisect} is \texttt{True}, between its longest sides.
 
@@ -993,7 +993,7 @@ The \texttt{bisect\_edge\_columns} parameter can be used to give more desirable 
 \end{itemize}
 
 \subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2, \emph{chars} = ascii\_lowercase)}}
-\label{sec:refine_layers}
+\label{sec:mulgrid:refine_layers}
 
 Refines the specified layers in the grid.  If no layers are specified, all layers are refined.  Each layer is refined by the specified integer factor.
 
@@ -1008,7 +1008,7 @@ Refines the specified layers in the grid.  If no layers are specified, all layer
 \end{itemize}
 
 \subsubsection{\texttt{rename\_column(\emph{oldcolname}, \emph{newcolname})}}
-\label{sec:rename_column}
+\label{sec:mulgrid:rename_column}
 
 Renames a grid column.  Returns \texttt{True} if the column was found and renamed, or \texttt{False} if the specified column does not exist.  Multiple columns can be renamed at once by specifying lists of old and new column names- this is faster than calling the method multiple times, and the block and connection name lists are updated only once.
 
@@ -1021,7 +1021,7 @@ Renames a grid column.  Returns \texttt{True} if the column was found and rename
 \end{itemize}
 
 \subsubsection{\texttt{rename\_layer(\emph{oldlayername}, \emph{newlayername})}}
-\label{sec:rename_layer}
+\label{sec:mulgrid:rename_layer}
 
 Renames a grid layer.  Returns \texttt{True} if the layer was found and renamed, or \texttt{False} if the specified layer does not exist.  Multiple layers can be renamed at once by specifying lists of old and new layer names- this is faster than calling the method multiple times, and the block and connection name lists are updated only once.
 
@@ -1034,7 +1034,7 @@ Renames a grid layer.  Returns \texttt{True} if the layer was found and renamed,
 \end{itemize}
 
 \subsubsection{\texttt{rotate(\emph{angle}, \emph{centre}=\texttt{None}, \emph{wells}=\texttt{False})}}
-\label{sec:rotate}
+\label{sec:mulgrid:rotate}
 
 Rotates a grid by a specified angle (in degrees) clockwise in the horizontal plane.  Any wells in the grid are also rotated.  The centre of rotation can be optionally specified.  If it is not specified, the centre of the grid is used as the centre of rotation.  If the \texttt{wells} parameter is \texttt{True}, any wells in the grid are also rotated.
 
@@ -1066,7 +1066,7 @@ rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the 
     \emph{rockgroup}=None, \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \\
     \emph{flow\_variable\_name}=None,\emph{flow\_unit}=None, \emph{flow\_scale}=None, \\
     \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None, \emph{connection\_flows}=False)}}
-\label{sec:slice_plot}
+\label{sec:mulgrid:slice_plot}
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
@@ -1182,7 +1182,7 @@ geo.slice_plot(45., t, `Temperature', `$^o$C',
 plots the variable \texttt{t} again, but with a specified discrete colour scale with 10 divisions from zero to 250$^{\circ}$C.
 
 \subsubsection{\texttt{snap\_columns\_to\_layers(\emph{min\_thickness}=1.0, \emph{columns}=[])}}
-\label{sec:snap_columns_to_layers}
+\label{sec:mulgrid:snap_columns_to_layers}
 
 Snaps column surfaces to the bottom of their layers, if the surface block thickness is smaller than a given value.  This can be carried out over an optional subset of columns in the grid, otherwise over all columns.
 
@@ -1195,7 +1195,7 @@ Snaps column surfaces to the bottom of their layers, if the surface block thickn
 \end{itemize}
 
 \subsubsection{\texttt{split\_column(\emph{colname}, \emph{nodename}, \emph{chars} = ascii\_lowercase)}}
-\label{sec:split_column}
+\label{sec:mulgrid:split_column}
 
 Splits a quadrilateral column with specified name into two triangular columns.  The direction of the split is determined
 by specifying the name of one of the splitting nodes.  The method returns \texttt{True} if the split was carried out successfully.
@@ -1211,7 +1211,7 @@ by specifying the name of one of the splitting nodes.  The method returns \textt
 \end{itemize}
 
 \subsubsection{\texttt{translate(\emph{shift}, \emph{wells}=\texttt{False})}}
-\label{sec:translate}
+\label{sec:mulgrid:translate}
 
 Translates a grid by a specified shift in the \emph{x}, \emph{y} and \emph{z} directions.  If the \texttt{wells} parameter is \texttt{True}, any wells in the grid are also translated.
 
@@ -1233,7 +1233,7 @@ translates the grid \texttt{geo} by 10 km in the \emph{x} direction and down 1 k
 
 \subsubsection{\texttt{well\_values(\emph{well\_name}, \emph{variable}, \emph{divisions}=1, \emph{elevation}=\texttt{False}, \\
     \emph{deviations}=\texttt{False}, \emph{qtree}=None, \emph{extend}=\texttt{False})}}
-\label{sec:well_values}
+\label{sec:mulgrid:well_values}
 
 Returns values of a specified variable down a specified well.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions between layer centres or along each well deviation (default 1) can be optionally specified (this can be increased to capture detail along a deviation that passes through several blocks).  If \texttt{deviations} is \texttt{True}, values will be returned at the nodes of the well track, instead of at grid layer centres.  If \texttt{extend} is \texttt{True}, the well trace is artificially extended to the bottom of the model.
 
@@ -1258,7 +1258,7 @@ The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\t
 \end{itemize}
 
 \subsubsection{\texttt{write(\emph{filename}=`')}}
-\label{sec:write}
+\label{sec:mulgrid:write}
 
 Writes a \texttt{mulgrid} object to a MULgraph geometry file on disk.
 
@@ -1269,7 +1269,7 @@ Writes a \texttt{mulgrid} object to a MULgraph geometry file on disk.
 \end{itemize}
 
 \subsubsection{\texttt{write\_bna(\emph{filename}=`')}}
-\label{sec:write_bna}
+\label{sec:mulgrid:write_bna}
 
 Writes a geometry object to an Atlas BNA file on disk, for visualisation with Surfer or GIS tools.
 
@@ -1280,7 +1280,7 @@ Writes a geometry object to an Atlas BNA file on disk, for visualisation with Su
 \end{itemize}
 
 \subsubsection{\texttt{write\_vtk(\emph{filename}=`', \emph{arrays}=None, \emph{wells}=False)}}
-\label{sec:write_vtk}
+\label{sec:mulgrid:write_vtk}
 
 Writes a \texttt{mulgrid} object to a VTK file on disk, for visualisation with VTK, Paraview, Mayavi etc.  The grid is written as an `unstructured grid' VTK object with optional data arrays defined on cells.  A separate VTK file for the wells in the grid can optionally be written.
 
