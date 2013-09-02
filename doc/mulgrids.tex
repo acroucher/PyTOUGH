@@ -1457,7 +1457,7 @@ The well track can be deviated, and is defined as a list \texttt{pos} of (at lea
 
 A \texttt{well} object \texttt{w} can be created simply with the command \texttt{w = well(name,pos)}, where \texttt{name} is the well name and \texttt{pos} is a list of 3-element \texttt{np.arrays} (or lists, or tuples) representing the well trace (starting from the wellhead).
 
-The methods of a \texttt{well} are listed in Table \ref{tb:well_methods} and described below.
+The methods of a \texttt{well} object are listed in Table \ref{tb:well_methods} and described below.
 
 \begin{table}
   \begin{center}
@@ -1465,11 +1465,11 @@ The methods of a \texttt{well} are listed in Table \ref{tb:well_methods} and des
       \hline
       \textbf{Method} & \textbf{Type} & \textbf{Description}\\
       \hline
-      \texttt{depth\_elevation} & float & elevation for a given downhole depth \\
-      \texttt{depth\_pos} & \texttt{np.array} & position on well track for a given downhole depth \\
-      \texttt{elevation\_depth} & float & downhole depth for a given elevation \\
-      \texttt{elevation\_pos} & \texttt{np.array} & position on well track for a given elevation \\
-      \texttt{pos\_coordinate} & \texttt{np.array} & array of coordinates for a given index \\
+      \hyperref[sec:well:depth_elevation]{\texttt{depth\_elevation}} & float & elevation for a given downhole depth \\
+      \hyperref[sec:well:depth_pos]{\texttt{depth\_pos}} & \texttt{np.array} & position on well track for a given downhole depth \\
+      \hyperref[sec:well:elevation_pos]{\texttt{elevation\_depth}} & float & downhole depth for a given elevation \\
+      \hyperref[sec:well:elevation_pos]{\texttt{elevation\_pos}} & \texttt{np.array} & position on well track for a given elevation \\
+      \hyperref[sec:well:pos_coordinate]{\texttt{pos\_coordinate}} & \texttt{np.array} & array of coordinates for a given index \\
       \hline
     \end{tabular}
     \caption{Methods of a \texttt{well} object}
@@ -1478,6 +1478,7 @@ The methods of a \texttt{well} are listed in Table \ref{tb:well_methods} and des
 \end{table}
 
 \subsubsection{\texttt{depth\_elevation(\emph{depth})}}
+\label{sec:well:depth_elevation}
 
 Returns the elevation corresponding to the specified downhole \texttt{depth} (or \texttt{None} if \texttt{depth} is above the wellhead or below the bottom).
 
@@ -1488,6 +1489,7 @@ Returns the elevation corresponding to the specified downhole \texttt{depth} (or
 \end{itemize}
 
 \subsubsection{\texttt{depth\_pos(\emph{depth})}}
+\label{sec:well:depth_pos}
 
 Returns the 3D position of the point in the well with specified downhole \texttt{depth} (or \texttt{None} if \texttt{depth} is above the wellhead or below the bottom).  The position is interpolated between the deviation locations.
 
@@ -1498,6 +1500,7 @@ Returns the 3D position of the point in the well with specified downhole \texttt
 \end{itemize}
 
 \subsubsection{\texttt{elevation\_depth(\emph{elevation})}}
+\label{sec:well:elevation_depth}
 
 Returns the downhole depth corresponding to the specified \texttt{elevation} (or \texttt{None} if \texttt{elevation} is above the wellhead or below the bottom).
 
@@ -1508,6 +1511,7 @@ Returns the downhole depth corresponding to the specified \texttt{elevation} (or
 \end{itemize}
 
 \subsubsection{\texttt{elevation\_pos(\emph{elevation}, \emph{extend}=\texttt{False})}}
+\label{sec:well:elevation_pos}
 
 Returns the 3D position of the point in the well with specified \texttt{elevation} (or \texttt{None} if \texttt{elevation} is above the wellhead or below the bottom).  The position is interpolated between the deviation locations.  If \texttt{extend} is \texttt{True}, return extrapolated positions for elevations below the bottom of the well.
 
@@ -1520,6 +1524,7 @@ Returns the 3D position of the point in the well with specified \texttt{elevatio
 \end{itemize}
 
 \subsubsection{\texttt{pos\_coordinate(\emph{index})}}
+\label{sec:well:pos_coordinate}
 
 Returns an \texttt{np.array} of the well track node coordinates for the given index (0, 1 or 2).  For example, \texttt{pos\_coordinate(2)} returns an array containing the elevations of all well track nodes.
 
