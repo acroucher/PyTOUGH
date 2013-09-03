@@ -65,29 +65,29 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hline
       \textbf{Method} & \textbf{Type} & \textbf{Description}\\
       \hline
-      \texttt{+} & \texttt{t2grid} & adds two grids together\\
-      \texttt{add\_block} & -- & adds a block to the grid\\
-      \texttt{add\_connection} & -- & adds a connection to the grid\\
-      \texttt{add\_rocktype} & -- & adds a rock type to the grid\\
-      \texttt{block\_index} & integer & returns index of a block with a specified name\\
-      \texttt{calculate\_block\_centres} & -- & calculates geometrical centre of all blocks in the grid\\
-      \texttt{check} & Boolean & checks grid for errors and optionally fixes them\\
-      \texttt{clean\_rocktypes} & -- & deletes any unused rock types from the grid\\
-      \texttt{connection\_index} & integer & returns index of a connection with a specified pair of names\\
-      \texttt{copy\_connection\_directions} & -- & copies connection permeability directions from another grid\\
-      \texttt{delete\_block} & -- & deletes a block from the grid\\
-      \texttt{delete\_connection} & -- & deletes a connection from the grid\\
-      \texttt{delete\_rocktype} & -- & deletes a rock type from the grid\\
-      \texttt{demote\_block} & -- & shifts a block (or blocks) to the end of the blocklist\\
-      \texttt{embed} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
-      \texttt{empty} & -- & empties contents of grid\\
-      \texttt{flux\_matrix} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
-      \texttt{fromgeo} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
-      \texttt{incons} & \texttt{t2incon} & constructs initial conditions for the grid\\
-      \texttt{radial} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
-      \texttt{rocktype\_frequency} & integer & frequency of use of a particular rock type\\
-      \texttt{sort\_rocktypes} & -- & sorts rock type list into alphabetical order by name\\
-      \texttt{write\_vtk} & -- & writes grid to VTK file\\
+      \hyperref[sec:t2grid:plus]{\texttt{+}} & \texttt{t2grid} & adds two grids together\\
+      \hyperref[sec:t2grid:add_block]{\texttt{add\_block}} & -- & adds a block to the grid\\
+      \hyperref[sec:t2grid:add_connection]{\texttt{add\_connection}} & -- & adds a connection to the grid\\
+      \hyperref[sec:t2grid:add_rocktype]{\texttt{add\_rocktype}} & -- & adds a rock type to the grid\\
+      \hyperref[sec:t2grid:block_index]{\texttt{block\_index}} & integer & returns index of a block with a specified name\\
+      \hyperref[sec:t2grid:calculate_block_centres]{\texttt{calculate\_block\_centres}} & -- & calculates geometrical centre of all blocks in the grid\\
+      \hyperref[sec:t2grid:check]{\texttt{check}} & Boolean & checks grid for errors and optionally fixes them\\
+      \hyperref[sec:t2grid:clean_rocktypes]{\texttt{clean\_rocktypes}} & -- & deletes any unused rock types from the grid\\
+      \hyperref[sec:t2grid:connection_index]{\texttt{connection\_index}} & integer & returns index of a connection with a specified pair of names\\
+      \hyperref[sec:t2grid:copy_connection_directions]{\texttt{copy\_connection\_directions}} & -- & copies connection permeability directions from another grid\\
+      \hyperref[sec:t2grid:delete_block]{\texttt{delete\_block}} & -- & deletes a block from the grid\\
+      \hyperref[sec:t2grid:delete_connection]{\texttt{delete\_connection}} & -- & deletes a connection from the grid\\
+      \hyperref[sec:t2grid:delete_rocktype]{\texttt{delete\_rocktype}} & -- & deletes a rock type from the grid\\
+      \hyperref[sec:t2grid:demote_block]{\texttt{demote\_block}} & -- & shifts a block (or blocks) to the end of the blocklist\\
+      \hyperref[sec:t2grid:embed]{\texttt{embed}} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
+      \hyperref[sec:t2grid:empty]{\texttt{empty}} & -- & empties contents of grid\\
+      \hyperref[sec:t2grid:flux_matrix]{\texttt{flux\_matrix}} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
+      \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
+      \hyperref[sec:t2grid:incons]{\texttt{incons}} & \texttt{t2incon} & constructs initial conditions for the grid\\
+      \hyperref[sec:t2grid:radial]{\texttt{radial}} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
+      \hyperref[sec:t2grid:rocktype_frequency]{\texttt{rocktype\_frequency}} & integer & frequency of use of a particular rock type\\
+      \hyperref[sec:t2grid:sort_rocktypes]{\texttt{sort\_rocktypes}} & -- & sorts rock type list into alphabetical order by name\\
+      \hyperref[sec:t2grid:write_vtk]{\texttt{write\_vtk}} & -- & writes grid to VTK file\\
       \hline
     \end{tabular}
     \caption{Methods of a \texttt{t2grid} object}
@@ -96,6 +96,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
 \end{table}
 
 \subsubsection{\texttt{+}}
+\label{sec:t2grid:plus}
 
 Adds two grids \texttt{a} and \texttt{b} together (i.e. amalgamates them) to form a new grid \texttt{a+b}.  If any rock types, blocks or connections exist in both grids \texttt{a} and \texttt{b}, the value from \texttt{b} is used, so there are no duplicates.
 
@@ -106,6 +107,7 @@ Adds two grids \texttt{a} and \texttt{b} together (i.e. amalgamates them) to for
 \end{itemize}
 
 \subsubsection{\texttt{add\_block(\emph{block})}}
+\label{sec:t2grid:add_block}
 
 Adds a block to the grid.  If another block with the same name already exists, it is replaced.
 
@@ -116,6 +118,7 @@ Adds a block to the grid.  If another block with the same name already exists, i
 \end{itemize}
 
 \subsubsection{\texttt{add\_connection(\emph{connection})}}
+\label{sec:t2grid:add_connection}
 
 Adds a connection to the grid.  If another connection with the same column names already exists, it is replaced.
 
@@ -126,6 +129,7 @@ Adds a connection to the grid.  If another connection with the same column names
 \end{itemize}
 
 \subsubsection{\texttt{add\_rocktype(\emph{rock})}}
+\label{sec:t2grid:add_rocktype}
 
 Adds a rock type to the grid.  If another rock type with the same name already exists, it is replaced.
 
@@ -136,6 +140,7 @@ Adds a rock type to the grid.  If another rock type with the same name already e
 \end{itemize}
 
 \subsubsection{\texttt{block\_index(\emph{blockname})}}
+\label{sec:t2grid:block_index}
 
 Returns the block index (in the \texttt{blocklist} list) of a specified block name.
 
@@ -146,6 +151,7 @@ Returns the block index (in the \texttt{blocklist} list) of a specified block na
 \end{itemize}
 
 \subsubsection{\texttt{calculate\_block\_centres(\emph{geo})}}
+\label{sec:t2grid:calculate_block_centres}
 
 Calculates geometrical centres of all blocks in the grid, based on the specified geometry object \texttt{geo}.
 
@@ -156,6 +162,7 @@ Calculates geometrical centres of all blocks in the grid, based on the specified
 \end{itemize}
 
 \subsubsection{\texttt{check(\emph{fix}=False,\emph{silent}=False)}}
+\label{sec:t2grid:check}
 
 Checks a grid for errors and optionally fixes them.  Errors checked for are: blocks not connected to any other blocks, and blocks with isolated rocktypes (not shared with any neighbouring blocks).  Returns \texttt{True} if no errors were found, and \texttt{False} otherwise.  If \texttt{fix} is \texttt{True}, any identified problems will be fixed.  If \texttt{silent} is \texttt{True}, there is no printout (only really useful if \texttt{fix} is \texttt{True}).
 
@@ -170,10 +177,12 @@ Blocks not connected to any others are fixed by deleting them.  Isolated-rocktyp
 \end{itemize}
 
 \subsubsection{\texttt{clean\_rocktypes}()}
+\label{sec:t2grid:clean_rocktypes}
 
 Deletes any rock types from the grid which are not assigned to any block.
 
 \subsubsection{\texttt{connection\_index(\emph{blocknames})}}
+\label{sec:t2grid:connection_index}
 
 Returns the connection index (in the \texttt{connectionlist} list) of the connection between a specified pair of block names.
 
@@ -184,6 +193,7 @@ Returns the connection index (in the \texttt{connectionlist} list) of the connec
 \end{itemize}
 
 \subsubsection{\texttt{copy\_connection\_directions(\emph{geo},\emph{grid})}}
+\label{sec:t2grid:copy_connection_directions}
 
 Copies the connection permeability directions for horizontal connections from another grid.  It is assumed that both grids have the same column structure, but may have different layer structures.
 
@@ -196,6 +206,7 @@ Copies the connection permeability directions for horizontal connections from an
 \end{itemize}
 
 \subsubsection{\texttt{delete\_block(\emph{blockname})}}
+\label{sec:t2grid:delete_block}
 
 Deletes a block from the grid.  This also deletes any connections involving the specified block.
 
@@ -206,6 +217,7 @@ Deletes a block from the grid.  This also deletes any connections involving the 
 \end{itemize}
 
 \subsubsection{\texttt{delete\_connection(\emph{connectionname})}}
+\label{sec:t2grid:delete_connection}
 
 Deletes a connection from the grid.
 
@@ -216,6 +228,7 @@ Deletes a connection from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_rocktype(\emph{rocktypename})}}
+\label{sec:t2grid:delete_rocktype}
 
 Deletes a rock type from the grid.
 
@@ -226,6 +239,7 @@ Deletes a rock type from the grid.
 \end{itemize}
 
 \subsubsection{\texttt{demote\_block(\emph{blockname})}}
+\label{sec:t2grid:demote_block}
 
 Shifts a block (or blocks) to the end of the blocklist.  This can be useful for making blocks inactive- by setting their volumes to zero or negative, and then shifting them to the end of the list (to avoid all blocks below them also being treated as inactive).
 
@@ -236,6 +250,7 @@ Shifts a block (or blocks) to the end of the blocklist.  This can be useful for 
 \end{itemize}
 
 \subsubsection{\texttt{embed(\emph{subgrid}, \emph{connection})}}
+\label{sec:t2grid:embed}
 
 Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids are to be connected: the blocks to be connected and the connection distances, area etc. between them.
 
@@ -248,10 +263,12 @@ Returns a grid with a subgrid embedded inside one of its blocks.  The connection
 \end{itemize}
 
 \subsubsection{\texttt{empty}()}
+\label{sec:t2grid:empty}
 
 Empties the grid of all its blocks, rock types and connections.
 
 \subsubsection{\texttt{flux\_matrix(\emph{geo})}}
+\label{sec:t2grid:flux_matrix}
 
 Takes the grid and a corresponding \texttt{mulgrid} object, and constructs a sparse matrix (of type \texttt{scipy.sparse.lil\_matrix}) which can be used to convert connection flow values on the grid to block-average fluxes (flows per unit area).  Specifically, if an array of connection flow values (one for each connection in the grid) is multiplied by this sparse matrix, the result is a partitioned array containing the 3-component block-average flux for each of the (non-atmosphere) blocks.
 
@@ -264,6 +281,7 @@ The method for constructing the matrix is as follows.  For each block, a distrib
 \end{itemize}
 
 \subsubsection{\texttt{fromgeo(\emph{geo})}}
+\label{sec:t2grid:fromgeo}
 
 Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previous contents of the grid are first emptied.)
 
@@ -274,6 +292,7 @@ Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previo
 \end{itemize}
 
 \subsubsection{\texttt{incons(\emph{values}=(101.3e3,20.))}}
+\label{sec:t2grid:incons}
 
 Returns a \texttt{t2incon} set of initial conditions for the grid, using the supplied values.  Initial conditions can be specified for only one block, in which case they will be applied to all blocks, or for each block, in an array.
 
@@ -285,6 +304,7 @@ Returns a \texttt{t2incon} set of initial conditions for the grid, using the sup
 
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
     \emph{justify}=`r', \emph{case}=`l', \emph{dimension}=2)}}
+\label{sec:t2grid:radial}
 
 Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.  Grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \emph{justify} and \emph{case} parameters control the formatting of the character part of the block names.
 
@@ -309,6 +329,7 @@ The \emph{dimension} parameter sets the flow dimension for `generalized radial f
 \end{itemize}
 
 \subsubsection{\texttt{rocktype\_frequency(\emph{rockname})}}
+\label{sec:t2grid:rocktype_frequency}
 
 Returns the frequency of use of the rock type with the specified name, i.e. how many blocks are assigned that rock type.
 
@@ -319,10 +340,12 @@ Returns the frequency of use of the rock type with the specified name, i.e. how 
 \end{itemize}
 
 \subsubsection{\texttt{sort\_rocktypes()}}
+\label{sec:t2grid:sort_rocktypes}
 
 Sorts the rocktype list into alphabetical order by name.
 
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{wells}=False)}}
+\label{sec:t2grid:write_vtk}
 
 Writes a \texttt{t2grid} object to a VTK file on disk, for visualisation with VTK, Paraview, Mayavi etc.  The grid is written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written, in addition to the defaults arrays for the associated \texttt{mulgrid} object, are: rock type index, porosity and permeability for each block.  A separate VTK file for the wells in the grid can optionally be written.
 
