@@ -105,13 +105,13 @@ The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2inco
       \hline
       \textbf{Method} & \textbf{Type} & \textbf{Description}\\
       \hline
-      \texttt{add\_incon} & -- & adds a set of initial conditions for one block\\
-      \texttt{delete\_incon} & -- & deletes the initial conditions for one block\\
-      \texttt{empty} & -- & deletes all initial conditions from the object\\
-      \texttt{insert\_incon} & -- & inserts initial conditions for one block at a specified index\\
-      \texttt{read} & -- & reads initial conditions from file\\
-      \texttt{transfer\_from} & -- & transfers initial conditions from one grid to another\\
-      \texttt{write} & -- & writes initial conditions to file\\
+      \hyperref[sec:t2incon:add_incon]{\texttt{add\_incon}} & -- & adds a set of initial conditions for one block\\
+      \hyperref[sec:t2incon:delete_incon]{\texttt{delete\_incon}} & -- & deletes the initial conditions for one block\\
+      \hyperref[sec:t2incon:empty]{\texttt{empty}} & -- & deletes all initial conditions from the object\\
+      \hyperref[sec:t2incon:insert_incon]{\texttt{insert\_incon}} & -- & inserts initial conditions for one block at a specified index\\
+      \hyperref[sec:t2incon:read]{\texttt{read}} & -- & reads initial conditions from file\\
+      \hyperref[sec:t2incon:transfer_from]{\texttt{transfer\_from}} & -- & transfers initial conditions from one grid to another\\
+      \hyperref[sec:t2incon:write]{\texttt{write}} & -- & writes initial conditions to file\\
       \hline
     \end{tabular}
     \caption{Methods of a \texttt{t2incon} object}
@@ -120,6 +120,7 @@ The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2inco
 \end{table}
 
 \subsubsection{\texttt{add\_incon(\emph{incon})}}
+\label{sec:t2incon:add_incon}
 
 Adds a set of initial conditions for a single block.
 
@@ -130,6 +131,7 @@ Adds a set of initial conditions for a single block.
 \end{itemize}
 
 \subsubsection{\texttt{delete\_incon(\emph{blockname})}}
+\label{sec:t2incon:delete_incon}
 
 Deletes a set of initial conditions for a single block.
 
@@ -140,10 +142,12 @@ Deletes a set of initial conditions for a single block.
 \end{itemize}
 
 \subsubsection{\texttt{empty()}}
+\label{sec:t2incon:empty}
 
 Deletes initial conditions for all blocks.
 
 \subsubsection{\texttt{insert\_incon(\emph{index},\emph{incon})}}
+\label{sec:t2incon:insert_incon}
 
 Inserts a set of initial conditions for a single block at the specified index.
 
@@ -156,6 +160,7 @@ Inserts a set of initial conditions for a single block at the specified index.
 \end{itemize}
 
 \subsubsection{\texttt{read(\emph{filename})}}
+\label{sec:t2incon:read}
 
 Reads initial conditions from file.
 
@@ -167,6 +172,7 @@ Reads initial conditions from file.
 
 \subsubsection{\texttt{transfer\_from(\emph{sourceinc}, \emph{sourcegeo}, \emph{geo}, \emph{mapping=\{\}},\
     \emph{colmapping=\{\}})}}
+\label{sec:t2incon:transfer_from}
 
 Transfers initial conditions from another \texttt{t2incon} object \texttt{sourceinc}, using the two corresponding \texttt{mulgrid} geometry objects \texttt{sourcegeo} and \texttt{geo}, and optionally the block and column mappings between the two grids (which are created if not specified).
 
@@ -185,6 +191,7 @@ Transfers initial conditions from another \texttt{t2incon} object \texttt{source
 \end{itemize}
 
 \subsubsection{\texttt{write(\emph{filename}, \emph{reset}=True)}}
+\label{sec:t2incon:write}
 
 Writes initial conditions to file.
 
