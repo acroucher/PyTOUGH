@@ -18,13 +18,13 @@ The functions available through the \texttt{t2thermo} library are listed in Tabl
       \hline
       \textbf{Function} & \textbf{Type} & \textbf{Description}\\
       \hline
-      \texttt{cowat} & tuple & density and internal energy of liquid water\\
-      \texttt{sat} & float & saturation pressure as a function of temperature\\
-      \texttt{separated\_steam\_fraction} & float & separated steam fraction for given enthalpy and separator pressure\\
-      \texttt{supst} & tuple & density and internal energy of dry steam\\
-      \texttt{tsat} & float & saturation temperature as a function of pressure\\
-      \texttt{visw} & float & dynamic viscosity of water\\
-      \texttt{viss} & float & dynamic viscosity of steam\\
+      \hyperref[sec:t2thermo:cowat]{\texttt{cowat}} & tuple & density and internal energy of liquid water\\
+      \hyperref[sec:t2thermo:sat]{\texttt{sat}} & float & saturation pressure as a function of temperature\\
+      \hyperref[sec:t2thermo:separated_steam_fraction]{\texttt{separated\_steam\_fraction}} & float & separated steam fraction for given enthalpy and separator pressure\\
+      \hyperref[sec:t2thermo:supst]{\texttt{supst}} & tuple & density and internal energy of dry steam\\
+      \hyperref[sec:t2thermo:tsat]{\texttt{tsat}} & float & saturation temperature as a function of pressure\\
+      \hyperref[sec:t2thermo:visw]{\texttt{visw}} & float & dynamic viscosity of water\\
+      \hyperref[sec:t2thermo:viss]{\texttt{viss}} & float & dynamic viscosity of steam\\
       \hline
     \end{tabular}
     \caption{\texttt{t2thermo} functions}
@@ -37,6 +37,7 @@ The functions available through the \texttt{t2thermo} library are listed in Tabl
 The thermodynamic routines used in TOUGH2 provide functions for liquid water and dry steam.  These functions calculate secondary parameters from the primary thermodynamic variables.  Their names follow the subroutine names used in the TOUGH2 code.
 
 \subsection{Liquid water: \texttt{cowat(\emph{t,p})}}
+\label{sec:t2thermo:cowat}
 
 The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of liquid water as a function of temperature \texttt{t} ($^{\circ}$C) and pressure \texttt{p} (Pa).
 
@@ -49,6 +50,7 @@ The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) 
 \end{itemize}
 
 \subsection{Dry steam: \texttt{supst(\emph{t,p})}}
+\label{sec:t2thermo:supst}
 
 The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of dry steam as a function of temperature \texttt{t} ($^{\circ}$C) and pressure \texttt{p} (Pa).
 
@@ -63,6 +65,7 @@ The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) 
 \section{Viscosity}
 
 \subsection{Liquid water: \texttt{visw(\emph{t,p,ps})}}
+\label{sec:t2thermo:visw}
 
 The \texttt{visw} function returns the dynamic viscosity (Pa.s) of liquid water as a function of temperature \texttt{t} ($^{\circ}$C), pressure (Pa) and saturation pressure (Pa).
 
@@ -77,6 +80,7 @@ The \texttt{visw} function returns the dynamic viscosity (Pa.s) of liquid water 
 \end{itemize}
 
 \subsection{Dry steam: \texttt{viss(\emph{t,d})}}
+\label{sec:t2thermo:viss}
 
 The \texttt{viss} function returns the dynamic viscosity (Pa.s) of dry steam as a function of temperature \texttt{t} ($^{\circ}$C) and density \texttt{d} (kg/m$^3$).
 
@@ -91,6 +95,7 @@ The \texttt{viss} function returns the dynamic viscosity (Pa.s) of dry steam as 
 \section{Saturation line: \texttt{sat(\emph{t})} and \texttt{tsat(\emph{p})}}
 
 \subsection{\texttt{sat(\emph{t})}}
+\label{sec:t2thermo:sat}
 
 The \texttt{sat} function returns the saturation pressure (Pa) at a given temperature \texttt{t} ($^{\circ}$C), for temperatures below the critical temperature.
 
@@ -101,6 +106,7 @@ The \texttt{sat} function returns the saturation pressure (Pa) at a given temper
 \end{itemize}
 
 \subsection{\texttt{tsat(\emph{p})}}
+\label{sec:t2thermo:tsat}
 
 The \texttt{tsat} function returns the saturation temperature ($^{\circ}$C) at a given pressure \texttt{p} (Pa), for pressures below the critical pressure.
 
@@ -117,6 +123,7 @@ Note that the IFC-67 formulation did not include an explicit formula for calcula
 \subsection{Separated steam fraction}
 
 \subsubsection{\texttt{separated\_steam\_fraction(\emph{h}, \emph{separator\_pressure}, \emph{separator\_pressure2} = None)}}
+\label{sec:t2thermo:separated_steam_fraction}
 
 Returns the separated steam fraction for a given enthalpy \texttt{h} and separator pressure.  A second separator pressure may be specified in the case of two-stage flash.
 
