@@ -30,7 +30,7 @@ creates a \texttt{t2incon} object called \texttt{inc} and reads its contents fro
 
 \subsection{Properties}
 
-The main properties of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_properties}.  Once a set of initial conditions is loaded into a \texttt{t2incon} object, conditions for individual blocks can be accessed by block name or index.  For example, for a \texttt{t2incon} object \texttt{inc}, the initial conditions in block \emph{blockname} are given simply by \texttt{inc[\emph{blockname}]}.  This returns a \texttt{t2blockincon} object (see section \ref{t2blockincons}).  Similarly, \texttt{inc[\emph{i}]} returns the initial conditions at the block with (zero-based) index \texttt{\emph{i}}.
+The main properties of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_properties}.  Once a set of initial conditions is loaded into a \texttt{t2incon} object, conditions for individual blocks can be accessed by block name or index.  For example, for a \texttt{t2incon} object \texttt{inc}, the initial conditions in block \emph{blockname} are given simply by \texttt{inc[\emph{blockname}]}.  This returns a \hyperref[t2blockincons]{\texttt{t2blockincon}} object (see section \ref{t2blockincons}).  Similarly, \texttt{inc[\emph{i}]} returns the initial conditions at the block with (zero-based) index \texttt{\emph{i}}.
 
 Each column in the initial conditions file can be accessed by adding an integer (zero-based) index after the \texttt{t2blockincon} object, so for example:
 
@@ -128,7 +128,7 @@ Adds a set of initial conditions for a single block.
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{incon}: \texttt{t2blockincon}\\
+\item \textbf{incon}: \hyperref[t2blockincons]{\texttt{t2blockincon}}\\
   Initial conditions for the block.
 \end{itemize}
 
@@ -163,7 +163,7 @@ Inserts a set of initial conditions for a single block at the specified index.
 \begin{itemize}
 \item \textbf{index}: integer\\
   Index (zero-based) at which to insert the initial conditions.
-\item \textbf{incon}: \texttt{t2blockincon}\\
+\item \textbf{incon}: \hyperref[t2blockincons]{\texttt{t2blockincon}}\\
   Initial conditions for the block.
 \end{itemize}
 
@@ -190,11 +190,11 @@ Transfers initial conditions from another \texttt{t2incon} object \texttt{source
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{sourceinc}: \texttt{t2incon}\\
+\item \textbf{sourceinc}: \hyperref[incons]{\texttt{t2incon}}\\
   Source initial conditions object.
-\item \textbf{sourcegeo}: \texttt{mulgrid}\\
+\item \textbf{sourcegeo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   Geometry object corresponding to the source initial conditions.
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   Geometry object for the grid to be transferred to.
 \item \textbf{mapping}: dictionary\\
   Dictionary mapping block names from \texttt{geo} to \texttt{sourcegeo}.

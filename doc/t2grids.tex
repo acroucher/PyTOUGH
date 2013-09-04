@@ -12,7 +12,7 @@ The \texttt{t2grids} library in PyTOUGH contains classes and routines for manipu
 
 The \texttt{t2grids} library defines a \texttt{t2grid} class, used for representing TOUGH2 grids.  This gives access via Python to the grid's rock types, blocks, connections and other parameters.
 
-Normally a TOUGH2 grid is not created directly, but is either read from a TOUGH2 data file, or constructed from a \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}) using the \texttt{fromgeo} method (see section \ref{t2gridmethods}).
+Normally a TOUGH2 grid is not created directly, but is either read from a TOUGH2 data file, or constructed from a \hyperref[mulgrids]{\texttt{mulgrid}} geometry object (see chapter \ref{mulgrids}) using the \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} method.
 
 Printing a \texttt{t2grid} object (e.g. \texttt{print grid}) displays a summary of information about the grid: how many rock types, blocks and connections it contains.
 
@@ -65,7 +65,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hline
       \textbf{Method} & \textbf{Type} & \textbf{Description}\\
       \hline
-      \hyperref[sec:t2grid:plus]{\texttt{+}} & \texttt{t2grid} & adds two grids together\\
+      \hyperref[sec:t2grid:plus]{\texttt{+}} & \hyperref[t2grids]{\texttt{t2grid}} & adds two grids together\\
       \hyperref[sec:t2grid:add_block]{\texttt{add\_block}} & -- & adds a block to the grid\\
       \hyperref[sec:t2grid:add_connection]{\texttt{add\_connection}} & -- & adds a connection to the grid\\
       \hyperref[sec:t2grid:add_rocktype]{\texttt{add\_rocktype}} & -- & adds a rock type to the grid\\
@@ -79,12 +79,12 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hyperref[sec:t2grid:delete_connection]{\texttt{delete\_connection}} & -- & deletes a connection from the grid\\
       \hyperref[sec:t2grid:delete_rocktype]{\texttt{delete\_rocktype}} & -- & deletes a rock type from the grid\\
       \hyperref[sec:t2grid:demote_block]{\texttt{demote\_block}} & -- & shifts a block (or blocks) to the end of the blocklist\\
-      \hyperref[sec:t2grid:embed]{\texttt{embed}} & \texttt{t2grid} & embeds a subgrid inside one block of another \\
+      \hyperref[sec:t2grid:embed]{\texttt{embed}} & \hyperref[t2grids]{\texttt{t2grid}} & embeds a subgrid inside one block of another \\
       \hyperref[sec:t2grid:empty]{\texttt{empty}} & -- & empties contents of grid\\
       \hyperref[sec:t2grid:flux_matrix]{\texttt{flux\_matrix}} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
-      \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} & \texttt{t2grid} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
-      \hyperref[sec:t2grid:incons]{\texttt{incons}} & \texttt{t2incon} & constructs initial conditions for the grid\\
-      \hyperref[sec:t2grid:radial]{\texttt{radial}} & \texttt{t2grid} & constructs a radial TOUGH2 grid\\
+      \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
+      \hyperref[sec:t2grid:incons]{\texttt{incons}} & \hyperref[incons]{\texttt{t2incon}} & constructs initial conditions for the grid\\
+      \hyperref[sec:t2grid:radial]{\texttt{radial}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a radial TOUGH2 grid\\
       \hyperref[sec:t2grid:rocktype_frequency]{\texttt{rocktype\_frequency}} & integer & frequency of use of a particular rock type\\
       \hyperref[sec:t2grid:sort_rocktypes]{\texttt{sort\_rocktypes}} & -- & sorts rock type list into alphabetical order by name\\
       \hyperref[sec:t2grid:write_vtk]{\texttt{write\_vtk}} & -- & writes grid to VTK file\\
@@ -104,7 +104,7 @@ Adds two grids \texttt{a} and \texttt{b} together (i.e. amalgamates them) to for
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{a, b}: \texttt{t2grid}\\
+\item \textbf{a, b}: \hyperref[t2grids]{\texttt{t2grid}}\\
   The two grids to be added together.
 \end{itemize}
 
@@ -117,7 +117,7 @@ Adds a block to the grid.  If another block with the same name already exists, i
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{block}: \texttt{t2block}\\
+\item \textbf{block}: \hyperref[t2blockobjects]{\texttt{t2block}}\\
   Block to be added to the grid.
 \end{itemize}
 
@@ -130,7 +130,7 @@ Adds a connection to the grid.  If another connection with the same column names
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{connection}: \texttt{t2connection}\\
+\item \textbf{connection}: \hyperref[t2connectionobjects]{\texttt{t2connection}}\\
   Connection to be added to the grid.
 \end{itemize}
 
@@ -143,7 +143,7 @@ Adds a rock type to the grid.  If another rock type with the same name already e
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{rock}: \texttt{rocktype}\\
+\item \textbf{rock}: \hyperref[rocktypeobjects]{\texttt{rocktype}}\\
   Rock type to be added to the grid.
 \end{itemize}
 
@@ -169,7 +169,7 @@ Calculates geometrical centres of all blocks in the grid, based on the specified
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   Geometry object associated with the grid.
 \end{itemize}
 
@@ -219,9 +219,9 @@ Copies the connection permeability directions for horizontal connections from an
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   Geometry object associated with the source grid.
-\item \textbf{grid}: \texttt{t2grid}\\
+\item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}}\\
   The source grid from which the connection permeability directions are to be copied.
 \end{itemize}
 
@@ -286,9 +286,9 @@ Returns a grid with a subgrid embedded inside one of its blocks.  The connection
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{subgrid}: \texttt{t2grid}\\
+\item \textbf{subgrid}: \hyperref[t2grids]{\texttt{t2grid}}\\
   Subgrid to be embedded.
-\item \textbf{connection}: \texttt{t2connection}\\
+\item \textbf{connection}: \hyperref[t2connectionobjects]{\texttt{t2connection}}\\
   Connection specifying how the subgrid is to be embedded, including the connection distances and area.  The first block should be the host block, the second the connecting block in the subgrid.
 \end{itemize}
 
@@ -310,7 +310,7 @@ The method for constructing the matrix is as follows.  For each block, a distrib
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
 \end{itemize}
 
@@ -323,7 +323,7 @@ Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previo
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
 \end{itemize}
 
@@ -332,7 +332,7 @@ Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previo
 \end{snugshade}
 \label{sec:t2grid:incons}
 
-Returns a \texttt{t2incon} set of initial conditions for the grid, using the supplied values.  Initial conditions can be specified for only one block, in which case they will be applied to all blocks, or for each block, in an array.
+Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the grid, using the supplied values.  Initial conditions can be specified for only one block, in which case they will be applied to all blocks, or for each block, in an array.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -397,7 +397,7 @@ Writes a \texttt{t2grid} object to a VTK file on disk, for visualisation with VT
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} geometry object associated with the grid.  This is required as the \texttt{t2grid} object does not contain any spatial information, e.g. locations of block vertices.
 \item \textbf{filename}: string\\
   Name of the VTK file to be written.  This is also required.
@@ -410,6 +410,7 @@ Writes a \texttt{t2grid} object to a VTK file on disk, for visualisation with VT
 A \texttt{t2grid} object contains lists of other types of objects: \texttt{rocktype}, \texttt{t2block} and \texttt{t2connection}.  These classes are described below.
 
 \subsection{\texttt{rocktype} objects}
+\label{rocktypeobjects}
 
 A \texttt{rocktype} object represents a TOUGH2 rock type.  The properties of a \texttt{rocktype} object, and their default values, are given in Table \ref{tb:rocktype_properties}.
 
@@ -458,10 +459,11 @@ declares a rocktype object called \texttt{r} with name `ignim', permeability of 
 \end{table}
 
 \subsection{\texttt{t2block} objects}
+\label{t2blockobjects}
 
 A \texttt{t2block} object represents a block in a TOUGH2 grid.  The properties of a \texttt{t2block} object are given in Table \ref{tb:t2block_properties}.  These reflect the specifications of a TOUGH2 block as given in a TOUGH2 data file, with the exception of the \texttt{atmosphere}, \texttt{centre}, \texttt{connection\_name}, \texttt{neighbour\_name} and \texttt{num\_connections} properties.
 
-The \texttt{atmosphere} property determines whether the block is to be treated as an atmosphere block.  The \texttt{centre} property can optionally be used to specify the coordinates of the centre of a block.  Block centres are automatically calculated when a \texttt{t2grid} object is constructed from a \texttt{mulgrid} object using the \texttt{fromgeo} method (see section \ref{t2gridmethods}).  The \texttt{connection\_name} property is a set containing the names (as tuples of strings) of all connections involving the block.
+The \texttt{atmosphere} property determines whether the block is to be treated as an atmosphere block.  The \texttt{centre} property can optionally be used to specify the coordinates of the centre of a block.  Block centres are automatically calculated when a \hyperref[t2grids]{\texttt{t2grid}} object is constructed from a \hyperref[mulgrids]{\texttt{mulgrid}} object using the \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} method).  The \texttt{connection\_name} property is a set containing the names (as tuples of strings) of all connections involving the block.
 
 A \texttt{t2block} object has no methods.
 
@@ -491,8 +493,9 @@ A \texttt{t2block} object has no methods.
 \end{table}
 
 \subsection{\texttt{t2connection} objects}
+\label{t2connectionobjects}
 
-A \texttt{t2connection} object represents a connections between two TOUGH2 blocks.  The properties of a \texttt{t2connnection} object are given in Table \ref{tb:t2connection_properties}.  These correspond to the properties of a connection specified in a TOUGH2 data file.  Note that the \texttt{block} property returns \texttt{t2block} objects, not just the names of the blocks in the connection.  Hence, for example, the volume of the first block in a connection object \texttt{con} is given simply by \texttt{con.block[0].volume}.
+A \texttt{t2connection} object represents a connections between two TOUGH2 blocks.  The properties of a \texttt{t2connnection} object are given in Table \ref{tb:t2connection_properties}.  These correspond to the properties of a connection specified in a TOUGH2 data file.  Note that the \texttt{block} property returns \hyperref[t2blockobjects]{\texttt{t2block}} objects, not just the names of the blocks in the connection.  Hence, for example, the volume of the first block in a connection object \texttt{con} is given simply by \texttt{con.block[0].volume}.
 
 A \texttt{t2connection} object has no methods.
 

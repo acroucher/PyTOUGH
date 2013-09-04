@@ -177,7 +177,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:column_name]{\texttt{column\_name}} & string & column name of a block name\\ 
   \hyperref[sec:mulgrid:column_neighbour_groups]{\texttt{column\_neighbour\_groups}} & list & groups connected columns\\ 
   \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree}} & quadtree & quadtree structure for searching columns\\ 
-  \hyperref[sec:mulgrid:column_surface_layer]{\texttt{column\_surface\_layer}} & \texttt{column} & surface layer for a specified column\\
+  \hyperref[sec:mulgrid:column_surface_layer]{\texttt{column\_surface\_layer}} & \hyperref[columnobjects]{\texttt{column}} & surface layer for a specified column\\
   \hyperref[sec:mulgrid:column_values]{\texttt{column\_values}} & tuple & values of a variable down a column\\
   \hyperref[sec:mulgrid:columns_in_polygon]{\texttt{columns\_in\_polygon}} & list & columns inside a specified polygon (or rectangle)\\ 
   \hyperref[sec:mulgrid:connects]{\texttt{connects}} & Boolean & whether the grid has a connection between two specified columns\\ 
@@ -193,7 +193,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:empty]{\texttt{empty}} & --  & empties contents of grid\\
   \hyperref[sec:mulgrid:export_surfer]{\texttt{export\_surfer}} & -- & exports to various files on disk for visualization in Surfer\\ 
   \hyperref[sec:mulgrid:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
-  \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \texttt{mulgrid} & imports a grid from a \texttt{gmsh} mesh\\ 
+  \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & imports a grid from a \texttt{gmsh} mesh\\ 
   \hyperref[sec:mulgrid:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
   \hyperref[sec:mulgrid:layer_mapping]{\texttt{layer\_mapping}} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
   \hyperref[sec:mulgrid:layer_name]{\texttt{layer\_name}} & string & layer name of a block name\\ 
@@ -202,11 +202,11 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
   \hyperref[sec:mulgrid:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
   \hyperref[sec:mulgrid:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
-  \hyperref[sec:mulgrid:node_nearest_to]{\texttt{node\_nearest\_to}} & \texttt{node} & node nearest to a specified point\\ 
+  \hyperref[sec:mulgrid:node_nearest_to]{\texttt{node\_nearest\_to}} & \hyperref[nodeobjects]{\texttt{node}} & node nearest to a specified point\\ 
   \hyperref[sec:mulgrid:optimize]{\texttt{optimize}} & -- & adjusts node positions to optimize grid quality\\
   \hyperref[sec:mulgrid:polyline_values]{\texttt{polyline\_values}} & tuple & values of a variable along an arbitrary polyline through the grid\\
-  \hyperref[sec:mulgrid:read]{\texttt{read}} & \texttt{mulgrid} & reads geometry file from disk\\
-  \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular}} & \texttt{mulgrid} & creates rectangular grid\\
+  \hyperref[sec:mulgrid:read]{\texttt{read}} & \hyperref[mulgrids]{\texttt{mulgrid}} & reads geometry file from disk\\
+  \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular}} & \hyperref[mulgrids]{\texttt{mulgrid}} & creates rectangular grid\\
   \hyperref[sec:mulgrid:reduce]{\texttt{reduce}} & -- & reduces a grid to contain only specified columns\\
   \hyperref[sec:mulgrid:refine]{\texttt{refine}} & -- & refines specified columns in the grid\\
   \hyperref[sec:mulgrid:refine_layers]{\texttt{refine\_layers}} & -- & refines specified layers in the grid\\
@@ -230,27 +230,27 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
 \begin{snugshade}\subsubsection{\texttt{add\_column(\emph{col})}}\end{snugshade}
 \label{sec:mulgrid:add_column}
 
-Adds a \texttt{column} object \texttt{col} to the grid.
+Adds a \hyperref[columnobjects]{\texttt{column}} object \texttt{col} to the grid.
 
 \begin{snugshade}\subsubsection{\texttt{add\_connection(\emph{con})}}\end{snugshade}
 \label{sec:mulgrid:add_connection}
 
-Adds a \texttt{connection} object \texttt{con} to the grid.
+Adds a \hyperref[connectionobjects]{\texttt{connection}} object \texttt{con} to the grid.
 
 \begin{snugshade}\subsubsection{\texttt{add\_layer(\emph{lay})}}\end{snugshade}
 \label{sec:mulgrid:add_layer}
 
-Adds a \texttt{layer} object \texttt{lay} to the grid.
+Adds a \hyperref[layerobjects]{\texttt{layer}} object \texttt{lay} to the grid.
 
 \begin{snugshade}\subsubsection{\texttt{add\_node(\emph{n})}}\end{snugshade}
 \label{sec:mulgrid:add_node}
 
-Adds a \texttt{node} object \texttt{n} to the grid.
+Adds a \hyperref[nodeobjects]{\texttt{node}} object \texttt{n} to the grid.
 
 \begin{snugshade}\subsubsection{\texttt{add\_well(\emph{w})}}\end{snugshade}
 \label{sec:mulgrid:add_well}
 
-Adds a \texttt{well} object \texttt{w} to the grid.
+Adds a \hyperref[wellobjects]{\texttt{well}} object \texttt{w} to the grid.
 
 \begin{snugshade}\subsubsection{\texttt{block\_contains\_point(\emph{blockname}, \emph{pos})}}\end{snugshade}
 \label{sec:mulgrid:block_contains_point}
@@ -272,7 +272,7 @@ Returns a dictionary mapping each block name in the \texttt{mulgrid} object \tex
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} object to create a block mapping from.
 \item \textbf{column\_mapping}: Boolean\\
   If \texttt{True}, the column mapping will also be returned (i.e. the function will return a tuple containing the block mapping and the column mapping).  Default value is \texttt{False}.
@@ -347,9 +347,9 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
 \begin{itemize}
 \item \textbf{pos}: \texttt{np.array}\\
   Horizontal position (\emph{x}, \emph{y})
-\item \textbf{columns}: list of \texttt{column} (or \texttt{None})\\
+\item \textbf{columns}: list of \hyperref[columnobjects]{\texttt{column}} (or \texttt{None})\\
   List of columns to search.  If \texttt{None}, the entire grid will be searched.
-\item \textbf{guess}: \texttt{column} (or \texttt{None})\\
+\item \textbf{guess}: \hyperref[columnobjects]{\texttt{column}} (or \texttt{None})\\
   Guess of required column.  If specified, this column will be tested first, followed (if necessary) by its neighbours; only if none of these contain the point will the remaining columns be searched.  This can speed up the process if data follow a sequential pattern in space, e.g. a grid or lines.
  \item \textbf{bounds}: list of \texttt{np.array} (or \texttt{None})\\
   Polygon or rectangle representing e.g. the boundary of the grid: points outside this polygon will always return \texttt{None}.  If the polygon has only two points, it will be interpreted as a rectangle [bottom left, top right].
@@ -364,7 +364,7 @@ Returns a dictionary mapping each column name in the \texttt{mulgrid} object \te
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} object to create a column mapping from.
 \end{itemize}
 
@@ -408,7 +408,7 @@ Returns the layer containing the surface elevation of a specified column.
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{col}: \texttt{column}\\
+\item \textbf{col}: \hyperref[columnobjects]{\texttt{column}}\\
   The column for which the surface layer is to be found.
 \end{itemize}
 
@@ -421,7 +421,7 @@ The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\t
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{col}: \texttt{column} or string\\
+\item \textbf{col}: \hyperref[columnobjects]{\texttt{column}} or string\\
   The column for which values are to be found.
 \item \textbf{variable}: list (or \texttt{np.array})\\
   Values of variable, of length equal to the number of blocks in the grid.
@@ -447,7 +447,7 @@ Returns \texttt{True} if the geometry contains a connection connecting the two s
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{column1, column2}: \texttt{column}\\
+\item \textbf{column1, column2}: \hyperref[columnobjects]{\texttt{column}}\\
   Two columns in the geometry.
 \end{itemize}
 
@@ -458,7 +458,7 @@ Copies the layer structure from the geometry \texttt{geo} (deleting any existing
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The geometry to copy layers from.
 \end{itemize}
 
@@ -469,7 +469,7 @@ Copies the wells from the geometry \texttt{geo} (deleting any existing wells fir
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The geometry to copy wells from.
 \end{itemize}
 
@@ -581,9 +581,9 @@ Fits column surface elevations from data, using bilinear least-squares finite el
   Smoothing parameter for first derivatives- increasing its value results in solutions with lower gradients (but may result in extrema being smoothed out).
 \item \textbf{beta}: float\\
   Smoothing parameter for second derivatives- increasing its value results in solutions with lower curvature.
-\item \textbf{columns}: list of string or \texttt{column}\\
+\item \textbf{columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
   Columns, or names of columns to be fitted.  If empty (the default), then all columns will be fitted.
-\item \textbf{min\_columns}: list of string or \texttt{column}\\
+\item \textbf{min\_columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
   Columns, or names of columns for which elevations will be determined from the minimum of the fitted nodal elevations (elevations at all other columns are determined from the average of the fitted nodal elevations).
 \item \textbf{grid\_boundary}: Boolean\\
   If \texttt{True}, test each data point first to see if it lies inside the boundary polygon of the grid.  This can speed up the fitting process if there are many data points outside the grid, and the grid has a simple boundary (e.g. a rectangle).  In general if there are many data points outside the grid, it is best to clip the data set before fitting, particularly if it is to be used more than once.
@@ -623,7 +623,7 @@ Returns the grid layer containing the specified vertical elevation.
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{elevation}: float\\
-  Vertical elevation
+  Vertical elevation.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{layer\_mapping(\emph{geo})}}\end{snugshade}
@@ -633,7 +633,7 @@ Returns a dictionary mapping each layer name in the \texttt{mulgrid} object \tex
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} object to create a layer mapping from.
 \end{itemize}
 
@@ -676,7 +676,7 @@ Flows can be shown on the layer by specifying an array of connection flow values
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{layer}: \texttt{layer}, string, integer, float or \texttt{None}\\
+\item \textbf{layer}: \hyperref[layerobjects]{\texttt{layer}}, string, integer, float or \texttt{None}\\
   Layer or name (string) of layer to plot, or elevation (float or integer).  Specifying \texttt{None} gives a surface plot.
 \item \textbf{variable}: list (or \texttt{np.array})\\
   Variable to be plotted, of length equal to the number of blocks or columns in the grid (or \texttt{None} just to plot the grid).
@@ -734,7 +734,7 @@ Flows can be shown on the layer by specifying an array of connection flow values
   Line width for drawing the wells.
 \item \textbf{wellname\_bottom}: Boolean\\
   Set to \texttt{False} to label wells at the wellhead rather than the bottom.
-\item \textbf{rocktypes}: \texttt{t2grid} (or \texttt{None})\\
+\item \textbf{rocktypes}: \hyperref[t2grids]{\texttt{t2grid}} (or \texttt{None})\\
   To plot rock types, specify a \texttt{t2grid} object containing rock types for the grid.  If \texttt{None}, no rock types will be plotted.
 \item \textbf{allrocks}: Boolean\\
   If \texttt{False} (the default), only rock types present on the specified layer will be shown in the colour bar; others will be omitted.  If \texttt{True}, all rocks present in the model grid will be shown on the colour bar, regardless of whether they appear in the specified layer.
@@ -742,7 +742,7 @@ Flows can be shown on the layer by specifying an array of connection flow values
   To group similar rock types into one colour, specify a tuple or list of integers, representing the significant characters of the rock type names.  For example, to group rock types having the same first two characters, specify (0,1).  Alternatively, specify a 5-character string mask containing asterisks in positions that are not significant, and any other characters in the significant positions (e.g. `++***').
 \item \textbf{flow}: \texttt{np.array} (or \texttt{None})\\
   To plot flows, specify an array of connection flow values (one floating point value for each connection in the grid).  These may for example be extracted from the columns of the connection table in a \texttt{t2listing} object.
-\item \textbf{grid}: \texttt{t2grid} (or \texttt{None})\\
+\item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}} (or \texttt{None})\\
   Specify a \texttt{t2grid} object associated with the grid, to be used to calculate the `flux matrix' which converts the connection flow values to block-average fluxes.  If this is not specified (and neither is the \texttt{flux\_matrix} parameter), then a \texttt{t2grid} object will be created internally.
 \item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix} (or \texttt{None})\\
   A sparse matrix used to convert the connection flow values to block-average fluxes.  Such a matrix can be created using the \texttt{flux\_matrix()} method of a \texttt{t2grid} object and an appropriate \texttt{mulgrid} object.  If no flux matrix is specified, one will be created internally.  This can be time-consuming for large grids, so for multiple flow plots it is faster to pre-calculate a flux matrix in your script and pass it via this parameter.  If this parameter is specified, there is no need also to specify the \texttt{grid} parameter.
@@ -835,7 +835,7 @@ Returns a list of all nodes in a specified list of columns.
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{columns}: list (of \texttt{column})\\
+\item \textbf{columns}: list (of \hyperref[columnobjects]{\texttt{column}})\\
   List of columns in which to find nodes.
 \end{itemize}
 
@@ -943,7 +943,7 @@ Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{xblocks}, \textbf{yblocks}, \textbf{zblocks}: list, tuple or \texttt{np.array}\\
-  Lists (or arrays) of block sizes in the \emph{x}, \emph{y} and \emph{z} directions.
+  Lists (or arrays) of block sizes (float) in the \emph{x}, \emph{y} and \emph{z} directions.
 \item \textbf{convention}: integer\\
   Naming convention for grid columns and layers.
 \item \textbf{atmos\_type}: integer\\
@@ -1149,7 +1149,7 @@ Flows can be shown on the slice by specifying an array of connection flow values
   Line width for drawing the wells.
 \item \textbf{wellname\_bottom}: Boolean\\
   Set to \texttt{True} to label wells at the bottom rather than the wellhead.
-\item \textbf{rocktypes}: \texttt{t2grid} (or \texttt{None})\\
+\item \textbf{rocktypes}: \hyperref[t2grids]{\texttt{t2grid}} (or \texttt{None})\\
   To plot rock types, specify a \texttt{t2grid} object containing rock types for the grid.  If \texttt{None}, no rock types will be plotted.
 \item \textbf{allrocks}: Boolean\\
   If \texttt{False} (the default), only rock types present on the specified slice will be shown in the colour bar; others will be omitted.  If \texttt{True}, all rocks present in the model grid will be shown on the colour bar, regardless of whether they appear in the specified slice.
@@ -1157,7 +1157,7 @@ Flows can be shown on the slice by specifying an array of connection flow values
   To group similar rock types into one colour, specify a tuple or list of integers, representing the significant characters of the rock type names.  For example, to group rock types having the same first two characters, specify (0,1).  Alternatively, specify a 5-character string mask containing asterisks in positions that are not significant, and any other characters in the significant positions (e.g. `++***').
 \item \textbf{flow}: \texttt{np.array} (or \texttt{None})\\
   To plot flows, specify an array of connection flow values (one floating point value for each connection in the grid).  These may for example be extracted from the columns of the connection table in a \texttt{t2listing} object.
-\item \textbf{grid}: \texttt{t2grid} (or \texttt{None})\\
+\item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}} (or \texttt{None})\\
   Specify a \texttt{t2grid} object associated with the grid, to be used to calculate the `flux matrix' which converts the connection flow values to block-average fluxes.  If this is not specified (and neither is the \texttt{flux\_matrix} parameter), then a \texttt{t2grid} object will be created internally.
 \item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix} (or \texttt{None})\\
   A sparse matrix used to convert the connection flow values to block-average fluxes.  Such a matrix can be created using the \texttt{flux\_matrix()} method of a \texttt{t2grid} object and an appropriate \texttt{mulgrid} object.  If no flux matrix is specified, one will be created internally.  This can be time-consuming for large grids, so for multiple flow plots it is faster to pre-calculate a flux matrix in your script and pass it via this parameter.  If this parameter is specified, there is no need also to specify the \texttt{grid} parameter.
@@ -1201,7 +1201,7 @@ Snaps column surfaces to the bottom of their layers, if the surface block thickn
 \begin{itemize}
 \item \textbf{min\_thickness}: float\\
   Minimum surface block thickness.  Blocks with thickness less than this value will be eliminated by `snapping' the column surface elevation to the bottom of the surface layer.  Values of \texttt{min\_thickness} less than or equal to zero will have no effect.
-\item \textbf{columns}: list\\
+\item \textbf{columns}: list (of \hyperref[columnobjects]{\texttt{column}} or string)\\
   List of columns to process.  If empty (the default), process all columns.
 \end{itemize}
 
@@ -1310,9 +1310,10 @@ Writes a \texttt{mulgrid} object to a VTK file on disk, for visualisation with V
 \section{Other objects (\texttt{node}, \texttt{column}, \texttt{layer}, \texttt{connection} and \texttt{well})}
 \label{other_mulgrid_objects}
 
-A \texttt{mulgrid} object contains lists of other types of objects: \texttt{node}, \texttt{column}, \texttt{layer}, \texttt{connection} and \texttt{well} objects.  These classes are described below.
+A \texttt{mulgrid} object contains lists of other types of objects: \hyperref[nodeobjects]{\texttt{node}}, \hyperref[columnobjects]{\texttt{column}}, \hyperref[layerobjects]{\texttt{layer}}, \hyperref[connectionobjects]{\texttt{connection}} and \hyperref[wellobjects]{\texttt{well}} objects.  These classes are described below.
 
 \subsection{\texttt{node} objects}
+\label{nodeobjects}
 
 A \texttt{node} object represents a node (i.e. vertex) in a \texttt{mulgrid} object.  A \texttt{node} object has three properties: \texttt{name}, which is a string property containing the name of the node, \texttt{pos} which is an \texttt{np.array} with three elements, containing the node's position in 3D, and \texttt{column} which is a set of the columns the node belongs to.  A \texttt{node} object does not have any methods.
 
@@ -1323,7 +1324,7 @@ A \texttt{node} object \texttt{n} can be created for example using the command \
 
 A \texttt{column} object represents a column in a \texttt{mulgrid} object.  The properties of a \texttt{column} object are listed in Table \ref{tb:column_properties}.
 
-The main properties defining a column are its \texttt{name} and \texttt{node} properties.  The \texttt{name} is specified according to the naming convention of the \texttt{mulgrid} object that the column belongs to.  The \texttt{node} property is a list of \texttt{node} objects (not node names) that belong to the column.  A \texttt{column}'s \texttt{neighbour} property is a set of other \texttt{columns} connected to that column via a \texttt{connection} (see section \ref{connections}), and its \texttt{connection} property is a set of connections the column is part of.  The \texttt{neighbourlist} property is a list of neighbouring columns, with each item corresponding to a column edge (\texttt{None} if the edge is on a grid boundary).  A \texttt{column}'s \texttt{centroid} property returns the average of the positions of its vertices- which is what the \texttt{centre} property is set to, unless otherwise specified.
+The main properties defining a column are its \texttt{name} and \texttt{node} properties.  The \texttt{name} is specified according to the naming convention of the \texttt{mulgrid} object that the column belongs to.  The \texttt{node} property is a list of \texttt{node} objects (not node names) that belong to the column.  A \texttt{column}'s \texttt{neighbour} property is a set of other \texttt{columns} connected to that column via a \texttt{connection} (see section \ref{connectionobjects}), and its \texttt{connection} property is a set of connections the column is part of.  The \texttt{neighbourlist} property is a list of neighbouring columns, with each item corresponding to a column edge (\texttt{None} if the edge is on a grid boundary).  A \texttt{column}'s \texttt{centroid} property returns the average of the positions of its vertices- which is what the \texttt{centre} property is set to, unless otherwise specified.
 
 A \texttt{column} object has two properties measuring `grid quality'.  The \texttt{angle\_ratio} property returns the ratio of largest to smallest interior angles in the column.  The \texttt{side\_ratio} property returns the ratio of largest to smallest side lengths (a generalisation of `aspect ratio' to columns with any number of sides).  Values as close as possible to 1.0 for both these measures are desirable (their values are both exactly 1.0 for any regular polygon, e.g. an equilateral triangle or square).  Columns with large angle ratios will be highly skewed, while those with large side ratios will be typically highly elongated in one direction.
 
@@ -1333,7 +1334,7 @@ A \texttt{column} object \texttt{col} can be created for example using the comma
 col = column(name,nodes,centre,surface)
 \end{verbatim}
 
-where \texttt{name} is the column name and \texttt{nodes} is a list of \texttt{node} objects defining the column.  The \texttt{centre} and \texttt{surface} parameters are optional.
+where \texttt{name} is the column name and \texttt{nodes} is a list of \hyperref[nodeobjects]{\texttt{node}} objects defining the column.  The \texttt{centre} and \texttt{surface} parameters are optional.
 
 \texttt{column} objects have three methods, \hyperref[sec:column:contains_point]{\texttt{contains\_point}}, \hyperref[sec:column:in_polygon]{\texttt{in\_polygon}} and \hyperref[sec:column:is_against]{\texttt{is\_against}}, as described below.
 
@@ -1404,6 +1405,7 @@ Returns \texttt{true} if the column is `against' \texttt{othercolumn}- that is, 
 \end{table}
 
 \subsection{\texttt{layer} objects}
+\label{layerobjects}
 
 A \texttt{layer} object represents a layer in a \texttt{mulgrid} object. The properties of a \texttt{layer} object are given in Table \ref{tb:layer_properties}.
 
@@ -1460,13 +1462,20 @@ Translates a layer up or down by a specified distance.
 \end{table}
 
 \subsection{\texttt{connection} objects}
-\label{connections}
+\label{connectionobjects}
 
 A \texttt{connection} object represents a connection between \texttt{columns} in a \texttt{mulgrid} object.  It has three properties: \texttt{column}, which contains a two-element list of the \texttt{column} objects making up the connection, \texttt{node}, which contains a two-element list of the \texttt{nodes} on the face joining the two columns in the connection, and \texttt{angle\_cosine}, which gives the cosine of the angle between a line joining the nodes in the connection and a line joining the centres of the two columns.  This is used as a measure of grid quality, these two lines should ideally be as close to perpendicular as possible, making the cosine of the angle zero.  A \texttt{connection} has no methods.
 
-A \texttt{connection} object \texttt{con} can be created for example using the command \texttt{con = connection(cols)} where \texttt{cols} is a two-element list of the \texttt{column} objects in the connection.
+A \texttt{connection} object \texttt{con} can be created for example using the command
+
+\begin{verbatim}
+con = connection(cols)
+\end{verbatim}
+
+where \texttt{cols} is a two-element list of the \texttt{column} objects in the connection.
 
 \subsection{\texttt{well} objects}
+\label{wellobjects}
 
 A \texttt{well} object represents a well in a \texttt{mulgrid} object.  The properties of a \texttt{well} object are given in Table \ref{tb:well_properties}.
 

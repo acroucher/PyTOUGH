@@ -50,7 +50,7 @@ The details of all the \texttt{t2data} properties are given below.
       \hyperref[sec:t2data:filename]{\texttt{filename}} & string & file name on disk & --\\
       \hyperref[sec:t2data:generator]{\texttt{generator}} & dictionary & generators (by block name and generator name) & GENER\\
       \hyperref[sec:t2data:generatorlist]{\texttt{generatorlist}} & list & generators (by index) & GENER\\
-      \hyperref[sec:t2data:grid]{\texttt{grid}} & \texttt{t2grid} & model grid & ELEME, CONNE\\
+      \hyperref[sec:t2data:grid]{\texttt{grid}} & \hyperref[t2grids]{\texttt{t2grid}} & model grid & ELEME, CONNE\\
       \hyperref[sec:t2data:history_block]{\texttt{history\_block}} & list & history blocks (TOUGH2 only) & FOFT\\
       \hyperref[sec:t2data:history_connection]{\texttt{history\_connection}} & list & history connections (TOUGH2 only) & COFT\\
       \hyperref[sec:t2data:history_generator]{\texttt{history\_generator}} & list & history generators (TOUGH2 only) & GOFT\\
@@ -131,7 +131,7 @@ A list property determining which data sections will be written to an auxiliary 
 
 The \texttt{extra\_precision} parameter may be a list containing names of sections to be written in extra precision (e.g. [`RPCAP', `GENER']), or set to \texttt{False} to disable extra precision (equivalent to []), or to \texttt{True} to specify that all possible sections should be written in extra precision.
 
-The \texttt{read()} method of a \texttt{t2data} object determines whether extra precision data are available by searching for an additional file with the same base name as the data file itself, but with a '.pdat' or '.PDAT' extension (depending on the case of the main data file name).  If no such file exists, then no extra precision data will be read.
+The \hyperref[sec:t2data:read]{\texttt{read()}} method of a \texttt{t2data} object determines whether extra precision data are available by searching for an additional file with the same base name as the data file itself, but with a '.pdat' or '.PDAT' extension (depending on the case of the main data file name).  If no such file exists, then no extra precision data will be read.
 
 \begin{snugshade}
 \subsubsection{\texttt{filename} property}
@@ -145,7 +145,7 @@ A string property containing the name of the TOUGH2 data file on disk.  (This do
 \end{snugshade}
 \label{sec:t2data:generator}
 
-A dictionary property containing the generators for the simulation, accessed by tuples of block name and generator name.  Each generator is an object of type \texttt{t2generator}, which is described in section \ref{t2generator}.
+A dictionary property containing the generators for the simulation, accessed by tuples of block name and generator name.  Each generator is an object of type \hyperref[t2generatorobjects]{\texttt{t2generator}}, which is described in section \ref{t2generatorobjects}.
 
 \begin{snugshade}
 \subsubsection{\texttt{generatorlist} property}
@@ -159,28 +159,28 @@ A list property containing the generators for the simulation, accessed by index.
 \end{snugshade}
 \label{sec:t2data:grid}
 
-A \texttt{t2grid} object (see chapter \ref{t2grids}) representing the simulation grid, corresponding to the \textbf{ELEME} and \textbf{CONNE} input blocks in a TOUGH2 data file.
+A \hyperref[t2grids]{\texttt{t2grid}} object (see chapter \ref{t2grids}) representing the simulation grid, corresponding to the \textbf{ELEME} and \textbf{CONNE} input blocks in a TOUGH2 data file.
 
 \begin{snugshade}
 \subsubsection{\texttt{history\_block} property}
 \end{snugshade}
 \label{sec:t2data:history_block}
 
-A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2block} objects; otherwise, they are block names (i.e. strings).
+A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \hyperref[t2blockobjects]{\texttt{t2block}} objects; otherwise, they are block names (i.e. strings).
 
 \begin{snugshade}
 \subsubsection{\texttt{history\_connection} property}
 \end{snugshade}
 \label{sec:t2data:history_connection}
 
-A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2connection} objects; otherwise, they are tuples of block names (i.e. tuples of strings).
+A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \hyperref[t2connectionobjects]{\texttt{t2connection}} objects; otherwise, they are tuples of block names (i.e. tuples of strings).
 
 \begin{snugshade}
 \subsubsection{\texttt{history\_generator} property}
 \end{snugshade}
 \label{sec:t2data:history_generator}
 
-A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2block} objects; otherwise, they are block names (i.e. strings).
+A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \hyperref[t2blockobjects]{\texttt{t2block}} objects; otherwise, they are block names (i.e. strings).
 
 \begin{snugshade}
 \subsubsection{\texttt{incon} property}
@@ -486,7 +486,7 @@ The dictionary contains two keys: `integer' and `float', the first of which acce
 
 A dictionary property representing blocks, connections and generators for which short output is required, corresponding to the \textbf{SHORT} input block in an AUTOUGH2 data file.
 
-The dictionary contains four keys: `frequency', `block', `connection' and `generator'. The last three of these access lists of blocks, connections and generators respectively for short output.  (Note that each of these lists contains \texttt{t2block}, \texttt{t2connection} or \texttt{t2generator} objects, rather than names.)  The `frequency' key accesses the time step frequency (an integer) for which short output is required.
+The dictionary contains four keys: `frequency', `block', `connection' and `generator'. The last three of these access lists of blocks, connections and generators respectively for short output.  (Note that each of these lists contains \hyperref[t2blockobjects]{\texttt{t2block}}, \hyperref[t2connectionobjects]{\texttt{t2connection}} or \hyperref[t2generatorobjects]{\texttt{t2generator}} objects, rather than names.)  The `frequency' key accesses the time step frequency (an integer) for which short output is required.
 
 \begin{snugshade}
 \subsubsection{\texttt{simulator} property}
@@ -558,7 +558,7 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
       \hyperref[sec:t2data:delete_generator]{\texttt{delete\_generator}} & -- & deletes a generator\\
       \hyperref[sec:t2data:delete_orphan_generators]{\texttt{delete\_orphan\_generators}} & -- & deletes orphaned generators\\
       \hyperref[sec:t2data:generator_index]{\texttt{generator\_index}} & integer & returns index of generator with specified name and block name\\
-      \hyperref[sec:t2data:read]{\texttt{read}} & \texttt{t2data} & reads data file from disk\\
+      \hyperref[sec:t2data:read]{\texttt{read}} & \hyperref[datafiles]{\texttt{t2data}} & reads data file from disk\\
       \hyperref[sec:t2data:run]{\texttt{run}} & -- & runs a TOUGH2 simulation\\
       \hyperref[sec:t2data:specific_generation]{\texttt{specific\_generation}} & \texttt{np.array} & generation per unit volume in each block\\
       \hyperref[sec:t2data:total_generation]{\texttt{total\_generation}} & \texttt{np.array} & total generation in each block\\
@@ -580,7 +580,7 @@ Adds a generator to the data file object.
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{generator}: \texttt{t2generator}\\
+\item \textbf{generator}: \hyperref[t2generatorobjects]{\texttt{t2generator}}\\
   Generator to be added to the data file object.
 \end{itemize}
 
@@ -737,11 +737,11 @@ If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{source}: \texttt{t2data}\\
+\item \textbf{source}: \hyperref[datafiles]{\texttt{t2data}}\\
   The \texttt{t2data} object to transfer data from.
-\item \textbf{sourcegeo}: \texttt{mulgrid}\\
+\item \textbf{sourcegeo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} object corresponding to \texttt{source}.
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} object corresponding to the destination \texttt{t2data} object.
 \item \textbf{top\_generator}: list\\
   A list of generator `layer' identifier strings for generators that need to be kept at the top of the model (e.g. rain generators).
@@ -793,7 +793,7 @@ Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{m
 \end{itemize}
 
 \section{\texttt{t2generator} objects}
-\label{t2generator}
+\label{t2generatorobjects}
 
 A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e. an item in the generation table).  The properties of a \texttt{t2generator} object are given in Table \ref{tb:t2generator_properties}.  These correspond closely to the parameters specified in the TOUGH2 \textbf{GENER} input block.  A \texttt{t2generator} object has no methods.
 

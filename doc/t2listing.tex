@@ -34,7 +34,7 @@ The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t
 
 \subsubsection{Element, connection and generation tables}
 
-There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \texttt{listingtable} (see section \ref{listingtable}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
+There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \hyperref[listingtableobjects]{\texttt{listingtable}} (see section \ref{listingtableobjects}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
 
 For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element[`AR210'][`Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120][`Pressure']} gives the pressure at the block with (zero-based) index 120.
 
@@ -46,7 +46,7 @@ The names of the columns for each table are read directly from the listing file,
 
 \subsubsection{Skipping tables}
 
-The default behaviour is for a \texttt{t2listing} object to read all tables present in the listing file.  However, it is possible to skip the reading of specified tables if required.  This can be useful for speeding up reading of large listing files where not all tables are required.  For example, sometimes the connection data are not required, but for large models the connection table is often much bigger than the others, so skipping it can make reading significantly faster.  Data in skipped tables are not available either via their corresponding properties or via the \texttt{history()} method.
+The default behaviour is for a \texttt{t2listing} object to read all tables present in the listing file.  However, it is possible to skip the reading of specified tables if required.  This can be useful for speeding up reading of large listing files where not all tables are required.  For example, sometimes the connection data are not required, but for large models the connection table is often much bigger than the others, so skipping it can make reading significantly faster.  Data in skipped tables are not available either via their corresponding properties or via the \hyperref[sec:t2listing:history]{\texttt{history()}} method.
 
 To skip tables, specify their table names (\texttt{element}, \texttt{connection} etc.) in the optional \texttt{skip\_tables} parameter when creating the \texttt{t2listing} object.  (By default, this parameter is an empty list.)  For example, to read a listing file with name `output.listing' into the object \texttt{lst} and skip reading the connection and generation tables:
 
@@ -56,7 +56,7 @@ lst = t2listing('output.listing',skip_tables=['connection','generation'])
 
 \subsubsection{Full and short output}
 
-AUTOUGH2 allows the use of `short' output, in which a specified selection of block, connection or generator properties are printed at time steps between normal full output.  A \texttt{t2listing} object will read short output results, if they are present, when producing time histories using the \texttt{history()} method.  However it is not possible to navigate to short output results or access them via the \texttt{t2listing} table properties above.
+AUTOUGH2 allows the use of `short' output, in which a specified selection of block, connection or generator properties are printed at time steps between normal full output.  A \texttt{t2listing} object will read short output results, if they are present, when producing time histories using the \hyperref[sec:t2listing:history]{\texttt{history()}} method.  However it is not possible to navigate to short output results or access them via the \texttt{t2listing} table properties above.
 
 TOUGH2, TOUGH2\_MP and TOUGH+ do not support short output.
 
@@ -92,18 +92,18 @@ The \texttt{reductions} property is a list of tuples of time step indices at whi
       \hline
       \textbf{Property} & \textbf{Type} & \textbf{Description}\\
       \hline
-      \texttt{connection} & \texttt{listingtable} & connection table for current set of results\\
+      \texttt{connection} & \hyperref[listingtableobjects]{\texttt{listingtable}} & connection table for current set of results\\
       \texttt{convergence} & dictionary & maximum differences in element table between second to last and last sets of results\\
-      \texttt{element} & \texttt{listingtable} & element table for current set of results\\
-      \texttt{element1} etc. & \texttt{listingtable} & additional element table for current set of results (TOUGH+ only)\\
+      \texttt{element} & \hyperref[listingtableobjects]{\texttt{listingtable}} & element table for current set of results\\
+      \texttt{element1} etc. & \hyperref[listingtableobjects]{\texttt{listingtable}} & additional element table for current set of results (TOUGH+ only)\\
       \texttt{filename} & string & name of listing file on disk\\
       \texttt{fullsteps} & \texttt{np.array} & array of time step numbers (integer) for full results\\
       \texttt{fulltimes} & \texttt{np.array} & array of times (float) for full results\\
-      \texttt{generation} & \texttt{listingtable} & generation table for current set of results\\
+      \texttt{generation} & \hyperref[listingtableobjects]{\texttt{listingtable}} & generation table for current set of results\\
       \texttt{index} & integer & index of current set of results\\
       \texttt{num\_fulltimes} & integer & number of sets of full results\\
       \texttt{num\_times} & integer & number of sets of all results (full and short)\\
-      \texttt{primary} & \texttt{listingtable} & primary variable table for current set of results (TOUGH2 only)\\
+      \texttt{primary} & \hyperref[listingtableobjects]{\texttt{listingtable}} & primary variable table for current set of results (TOUGH2 only)\\
       \texttt{reductions} & list & time step indices at which time step was reduced during the simulation\\
       \texttt{short\_types} & list of string & types of short output present\\
       \texttt{step} & integer & time step number of current set of results\\
@@ -154,7 +154,7 @@ Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a pro
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   Geometry object associated with the listing.
 \item \textbf{dat}: \texttt{t2data}\\
   TOUGH2 data object for the side recharge generators to be added to.
@@ -243,11 +243,11 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 
 \textbf{Parameters:}
 \begin{itemize}
-\item \textbf{geo}: \texttt{mulgrid}\\
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} geometry object associated with the results.  For flexibility, this geometry need not be fully compatible with the results- for example, it may contain only a subset of the blocks for which results are present, or the blocks may be in a different order.  However, if it is not fully compatible, the writing process will be slower, and flux vectors will not be written (even if \texttt{flows} is set to \texttt{True}).
 \item \textbf{filename}: string\\
   Name of the *.pvd file to be written.  Names of the individual *.vtu files for each time step are similar but with a time index appended and the file extension changed.
-\item \textbf{grid}: \texttt{t2grid}\\
+\item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}}\\
   Name of optional \texttt{t2grid} object associated with the results.
 \item \textbf{indices}: list or tuple\\
   Optional specification of time indices to include in the output.  If set to \texttt{None} (the default), all time indices will be included.
@@ -264,7 +264,7 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 \end{itemize}
 
 \section{\texttt{listingtable} objects}
-\label{listingtable}
+\label{listingtableobjects}
 
 A \texttt{listingtable} object represents a table of results in a TOUGH2 listing file (whether it is an element, connection or generation table).  The column headings of the table are taken directly from the corresponding table in the listing file.  The rows of the table may be accessed either by (zero-based) index, or by the `key' for the table row, which depends on the table type (see Table \ref{tb:listing_table_keys}).
 
