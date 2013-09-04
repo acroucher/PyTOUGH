@@ -119,7 +119,9 @@ The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2inco
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{add\_incon(\emph{incon})}}
+\end{snugshade}
 \label{sec:t2incon:add_incon}
 
 Adds a set of initial conditions for a single block.
@@ -130,7 +132,9 @@ Adds a set of initial conditions for a single block.
   Initial conditions for the block.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{delete\_incon(\emph{blockname})}}
+\end{snugshade}
 \label{sec:t2incon:delete_incon}
 
 Deletes a set of initial conditions for a single block.
@@ -141,12 +145,16 @@ Deletes a set of initial conditions for a single block.
   Name of the block at which initial conditions are to be deleted.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{empty()}}
+\end{snugshade}
 \label{sec:t2incon:empty}
 
 Deletes initial conditions for all blocks.
 
+\begin{snugshade}
 \subsubsection{\texttt{insert\_incon(\emph{index},\emph{incon})}}
+\end{snugshade}
 \label{sec:t2incon:insert_incon}
 
 Inserts a set of initial conditions for a single block at the specified index.
@@ -159,7 +167,9 @@ Inserts a set of initial conditions for a single block at the specified index.
   Initial conditions for the block.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{read(\emph{filename})}}
+\end{snugshade}
 \label{sec:t2incon:read}
 
 Reads initial conditions from file.
@@ -170,8 +180,10 @@ Reads initial conditions from file.
   Name of the initial conditions file to be read.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{transfer\_from(\emph{sourceinc}, \emph{sourcegeo}, \emph{geo}, \emph{mapping=\{\}},\
     \emph{colmapping=\{\}})}}
+\end{snugshade}
 \label{sec:t2incon:transfer_from}
 
 Transfers initial conditions from another \texttt{t2incon} object \texttt{sourceinc}, using the two corresponding \texttt{mulgrid} geometry objects \texttt{sourcegeo} and \texttt{geo}, and optionally the block and column mappings between the two grids (which are created if not specified).
@@ -190,7 +202,9 @@ Transfers initial conditions from another \texttt{t2incon} object \texttt{source
   Dictionary mapping column names from \texttt{geo} to \texttt{sourcegeo}.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{write(\emph{filename}, \emph{reset}=True)}}
+\end{snugshade}
 \label{sec:t2incon:write}
 
 Writes initial conditions to file.

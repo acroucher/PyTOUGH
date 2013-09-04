@@ -79,7 +79,9 @@ The details of all the \texttt{t2data} properties are given below.
   \end{center}
 \end{sidewaystable}
 
+\begin{snugshade}
 \subsubsection{\texttt{capillarity} property}
+\end{snugshade}
 \label{sec:t2data:capillarity}
 
 A dictionary property specifying the capillarity function used, corresponding to the second line of the \textbf{RPCAP} input block in the TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:capillarity}.
@@ -99,22 +101,30 @@ A dictionary property specifying the capillarity function used, corresponding to
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{diffusion} property}
+\end{snugshade}
 \label{sec:t2data:diffusion}
 
 A list property specifying diffusion coefficients for each mass component simulated, corresponding to the \textbf{DIFFU} input block in the TOUGH2 data file.  The list has length \texttt{multi[`num\_components']} (i.e. NK in TOUGH2 terminology), and each element is a list of the diffusion coefficients for each component (with length \texttt{multi[`num\_phases']}, or NPH).
 
+\begin{snugshade}
 \subsubsection{\texttt{echo\_extra\_precision} property}
+\end{snugshade}
 \label{sec:t2data:echo_extra_precision}
 
 A Boolean property (AUTOUGH2 only) governing whether data written to an auxiliary extra-precision file is also echoed to the main data file.  If \texttt{True}, all extra-precision data sections are echoed to the main file.
 
+\begin{snugshade}
 \subsubsection{\texttt{end\_keyword} property}
+\end{snugshade}
 \label{sec:t2data:end_keyword}
 
 A string property containing the keyword used in the data file to end the file.  Normally this is `ENDCY', but `ENDFI' can also be used.
 
+\begin{snugshade}
 \subsubsection{\texttt{extra\_precision} property}
+\end{snugshade}
 \label{sec:t2data:extra_precision}
 
 A list property determining which data sections will be written to an auxiliary extra-precision file (AUTOUGH2 only).  Recent versions of AUTOUGH2 support an additional data file containing some data written with extra precision.  Possible extra-precision data sections are ROCKS, RPCAP and GENER.  Typical usage of this extra-precision data is for automatic model calibration using PEST or similar software, where calculation of derivatives of model outputs with respect to model parameters requires higher precision than is possible with the standard TOUGH2 data file format.
@@ -123,54 +133,74 @@ The \texttt{extra\_precision} parameter may be a list containing names of sectio
 
 The \texttt{read()} method of a \texttt{t2data} object determines whether extra precision data are available by searching for an additional file with the same base name as the data file itself, but with a '.pdat' or '.PDAT' extension (depending on the case of the main data file name).  If no such file exists, then no extra precision data will be read.
 
+\begin{snugshade}
 \subsubsection{\texttt{filename} property}
+\end{snugshade}
 \label{sec:t2data:filename}
 
 A string property containing the name of the TOUGH2 data file on disk.  (This does not correspond to any parameter in the TOUGH2 data file.)
 
+\begin{snugshade}
 \subsubsection{\texttt{generator} property}
+\end{snugshade}
 \label{sec:t2data:generator}
 
 A dictionary property containing the generators for the simulation, accessed by tuples of block name and generator name.  Each generator is an object of type \texttt{t2generator}, which is described in section \ref{t2generator}.
 
+\begin{snugshade}
 \subsubsection{\texttt{generatorlist} property}
+\end{snugshade}
 \label{sec:t2data:generatorlist}
 
 A list property containing the generators for the simulation, accessed by index.
 
+\begin{snugshade}
 \subsubsection{\texttt{grid} property}
+\end{snugshade}
 \label{sec:t2data:grid}
 
 A \texttt{t2grid} object (see chapter \ref{t2grids}) representing the simulation grid, corresponding to the \textbf{ELEME} and \textbf{CONNE} input blocks in a TOUGH2 data file.
 
+\begin{snugshade}
 \subsubsection{\texttt{history\_block} property}
+\end{snugshade}
 \label{sec:t2data:history_block}
 
 A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2block} objects; otherwise, they are block names (i.e. strings).
 
+\begin{snugshade}
 \subsubsection{\texttt{history\_connection} property}
+\end{snugshade}
 \label{sec:t2data:history_connection}
 
 A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2connection} objects; otherwise, they are tuples of block names (i.e. tuples of strings).
 
+\begin{snugshade}
 \subsubsection{\texttt{history\_generator} property}
+\end{snugshade}
 \label{sec:t2data:history_generator}
 
 A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \texttt{t2block} objects; otherwise, they are block names (i.e. strings).
 
+\begin{snugshade}
 \subsubsection{\texttt{incon} property}
+\end{snugshade}
 \label{sec:t2data:incon}
 
 A dictionary property representing the initial conditions for the simulation, accessed by block name, corresponding to the \textbf{INCON} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the porosity of the block followed by the specified initial primary thermodynamic variables in the block.
 
 For example, to specify porosity 0.1 and initial conditions (101.3E3, 20.0) in block \texttt{`AB105'} of a \texttt{t2data} object called \texttt{dat}, set \texttt{dat.incon[`AB105'] = [0.1, 101.3e3, 20.0]}.
 
+\begin{snugshade}
 \subsubsection{\texttt{indom} property}
+\end{snugshade}
 \label{sec:t2data:indom}
 
 A dictionary property representing the initial conditions for the simulation, accessed by rocktype name, corresponding to the \textbf{INDOM} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the specified initial primary thermodynamic variables for the rocktype.
 
+\begin{snugshade}
 \subsubsection{\texttt{lineq} property}
+\end{snugshade}
 \label{sec:t2data:lineq}
 
 A dictionary property representing linear equation solver options, corresponding to the \textbf{LINEQ} input block in an AUTOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:lineq}.
@@ -193,7 +223,9 @@ A dictionary property representing linear equation solver options, corresponding
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{meshfilename} property}
+\end{snugshade}
 \label{sec:t2data:meshfilename}
 
 A string property (or tuple of strings) containing the name(s) of files on disk containing the mesh data.  (This does not correspond to any parameter in the TOUGH2 data file.)  Its default value is an empty string which means mesh data will be read from the main data file.
@@ -202,7 +234,9 @@ If \texttt{meshfilename} is a single (non-empty) string, this is interpreted as 
 
 If \texttt{meshfilename} is a tuple of two strings, these are interpreted as the names of two binary files containing the mesh data, e.g. the `MESHA' and `MESHB' files created by TOUGH2\_MP.
 
+\begin{snugshade}
 \subsubsection{\texttt{meshmaker} property}
+\end{snugshade}
 \label{sec:t2data:meshmaker}
 
 A list property representing mesh generation options, corresponding to the \textbf{MESHM} input block in a TOUGH2 data file.  For more detail on the use of \textbf{MESHM} data, consult the TOUGH2 users' guide \citep{tough2}.
@@ -302,7 +336,9 @@ Possible sub-section types for \texttt{rz2d} data are \texttt{radii}, \texttt{eq
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{multi} property}
+\end{snugshade}
 \label{sec:t2data:multi}
 
 A dictionary property selecting the equation of state (EOS) module used and setting associated parameters, corresponding to the \textbf{MULTI} input block in a TOUGH2 or AUTOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:multi}.
@@ -326,17 +362,23 @@ A dictionary property selecting the equation of state (EOS) module used and sett
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{noversion} property}
+\end{snugshade}
 \label{sec:t2data:noversion}
 
 A Boolean property specifying whether to suppress printing of version and date information, corresponding to the \textbf{NOVER} input block in a TOUGH2 data file.
 
+\begin{snugshade}
 \subsubsection{\texttt{num\_generators} property}
+\end{snugshade}
 \label{sec:t2data:num_generators}
 
 A read-only integer property returning the number of generators.
 
+\begin{snugshade}
 \subsubsection{\texttt{output\_times} property}
+\end{snugshade}
 \label{sec:t2data:output_times}
 
 A dictionary property specifying the times at which model output is required, corresponding to the \textbf{TIMES} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:outputtimes}.
@@ -359,7 +401,9 @@ A dictionary property specifying the times at which model output is required, co
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{parameter} property}
+\end{snugshade}
 \label{sec:t2data:parameter}
 
 A dictionary property specifying run-time parameters, corresponding to the \textbf{PARAM} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:parameter}.
@@ -404,7 +448,9 @@ The \texttt{option} parameter (MOP array in TOUGH2) is an array of 24 integers, 
   \end{center}
 \end{sidewaystable}
 
+\begin{snugshade}
 \subsubsection{\texttt{relative\_permeability} property}
+\end{snugshade}
 \label{sec:t2data:relative_permeability}
 
 A dictionary property specifying the relative permeability function used, corresponding to the first line of the \textbf{RPCAP} input block in the TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:relativepermeability}.
@@ -424,26 +470,34 @@ A dictionary property specifying the relative permeability function used, corres
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{selection} property}
+\end{snugshade}
 \label{sec:t2data:selection}
 
 A dictionary property representing selection parameters for the simulation (only used by some EOS modules, e.g. EOS7, EOS7R, EWASG), corresponding to the \textbf{SELEC} block in the TOUGH2 data file.
 
 The dictionary contains two keys: `integer' and `float', the first of which accesses a list of the integer selection parameters (the first line of the \textbf{SELEC} block), while the second accesses a list of the float selection parameters (the remaining lines of the \textbf{SELEC} block).
 
+\begin{snugshade}
 \subsubsection{\texttt{short\_output} property}
+\end{snugshade}
 \label{sec:t2data:short_output}
 
 A dictionary property representing blocks, connections and generators for which short output is required, corresponding to the \textbf{SHORT} input block in an AUTOUGH2 data file.
 
 The dictionary contains four keys: `frequency', `block', `connection' and `generator'. The last three of these access lists of blocks, connections and generators respectively for short output.  (Note that each of these lists contains \texttt{t2block}, \texttt{t2connection} or \texttt{t2generator} objects, rather than names.)  The `frequency' key accesses the time step frequency (an integer) for which short output is required.
 
+\begin{snugshade}
 \subsubsection{\texttt{simulator} property}
+\end{snugshade}
 \label{sec:t2data:simulator}
 
 A string property specifying the type of simulator, corresponding to the \textbf{SIMUL} input block in an AUTOUGH2 data file.
 
+\begin{snugshade}
 \subsubsection{\texttt{solver} property}
+\end{snugshade}
 \label{sec:t2data:solver}
 
 A dictionary property representing linear equation solver options, corresponding to the \textbf{SOLVR} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:solver}.
@@ -466,17 +520,23 @@ A dictionary property representing linear equation solver options, corresponding
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{start} property}
+\end{snugshade}
 \label{sec:t2data:start}
 
 A Boolean property specifying whether the flexible start option is used, corresponding to the \textbf{START} input block in a TOUGH2 data file.
 
+\begin{snugshade}
 \subsubsection{\texttt{title} property}
+\end{snugshade}
 \label{sec:t2data:title}
 
 A string property containing the simulation title, corresponding to the \textbf{TITLE} input block in a TOUGH2 data file.
 
+\begin{snugshade}
 \subsubsection{\texttt{type} property}
+\end{snugshade}
 \label{sec:t2data:type}
 
 A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Changing the value of this property will cause one of the \texttt{convert\_to\_TOUGH2()} or \texttt{convert\_to\_AUTOUGH2()} methods to be executed, with default method parameters.  Hence, changing the \texttt{type} property to `AUTOUGH2' causes the EOS to be set to the default `EW'.  It is also not possible to specify TOUGH2\_MP options when setting \texttt{type}.  For more control over how the conversion is carried out, use the conversion methods directly instead of setting \texttt{type}.
@@ -511,7 +571,9 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{add\_generator(\emph{generator})}}
+\end{snugshade}
 \label{sec:t2data:add_generator}
 
 Adds a generator to the data file object.
@@ -522,8 +584,10 @@ Adds a generator to the data file object.
   Generator to be added to the data file object.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{convert\_to\_AUTOUGH2(\emph{warn}=True, \emph{MP}=False, \emph{simulator}=`AUTOUGH2.2',\
     \emph{eos}=`EW')}}
+\end{snugshade}
 \label{sec:t2data:convert_to_AUTOUGH2}
 
 Converts a TOUGH2 (or TOUGH2\_MP) data file for use with AUTOUGH2.  Various parameter options are altered to try to make the AUTOUGH2 simulation give similar results to the original TOUGH2 simulation.  If necessary, the \texttt{filename} property is changed to end in `.dat' (or `.DAT', depending on the case of the base file name), as required by AUTOUGH2.
@@ -542,7 +606,9 @@ The simulator and EOS name can also be specified, as AUTOUGH2 data files contain
   EOS name, used for the trailing part of the AUTOUGH2 SIMUL data section (e.g. `EW', `EWC', `EWA', `EWAV' etc.)
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{convert\_to\_TOUGH2(\emph{warn}=True, \emph{MP}=False)}}
+\end{snugshade}
 \label{sec:t2data:convert_to_TOUGH2}
 
 Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators such as TOUGH2\_MP).  Various parameter options are altered to try to make the TOUGH2 simulation give similar results to the original AUTOUGH2 simulation.  This particularly affects AUTOUGH2 options related to backward compatibility with MULKOM.  In particular, if these are used then the heat conductivities in the ROCKS block have to be altered to give the same results.  Data blocks specific to AUTOUGH2 (e.g. SIMULATOR, LINEQ, and SHORT) are removed, and AUTOUGH2-specific generator types are converted to their TOUGH2 equivalents if possible, or otherwise deleted.
@@ -555,12 +621,16 @@ Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators suc
   if \texttt{True}, converts to a TOUGH2\_MP data file, which treats some of the parameters differently (e.g. MOP(20)).  The \texttt{filename} property is also changed to INFILE, as required by TOUGH2\_MP. 
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{clear\_generators()}}
+\end{snugshade}
 \label{sec:t2data:clear_generators}
 
 Deletes all generators from the data file object.
 
+\begin{snugshade}
 \subsubsection{\texttt{delete\_generator(\emph{blocksourcenames})}}
+\end{snugshade}
 \label{sec:t2data:delete_generator}
 
 Deletes the generator with the specified block and generator (source) name, if it exists.
@@ -571,12 +641,16 @@ Deletes the generator with the specified block and generator (source) name, if i
   Tuple of block name and generator name (both strings) of the generator to be deleted.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{delete\_orphan\_generators()}}
+\end{snugshade}
 \label{sec:t2data:delete_orphan_generators}
 
 Deletes all generators with block names that are not in the grid.
 
+\begin{snugshade}
 \subsubsection{\texttt{generator\_index(\emph{blocksourcenames})}}
+\end{snugshade}
 \label{sec:t2data:generator_index}
 
 Returns the index (in the \texttt{generatorlist} list) of the generator with the specified block and generator name.
@@ -587,7 +661,9 @@ Returns the index (in the \texttt{generatorlist} list) of the generator with the
   Tuple of block name and generator name (both strings) of the generator.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{read(\emph{filename}, \emph{meshfilename}=`')}}
+\end{snugshade}
 \label{sec:t2data:read}
 
 Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data may optionally be read from auxiliary files, if it is not present in the main data file.  (Note that if the main data file does contain mesh information (the `ELEME' and `CONNE' sections), any auxiliary mesh files will not be read.)
@@ -602,8 +678,10 @@ Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data m
 
 Note that it is possible to create a \texttt{t2data} object and read its contents in from disk files in one step, e.g.: \texttt{dat = t2data(filename,meshfilename)}.
 
+\begin{snugshade}
 \subsubsection{\texttt{run(\emph{save\_filename}=`', \emph{incon\_filename}=`', \emph{simulator}=`AUTOUGH2\_2',\\
     \emph{silent}=False)}}
+\end{snugshade}
 \label{sec:t2data:run}
 
 Runs an AUTOUGH2 or TOUGH2 (but not TOUGH2\_MP) simulation using the data file corresponding to a \texttt{t2data} object.  The contents of the \texttt{t2data} object must first have been written to disk using the \texttt{write} function.  If the file names for the save file or initial conditions file are not specified, they are constructed by changing the file extension of the data file name.  The name of the TOUGH2 executable can be specified.
@@ -629,7 +707,9 @@ system("mpirun -np 16 t2eos1_mp")
   Set to \texttt{True} to suppress output to the display while running (default is \texttt{False}).
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{specific\_generation(\emph{type}=`MASS', \emph{name}=`')}}
+\end{snugshade}
 \label{sec:t2data:specific_generation}
 
 Returns an \texttt{np.array} containing the total specific generation rate in each block (i.e. generation rate per unit volume) for the specified generator type and name.
@@ -642,9 +722,11 @@ Returns an \texttt{np.array} containing the total specific generation rate in ea
   Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{transfer\_from(\emph{source}, \emph{sourcegeo}, \emph{geo}, \emph{top\_generator}=[], \emph{bottom\_generator}=[],\\
     \emph{sourceinconfilename}=`', \emph{inconfilename}=`', \emph{rename\_generators}=False, \\
     \emph{preserve\_generation\_totals}=False)}}
+\end{snugshade}
 \label{sec:t2data:transfer_from}
 
 Transfers data from another \texttt{t2data} object, and its associated \texttt{mulgrid} object.  Parameters, rock types and rock type assignments, and optionally initial conditions files are transferred.  In general the data for a given block in the geometry is found by identifying the nearest block in the source geometry and transferring data from that block.  There are, however, exceptions, such as for generators that need to remain on the surface or bottom of the model.  The \texttt{top\_generator} and \texttt{bottom\_generator} lists specify the `layer' part of the generator name for generators that should remain on the top or bottom of the model, respectively.
@@ -675,7 +757,9 @@ If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a
   If \texttt{False} (the default), the transfer of generators will attempt to preserve the distribution of specific generation of the original model; otherwise, it will attempt to preserve the total generation over the model.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{total\_generation(\emph{type}=`MASS', \emph{name}=`')}}
+\end{snugshade}
 \label{sec:t2data:total_generation}
 
 Returns an \texttt{np.array} containing the total generation rate in each block for the specified generator type and name.
@@ -688,8 +772,10 @@ Returns an \texttt{np.array} containing the total generation rate in each block 
   Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
 \end{itemize}
 
-\subsubsection{\texttt{write(\emph{filename}=`', \emph{meshfilename}=`', \emph{extra\_precision}=None,\
+\begin{snugshade}
+\subsubsection{\texttt{write(\emph{filename}=`', \emph{meshfilename}=`', \emph{extra\_precision}=None,\\
     \emph{echo\_extra\_precision}=None)}}
+\end{snugshade}
 \label{sec:t2data:write}
 
 Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{meshfilename} parameter is used, mesh information can be written to auxiliary mesh files.

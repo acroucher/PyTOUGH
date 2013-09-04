@@ -145,7 +145,9 @@ The main methods of a \texttt{t2listing} object are listed in Table \ref{tb:t2li
   \end{center}
 \end{table}
 
+\begin{snugshade}
 \subsubsection{\texttt{add\_side\_recharge(\emph{geo}, \emph{dat})}}
+\end{snugshade}
 \label{sec:t2listing:add_side_recharge}
 
 Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a production run, calculated according to the final results in the listing.  These generators represent side inflows due to pressure changes in the blocks on the model's horizontal boundaries.  Recharge generators are given the names of their blocks- any existing generators with the same names will be overwritten.
@@ -158,12 +160,16 @@ Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a pro
   TOUGH2 data object for the side recharge generators to be added to.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{first()}}
+\end{snugshade}
 \label{sec:t2listing:first}
 
 Navigates to the first set of full results in the listing file.
 
+\begin{snugshade}
 \subsubsection{\texttt{get\_difference(\emph{indexa}=None, \emph{indexb}=None)}}
+\end{snugshade}
 \label{sec:t2listing:get_difference}
 
 Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.
@@ -174,7 +180,9 @@ Returns dictionary of maximum differences, and locations of difference, of all e
   Indices of results between which the maximum differences are to be calculated.  If both indexa and indexb are provided, the result is the difference between these two result indices.  If only one index is given, the result is the difference between the given index and the one before that.  If neither are given, the result is the difference between the last and penultimate sets of results.
 \end{itemize}
 
+\begin{snugshade}
 \subsubsection{\texttt{history(\emph{selection}, \emph{short}=True)}}
+\end{snugshade}
 \label{sec:t2listing:history}
 
 Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.  Short output (AUTOUGH2 only) can be omitted from the history results by setting the \texttt{short} parameter to \texttt{False}.
@@ -197,24 +205,32 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
 
 returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \texttt{(tq,q)} and \texttt{(tg,g)}, giving the times and values of temperature at block `AR210', mass flow at the connection between blocks `AB300' and `AC300', and generation rate in the generator `SO  1' in block `BR110' respectively.
 
+\begin{snugshade}
 \subsubsection{\texttt{last()}}
+\end{snugshade}
 \label{sec:t2listing:last}
 
 Navigates to the last set of full results in the listing file.
 
+\begin{snugshade}
 \subsubsection{\texttt{next()}}
+\end{snugshade}
 \label{sec:t2listing:next}
 
 Navigates to the next set of full results in the listing file.  Returns \texttt{False} if already at the last set of results (and \texttt{True} otherwise).
 
+\begin{snugshade}
 \subsubsection{\texttt{prev()}}
+\end{snugshade}
 \label{sec:t2listing:prev}
 
 Navigates to the previous set of full results in the listing file.  Returns \texttt{False} if already at the first set of results (and \texttt{True} otherwise).
 
+\begin{snugshade}
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{flows}=False,
 \emph{wells}=False,\\
 \emph{start\_time}=0, \emph{time\_unit}=`s', \emph{flux\_matrix}=None)}}
+\end{snugshade}
 \label{sec:t2listing:write_vtk}
 
 Writes a \texttt{t2listing} object to a set of VTK files on disk, for visualisation with VTK, Paraview, Mayavi etc.  The results in the listing object are written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written correspond to the variables given in the columns of the element table of the \texttt{t2listing} object.  (For TOUGH+ results, variables from the additional element tables are also included.) In addition, data arrays from an associated \texttt{mulgrid} and (optionally) \texttt{t2grid} objects can be included.
@@ -296,7 +312,9 @@ It is possible to perform addition and subtraction operations on \texttt{listing
 
 \texttt{listingtable} objects have one method as described below.
 
+\begin{snugshade}
 \subsubsection{\texttt{rows\_matching(\emph{pattern}, \emph{index}=0, \emph{match\_any}=False)}}
+\end{snugshade}
 
 Returns a list of rows in the table with keys matching the specified regular expression string, \texttt{pattern}.
 
