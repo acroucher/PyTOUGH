@@ -37,15 +37,15 @@ The formats of the listing files produced by TOUGH2, AUTOUGH2, TOUGH2\_MP and TO
 
 \section{What is Python?}
 
-Python is a general-purpose programming language.  It is free and open-source, and runs on many different computer operating systems (Linux, Windows, Mac OS X and others).  Python can be downloaded from the Python website (\texttt{http://www.python.org}), which also contains detailed reference material about the Python language.  If you are using Linux you probably already have Python, as it is included in most Linux distributions.
+Python is a general-purpose programming language.  It is free and open-source, and runs on many different computer operating systems (Linux, Windows, Mac OS X and others).  Python can be downloaded from the Python website (\url{http://www.python.org}), which also contains detailed reference material about the Python language.  If you are using Linux you probably already have Python, as it is included in most Linux distributions.
 
 PyTOUGH should run on any version of Python 2.x newer than 2.4 (though version 2.5 or newer is recommended).  Currently PyTOUGH will not run on Python 3.x (which is not backwards compatible with the 2.x series).
 
 If you are unfamiliar with Python (even if you have used another programming language before), it is highly recommended that you do one of the many Python tutorials available online, e.g.
 
 \begin{itemize}
-  \item \texttt{http://docs.python.org/tutorial/}
-  \item \texttt{http://wiki.python.org/moin/BeginnersGuide}
+  \item \url{http://docs.python.org/tutorial/}
+  \item \url{http://wiki.python.org/moin/BeginnersGuide}
 \end{itemize}
 
 \subsection{Python basics}
@@ -113,31 +113,31 @@ Python comes with a large number of features already built in, but for specialis
 
 The most important of these is Numerical Python (`numpy'), which you will need to have installed on your computer before you can use PyTOUGH at all \footnote{PyTOUGH will run using Numeric, a now-obsolete predecessor of Numerical Python, though the PyTOUGH plotting functions will not work.  In general it is recommended to use Numerical Python if possible.}.  Numerical Python adds a special \texttt{numpy.array} class for fast multi-dimensional arrays, which PyTOUGH makes heavy use of, and a whole range of other features, e.g. linear algebra routines, Fourier transforms and statistics.
 
-Numerical Python can be freely downloaded from \texttt{http://numpy.scipy.org/} (or simply installed via your package manager on Linux). The latest versions may not yet be available for 64-bit Windows from this site.  However, you can find unofficial builds at \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
+Numerical Python can be freely downloaded from \url{http://numpy.scipy.org/} (or simply installed via your package manager on Linux). The latest versions may not yet be available for 64-bit Windows from this site.  However, you can find unofficial builds at \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
 
 \subsubsection{Other libraries}
 
 Some parts of PyTOUGH use other Python libraries.  You do not need these libraries unless you are using the parts of PyTOUGH that depend on them.
 
 \begin{itemize}
-\item \textbf{matplotlib} (\texttt{http://matplotlib.sourceforge.net/}), a library of graphical plotting routines
-\item \textbf{Scientific Python} (\texttt{http://www.scipy.org/}), a library of advanced mathematical functions (e.g. interpolation, calculus, optimisation)
-\item \textbf{VTK} (\texttt{http://www.vtk.org/}), the Visualization Tool Kit (a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.) and \textbf{VTK Python}, the Python interface for VTK.
+\item \textbf{matplotlib} (\url{http://matplotlib.sourceforge.net/}), a library of graphical plotting routines
+\item \textbf{Scientific Python} (\url{http://www.scipy.org/}), a library of advanced mathematical functions (e.g. interpolation, calculus, optimisation)
+\item \textbf{VTK} (\url{http://www.vtk.org/}), the Visualization Tool Kit (a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.) and \textbf{VTK Python}, the Python interface for VTK.
 \end{itemize}
 
 On Linux systems you can download and install these libraries via your package manager (e.g. on Debian or Debian-based distributions like Ubuntu, \texttt{aptitude install python-matplotlib python-scipy libvtk5.4 python-vtk}).
 
-On Windows you will need to download and install them yourself from the internet (see links above) or elsewhere.  At the time of writing there is not yet an official 64-bit build of Scientific Python for Windows.  However an unofficial build can be found at \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.  Use of this version of Scientific Python requires that their version of Numerical Python is also used.
+On Windows you will need to download and install them yourself from the internet (see links above) or elsewhere.  At the time of writing there is not yet an official 64-bit build of Scientific Python for Windows.  However an unofficial build can be found at \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.  Use of this version of Scientific Python requires that their version of Numerical Python is also used.
 
 \subsubsection{Installing VTK-Python on Windows}
 
-There does not appear to be an official Windows build of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) from \texttt{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
+There does not appear to be an official Windows build of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) from \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
 
 Make sure you download and install the right version, corresponding to the version of Python you are using.  You will need to add a few things to the environment variables on your system to get it to work.  (If you aren't sure how to edit your environment variables, see section \ref{installing} below.) 
 
 In the directory where VTK is installed to, there should be sub-directories called something like \texttt{VTK\textbackslash bin} and \texttt{VTK\textbackslash lib\textbackslash site-packages}.  You need to add the full path to the \texttt{bin} directory to the PATH environment variable on your system, and the paths to both the \texttt{bin} and \texttt{lib\textbackslash site-packages} directories to your PYTHONPATH environment variable.
 
-Alternatively, there are third-party repackaged distributions of Python which come bundled with some or all of these additional libraries (see \texttt{http://www.python.org/download/}).
+Alternatively, there are third-party repackaged distributions of Python which come bundled with some or all of these additional libraries (see \url{http://www.python.org/download/}).
 
 \subsubsection{Importing libraries}
 
@@ -152,9 +152,7 @@ First, make sure you have Python, and the Numerical Python library (see section 
 
 On the PyTOUGH website, click the `Download ZIP' button at the right of the page:
 
-\begin{verbatim}
-https://github.com/acroucher/PyTOUGH/archive/master.zip
-\end{verbatim}
+\url{https://github.com/acroucher/PyTOUGH/archive/master.zip}
 
 to download PyTOUGH as a .zip file.  Unzip this to any directory on your computer.  This will create a directory containing a file called \texttt{setup.py}.  At the command line type:
 
@@ -166,4 +164,4 @@ You should now be able to import the PyTOUGH libraries into the Python interacti
 
 \section{Licensing}
 
-PyTOUGH is free software, distributed under the GNU Lesser General Public License (LGPL).  For more information, see \texttt{http://www.gnu.org/licenses/}.
+PyTOUGH is free software, distributed under the GNU Lesser General Public License (LGPL).  For more information, see \url{http://www.gnu.org/licenses/}.
