@@ -62,13 +62,13 @@ In general, an object not only has \textbf{properties} (like \texttt{blk.volume}
 
 Most programming languages have simple data types built in, e.g. float, double precision or integer numbers, strings, and arrays of these.  Python has some other data types which are very useful and are used a lot.
 
-The first of these is the \textbf{list}.  A list can contain any ordered collection of objects, of any type, or even of different types, and is delimited by square brackets.  So for example we can declare a list \texttt{things = [1,`two',3.0]} containing an integer, a string and a float.  We can access the list's elements in much the same way as we access the elements of an array, for example \texttt{things[1]} would return the value \texttt{`two'} (note that in Python, as in most other languages besides Fortran, the indices of arrays and lists start at 0, not 1).  Additional elements can be added to a list at any time, without having to re-declare the size of the list: for example, \texttt{things.append(`IV')} would add an extra element to the end of the list, giving it the value \texttt{[1,`two',3.0,`IV']}.  It is also possible to remove elements from a list, e.g. \texttt{things.remove(3.0)}, which would give our list the value \texttt{[1,`two',`IV']}.
+The first of these is the \textbf{list}.  A list can contain any ordered collection of objects, of any type, or even of different types, and is delimited by square brackets.  So for example we can declare a list \texttt{things = [1, 'two',3.0]} containing an integer, a string and a float.  We can access the list's elements in much the same way as we access the elements of an array, for example \texttt{things[1]} would return the value \texttt{'two'} (note that in Python, as in most other languages besides Fortran, the indices of arrays and lists start at 0, not 1).  Additional elements can be added to a list at any time, without having to re-declare the size of the list: for example, \texttt{things.append('IV')} would add an extra element to the end of the list, giving it the value \texttt{[1, 'two', 3.0, 'IV']}.  It is also possible to remove elements from a list, e.g. \texttt{things.remove(3.0)}, which would give our list the value \texttt{[1, 'two', 'IV']}.
 
-Another useful Python data type is the \textbf{dictionary}.  Dictionaries are mainly used to store collections of objects (again, of any type or of different types) that are referenced by name rather than by index (as in an array or list).  A dictionary is delimited by curly brackets.  So for example we can declare a dictionary \texttt{phone=\{`Eric':8155,`Fred':2350,`Wilma':4667\}} and then find Fred's phone number from \texttt{phone[`Fred']}, which would return \texttt{2350}.  For TOUGH2 models, blocks, generators, rock types and other objects are often referred to by name rather than index, so dictionaries are an appropriate way to store them.
+Another useful Python data type is the \textbf{dictionary}.  Dictionaries are mainly used to store collections of objects (again, of any type or of different types) that are referenced by name rather than by index (as in an array or list).  A dictionary is delimited by curly brackets.  So for example we can declare a dictionary \texttt{phone = \{'Eric':8155, 'Fred':2350, 'Wilma':4667\}} and then find Fred's phone number from \texttt{phone['Fred']}, which would return \texttt{2350}.  For TOUGH2 models, blocks, generators, rock types and other objects are often referred to by name rather than index, so dictionaries are an appropriate way to store them.
 
-A third Python data type, similar to a list, is the \textbf{tuple}.  A tuple is essentially a list that cannot be changed, and is often used just for grouping objects together.  A tuple is delimited by parentheses.  For example, \texttt{things=(1,`two',3.0)} declares a tuple with three elements.  We can still refer to the elements of a tuple using e.g. \texttt{a[1]}, but we cannot assign new values to these elements or add or remove elements from the tuple once it has been declared.
+A third Python data type, similar to a list, is the \textbf{tuple}.  A tuple is essentially a list that cannot be changed, and is often used just for grouping objects together.  A tuple is delimited by parentheses.  For example, \texttt{things = (1, 'two', 3.0)} declares a tuple with three elements.  We can still refer to the elements of a tuple using e.g. \texttt{a[1]}, but we cannot assign new values to these elements or add or remove elements from the tuple once it has been declared.
 
-Python also has a \textbf{set} data type, which represents a mathematical set- an unordered collection of objects.  One of the useful aspects of sets is that they cannot contain duplicate items.  As a result, for example, duplicate items can be removed from a list \texttt{x} simply by converting it to a set, and then back to a list: \texttt{x=list(set(x))}.
+Python also has a \textbf{set} data type, which represents a mathematical set- an unordered collection of objects.  One of the useful aspects of sets is that they cannot contain duplicate items.  As a result, for example, duplicate items can be removed from a list \texttt{x} simply by converting it to a set, and then back to a list: \texttt{x = list(set(x))}.
 
 \subsection{How to run Python}
 
@@ -84,7 +84,7 @@ C:\>python
 Python 2.6.4 (r264:75708, Oct 26 2009, 08:23:19) [MSC v.1500 32 bit (Intel)]
 on win32
 Type "help", "copyright", "credits" or "license" for more information.
->>> things = [1,`two',3.0]
+>>> things = [1, 'two', 3.0]
 >>> print things[1]
 two
 >>> exit()
@@ -102,7 +102,7 @@ The real power of Python, however, lies in using it to write \textbf{scripts} to
 
 You can also debug a Python script using the `pdb' command-line debugger.  Typing \texttt{python -m pdb \emph{filename.py}} will start debugging the script \emph{filename.py}.
 
-It is also possible to run a Python script from within the interactive Python environment.  From the Python environment command line, typing \texttt{execfile(\emph{`filename.py'})} will execute the script \emph{filename.py}.
+It is also possible to run a Python script from within the interactive Python environment.  From the Python environment command line, typing \texttt{execfile(\emph{'filename.py'})} will execute the script \emph{filename.py}.
 
 \subsection{Python libraries}
 \label{pylibraries}
@@ -147,6 +147,10 @@ When you import a library, you can also change its name.  For example, PyTOUGH i
 
 \section{Installing and accessing PyTOUGH}
 \label{installing}
+
+The latest version of PyTOUGH can always be downloaded from the PyTOUGH website:
+
+\url{https://github.com/acroucher/PyTOUGH/}
 
 First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.  On Windows, you may have to add the directory where Python has installed (e.g. \texttt{C:\textbackslash Python26} or similar, depending on which version you have) to your PATH environment variable, before you can access Python from the command line.
 
