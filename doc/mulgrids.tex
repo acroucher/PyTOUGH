@@ -4,8 +4,9 @@
 \section{Introduction}
 The \texttt{mulgrids} library in PyTOUGH contains classes and routines for creating, editing and saving MULgraph geometry files.  It can be imported using the command:
 
- \texttt{\\
-   from mulgrids import *}
+\begin{lstlisting}
+  from mulgrids import *
+\end{lstlisting}
 
 \section{\texttt{mulgrid} objects}
 
@@ -13,17 +14,17 @@ The \texttt{mulgrids} library defines a \texttt{mulgrid} class, used for represe
 
 \textbf{Example:}
 
-\begin{verbatim}
-geo=mulgrid()
-\end{verbatim}
+\begin{lstlisting}
+geo = mulgrid()
+\end{lstlisting}
 
 creates an empty \texttt{mulgrid} object called \texttt{geo}.
 
-\begin{verbatim}
-geo=mulgrid(`geom.dat')
-\end{verbatim}
+\begin{lstlisting}
+geo = mulgrid('geom.dat')
+\end{lstlisting}
 
-creates a \texttt{mulgrid} object called \texttt{geo} and reads its contents from a file named \texttt{`geom.dat'}.
+creates a \texttt{mulgrid} object called \texttt{geo} and reads its contents from a file named \texttt{'geom.dat'}.
 
 Printing a \texttt{mulgrid} object (e.g. \texttt{print geo}) displays a summary of information about the grid: how many nodes, columns, layers, blocks and wells it contains, as well as its naming convention and atmosphere type.
 
@@ -31,9 +32,9 @@ Printing a \texttt{mulgrid} object (e.g. \texttt{print geo}) displays a summary 
 
 The main properties of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgrid_properties}.  Some of these properties are `header' information, corresponding to the data at the start of a MULgraph geometry file (\texttt{type}, \texttt{convention}, \texttt{atmosphere\_type}, \texttt{atmosphere\_volume}, \texttt{atmosphere\_connection} and \texttt{unit\_type}).
 
-The most important properties of a \texttt{mulgrid} object are \texttt{node}, \texttt{column}, \texttt{connection}, \texttt{layer} and \texttt{well}, which are dictionaries of the grid nodes, columns, connections, layers and wells, accessed by name.  For example, grid layer `AA' of a \texttt{mulgrid} object \texttt{geo} can be accessed by \texttt{geo.layer[`AA']}.  (The \texttt{nodelist}, \texttt{columnlist}, \texttt{connectionlist}, \texttt{layerlist} and \texttt{welllist} properties offer access to the nodes, columns, connections, layers and wells by index, which is sometimes useful e.g. for looping over all columns in the grid.)
+The most important properties of a \texttt{mulgrid} object are \texttt{node}, \texttt{column}, \texttt{connection}, \texttt{layer} and \texttt{well}, which are dictionaries of the grid nodes, columns, connections, layers and wells, accessed by name.  For example, grid layer `AA' of a \texttt{mulgrid} object \texttt{geo} can be accessed by \texttt{geo.layer['AA']}.  (The \texttt{nodelist}, \texttt{columnlist}, \texttt{connectionlist}, \texttt{layerlist} and \texttt{welllist} properties offer access to the nodes, columns, connections, layers and wells by index, which is sometimes useful e.g. for looping over all columns in the grid.)
 
-Connections are slightly different from nodes, columns etc. in that they are not named individually.  However, they can be accessed by the names of the columns connected by the connection.  For example, the connection between columns ` 10' and ` 11' in a \texttt{mulgrid} called \texttt{geo} is given by \texttt{geo.connection[` 10',` 11']}.
+Connections are slightly different from nodes, columns etc. in that they are not named individually.  However, they can be accessed by the names of the columns connected by the connection.  For example, the connection between columns ` 10' and ` 11' in a \texttt{mulgrid} called \texttt{geo} is given by \texttt{geo.connection[' 10',' 11']}.
 
 The elements of these lists and dictionaries are of type \texttt{node}, \texttt{column}, \texttt{connection}, \texttt{layer} and \texttt{well} respectively.  These are additional object classes to represent nodes, columns, connections, layers and wells, defined in the \texttt{mulgrids} library (see section \ref{other_mulgrid_objects}).
 
@@ -81,15 +82,15 @@ Blocks at the ground surface that have very small vertical thickness can sometim
 
 \subsubsection{Functions for reading data from file}
 
-A \texttt{mulgrid} object has a \texttt{read\_function} property which controls how data are read from file.  This property is a dictionary with six keys: `d', `f', `e', `g', `s' and `x', denoting respectively integer, float, exponential, general, string and blank.  Each item in the dictionary is a function which converts a string from the file on disk into the appropriate value.  For example, \texttt{read\_function[`f']} converts a string to a floating point value.  By default, the built-in Python \texttt{float} function is used for this (although it is modified slightly so that it returns \texttt{None} if the input string is blank).  There is a dictionary of default reading functions included in PyTOUGH, called \texttt{default\_read\_function}.
+A \texttt{mulgrid} object has a \texttt{read\_function} property which controls how data are read from file.  This property is a dictionary with six keys: `d', `f', `e', `g', `s' and `x', denoting respectively integer, float, exponential, general, string and blank.  Each item in the dictionary is a function which converts a string from the file on disk into the appropriate value.  For example, \texttt{read\_function['f']} converts a string to a floating point value.  By default, the built-in Python \texttt{float} function is used for this (although it is modified slightly so that it returns \texttt{None} if the input string is blank).  There is a dictionary of default reading functions included in PyTOUGH, called \texttt{default\_read\_function}.
 
 However, the user can specify other functions if needed.  In particular, files produced from Fortran programs sometimes have formatting that is not readable by the default functions, if some more exotic Fortran formatting options have been used.   For example, a `d' can also be used to represent an exponent (like `e'), or spaces can be included within a number, or the exponent identifier (e.g. `e') can be omitted.  PyTOUGH includes a second set of reading functions, called \texttt{fortran\_read\_function}, for handling Fortran formatting.  These are slightly slower than the default reading functions.
 
 The reading functions for a \texttt{mulgrid} object can be specified when the object is being created, e.g.:
 
-\begin{verbatim}
-geo = mulgrid(`geom.dat', read_function = fortran_read_function)
-\end{verbatim}
+\begin{lstlisting}
+geo = mulgrid('geom.dat', read_function = fortran_read_function)
+\end{lstlisting}
 
 \begin{center}
   \begin{longtable}{|l|l|p{75mm}|}
@@ -114,7 +115,7 @@ geo = mulgrid(`geom.dat', read_function = fortran_read_function)
     \texttt{columnlist} & list & columns (by index, e.g. \texttt{columnlist[23]})\\
     \texttt{column\_angle\_ratio} & \texttt{np.array} & angle ratio for each column\\
     \texttt{column\_side\_ratio} & \texttt{np.array} & side ratio for each column\\
-    \texttt{column} & dictionary & columns (by name, e.g. \texttt{column[`AA']})\\
+    \texttt{column} & dictionary & columns (by name, e.g. \texttt{column['AA']})\\
     \texttt{connection\_list} & list & connections between columns (by index)\\
     \texttt{connection\_angle\_cosine} & \texttt{np.array} & angle cosines for all connections\\
     \texttt{convention} & integer & naming convention for columns and layers\\
@@ -651,11 +652,11 @@ Gives the name of the layer corresponding to the specified block name, according
 \begin{snugshade}
 \subsubsection{\texttt{layer\_plot(\emph{layer}, \emph{variable}=None, \emph{variable\_name}=None, \emph{unit}=None,\\
     \emph{column\_names}=None, \emph{node\_names}=None, \emph{column\_centres}=None, \emph{nodes}=None,\\
-    \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black', \emph{aspect}=`equal', \emph{plt}=None,\\
-    \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`x (m)', \emph{ylabel}=`y (m)', \emph{contours}=False,\\
-    \emph{contour\_label\_format}=`\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
+    \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}='black', \emph{aspect}='equal', \emph{plt}=None,\\
+    \emph{subplot}=111, \emph{title}=None, \emph{xlabel}='x (m)', \emph{ylabel}='y (m)', \emph{contours}=False,\\
+    \emph{contour\_label\_format}='\%3.0f', \emph{contour\_grid\_divisions}=(100,100),\\
     \emph{connections}=None, \emph{colourbar\_limits}=None, \emph{plot\_limits}=None, \emph{wells}=None,\\
-    \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}=`blue', \\
+    \emph{well\_names}=True, \emph{hide\_wells\_outside}=True, \emph{wellcolour}='blue', \\
     \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False,\\
     \emph{rockgroup}=None, \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None,\\
     \emph{flow\_variable\_name}=None, \emph{flow\_unit}=None, \emph{flow\_scale}=None,\\
@@ -762,11 +763,11 @@ Flows can be shown on the layer by specifying an array of connection flow values
 
 \textbf{Example:}
 
-\begin{verbatim}
-geo.layer_plot(-500.,t,`Temperature',`$^o$C', contours=np.arange(100,200,25))
-\end{verbatim}
+\begin{lstlisting}
+geo.layer_plot(-500., t, 'Temperature', '$\degree$C', contours = np.arange(100,200,25))
+\end{lstlisting}
 
-plots the variable \texttt{t} at elevation -500 m over the grid, with the values as Temperature ($^{\circ}$C), and with contours drawn from 100$^o$C to 200$^o$C with a contour interval of 25$^o$C.
+plots the variable \texttt{t} at elevation -500 m over the grid, with the values as Temperature ($\degree$C), and with contours drawn from 100$\degree$C to 200$\degree$C with a contour interval of 25$\degree$C.
 
 \begin{snugshade}\subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False},\\
       \emph{qtree}=None)}}\end{snugshade}
@@ -792,8 +793,8 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
 
 \begin{snugshade}
 \subsubsection{\texttt{line\_plot(\emph{start}=None, \emph{end}=None, \emph{variable}, \emph{variable\_name}=None,\\
-\emph{unit}=None, \emph{divisions}=100, \emph{plt}=None, \emph{subplot}=111, \emph{title}=`',\\
-\emph{xlabel}=`distance (m)')}}\end{snugshade}
+\emph{unit}=None, \emph{divisions}=100, \emph{plt}=None, \emph{subplot}=111, \emph{title}='',\\
+\emph{xlabel}='distance (m)')}}\end{snugshade}
 \label{sec:mulgrid:line_plot}
 
 Plots a variable along a line through the grid, using the \texttt{matplotlib} plotting library. The line is specified by its start and end points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.  The name and units of the variable can optionally be specified, as well as the number of divisions the line is divided into (default 100), the plot title and the axis labels.
@@ -822,11 +823,11 @@ Plots a variable along a line through the grid, using the \texttt{matplotlib} pl
 
 \textbf{Example:}
 
-\begin{verbatim}
-geo.line_plot([0.,0.,500.],[1000.,0.,500.],t,`Temperature',`$^o$C')
-\end{verbatim}
+\begin{lstlisting}
+geo.line_plot([0.,0.,500.], [1000.,0.,500.], t, 'Temperature', '$\degree$C')
+\end{lstlisting}
 
-plots the variable \texttt{t} along a line from (0,0,500) to (1000,0,500) through the grid, with the values as Temperature ($^{\circ}$C).
+plots the variable \texttt{t} along a line from (0,0,500) to (1000,0,500) through the grid, with the values as Temperature ($\degree$C).
 
 \begin{snugshade}\subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}\end{snugshade}
 \label{sec:mulgrid:nodes_in_columns}
@@ -923,19 +924,19 @@ Reads a \texttt{mulgrid} object from a MULgraph geometry file on disk.
 
 \textbf{Example:}
 
-\begin{verbatim}
+\begin{lstlisting}
 geo=mulgrid().read(filename)
-\end{verbatim}
+\end{lstlisting}
 
 creates a \texttt{mulgrid} object and reads its contents from file \texttt{filename}.  This can be done more simply just by passing the filename into the \texttt{mulgrid} creation command:
 
-\begin{verbatim}
+\begin{lstlisting}
 geo=mulgrid(filename)
-\end{verbatim}
+\end{lstlisting}
 
 \begin{snugshade}
 \subsubsection{\texttt{rectangular(\emph{xblocks}, \emph{yblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
-    \emph{origin}=[0,0,0], \emph{justify}=`r', \emph{case}=None, \emph{chars}=ascii\_lowercase)}}\end{snugshade}
+    \emph{origin}=[0,0,0], \emph{justify}='r', \emph{case}=None, \emph{chars}=ascii\_lowercase)}}\end{snugshade}
 \label{sec:mulgrid:rectangular}
 
 Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{chars} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
@@ -960,10 +961,9 @@ Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid
 
 \textbf{Example:}
 
-\begin{verbatim}
-geo=mulgrid().rectangular([1000]*10,[500]*20,[100]*5+[200]*10,
-  origin=[0,0,2500])
-\end{verbatim}
+\begin{lstlisting}
+geo = mulgrid().rectangular([1000]*10, [500]*20, [100]*5+[200]*10, origin=[0,0,2500])
+\end{lstlisting}
 
 creates a \texttt{mulgrid} object called \texttt{geo}, and fills it with a rectangular grid of 10 blocks of size 1000 m in the \emph{x}-direction, 20 blocks of size 500 m in the \emph{x}-direction, 5 layers at the top of thickness 100 m and 10 layers underneath of thickness 200 m, and with origin (0,0,2500) m.  The grid will have the default naming convention (0) and atmosphere type (2).
 
@@ -1058,20 +1058,20 @@ Rotates a grid by a specified angle (in degrees) clockwise in the horizontal pla
 
 \textbf{Example:}
 
-\begin{verbatim}
+\begin{lstlisting}
 geo.rotate(30)
-\end{verbatim}
+\end{lstlisting}
 
-rotates the grid \texttt{geo} clockwise by 30$^{\circ}$ about its centre in the horizontal plane.
+rotates the grid \texttt{geo} clockwise by 30$\degree$ about its centre in the horizontal plane.
 
 \begin{snugshade}
 \subsubsection{\texttt{slice\_plot(\emph{line}=None, \emph{variable}=None, \emph{variable\_name}=None, \emph{unit}=None,\\
-    \emph{block\_names}=None, \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}=`black',\\
-    \emph{aspect}=`auto', \emph{plt}=None, \emph{subplot}=111, \emph{title}=None, \emph{xlabel}=`',\\
-    \emph{ylabel}=`elevation (m)', \emph{contours}=False, \emph{contour\_label\_format}=`\%3.0f',\\
+    \emph{block\_names}=None, \emph{colourmap}=None, \emph{linewidth}=0.2, \emph{linecolour}='black',\\
+    \emph{aspect}='auto', \emph{plt}=None, \emph{subplot}=111, \emph{title}=None, \emph{xlabel}='',\\
+    \emph{ylabel}='elevation (m)', \emph{contours}=False, \emph{contour\_label\_format}='\%3.0f',\\
     \emph{contour\_grid\_divisions}=(100,100), \emph{colourbar\_limits}=None, \emph{plot\_limits}=None,\\
     \emph{column\_axis}=False, \emph{layer\_axis}=False, \emph{wells}=None, \emph{well\_names}=True,\\
-    \emph{hide\_wells\_outside}=False, \emph{wellcolour}=`blue', \emph{welllinewidth}=1.0,\\
+    \emph{hide\_wells\_outside}=False, \emph{wellcolour}='blue', \emph{welllinewidth}=1.0,\\
     \emph{wellname\_bottom}=False, \emph{rocktypes}=None, \emph{allrocks}=False, \emph{rockgroup}=None,\\
     \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None, \emph{flow\_variable\_name}=None,\\
     \emph{flow\_unit}=None, \emph{flow\_scale}=None, \emph{flow\_scale\_pos}=(0.5, 0.02),\\
@@ -1177,20 +1177,20 @@ Flows can be shown on the slice by specifying an array of connection flow values
 
 \textbf{Example:}
 
-\begin{verbatim}
-geo.slice_plot(45.,t,`Temperature',`$^o$C',contours=[100,200])
-\end{verbatim}
+\begin{lstlisting}
+geo.slice_plot(45., t, 'Temperature', '$\degree$C', contours = [100,200])
+\end{lstlisting}
 
-plots the variable \texttt{t} through a SW--NE vertical slice (heading 45$^{\circ}$) through the grid, with the values as Temperature ($^{\circ}$C) and contours drawn at 100$^{\circ}$C and 200$^{\circ}$C.
+plots the variable \texttt{t} through a SW--NE vertical slice (heading 45$\degree$) through the grid, with the values as Temperature ($\degree$C) and contours drawn at 100$\degree$C and 200$\degree$C.
 
-\begin{verbatim}
+\begin{lstlisting}
 from matplotlib import cm
-cmap = cm.get_cmap(`jet', 10)
-geo.slice_plot(45., t, `Temperature', `$^o$C',
+cmap = cm.get_cmap('jet', 10)
+geo.slice_plot(45., t, 'Temperature', '$\degree$C',
   colourbar_limits = (0., 250.), colourmap = cmap)
-\end{verbatim}
+\end{lstlisting}
 
-plots the variable \texttt{t} again, but with a specified discrete colour scale with 10 divisions from zero to 250$^{\circ}$C.
+plots the variable \texttt{t} again, but with a specified discrete colour scale with 10 divisions from zero to 250$\degree$C.
 
 \begin{snugshade}\subsubsection{\texttt{snap\_columns\_to\_layers(\emph{min\_thickness}=1.0, \emph{columns}=[])}}\end{snugshade}
 \label{sec:mulgrid:snap_columns_to_layers}
@@ -1236,9 +1236,9 @@ Translates a grid by a specified shift in the \emph{x}, \emph{y} and \emph{z} di
 
 \textbf{Example:}
 
-\begin{verbatim}
-geo.translate([10.e3,0.0,-1000.0])
-\end{verbatim}
+\begin{lstlisting}
+geo.translate([10.e3, 0.0, -1000.0])
+\end{lstlisting}
 
 translates the grid \texttt{geo} by 10 km in the \emph{x} direction and down 1 km in the \emph{z} direction.
 
@@ -1270,7 +1270,7 @@ The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\t
   Set \texttt{True} to artificially extend the well trace to the bottom of the model.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{write(\emph{filename}=`')}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{write(\emph{filename}='')}}\end{snugshade}
 \label{sec:mulgrid:write}
 
 Writes a \texttt{mulgrid} object to a MULgraph geometry file on disk.
@@ -1281,7 +1281,7 @@ Writes a \texttt{mulgrid} object to a MULgraph geometry file on disk.
   Name of the MULgraph geometry file to be written.  If no file name is specified, the object's own \texttt{filename} property is used.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{write\_bna(\emph{filename}=`')}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{write\_bna(\emph{filename}='')}}\end{snugshade}
 \label{sec:mulgrid:write_bna}
 
 Writes a geometry object to an Atlas BNA file on disk, for visualisation with Surfer or GIS tools.
@@ -1292,7 +1292,7 @@ Writes a geometry object to an Atlas BNA file on disk, for visualisation with Su
   Name of the BNA file to be written.  If no file name is specified, the object's own \texttt{filename} property is used, with the extension changed to *.bna.  If the object's \texttt{filename} property is not set, the default name `geometry.bna' is used.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}=`', \emph{arrays}=None, \emph{wells}=False)}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False)}}\end{snugshade}
 \label{sec:mulgrid:write_vtk}
 
 Writes a \texttt{mulgrid} object to a VTK file on disk, for visualisation with VTK, Paraview, Mayavi etc.  The grid is written as an `unstructured grid' VTK object with optional data arrays defined on cells.  A separate VTK file for the wells in the grid can optionally be written.
@@ -1330,9 +1330,9 @@ A \texttt{column} object has two properties measuring `grid quality'.  The \text
 
 A \texttt{column} object \texttt{col} can be created for example using the command:
 
-\begin{verbatim}
-col = column(name,nodes,centre,surface)
-\end{verbatim}
+\begin{lstlisting}
+col = column(name, nodes, centre, surface)
+\end{lstlisting}
 
 where \texttt{name} is the column name and \texttt{nodes} is a list of \hyperref[nodeobjects]{\texttt{node}} objects defining the column.  The \texttt{centre} and \texttt{surface} parameters are optional.
 
@@ -1411,9 +1411,9 @@ A \texttt{layer} object represents a layer in a \texttt{mulgrid} object. The pro
 
 A \texttt{layer} object \texttt{lay} can be created for example using the command:
 
-\begin{verbatim}
-lay = layer(name,bottom,centre,top)
-\end{verbatim}
+\begin{lstlisting}
+lay = layer(name, bottom, centre, top)
+\end{lstlisting}
 
 where \texttt{name} is the layer name and \texttt{bottom}, \texttt{centre} and \texttt{top} specify the vertical position of the layer.
 
@@ -1468,9 +1468,9 @@ A \texttt{connection} object represents a connection between \texttt{columns} in
 
 A \texttt{connection} object \texttt{con} can be created for example using the command
 
-\begin{verbatim}
+\begin{lstlisting}
 con = connection(cols)
-\end{verbatim}
+\end{lstlisting}
 
 where \texttt{cols} is a two-element list of the \texttt{column} objects in the connection.
 

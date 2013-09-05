@@ -4,9 +4,9 @@
 \section{Introduction}
 The \texttt{t2incons} library in PyTOUGH contains classes and routines for reading, editing and writing TOUGH2 initial conditions and files.  It can be imported using the command:
 
-\begin{verbatim}
+\begin{lstlisting}
    from t2incons import *
-\end{verbatim}
+\end{lstlisting}
 
 The initial conditions files used by TOUGH2 and AUTOUGH2 have the same format.  PyTOUGH also supports TOUGHREACT initial conditions files, which have a slightly different format- permeabilities are included for each block, and timing information at the bottom of the file is formatted differently.
 
@@ -16,15 +16,15 @@ The \texttt{t2incons} library defines a \texttt{t2incon} class, used for represe
 
 \textbf{Example:}
 
-\begin{verbatim}
-inc=t2incon()
-\end{verbatim}
+\begin{lstlisting}
+inc = t2incon()
+\end{lstlisting}
 
 creates an empty \texttt{t2incon} object called \texttt{inc}.
 
-\begin{verbatim}
-inc=t2incon(filename)
-\end{verbatim}
+\begin{lstlisting}
+inc = t2incon(filename)
+\end{lstlisting}
 
 creates a \texttt{t2incon} object called \texttt{inc} and reads its contents from file \texttt{filename}.
 
@@ -34,43 +34,43 @@ The main properties of a \texttt{t2incon} object are listed in Table \ref{tb:t2i
 
 Each column in the initial conditions file can be accessed by adding an integer (zero-based) index after the \texttt{t2blockincon} object, so for example:
 
-\begin{verbatim}
-t=inc['aa 20'][1]
-\end{verbatim}
+\begin{lstlisting}
+t = inc['aa 20'][1]
+\end{lstlisting}
 
-assigns the variable \texttt{t} the value of the second primary thermodynamic variable (index 1) in block \texttt{`AA 20'}.  Initial conditions can be edited in a similar way, for example:
+assigns the variable \texttt{t} the value of the second primary thermodynamic variable (index 1) in block \texttt{'AA 20'}.  Initial conditions can be edited in a similar way, for example:
 
-\begin{verbatim}
-inc['aa 20'][0]=p
-\end{verbatim}
+\begin{lstlisting}
+inc['aa 20'][0] = p
+\end{lstlisting}
 
-assigns the value of \texttt{p} to the first primary variable (usually pressure) in block \texttt{`AA 20'}.  For convenience, initial conditions for a given block can also be specified as a simple list or tuple of values, for example:
+assigns the value of \texttt{p} to the first primary variable (usually pressure) in block \texttt{'AA 20'}.  For convenience, initial conditions for a given block can also be specified as a simple list or tuple of values, for example:
 
-\begin{verbatim}
-inc['ab 25']=(101.3e5,25.0)
-\end{verbatim}
+\begin{lstlisting}
+inc['ab 25'] = (101.3e5,25.0)
+\end{lstlisting}
 
-sets the initial conditions at block \texttt{`ab 25'} to the specified values.  This will work even if no initial conditions have been previously specified for the given block.
+sets the initial conditions at block \texttt{'ab 25'} to the specified values.  This will work even if no initial conditions have been previously specified for the given block.
 
 An \texttt{np.array} of the values of the variables at all blocks can be found from the \texttt{variable} property.  For example:
 
-\begin{verbatim}
+\begin{lstlisting}
 inc.variable[:,2]
-\end{verbatim}
+\end{lstlisting}
 
 returns an \texttt{np.array} of the third variable (index 2) in each block.  The \texttt{variable} property can also be set to a given array.  Note, however, that the whole array must be set, not just part of it.  For example, adding an offset \texttt{P0} to all pressures (variable 0) in the initial conditions could be done by:
 
-\begin{verbatim}
-v=inc.variable
-v[:,0]+=P0
-inc.variable=v
-\end{verbatim}
+\begin{lstlisting}
+v = inc.variable
+v[:,0] += P0
+inc.variable = v
+\end{lstlisting}
 
 The \texttt{porosity} property may be set to assign values of porosity to all blocks.  The assigned value may be an \texttt{np.array} with a value for each block, or a scalar float (in which case the same value is assigned to all blocks), or \texttt{None} which assigns the value in each block to \texttt{None}.
 
 Similarly, for TOUGHREACT initial conditions files, the \texttt{permeability} property can be used to read or assign permeabilities for all blocks.  When assigning this property, the value can be an \texttt{np.array} of shape (\texttt{num\_blocks}, 3), (i.e. a row for each block), or a single \texttt{np.array} with 3 elements, to be applied to all blocks, a single scalar float (to assign isotropic permeabilities to all blocks) or \texttt{None} which assigns \texttt{None} to all block permeabilities.
 
-The \texttt{timing} property of a \texttt{t2incon} object contains the optional timing information at the end of the file.  This is a dictionary property with keys \texttt{`kcyc'}, \texttt{`iter'}, \texttt{`nm'}, \texttt{`tstart'} and \texttt{`sumtim'}, corresponding to the values stored on this line.
+The \texttt{timing} property of a \texttt{t2incon} object contains the optional timing information at the end of the file.  This is a dictionary property with keys \texttt{'kcyc'}, \texttt{'iter'}, \texttt{'nm'}, \texttt{'tstart'} and \texttt{'sumtim'}, corresponding to the values stored on this line.
 
 The \texttt{simulator} string property is `TOUGH2' by default, and is set to `TOUGHREACT' if permeabilities are detected while reading from file.  Setting this property back to `TOUGH2' will cause the file to be written out in TOUGH2 format (no permeabilities, and different format for timing information) if the \texttt{write()} method is executed.
 
@@ -230,11 +230,11 @@ TOUGH2 writes a *.save file at the end of the simulation, which has a format alm
 
 PyTOUGH will read a *.save file into a \texttt{t2incon} object.  This can then be written to file, providing a simple way to convert *.save files into *.incon files.  By default, the timing information is discarded when writing (it can be retained by setting the \texttt{reset} parameter of the \texttt{write} method to \texttt{False}).  For example:
 
-\begin{verbatim}
+\begin{lstlisting}
 t2incon('model1.save').write('model2.incon')
-\end{verbatim}
+\end{lstlisting}
 
-will read the save file \texttt{`model1.save'}, convert it to initial conditions, and write it to the initial conditions file \texttt{`model2.incon'}.
+will read the save file \texttt{'model1.save'}, convert it to initial conditions, and write it to the initial conditions file \texttt{'model2.incon'}.
 
 \section{Example}
 
@@ -242,14 +242,13 @@ The following piece of Python script reads in a *.save file and prints out a tab
 
 Adding a new variable to each initial condition can be useful when e.g. changing from one TOUGH2 equation of state (EOS) module to another, as different EOS modules may have different numbers of primary thermodynamic variables.
 
-\begin{verbatim}
+\begin{lstlisting}
 from t2incons import *
-inc=t2incon('model1.save')
+inc = t2incon('model1.save')
 for blk in inc[0:10]:
     print 'Block %5s: temperature = %5.1f' % (blk.block,blk[1])
-patm=101.3e3
+patm = 101.3e3
 for blk in inc: blk.variable.append(patm)
 inc.write('model2.incon')
-
-\end{verbatim}
+\end{lstlisting}
 

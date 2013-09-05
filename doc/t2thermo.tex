@@ -6,9 +6,9 @@ The \texttt{t2thermo} library in PyTOUGH contains a Python implementation of the
 
 The \texttt{t2thermo} library can be imported using the command:
 
-\begin{verbatim} 
+\begin{lstlisting} 
    from t2thermo import *
-\end{verbatim}
+\end{lstlisting}
 
 The functions available through the \texttt{t2thermo} library are listed in Table \ref{tb:t2thermo_functions} and described below.
 
@@ -41,12 +41,12 @@ The thermodynamic routines used in TOUGH2 provide functions for liquid water and
 \end{snugshade}
 \label{sec:t2thermo:cowat}
 
-The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of liquid water as a function of temperature \texttt{t} ($^{\circ}$C) and pressure \texttt{p} (Pa).
+The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of liquid water as a function of temperature \texttt{t} ($\degree$C) and pressure \texttt{p} (Pa).
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{t}: float\\
-  Temperature ($^{\circ}$C)
+  Temperature ($\degree$C)
 \item \textbf{p}: float\\
   Pressure (Pa)
 \end{itemize}
@@ -56,12 +56,12 @@ The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) 
 \end{snugshade}
 \label{sec:t2thermo:supst}
 
-The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of dry steam as a function of temperature \texttt{t} ($^{\circ}$C) and pressure \texttt{p} (Pa).
+The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of dry steam as a function of temperature \texttt{t} ($\degree$C) and pressure \texttt{p} (Pa).
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{t}: float\\
-  Temperature ($^{\circ}$C)
+  Temperature ($\degree$C)
 \item \textbf{p}: float\\
   Pressure (Pa)
 \end{itemize}
@@ -73,12 +73,12 @@ The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) 
 \end{snugshade}
 \label{sec:t2thermo:visw}
 
-The \texttt{visw} function returns the dynamic viscosity (Pa.s) of liquid water as a function of temperature \texttt{t} ($^{\circ}$C), pressure (Pa) and saturation pressure (Pa).
+The \texttt{visw} function returns the dynamic viscosity (Pa.s) of liquid water as a function of temperature \texttt{t} ($\degree$C), pressure (Pa) and saturation pressure (Pa).
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{t}: float\\
-  Temperature ($^{\circ}$C)
+  Temperature ($\degree$C)
 \item \textbf{p}: float\\
   Pressure (Pa)
 \item \textbf{ps}: float\\
@@ -90,12 +90,12 @@ The \texttt{visw} function returns the dynamic viscosity (Pa.s) of liquid water 
 \end{snugshade}
 \label{sec:t2thermo:viss}
 
-The \texttt{viss} function returns the dynamic viscosity (Pa.s) of dry steam as a function of temperature \texttt{t} ($^{\circ}$C) and density \texttt{d} (kg/m$^3$).
+The \texttt{viss} function returns the dynamic viscosity (Pa.s) of dry steam as a function of temperature \texttt{t} ($\degree$C) and density \texttt{d} (kg/m$^3$).
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{t}: float\\
-  Temperature ($^{\circ}$C)
+  Temperature ($\degree$C)
 \item \textbf{d}: float\\
   Density (kg/m$^3$)
 \end{itemize}
@@ -107,12 +107,12 @@ The \texttt{viss} function returns the dynamic viscosity (Pa.s) of dry steam as 
 \end{snugshade}
 \label{sec:t2thermo:sat}
 
-The \texttt{sat} function returns the saturation pressure (Pa) at a given temperature \texttt{t} ($^{\circ}$C), for temperatures below the critical temperature.
+The \texttt{sat} function returns the saturation pressure (Pa) at a given temperature \texttt{t} ($\degree$C), for temperatures below the critical temperature.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{t}: float\\
-  Temperature ($^{\circ}$C)
+  Temperature ($\degree$C)
 \end{itemize}
 
 \begin{snugshade}
@@ -120,7 +120,7 @@ The \texttt{sat} function returns the saturation pressure (Pa) at a given temper
 \end{snugshade}
 \label{sec:t2thermo:tsat}
 
-The \texttt{tsat} function returns the saturation temperature ($^{\circ}$C) at a given pressure \texttt{p} (Pa), for pressures below the critical pressure.
+The \texttt{tsat} function returns the saturation temperature ($\degree$C) at a given pressure \texttt{p} (Pa), for pressures below the critical pressure.
 
 Note that the IFC-67 formulation did not include an explicit formula for calculating saturation temperature as a function of pressure, so here (as in TOUGH2) this is calculated using an iterative root-finding process on the \texttt{sat} function.  The root-finding function is from the \texttt{scipy} library, so this library must be installed before the \texttt{tsat} function will work.
 
@@ -155,28 +155,29 @@ Returns the separated steam fraction for a given enthalpy \texttt{h} and separat
 
 The following script reads in a geometry file and writes an initial conditions file with approximate hydrostatic conditions corresponding to a specified vertical temperature gradient.  In this case, the model has a simple flat surface, so that each column has the same number of layers.  The \texttt{cowat} function is used to calculate the fluid density at each layer, and hence the approximate vertical pressure distribution.
 
-\begin{verbatim}
+\begin{lstlisting}
 from mulgrids import *
 from t2thermo import *
 
-geo=mulgrid(`gmodel.dat')
+geo = mulgrid('gmodel.dat')
 
-patm,tatm=101.325e3,15.0
-pblk,tblk=np.zeros(geo.num_blocks)+patm,np.zeros(geo.num_blocks)+tatm
-g=9.8
-p,t=patm,tatm
-thick=0.0
-tgradient=30 # deg C/km
+patm, tatm = 101.325e3, 15.0
+pblk = np.zeros(geo.num_blocks) + patm
+tblk = np.zeros(geo.num_blocks) + tatm
+g = 9.8
+p, t = patm, tatm
+thick = 0.0
+tgradient = 30 # deg C/km
 for lay in geo.layerlist[1:]:
-    d=cowat(t,p)[0]
-    thisthick=lay.top-lay.bottom
-    h=0.5*(thick+thisthick)
-    p+=d*g*h
-    t+=tgradient/1.e3*h
-    thick=thisthick
+    d = cowat(t, p)[0]
+    thisthick = lay.top-lay.bottom
+    h = 0.5*(thick+thisthick)
+    p += d*g*h
+    t += tgradient/1.e3*h
+    thick = thisthick
     for col in geo.columnlist:
-        blkname=geo.block_name(lay.name,col.name)
-        iblk=geo.block_name_index[blkname]
-        pblk[iblk],tblk[iblk]=p,t
-geo.write_incons(`model.incon',[pblk,tblk])
-\end{verbatim}
+        blkname = geo.block_name(lay.name, col.name)
+        iblk = geo.block_name_index[blkname]
+        pblk[iblk], tblk[iblk] = p, t
+geo.write_incons('model.incon', [pblk, tblk])
+\end{lstlisting}

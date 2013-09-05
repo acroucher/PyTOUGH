@@ -4,9 +4,9 @@
 \section{Introduction}
 The \texttt{t2listing} library in PyTOUGH contains classes and routines for reading TOUGH2 listing files.  It can be imported using the command:
 
-\begin{verbatim}
+\begin{lstlisting}
    from t2listing import *
-\end{verbatim}
+\end{lstlisting}
 
 Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP and TOUGH+ have different formats but are all supported.
 
@@ -16,15 +16,15 @@ The \texttt{t2listing} library defines a \texttt{t2listing} class, used for repr
 
 \textbf{Example:}
 
-\begin{verbatim}
-lst=t2listing()
-\end{verbatim}
+\begin{lstlisting}
+lst = t2listing()
+\end{lstlisting}
 
 creates an empty \texttt{t2listing} object called \texttt{lst}.
 
-\begin{verbatim}
-lst=t2listing(filename)
-\end{verbatim}
+\begin{lstlisting}
+lst = t2listing(filename)
+\end{lstlisting}
 
 creates a \texttt{t2listing} object called \texttt{lst} and reads its contents from file \texttt{filename}.
 
@@ -36,11 +36,11 @@ The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t
 
 There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \hyperref[listingtableobjects]{\texttt{listingtable}} (see section \ref{listingtableobjects}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
 
-For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element[`AR210'][`Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120][`Pressure']} gives the pressure at the block with (zero-based) index 120.
+For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element['AR210']['Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120]['Pressure']} gives the pressure at the block with (zero-based) index 120.
 
-These tables can also be accessed to give all results for a given block, or for a given column in the table.  For example, \texttt{lst.element[`AR210']} returns a dictionary containing all results at block `AR210', referred to by the name of each table column.  \texttt{lst.element[`Temperature']} returns an \texttt{np.array} containing the temperatures at all blocks in the model.  (Hence, \texttt{lst.element[`Pressure'][120]} gives the same result as \texttt{lst.element[120][`Pressure']}.)
+These tables can also be accessed to give all results for a given block, or for a given column in the table.  For example, \texttt{lst.element['AR210']} returns a dictionary containing all results at block `AR210', referred to by the name of each table column.  \texttt{lst.element['Temperature']} returns an \texttt{np.array} containing the temperatures at all blocks in the model.  (Hence, \texttt{lst.element['Pressure'][120]} gives the same result as \texttt{lst.element[120]['Pressure']}.)
 
-The connection and generation tables work very similarly to the element table, except that connections are referred to by tuples of block names (rather than single block names), and generators are referred to by tuples of block names and generator names.  So for example, the mass flow rate between blocks `AB300' and `AC300' might be given by \texttt{lst.connection[`AB300',`AC300'][`Mass flow']}.
+The connection and generation tables work very similarly to the element table, except that connections are referred to by tuples of block names (rather than single block names), and generators are referred to by tuples of block names and generator names.  So for example, the mass flow rate between blocks `AB300' and `AC300' might be given by \texttt{lst.connection['AB300', 'AC300']['Mass flow']}.
 
 The names of the columns for each table are read directly from the listing file, and will depend on the TOUGH2 equation of state (EOS) being used.
 
@@ -50,9 +50,9 @@ The default behaviour is for a \texttt{t2listing} object to read all tables pres
 
 To skip tables, specify their table names (\texttt{element}, \texttt{connection} etc.) in the optional \texttt{skip\_tables} parameter when creating the \texttt{t2listing} object.  (By default, this parameter is an empty list.)  For example, to read a listing file with name `output.listing' into the object \texttt{lst} and skip reading the connection and generation tables:
 
-\begin{verbatim}
-lst = t2listing('output.listing',skip_tables=['connection','generation'])
-\end{verbatim}
+\begin{lstlisting}
+lst = t2listing('output.listing', skip_tables = ['connection', 'generation'])
+\end{lstlisting}
 
 \subsubsection{Full and short output}
 
@@ -78,9 +78,9 @@ A \texttt{t2listing} object also has methods (as well as properties) for navigat
 
 The \texttt{convergence} property is a dictionary of the maximum absolute differences in the element table between the second to last and last sets of results in the listing file.  This can be used to check convergence of steady-state simulations.  For example:
 
-\begin{verbatim}
-lst.convergence[`Temperature']
-\end{verbatim}
+\begin{lstlisting}
+lst.convergence['Temperature']
+\end{lstlisting}
 
 gives the largest absolute temperature change between the second to last and last sets of results.
 
@@ -198,10 +198,10 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
 
 \textbf{Example:}
 
-\begin{verbatim}
-[(tt,temp),(tq,q),(tg,g)] = lst.history([(`e',`AR210',`Temperature'),
-(`c',(`AB300',`AC300'),`Mass flow'),(`g',(`BR110',`SO  1'),`Generation rate')])
-\end{verbatim}
+\begin{lstlisting}
+[(tt,temp), (tq,q), (tg,g)] = lst.history([('e', 'AR210', 'Temperature'),
+('c', ('AB300','AC300'), 'Mass flow'), ('g', ('BR110','SO  1'), 'Generation rate')])
+\end{lstlisting}
 
 returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \texttt{(tq,q)} and \texttt{(tg,g)}, giving the times and values of temperature at block `AR210', mass flow at the connection between blocks `AB300' and `AC300', and generation rate in the generator `SO  1' in block `BR110' respectively.
 
@@ -229,7 +229,7 @@ Navigates to the previous set of full results in the listing file.  Returns \tex
 \begin{snugshade}
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{flows}=False,
 \emph{wells}=False,\\
-\emph{start\_time}=0, \emph{time\_unit}=`s', \emph{flux\_matrix}=None)}}
+\emph{start\_time}=0, \emph{time\_unit}='s', \emph{flux\_matrix}=None)}}
 \end{snugshade}
 \label{sec:t2listing:write_vtk}
 
@@ -286,7 +286,7 @@ A \texttt{listingtable} object represents a table of results in a TOUGH2 listing
 
 Hence, the value in the element table for a given block and column can be accessed by \texttt{lst.element[\emph{blockname}][\emph{columnname}]}, or by \texttt{lst.element[\emph{blockindex}][\emph{columnname}]} (for a \texttt{t2listing} object \texttt{lst}).  Note that for connection and generation tables, the keys are tuples of two strings.  For connection tables, the order of these two strings (the block names) is not important; if the listing file contains results for (block1, block2), then results for (block2, block1) can be accessed via the corresponding \texttt{listingtable} object (though the results will have the opposite sign to those in the file, as they will represent flows in the opposite direction).
 
-The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[\emph{blockname}]} gives the row in the table for a specified block, with the values arranged in a dictionary which can be accessed using the column names of the table (e.g. \texttt{lst.element[`AR231'][`Temperature']}).  This dictionary for each row also contains an additional \texttt{`key'} item which returns the key for that row.  Conversely, \texttt{lst.element[\emph{columnname}]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid, for an element table).
+The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[\emph{blockname}]} gives the row in the table for a specified block, with the values arranged in a dictionary which can be accessed using the column names of the table (e.g. \texttt{lst.element['AR231']['Temperature']}).  This dictionary for each row also contains an additional \texttt{'key'} item which returns the key for that row.  Conversely, \texttt{lst.element[\emph{columnname}]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid, for an element table).
 
 The properties of a \texttt{listingtable} object are given in Table \ref{tb:listingtable_properties}.  The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.  The \texttt{num\_keys} property just returns the number of keys used to identify each row- generally 1 for an element table and 2 for connection and generation tables.
 
@@ -338,49 +338,49 @@ In addition to the main listing file, TOUGH2 can optionally produce extra files 
 
 The \texttt{t2listing} module contains a \texttt{t2historyfile} class for reading and manipulating these history files.  History files produced by TOUGH2, TOUGH2\_MP and TOUGH+ are supported, although they all have different formats.  The same class is used for FOFT, COFT and GOFT files.  A history file of any of these types can be opened using a command such as:
 
-\begin{verbatim}
+\begin{lstlisting}
 hist = t2historyfile(filename)
-\end{verbatim}
+\end{lstlisting}
 
 where \texttt{\emph{filename}} is the name of the file.  It may contain wildcards (*) so that several files matching a pattern are read in to the same object.  This is useful for reading output from TOUGH2\_MP, which creates separate history files for each processor used in the calculation (e.g. \texttt{FOFT\_P.000}, \texttt{FOFT\_P.001}, etc.).  It is assumed that all files opened are however of the same type (FOFT, COFT or GOFT).
 
 Once a history file has been read in, history results for a particular key (i.e. block, connection or generator) can be extracted.  For TOUGH2\_MP, the keys are the block names for FOFT files, tuples of block names for COFT files, and tuples of block names and source names for GOFT files.  For example:
 
-\begin{verbatim}
+\begin{lstlisting}
 foft = t2historyfile('FOFT_P.*')
 blockname = 'fmq20'
 results = foft[blockname]
-\end{verbatim}
+\end{lstlisting}
 
 This will return a dictionary containing an \texttt{np.array} for each column in the file, indexed by the column name.  For example the temperature history at this block would be given by:
 
-\begin{verbatim}
+\begin{lstlisting}
 temp = foft[blockname]['TEMPERATURE']
-\end{verbatim}
+\end{lstlisting}
 
 Results at a particular time can also be found:
 
-\begin{verbatim}
+\begin{lstlisting}
 time = 3.156e7
-result = foft[blockname,time]
-\end{verbatim}
+result = foft[blockname, time]
+\end{lstlisting}
 
 Again, this will return a dictionary with one item for each column, but in this case each item is just a single floating point number instead of an array.
 
 For \textbf{TOUGH2} rather than TOUGH2\_MP, the keys are integer indices of blocks, connections or generators, rather than names or tuples of names.  Similarly, the column names are just integers.  This is because the key names and column names are not given in TOUGH2 history files.  Aside from these differences, they can be used in the same way as TOUGH2\_MP history files, for example:
 
-\begin{verbatim}
+\begin{lstlisting}
 foft = t2historyfile('FOFT')
 blkindex = 123
 temp = foft[blkindex][1]
-\end{verbatim}
+\end{lstlisting}
 
 For \textbf{TOUGH+} connection and generator history files (\texttt{COFT} and \texttt{GOFT}, or \texttt{Conx\_Time\_Series} and \texttt{SS\_Time\_Series}), multiple connections and generators can be specified as usual in the TOUGH2 input data file, but individual results for them are not written to the history file.  Instead, the results for them are summed.  As a result, there are no `keys' as such for accessing individual results, and the \texttt{t2historyfile} works a little differently.  An array containing the data in each column can be accessed by specifying the column name, for example:
 
-\begin{verbatim}
+\begin{lstlisting}
 ct = t2historyfile('Conx_Time_Series')
 qh = ct['HeatFlow']
-\end{verbatim}
+\end{lstlisting}
 
 The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:historyfile_properties}.
 
@@ -411,21 +411,21 @@ The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:his
 
 This script shows a vertical slice plot along the model's \emph{x}-axis of the difference in pressure (i.e. drawdown) between the start and end of a simulation.
 
-\begin{verbatim}
+\begin{lstlisting}
 from mulgrids import *
 from t2listing import *
 from copy import copy
 
-geo=mulgrid(`gmodel.dat')
-results=t2listing(`model.listing')
+geo = mulgrid('gmodel.dat')
+results = t2listing('model.listing')
 
 results.first()
-p0=copy(results.element[`Pressure'])
+p0 = copy(results.element['Pressure'])
 results.last()
-p1=results.element[`Pressure']
+p1 = results.element['Pressure']
 
-geo.slice_plot(`x',(p1-p0)/1.e5,`Pressure\ difference',`bar')
-\end{verbatim}
+geo.slice_plot('x', (p1-p0)/1.e5, 'Pressure\ difference', 'bar')
+\end{lstlisting}
 
 (Note: the \texttt{copy} command is needed, otherwise the arrays \texttt{p0} and \texttt{p1} would both contain the final values of pressure after the \texttt{results.last()} command.)
 
@@ -433,46 +433,46 @@ geo.slice_plot(`x',(p1-p0)/1.e5,`Pressure\ difference',`bar')
 
 This script plots model results from a specified block on a pressure-temperature diagram.
 
-\begin{verbatim}
+\begin{lstlisting}
 from t2listing import *
 import matplotlib.pyplot as plt
 
-lst=t2listing(`model.listing')
-blk=` n 60'
-[(tp,p),(tt,t)]=lst.history([(`e',blk,`Pressure'),(`e',blk,`Temperature')])
+lst = t2listing('model.listing')
+blk = ' n 60'
+[(tp,p), (tt,t)] = lst.history([('e', blk, 'Pressure'), ('e', blk, 'Temperature')])
 
-plt.plot(t,p/1.e5,`o-')
-plt.xlabel(`T ($^o$C)')
-plt.ylabel(`P (bar)')
+plt.plot(t, p/1.e5, 'o-')
+plt.xlabel('T ($\degree$C)')
+plt.ylabel('P (bar)')
 plt.show()
-\end{verbatim}
+\end{lstlisting}
 
 \subsection{Comparing results of two models}
 \label{comparison_example}
 
 This script reads grids and results for two different models, a coarse model and a fine one, and produces a comparison plot of the time history of temperature for both models at a given point.
 
-\begin{verbatim}
+\begin{lstlisting}
 from mulgrids import *
 from t2listing import *
 import matplotlib.pyplot as plt
 
-geoc,geof=mulgrid(`gcoarse.dat'),mulgrid(`gfine.dat')
-coarse,fine=t2listing(`coarse.listing'),t2listing(`fine.listing')
+geoc, geof = mulgrid('gcoarse.dat'), mulgrid('gfine.dat')
+coarse, fine = t2listing('coarse.listing'), t2listing('fine.listing')
 
-p=[47.e3,0.0,-7000.0]
-blkc=geoc.block_name_containing_point(p)
-blkf=geof.block_name_containing_point(p)
+p = [47.e3, 0.0, -7000.0]
+blkc = geoc.block_name_containing_point(p)
+blkf = geof.block_name_containing_point(p)
 
-tc,tempc=coarse.history((`e',blkc,`Temperature'))
-tf,temp=fine.history((`e',blkf,`Temperature'))
+tc, tempc = coarse.history(('e', blkc, 'Temperature'))
+tf, temp = fine.history(('e', blkf, 'Temperature'))
 
-plt.plot(tc,tempc,`o-',label=`coarse model')
-plt.plot(tf,tempf,`s-',label=`fine model')
-plt.xlabel(`time (s)')
-plt.ylabel(`Temperature ($^o$C)')
+plt.plot(tc, tempc, 'o-', label = 'coarse model')
+plt.plot(tf, tempf, 's-', label = 'fine model')
+plt.xlabel('time (s)')
+plt.ylabel('Temperature ($\degree$C)')
 plt.legend()
 
 plt.show()
-\end{verbatim}
+\end{lstlisting}
 

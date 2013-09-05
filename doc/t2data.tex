@@ -4,9 +4,9 @@
 \section{Introduction}
 The \texttt{t2data} library in PyTOUGH contains classes and routines for creating, editing and saving TOUGH2 or AUTOUGH2 data files.  It can be imported using the command:
 
-\begin{verbatim}
+\begin{lstlisting}
    from t2data import *
-\end{verbatim}
+\end{lstlisting}
 
 \section{\texttt{t2data} objects}
 
@@ -14,15 +14,15 @@ The \texttt{t2data} library defines a \texttt{t2data} class, used for representi
 
 \textbf{Example:}
 
-\begin{verbatim}
-dat=t2data()
-\end{verbatim}
+\begin{lstlisting}
+dat = t2data()
+\end{lstlisting}
 
 creates an empty \texttt{t2data} object called \texttt{dat}.
 
-\begin{verbatim}
-dat=t2data(filename)
-\end{verbatim}
+\begin{lstlisting}
+dat = t2data(filename)
+\end{lstlisting}
 
 creates a \texttt{t2data} object called \texttt{dat} and reads its contents from file \texttt{filename}.  (It is also possible to read the mesh part of the \texttt{t2data} object from separate files- see below.)
 
@@ -32,7 +32,7 @@ Because a \texttt{t2data} object contains a large number of different parameters
 
 The main properties of a \texttt{t2data} object are listed in Table \ref{tb:t2data_properties}.  In general, each of these properties corresponds to an input block in a TOUGH2 data file.  Most of these input blocks contain a number of different parameters, so that the \texttt{t2data} property corresponding to each input block is usually in the form of a dictionary, containing a number of keys representing sub-properties.
 
-For example, the maximum number of time steps for the simulation is controlled by \texttt{max\_timesteps} key in the \texttt{parameter} property, which for a \texttt{t2data} object called \texttt{dat} would be accessed by \texttt{dat.parameter[`max\_timesteps']}.
+For example, the maximum number of time steps for the simulation is controlled by \texttt{max\_timesteps} key in the \texttt{parameter} property, which for a \texttt{t2data} object called \texttt{dat} would be accessed by \texttt{dat.parameter['max\_timesteps']}.
 
 The details of all the \texttt{t2data} properties are given below.
 
@@ -106,7 +106,7 @@ A dictionary property specifying the capillarity function used, corresponding to
 \end{snugshade}
 \label{sec:t2data:diffusion}
 
-A list property specifying diffusion coefficients for each mass component simulated, corresponding to the \textbf{DIFFU} input block in the TOUGH2 data file.  The list has length \texttt{multi[`num\_components']} (i.e. NK in TOUGH2 terminology), and each element is a list of the diffusion coefficients for each component (with length \texttt{multi[`num\_phases']}, or NPH).
+A list property specifying diffusion coefficients for each mass component simulated, corresponding to the \textbf{DIFFU} input block in the TOUGH2 data file.  The list has length \texttt{multi['num\_components']} (i.e. NK in TOUGH2 terminology), and each element is a list of the diffusion coefficients for each component (with length \texttt{multi['num\_phases']}, or NPH).
 
 \begin{snugshade}
 \subsubsection{\texttt{echo\_extra\_precision} property}
@@ -189,7 +189,7 @@ A list property containing blocks in which generators are defined and for which 
 
 A dictionary property representing the initial conditions for the simulation, accessed by block name, corresponding to the \textbf{INCON} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the porosity of the block followed by the specified initial primary thermodynamic variables in the block.
 
-For example, to specify porosity 0.1 and initial conditions (101.3E3, 20.0) in block \texttt{`AB105'} of a \texttt{t2data} object called \texttt{dat}, set \texttt{dat.incon[`AB105'] = [0.1, 101.3e3, 20.0]}.
+For example, to specify porosity 0.1 and initial conditions (101.3E3, 20.0) in block \texttt{'AB105'} of a \texttt{t2data} object called \texttt{dat}, set \texttt{dat.incon['AB105'] = [0.1, 101.3e3, 20.0]}.
 
 \begin{snugshade}
 \subsubsection{\texttt{indom} property}
@@ -251,17 +251,17 @@ Possible sub-section types for \texttt{rz2d} data are \texttt{radii}, \texttt{eq
 
 \textbf{Example}: The easiest way to understand how the \texttt{meshmaker} property works is to read some example input data into a \texttt{t2data} object and examine the result.  The \textbf{MESHM} data for the standard TOUGH2 test problem `rhbc' (`Production from a geothermal reservoir with hypersaline brine') is represented as a \texttt{t2data} \texttt{meshmaker} property as follows:
 
-\begin{verbatim}
-[(`rz2d',[
- (`radii', {`radii': [5.0]}),
- (`equid', {`dr': 2.0, `nequ': 1}),
- (`logar', {`rlog': 100.0, `nlog': 50}),
- (`logar', {`rlog': 1000.0, `nlog': 20}),
- (`equid', {`dr': 0.0, `nequ': 1}),
- (`layer', {`layer': [500.0]})
+\begin{lstlisting}
+[('rz2d',[
+ ('radii', {'radii': [5.0]}),
+ ('equid', {'dr': 2.0, 'nequ': 1}),
+ ('logar', {'rlog': 100.0, 'nlog': 50}),
+ ('logar', {'rlog': 1000.0, 'nlog': 20}),
+ ('equid', {'dr': 0.0, 'nequ': 1}),
+ ('layer', {'layer': [500.0]})
  ])
 ]
-\end{verbatim}
+\end{lstlisting}
 
 \begin{table}
   \begin{center}
@@ -585,8 +585,8 @@ Adds a generator to the data file object.
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{convert\_to\_AUTOUGH2(\emph{warn}=True, \emph{MP}=False, \emph{simulator}=`AUTOUGH2.2',\
-    \emph{eos}=`EW')}}
+\subsubsection{\texttt{convert\_to\_AUTOUGH2(\emph{warn}=True, \emph{MP}=False, \emph{simulator}='AUTOUGH2.2',\
+    \emph{eos}='EW')}}
 \end{snugshade}
 \label{sec:t2data:convert_to_AUTOUGH2}
 
@@ -662,7 +662,7 @@ Returns the index (in the \texttt{generatorlist} list) of the generator with the
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{read(\emph{filename}, \emph{meshfilename}=`')}}
+\subsubsection{\texttt{read(\emph{filename}, \emph{meshfilename}='')}}
 \end{snugshade}
 \label{sec:t2data:read}
 
@@ -679,7 +679,7 @@ Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data m
 Note that it is possible to create a \texttt{t2data} object and read its contents in from disk files in one step, e.g.: \texttt{dat = t2data(filename,meshfilename)}.
 
 \begin{snugshade}
-\subsubsection{\texttt{run(\emph{save\_filename}=`', \emph{incon\_filename}=`', \emph{simulator}=`AUTOUGH2\_2',\\
+\subsubsection{\texttt{run(\emph{save\_filename}='', \emph{incon\_filename}='', \emph{simulator}='AUTOUGH2\_2',\\
     \emph{silent}=False)}}
 \end{snugshade}
 \label{sec:t2data:run}
@@ -690,10 +690,10 @@ For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable mus
 
 Running TOUGH2\_MP is generally done via MPI rather than directly, and the exact syntax for doing so may vary with different implementations of MPI (OpenMPI, MPICH2 etc.)  It is also necessary to specify the number of processors to use.  However it is still possible to run TOUGH2\_MP from a Python script using a system call, e.g.:
 
-\begin{verbatim}
+\begin{lstlisting}
 from os import system
 system("mpirun -np 16 t2eos1_mp")
-\end{verbatim}
+\end{lstlisting}
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -708,7 +708,7 @@ system("mpirun -np 16 t2eos1_mp")
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{specific\_generation(\emph{type}=`MASS', \emph{name}=`')}}
+\subsubsection{\texttt{specific\_generation(\emph{type}='MASS', \emph{name}='')}}
 \end{snugshade}
 \label{sec:t2data:specific_generation}
 
@@ -724,7 +724,7 @@ Returns an \texttt{np.array} containing the total specific generation rate in ea
 
 \begin{snugshade}
 \subsubsection{\texttt{transfer\_from(\emph{source}, \emph{sourcegeo}, \emph{geo}, \emph{top\_generator}=[], \emph{bottom\_generator}=[],\\
-    \emph{sourceinconfilename}=`', \emph{inconfilename}=`', \emph{rename\_generators}=False, \\
+    \emph{sourceinconfilename}='', \emph{inconfilename}='', \emph{rename\_generators}=False, \\
     \emph{preserve\_generation\_totals}=False)}}
 \end{snugshade}
 \label{sec:t2data:transfer_from}
@@ -758,7 +758,7 @@ If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{total\_generation(\emph{type}=`MASS', \emph{name}=`')}}
+\subsubsection{\texttt{total\_generation(\emph{type}='MASS', \emph{name}='')}}
 \end{snugshade}
 \label{sec:t2data:total_generation}
 
@@ -773,7 +773,7 @@ Returns an \texttt{np.array} containing the total generation rate in each block 
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{write(\emph{filename}=`', \emph{meshfilename}=`', \emph{extra\_precision}=None,\\
+\subsubsection{\texttt{write(\emph{filename}='', \emph{meshfilename}='', \emph{extra\_precision}=None,\\
     \emph{echo\_extra\_precision}=None)}}
 \end{snugshade}
 \label{sec:t2data:write}
@@ -829,26 +829,26 @@ A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e
 
 The following piece of Python script opens a MULgraph geometry file and TOUGH2 data file, changes some TOUGH2 run-time parameters and assigns heat generators to the blocks in the bottom layer inside a defined area, with the specified total heat divided uniformly amongst the generators.
 
-\begin{verbatim}
-geo=mulgrid(`gmodel.dat')
-dat=t2data(`model.dat')
+\begin{lstlisting}
+geo = mulgrid('gmodel.dat')
+dat = t2data('model.dat')
 
-dat.parameter[`max_timesteps']=300
-dat.parameter[`print_interval']=dat.parameter[`max_timesteps']/10
-dat.parameter[`option'][16]=5 # time step control
+dat.parameter['max_timesteps'] = 300
+dat.parameter['print_interval'] = dat.parameter['max_timesteps']/10
+dat.parameter['option'][16] = 5 # time step control
 
 dat.clear_generators()
-totalheat=10.e6
-layer=geo.layerlist[-1]  # bottom layer
-cols=[col for col in geo.columnlist if 10.e3<=col.centre[0]<=20.e3]
-totalarea=sum([col.area for col in cols])
-q=totalheat/totalarea
+totalheat = 10.e6
+layer = geo.layerlist[-1]  # bottom layer
+cols = [col for col in geo.columnlist if 10.e3 <= col.centre[0] <= 20.e3]
+totalarea = sum([col.area for col in cols])
+q = totalheat / totalarea
 
 for col in cols:
-    blockname=geo.block_name(layer.name,col.name)
-    gen=t2generator(name=` q'+col.name,block=blockname,type=`HEAT',gx=q*col.area)
+    blockname = geo.block_name(layer.name, col.name)
+    gen = t2generator(name = ' q'+col.name, block = blockname, type = 'HEAT', gx = q*col.area)
     dat.add_generator(gen)
 
 dat.write()
 
-\end{verbatim}
+\end{lstlisting}

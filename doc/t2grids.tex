@@ -4,9 +4,9 @@
 \section{Introduction}
 The \texttt{t2grids} library in PyTOUGH contains classes and routines for manipulating TOUGH2 grids.  It can be imported using the command:
 
-\begin{verbatim}
+\begin{lstlisting}
     from t2grids import *
-\end{verbatim}
+\end{lstlisting}
 
 \section{\texttt{t2grid} objects}
 
@@ -18,9 +18,9 @@ Printing a \texttt{t2grid} object (e.g. \texttt{print grid}) displays a summary 
 
 \subsection{Properties}
 
-The main properties of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_properties}.  Essentially a \texttt{t2grid} object contains collections of blocks, rock types and connections, each accessible either by name or by index.  For example, block `AB 20' in a \texttt{t2grid} called \texttt{grid} is given by \texttt{grid.block[`AB 20']}.
+The main properties of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_properties}.  Essentially a \texttt{t2grid} object contains collections of blocks, rock types and connections, each accessible either by name or by index.  For example, block `AB 20' in a \texttt{t2grid} called \texttt{grid} is given by \texttt{grid.block['AB 20']}.
 
-Connections are slightly different from blocks or rock types, in that they are not named individually.  However, they can be accessed by the names of the blocks connected by the connection.  For example, the connection between blocks `aa 10' and `ab 10' in a \texttt{t2grid} called \texttt{grid} is given by \texttt{grid.connection[`aa 10',`ab 10']}.
+Connections are slightly different from blocks or rock types, in that they are not named individually.  However, they can be accessed by the names of the blocks connected by the connection.  For example, the connection between blocks `aa 10' and `ab 10' in a \texttt{t2grid} called \texttt{grid} is given by \texttt{grid.connection['aa 10','ab 10']}.
 
 The \texttt{rocktype\_frequencies} property gives information about how frequently each rock type is used (i.e. how many blocks use that rock type).  It returns a list of tuples, the first element of each tuple being the frequency of use, and the second element being a list of rock type names with that frequency.  The list is given in order of increasing frequency.
 
@@ -342,7 +342,7 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 
 \begin{snugshade}
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
-    \emph{justify}=`r', \emph{case}=`l', \emph{dimension}=2)}}
+    \emph{justify}='r', \emph{case}='l', \emph{dimension}=2)}}
 \end{snugshade}
 \label{sec:t2grid:radial}
 
@@ -420,10 +420,9 @@ Some rock type properties are optional, and only need be specified when the prop
 
 \textbf{Example:}
 
-\begin{verbatim}
-r=rocktype(name=`ignim',permeability=[10.e-15,10.e-15,2.e-15],
-  specific_heat=850)
-\end{verbatim}
+\begin{lstlisting}
+r = rocktype(name = 'ignim', permeability = [10.e-15, 10.e-15, 2.e-15], specific_heat = 850)
+\end{lstlisting}
 
 declares a rocktype object called \texttt{r} with name `ignim', permeability of 10 mD in the first and second directions and 2 mD in the vertical direction, and specific heat 850 J.kg$^{-1}$.K$^{-1}$.
 
@@ -524,25 +523,25 @@ A \texttt{t2connection} object has no methods.
 
 The following piece of Python script creates a rectangular 2-D slice TOUGH2 grid with two rock types, and assigns these rock types to blocks in the grid according to their position along the slice.
 
-\begin{verbatim}
+\begin{lstlisting}
 from t2grids import *
 
-geo=mulgrid().rectangular([500]*20,[1000],[100]*20,atmos_type=0,convention=2)
-geo.write(`2Dgrd.dat')
-grid=t2grid().fromgeo(geo)
+geo = mulgrid().rectangular([500]*20, [1000], [100]*20, atmos_type = 0, convention = 2)
+geo.write('2Dgrd.dat')
+grid = t2grid().fromgeo(geo)
 
-grid.add_rocktype(rocktype(`greyw',permeability=[1.e-15]*2+[0.1e-15]))
-grid.add_rocktype(rocktype(`fill ',permeability=[15.e-15]*2+[5.e-15]))
+grid.add_rocktype(rocktype('greyw', permeability = [1.e-15]*2 + [0.1e-15]))
+grid.add_rocktype(rocktype('fill ', permeability = [15.e-15]*2 + [5.e-15]))
 
 for blk in grid.blocklist[1:]:
-    if 200<=blk.centre[0]<=400: blk.rocktype=grid.rocktype[`fill ']
-    else: blk.rocktype=grid.rocktype[`greyw']
-\end{verbatim}
+    if 200 <= blk.centre[0] <= 400: blk.rocktype = grid.rocktype['fill ']
+    else: blk.rocktype = grid.rocktype['greyw']
+\end{lstlisting}
 
 The first line just imports the required PyTOUGH library.  (It is not necessary to import the \texttt{mulgrids} library explicitly, because it is used and therefore imported by the \texttt{t2grids} library.)
 
 The second block of code creates a rectangular MULgraph geometry object with 20 columns (each 500 m wide) along the slice and 20 layers (each 100 m thick), writes this to a geometry file on disk, and creates a TOUGH2 grid from it.
 
-Then the two rock types are created, \texttt{`greyw'} and \texttt{`fill '}.  (Note that rock types are expected by TOUGH2 to have names 5 characters long, so it is necessary to add spaces to shorter names.)
+Then the two rock types are created, \texttt{'greyw'} and \texttt{'fill '}.  (Note that rock types are expected by TOUGH2 to have names 5 characters long, so it is necessary to add spaces to shorter names.)
 
-The final part assigns the rock types to the blocks in the grid.  The loop starts from 1 instead of 0, so that the atmosphere block is skipped.  In this example, the blocks in the grid are assigned the \texttt{`fill'} rock type if they are between 200 m and 400 m along the slice.  Blocks outside this region are assigned the \texttt{`greyw'} rock type.
+The final part assigns the rock types to the blocks in the grid.  The loop starts from 1 instead of 0, so that the atmosphere block is skipped.  In this example, the blocks in the grid are assigned the \texttt{'fill '} rock type if they are between 200 m and 400 m along the slice.  Blocks outside this region are assigned the \texttt{'greyw'} rock type.

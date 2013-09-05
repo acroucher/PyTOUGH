@@ -3,8 +3,13 @@
 % PyTOUGH user's guide
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
+\usepackage{gensymb}
+\usepackage{listings}
 \usepackage{framed,color}
 \definecolor{shadecolor}{gray}{0.9}
+\definecolor{codehighlight}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{codestring}{rgb}{0.58,0,0.82}
+\definecolor{codecomment}{rgb}{0,0.6,0}
 \usepackage[authoryear,round]{natbib}   % for references
 \usepackage[hmargin=3.5cm]{geometry} % change margin
 \usepackage{rotating} % for sideways tables
@@ -19,6 +24,17 @@
   linkcolor = blue, % Colour of internal links
   citecolor = red % Colour of citations
 }
+
+% code listings:
+\lstset{language=Python,
+  basicstyle=\ttfamily,
+  keywordstyle=\color{codehighlight},
+  stringstyle=\color{codestring},
+  commentstyle=\color{codecomment},
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  frame=bt}
 
 %------------------------------------------------------------------------
 \begin{document}
