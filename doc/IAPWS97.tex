@@ -1,5 +1,7 @@
 \chapter{IAPWS-97 thermodynamics}
 \label{iapws97}
+\index{thermodynamics!IAPWS-97}
+\index{PyTOUGH!thermodynamics!IAPWS-97}
 
 \section{Introduction}
 The \texttt{IAPWS97} library in PyTOUGH contains a Python implementation of the main functions of the International Association for the Properties of Water and Steam 1997 (IAPWS-97) thermodynamic formulation \citep{iapws_2000}.  These can be used to calculate the thermodynamic properties of water, steam and supercritical water.  The IAPWS-97 supersedes the IFC-67 formulation used in TOUGH2 (see section \ref{t2thermo}), being generally faster and more accurate, as well as having a simpler representation of the thermodynamic region around the critical point.
@@ -15,6 +17,7 @@ The operating range of the IAPWS-97 formulation is shown in the pressure-tempera
 
 The two-phase region (4) follows the saturation line on the pressure-temperature plot (the boundary between liquid water and dry steam), up to the critical point $C$ ($T$ = 373.946 $\degree$C, $P$ = 22.064 MPa), where the distinction between liquid water and steam disappears.  Region 3 covers supercritcal fluid (above the critical point) and also near-critical fluid, just below the critical point.  The boundary between regions 1 and 3 (liquid water and supercritical) is aribitrarily set at $T$ = 350 $\degree$C.  The boundary between regions 2 and 3 (dry steam and supercritical) is described by the \texttt{b23p} and \texttt{b23t} functions, given in section \ref{region23_boundary}.
 
+\index{thermodynamics!IAPWS-97!operating range}
 \begin {figure}
   \begin{center}
     \includegraphics{ptplot.eps}
@@ -31,6 +34,7 @@ The \texttt{IAPWS97} library can be imported using the command:
 
 The functions available through the \texttt{IAPWS97} library are listed in Table \ref{tb:iapws97_functions} and described below.
 
+\index{thermodynamics!IAPWS-97!functions}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{65mm}|}
@@ -63,6 +67,7 @@ The IAPWS-97 formulation provides thermodynamic functions for liquid water, dry 
 \subsection{Liquid water: \texttt{cowat(\emph{t,p})}}
 \end{snugshade}
 \label{sec:iapws97:cowat}
+\index{thermodynamics!IAPWS-97!liquid water properties}
 
 The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of liquid water as a function of temperature \texttt{t} ($\degree$C) and pressure \texttt{p} (Pa).
 
@@ -78,6 +83,7 @@ The \texttt{cowat} function returns a two-element tuple (\texttt{d},\texttt{u}) 
 \subsection{Dry steam: \texttt{supst(\emph{t,p})}}
 \end{snugshade}
 \label{sec:iapws97:supst}
+\index{thermodynamics!IAPWS-97!dry steam properties}
 
 The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) of density (kg/m$^3$) and internal energy (J/kg) of dry steam as a function of temperature \texttt{t} ($\degree$C) and pressure \texttt{p} (Pa).
 
@@ -93,6 +99,7 @@ The \texttt{supst} function returns a two-element tuple (\texttt{d},\texttt{u}) 
 \subsection{Supercritical fluid: \texttt{super(\emph{d,t})}}
 \end{snugshade}
 \label{sec:iapws97:super}
+\index{thermodynamics!IAPWS-97!supercritical fluid properties}
 
 The \texttt{super} function returns a two-element tuple (\texttt{p},\texttt{u}) of pressure (Pa) and internal energy (J/kg) of supercritical fluid as a function of density \texttt{d} (kg/m$^3$) and temperature \texttt{t} ($\degree$C).
 
@@ -108,6 +115,7 @@ The \texttt{super} function returns a two-element tuple (\texttt{p},\texttt{u}) 
 \section{Viscosity: \texttt{visc(\emph{d,t})}}
 \end{snugshade}
 \label{sec:iapws97:visc}
+\index{thermodynamics!IAPWS-97!viscosity}
 
 The \texttt{visc} function returns the dynamic viscosity (Pa.s) of liquid water, dry steam or supercritical fluid as a function of density \texttt{d} (kg/m$^3$) and temperature \texttt{t} ($\degree$C).  This function is based on the supplementary ``IAPWS Formulation 2008 for the Viscosity of Ordinary Water Substance'', without the critical enhancement of viscosity near the critical point.
 
@@ -129,6 +137,7 @@ These functions describe the boundaries between the four thermodynamic regions o
 \subsubsection{\texttt{sat(\emph{t})}}
 \end{snugshade}
 \label{sec:iapws97:sat}
+\index{thermodynamics!IAPWS-97!saturation line}
 
 The \texttt{sat} function returns the saturation pressure (Pa) at a given temperature \texttt{t} ($\degree$C), for temperatures below the critical temperature.
 
@@ -142,6 +151,7 @@ The \texttt{sat} function returns the saturation pressure (Pa) at a given temper
 \subsubsection{\texttt{tsat(\emph{p})}}
 \end{snugshade}
 \label{sec:iapws97:tsat}
+\index{thermodynamics!IAPWS-97!saturation line}
 
 The \texttt{tsat} function returns the saturation temperature ($\degree$C) at a given pressure \texttt{p} (Pa), for pressures below the critical pressure.
 
@@ -158,6 +168,7 @@ The \texttt{tsat} function returns the saturation temperature ($\degree$C) at a 
 \subsubsection{\texttt{b23p(\emph{t})}}
 \end{snugshade}
 \label{sec:iapws97:b23p}
+\index{thermodynamics!IAPWS-97!region boundaries}
 
 The \texttt{b23p} function returns the pressure (Pa) on the boundary of the dry steam and supercritical regions (regions 2 and 3) at a given temperature \texttt{t} ($\degree$C).
 
@@ -171,6 +182,7 @@ The \texttt{b23p} function returns the pressure (Pa) on the boundary of the dry 
 \subsubsection{\texttt{b23t(\emph{p})}}
 \end{snugshade}
 \label{sec:iapws97:b23t}
+\index{thermodynamics!IAPWS-97!region boundaries}
 
 The \texttt{b23t} function returns the temperature ($\degree$C) on the boundary of the dry steam and supercritical regions (regions 2 and 3) at a given pressure \texttt{p} (Pa).
 
@@ -188,6 +200,7 @@ The \texttt{IAPWS97} library contains two functions used for including the IAPWS
 \subsection{\texttt{pressure\_temperature\_plot(\emph{plt})}}
 \end{snugshade}
 \label{sec:iapws97:pressure_temperature_plot}
+\index{thermodynamics!IAPWS-97!pressure-temperature plots}
 
 Draws the IAPWS-97 thermodynamic region boundaries on a pressure-temperature diagram.
 
@@ -201,6 +214,7 @@ Draws the IAPWS-97 thermodynamic region boundaries on a pressure-temperature dia
 \subsection{\texttt{density\_temperature\_plot(\emph{plt})}}
 \end{snugshade}
 \label{sec:iapws97:density_temperature_plot}
+\index{thermodynamics!IAPWS-97!density-temperature plots}
 
 Draws the IAPWS-97 thermodynamic region boundaries on a density-temperature diagram.  (This function requires the Scientific Python (\texttt{scipy}) library to be installed.)
 
@@ -214,5 +228,6 @@ Draws the IAPWS-97 thermodynamic region boundaries on a density-temperature diag
 \section{Testing: \texttt{test()}}
 \end{snugshade}
 \label{sec:iapws97:test}
+\index{thermodynamics!IAPWS-97!testing}
 
 The \texttt{test} function prints the results of the verification tests in \cite{iapws_2000} for the \texttt{cowat}, \texttt{supst} and \texttt{super} functions.

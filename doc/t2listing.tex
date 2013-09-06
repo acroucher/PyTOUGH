@@ -8,9 +8,18 @@ The \texttt{t2listing} library in PyTOUGH contains classes and routines for read
    from t2listing import *
 \end{lstlisting}
 
-Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP and TOUGH+ have different formats but are all supported.
+\index{TOUGH2}
+\index{TOUGH2!AUTOUGH2}
+\index{TOUGH2!TOUGH2-MP}
+\index{TOUGH2!TOUGH+}
+\index{TOUGH2!TOUGHREACT}
+
+Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP and TOUGH+ have different formats but are all supported.  The main listing files produced by TOUGHREACT are also supported.
 
 \section{\texttt{t2listing} objects}
+\index{PyTOUGH!classes!\texttt{t2listing}}
+\index{TOUGH2 listing files!objects}
+\index{TOUGH2 listing files!creating}
 
 The \texttt{t2listing} library defines a \texttt{t2listing} class, used for representing TOUGH2 listing files.
 
@@ -29,12 +38,14 @@ lst = t2listing(filename)
 creates a \texttt{t2listing} object called \texttt{lst} and reads its contents from file \texttt{filename}.
 
 \subsection{Properties}
+\index{TOUGH2 listing files!properties}
 
 The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t2listing_properties}.
 
 \subsubsection{Element, connection and generation tables}
+\index{TOUGH2 listing files!tables}
 
-There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \hyperref[listingtableobjects]{\texttt{listingtable}} (see section \ref{listingtableobjects}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
+There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \hyperref[listingtableobjects]{\texttt{listingtable}} (see section \ref{listingtableobjects}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  \index{TOUGH2!TOUGH+} TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
 
 For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element['AR210']['Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120]['Pressure']} gives the pressure at the block with (zero-based) index 120.
 
@@ -45,6 +56,7 @@ The connection and generation tables work very similarly to the element table, e
 The names of the columns for each table are read directly from the listing file, and will depend on the TOUGH2 equation of state (EOS) being used.
 
 \subsubsection{Skipping tables}
+\index{TOUGH2 listing files!tables!skipping}
 
 The default behaviour is for a \texttt{t2listing} object to read all tables present in the listing file.  However, it is possible to skip the reading of specified tables if required.  This can be useful for speeding up reading of large listing files where not all tables are required.  For example, sometimes the connection data are not required, but for large models the connection table is often much bigger than the others, so skipping it can make reading significantly faster.  Data in skipped tables are not available either via their corresponding properties or via the \hyperref[sec:t2listing:history]{\texttt{history()}} method.
 
@@ -55,12 +67,14 @@ lst = t2listing('output.listing', skip_tables = ['connection', 'generation'])
 \end{lstlisting}
 
 \subsubsection{Full and short output}
+\index{TOUGH2 listing files!short output}
 
 AUTOUGH2 allows the use of `short' output, in which a specified selection of block, connection or generator properties are printed at time steps between normal full output.  A \texttt{t2listing} object will read short output results, if they are present, when producing time histories using the \hyperref[sec:t2listing:history]{\texttt{history()}} method.  However it is not possible to navigate to short output results or access them via the \texttt{t2listing} table properties above.
 
 TOUGH2, TOUGH2\_MP and TOUGH+ do not support short output.
 
 \subsubsection{Navigating in time using \texttt{time}, \texttt{index} and \texttt{step}}
+\index{TOUGH2 listing files!navigating in time}
 
 The \texttt{time} property returns the time (in seconds) corresponding to the current set of results.  It is also possible to set the \texttt{time} property to navigate to a specific set of full results.  For example, \texttt{lst.time=1.e9} navigates to the set of full results with time closest to $10^9$s.
 
@@ -73,6 +87,7 @@ The \texttt{times} property returns an \texttt{np.array} of all times at which r
 A \texttt{t2listing} object also has methods (as well as properties) for navigating through time (see section \ref{t2listingmethods}).
 
 \subsubsection{Listing diagnostics}
+\index{TOUGH2 listing files!diagnostics}
 
 \texttt{t2listing} objects have two properties that provide diagnostics on the results of the TOUGH2 run.
 
@@ -86,6 +101,7 @@ gives the largest absolute temperature change between the second to last and las
 
 The \texttt{reductions} property is a list of tuples of time step indices at which the time step size was reduced during the simulation, and the block name at which the maximum residual occurred prior to each reduction.  This gives an indication of problematic times and blocks which caused time step reductions.
 
+\index{TOUGH2 listing files!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{70mm}|}
@@ -124,6 +140,7 @@ The \texttt{reductions} property is a list of tuples of time step indices at whi
 
 The main methods of a \texttt{t2listing} object are listed in Table \ref{tb:t2listing_methods}.  Details of these methods are given below.
 
+\index{TOUGH2 listing files!methods}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{80mm}|}
@@ -149,6 +166,7 @@ The main methods of a \texttt{t2listing} object are listed in Table \ref{tb:t2li
 \subsubsection{\texttt{add\_side\_recharge(\emph{geo}, \emph{dat})}}
 \end{snugshade}
 \label{sec:t2listing:add_side_recharge}
+\index{TOUGH2 listing files!using to add side recharge}
 
 Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a production run, calculated according to the final results in the listing.  These generators represent side inflows due to pressure changes in the blocks on the model's horizontal boundaries.  Recharge generators are given the names of their blocks- any existing generators with the same names will be overwritten.
 
@@ -164,6 +182,7 @@ Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a pro
 \subsubsection{\texttt{first()}}
 \end{snugshade}
 \label{sec:t2listing:first}
+\index{TOUGH2 listing files!navigating in time}
 
 Navigates to the first set of full results in the listing file.
 
@@ -171,6 +190,7 @@ Navigates to the first set of full results in the listing file.
 \subsubsection{\texttt{get\_difference(\emph{indexa}=None, \emph{indexb}=None)}}
 \end{snugshade}
 \label{sec:t2listing:get_difference}
+\index{TOUGH2 listing files!tables!maximum differences}
 
 Returns dictionary of maximum differences, and locations of difference, of all element table properties between two sets of results.
 
@@ -184,6 +204,7 @@ Returns dictionary of maximum differences, and locations of difference, of all e
 \subsubsection{\texttt{history(\emph{selection}, \emph{short}=True)}}
 \end{snugshade}
 \label{sec:t2listing:history}
+\index{TOUGH2 listing files!time histories}
 
 Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.  Short output (AUTOUGH2 only) can be omitted from the history results by setting the \texttt{short} parameter to \texttt{False}.
 
@@ -209,6 +230,7 @@ returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \textt
 \subsubsection{\texttt{last()}}
 \end{snugshade}
 \label{sec:t2listing:last}
+\index{TOUGH2 listing files!navigating in time}
 
 Navigates to the last set of full results in the listing file.
 
@@ -216,6 +238,7 @@ Navigates to the last set of full results in the listing file.
 \subsubsection{\texttt{next()}}
 \end{snugshade}
 \label{sec:t2listing:next}
+\index{TOUGH2 listing files!navigating in time}
 
 Navigates to the next set of full results in the listing file.  Returns \texttt{False} if already at the last set of results (and \texttt{True} otherwise).
 
@@ -223,6 +246,7 @@ Navigates to the next set of full results in the listing file.  Returns \texttt{
 \subsubsection{\texttt{prev()}}
 \end{snugshade}
 \label{sec:t2listing:prev}
+\index{TOUGH2 listing files!navigating in time}
 
 Navigates to the previous set of full results in the listing file.  Returns \texttt{False} if already at the first set of results (and \texttt{True} otherwise).
 
@@ -232,6 +256,8 @@ Navigates to the previous set of full results in the listing file.  Returns \tex
 \emph{start\_time}=0, \emph{time\_unit}='s', \emph{flux\_matrix}=None)}}
 \end{snugshade}
 \label{sec:t2listing:write_vtk}
+\index{TOUGH2 listing files!writing!VTK files}
+\index{Visualization Tool Kit (VTK)}
 
 Writes a \texttt{t2listing} object to a set of VTK files on disk, for visualisation with VTK, Paraview, Mayavi etc.  The results in the listing object are written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written correspond to the variables given in the columns of the element table of the \texttt{t2listing} object.  (For TOUGH+ results, variables from the additional element tables are also included.) In addition, data arrays from an associated \texttt{mulgrid} and (optionally) \texttt{t2grid} objects can be included.
 
@@ -265,9 +291,12 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 
 \section{\texttt{listingtable} objects}
 \label{listingtableobjects}
+\index{PyTOUGH!classes!\texttt{listingtable}}
+\index{TOUGH2 listing files!tables}
 
 A \texttt{listingtable} object represents a table of results in a TOUGH2 listing file (whether it is an element, connection or generation table).  The column headings of the table are taken directly from the corresponding table in the listing file.  The rows of the table may be accessed either by (zero-based) index, or by the `key' for the table row, which depends on the table type (see Table \ref{tb:listing_table_keys}).
 
+\index{TOUGH2 listing files!tables!keys}
 \begin{table}[h]
   \begin{center}
     \begin{tabular}{|l|l|}
@@ -290,6 +319,7 @@ The values for an entire row or column of the table can also be accessed, for ex
 
 The properties of a \texttt{listingtable} object are given in Table \ref{tb:listingtable_properties}.  The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.  The \texttt{num\_keys} property just returns the number of keys used to identify each row- generally 1 for an element table and 2 for connection and generation tables.
 
+\index{TOUGH2 listing files!tables!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|l|}
@@ -308,10 +338,13 @@ The properties of a \texttt{listingtable} object are given in Table \ref{tb:list
   \end{center}
 \end{table}
 
+\index{TOUGH2 listing files!tables!adding and subtracting}
 It is possible to perform addition and subtraction operations on \texttt{listingtable} objects.  Subtraction can be useful, for example, when comparing results from different runs.  These operations can only be carried out when the row and column names of the two tables are identical.  The resulting table will have the same row and column names as the original tables, but will contain the element-wise sums or differences.
 
 \texttt{listingtable} objects have one method as described below.
 
+\index{TOUGH2 listing files!tables!methods}
+\index{TOUGH2 listing files!tables!finding rows}
 \begin{snugshade}
 \subsubsection{\texttt{rows\_matching(\emph{pattern}, \emph{index}=0, \emph{match\_any}=False)}}
 \end{snugshade}
@@ -333,15 +366,22 @@ If \texttt{match\_any} is set to \texttt{True}, rows are returned with keys matc
 \end{itemize}
 
 \section{\texttt{t2historyfile} objects}
+\index{PyTOUGH!classes!\texttt{t2historyfile}}
+\index{TOUGH2 history files}
+\index{TOUGH2 data files!FOFT}
+\index{TOUGH2 data files!COFT}
+\index{TOUGH2 data files!GOFT}
 
 In addition to the main listing file, TOUGH2 can optionally produce extra files containing time history data from selected blocks, connections or generators, named \texttt{FOFT}, \texttt{COFT} and \texttt{GOFT} files respectively.  TOUGH+ can optionally name these files \texttt{Elem\_Time\_Series}, \texttt{Conx\_Time\_Series} and \texttt{SS\_Time\_Series} instead.  (AUTOUGH2 does not produce separate history files, but can instead produce `short output' at selected blocks, connections or generators within the listing file itself.)
 
 The \texttt{t2listing} module contains a \texttt{t2historyfile} class for reading and manipulating these history files.  History files produced by TOUGH2, TOUGH2\_MP and TOUGH+ are supported, although they all have different formats.  The same class is used for FOFT, COFT and GOFT files.  A history file of any of these types can be opened using a command such as:
 
+\index{TOUGH2 history files!creating}
 \begin{lstlisting}
 hist = t2historyfile(filename)
 \end{lstlisting}
 
+\index{TOUGH2!TOUGH2-MP}
 where \texttt{\emph{filename}} is the name of the file.  It may contain wildcards (*) so that several files matching a pattern are read in to the same object.  This is useful for reading output from TOUGH2\_MP, which creates separate history files for each processor used in the calculation (e.g. \texttt{FOFT\_P.000}, \texttt{FOFT\_P.001}, etc.).  It is assumed that all files opened are however of the same type (FOFT, COFT or GOFT).
 
 Once a history file has been read in, history results for a particular key (i.e. block, connection or generator) can be extracted.  For TOUGH2\_MP, the keys are the block names for FOFT files, tuples of block names for COFT files, and tuples of block names and source names for GOFT files.  For example:
@@ -367,6 +407,7 @@ result = foft[blockname, time]
 
 Again, this will return a dictionary with one item for each column, but in this case each item is just a single floating point number instead of an array.
 
+\index{TOUGH2}
 For \textbf{TOUGH2} rather than TOUGH2\_MP, the keys are integer indices of blocks, connections or generators, rather than names or tuples of names.  Similarly, the column names are just integers.  This is because the key names and column names are not given in TOUGH2 history files.  Aside from these differences, they can be used in the same way as TOUGH2\_MP history files, for example:
 
 \begin{lstlisting}
@@ -375,6 +416,7 @@ blkindex = 123
 temp = foft[blkindex][1]
 \end{lstlisting}
 
+\index{TOUGH2!TOUGH+}
 For \textbf{TOUGH+} connection and generator history files (\texttt{COFT} and \texttt{GOFT}, or \texttt{Conx\_Time\_Series} and \texttt{SS\_Time\_Series}), multiple connections and generators can be specified as usual in the TOUGH2 input data file, but individual results for them are not written to the history file.  Instead, the results for them are summed.  As a result, there are no `keys' as such for accessing individual results, and the \texttt{t2historyfile} works a little differently.  An array containing the data in each column can be accessed by specifying the column name, for example:
 
 \begin{lstlisting}
@@ -384,6 +426,7 @@ qh = ct['HeatFlow']
 
 The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:historyfile_properties}.
 
+\index{TOUGH2 history files!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|l|}
@@ -406,6 +449,7 @@ The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:his
 \end{table}
 
 \section{Examples}
+\index{examples!TOUGH2 listing files}
 
 \subsection{Slice plot of drawdown}
 

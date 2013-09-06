@@ -1,5 +1,6 @@
 \chapter{TOUGH2 grids}
 \label{t2grids}
+\index{TOUGH2 grids}
 
 \section{Introduction}
 The \texttt{t2grids} library in PyTOUGH contains classes and routines for manipulating TOUGH2 grids.  It can be imported using the command:
@@ -9,6 +10,8 @@ The \texttt{t2grids} library in PyTOUGH contains classes and routines for manipu
 \end{lstlisting}
 
 \section{\texttt{t2grid} objects}
+\index{PyTOUGH!classes!\texttt{t2grid}}
+\index{TOUGH2 grids!objects}
 
 The \texttt{t2grids} library defines a \texttt{t2grid} class, used for representing TOUGH2 grids.  This gives access via Python to the grid's rock types, blocks, connections and other parameters.
 
@@ -26,6 +29,7 @@ The \texttt{rocktype\_frequencies} property gives information about how frequent
 
 The \texttt{rocktype\_indices} property gives an \texttt{np.array} containing the index of the rocktype for each block in the grid.  This can be used to give a plot of rock types, in conjunction with the \texttt{mulgrid} methods \texttt{layer\_plot} or \texttt{slice\_plot}.
 
+\index{TOUGH2 grids!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|l|}
@@ -59,6 +63,7 @@ The \texttt{rocktype\_indices} property gives an \texttt{np.array} containing th
 
 The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_methods}.  Details of these methods are given below.
 
+\index{TOUGH2 grids!methods}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{65mm}|}
@@ -99,6 +104,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
 \subsubsection{\texttt{+}}
 \end{snugshade}
 \label{sec:t2grid:plus}
+\index{TOUGH2 grids!adding together}
 
 Adds two grids \texttt{a} and \texttt{b} together (i.e. amalgamates them) to form a new grid \texttt{a+b}.  If any rock types, blocks or connections exist in both grids \texttt{a} and \texttt{b}, the value from \texttt{b} is used, so there are no duplicates.  (Technically this is really an `operator' rather than a method.)
 
@@ -112,6 +118,8 @@ Adds two grids \texttt{a} and \texttt{b} together (i.e. amalgamates them) to for
 \subsubsection{\texttt{add\_block(\emph{block})}}
 \end{snugshade}
 \label{sec:t2grid:add_block}
+\index{TOUGH2 grids!adding!blocks}
+\index{TOUGH2 grids!blocks!adding}
 
 Adds a block to the grid.  If another block with the same name already exists, it is replaced.
 
@@ -125,6 +133,8 @@ Adds a block to the grid.  If another block with the same name already exists, i
 \subsubsection{\texttt{add\_connection(\emph{connection})}}
 \end{snugshade}
 \label{sec:t2grid:add_connection}
+\index{TOUGH2 grids!adding!connections}
+\index{TOUGH2 grids!connections!adding}
 
 Adds a connection to the grid.  If another connection with the same column names already exists, it is replaced.
 
@@ -138,6 +148,8 @@ Adds a connection to the grid.  If another connection with the same column names
 \subsubsection{\texttt{add\_rocktype(\emph{rock})}}
 \end{snugshade}
 \label{sec:t2grid:add_rocktype}
+\index{TOUGH2 grids!adding!rocktypes}
+\index{TOUGH2 grids!rocktypes!adding}
 
 Adds a rock type to the grid.  If another rock type with the same name already exists, it is replaced.
 
@@ -151,6 +163,8 @@ Adds a rock type to the grid.  If another rock type with the same name already e
 \subsubsection{\texttt{block\_index(\emph{blockname})}}
 \end{snugshade}
 \label{sec:t2grid:block_index}
+\index{TOUGH2 grids!blocks!indices}
+\index{TOUGH2 grids!indices!of blocks}
 
 Returns the block index (in the \texttt{blocklist} list) of a specified block name.
 
@@ -164,6 +178,8 @@ Returns the block index (in the \texttt{blocklist} list) of a specified block na
 \subsubsection{\texttt{calculate\_block\_centres(\emph{geo})}}
 \end{snugshade}
 \label{sec:t2grid:calculate_block_centres}
+\index{TOUGH2 grids!blocks!centres}
+\index{TOUGH2 grids!centres!blocks}
 
 Calculates geometrical centres of all blocks in the grid, based on the specified geometry object \texttt{geo}.
 
@@ -177,6 +193,8 @@ Calculates geometrical centres of all blocks in the grid, based on the specified
 \subsubsection{\texttt{check(\emph{fix}=False,\emph{silent}=False)}}
 \end{snugshade}
 \label{sec:t2grid:check}
+\index{TOUGH2 grids!checking}
+\index{checking!TOUGH2 grids}
 
 Checks a grid for errors and optionally fixes them.  Errors checked for are: blocks not connected to any other blocks, and blocks with isolated rocktypes (not shared with any neighbouring blocks).  Returns \texttt{True} if no errors were found, and \texttt{False} otherwise.  If \texttt{fix} is \texttt{True}, any identified problems will be fixed.  If \texttt{silent} is \texttt{True}, there is no printout (only really useful if \texttt{fix} is \texttt{True}).
 
@@ -194,6 +212,7 @@ Blocks not connected to any others are fixed by deleting them.  Isolated-rocktyp
 \subsubsection{\texttt{clean\_rocktypes}()}
 \end{snugshade}
 \label{sec:t2grid:clean_rocktypes}
+\index{TOUGH2 grids!rocktypes!cleaning}
 
 Deletes any rock types from the grid which are not assigned to any block.
 
@@ -201,6 +220,8 @@ Deletes any rock types from the grid which are not assigned to any block.
 \subsubsection{\texttt{connection\_index(\emph{blocknames})}}
 \end{snugshade}
 \label{sec:t2grid:connection_index}
+\index{TOUGH2 grids!connections!indices}
+\index{TOUGH2 grids!indices!of connections}
 
 Returns the connection index (in the \texttt{connectionlist} list) of the connection between a specified pair of block names.
 
@@ -214,6 +235,7 @@ Returns the connection index (in the \texttt{connectionlist} list) of the connec
 \subsubsection{\texttt{copy\_connection\_directions(\emph{geo},\emph{grid})}}
 \end{snugshade}
 \label{sec:t2grid:copy_connection_directions}
+\index{TOUGH2 grids!connections!directions}
 
 Copies the connection permeability directions for horizontal connections from another grid.  It is assumed that both grids have the same column structure, but may have different layer structures.
 
@@ -229,6 +251,8 @@ Copies the connection permeability directions for horizontal connections from an
 \subsubsection{\texttt{delete\_block(\emph{blockname})}}
 \end{snugshade}
 \label{sec:t2grid:delete_block}
+\index{TOUGH2 grids!blocks!deleting}
+\index{TOUGH2 grids!deleting!blocks}
 
 Deletes a block from the grid.  This also deletes any connections involving the specified block.
 
@@ -242,6 +266,8 @@ Deletes a block from the grid.  This also deletes any connections involving the 
 \subsubsection{\texttt{delete\_connection(\emph{connectionname})}}
 \end{snugshade}
 \label{sec:t2grid:delete_connection}
+\index{TOUGH2 grids!connections!deleting}
+\index{TOUGH2 grids!deleting!connections}
 
 Deletes a connection from the grid.
 
@@ -255,6 +281,8 @@ Deletes a connection from the grid.
 \subsubsection{\texttt{delete\_rocktype(\emph{rocktypename})}}
 \end{snugshade}
 \label{sec:t2grid:delete_rocktype}
+\index{TOUGH2 grids!rocktypes!deleting}
+\index{TOUGH2 grids!deleting!rocktypes}
 
 Deletes a rock type from the grid.
 
@@ -268,6 +296,7 @@ Deletes a rock type from the grid.
 \subsubsection{\texttt{demote\_block(\emph{blockname})}}
 \end{snugshade}
 \label{sec:t2grid:demote_block}
+\index{TOUGH2 grids!blocks!demoting}
 
 Shifts a block (or blocks) to the end of the blocklist.  This can be useful for making blocks inactive- by setting their volumes to zero or negative, and then shifting them to the end of the list (to avoid all blocks below them also being treated as inactive).
 
@@ -281,6 +310,7 @@ Shifts a block (or blocks) to the end of the blocklist.  This can be useful for 
 \subsubsection{\texttt{embed(\emph{subgrid}, \emph{connection})}}
 \end{snugshade}
 \label{sec:t2grid:embed}
+\index{TOUGH2 grids!embedding}
 
 Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids are to be connected: the blocks to be connected and the connection distances, area etc. between them.
 
@@ -296,6 +326,7 @@ Returns a grid with a subgrid embedded inside one of its blocks.  The connection
 \subsubsection{\texttt{empty}()}
 \end{snugshade}
 \label{sec:t2grid:empty}
+\index{TOUGH2 grids!emptying}
 
 Empties the grid of all its blocks, rock types and connections.
 
@@ -303,6 +334,7 @@ Empties the grid of all its blocks, rock types and connections.
 \subsubsection{\texttt{flux\_matrix(\emph{geo})}}
 \end{snugshade}
 \label{sec:t2grid:flux_matrix}
+\index{TOUGH2 grids!flux matrices}
 
 Takes the grid and a corresponding \texttt{mulgrid} object, and constructs a sparse matrix (of type \texttt{scipy.sparse.lil\_matrix}) which can be used to convert connection flow values on the grid to block-average fluxes (flows per unit area).  Specifically, if an array of connection flow values (one for each connection in the grid) is multiplied by this sparse matrix, the result is a partitioned array containing the 3-component block-average flux for each of the (non-atmosphere) blocks.
 
@@ -345,6 +377,7 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
     \emph{justify}='r', \emph{case}='l', \emph{dimension}=2)}}
 \end{snugshade}
 \label{sec:t2grid:radial}
+\index{TOUGH2 grids!creating!radial}
 
 Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.  Grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \emph{justify} and \emph{case} parameters control the formatting of the character part of the block names.
 
@@ -372,6 +405,7 @@ The \emph{dimension} parameter sets the flow dimension for `generalized radial f
 \subsubsection{\texttt{rocktype\_frequency(\emph{rockname})}}
 \end{snugshade}
 \label{sec:t2grid:rocktype_frequency}
+\index{TOUGH2 grids!rocktypes!frequencies}
 
 Returns the frequency of use of the rock type with the specified name, i.e. how many blocks are assigned that rock type.
 
@@ -385,6 +419,7 @@ Returns the frequency of use of the rock type with the specified name, i.e. how 
 \subsubsection{\texttt{sort\_rocktypes()}}
 \end{snugshade}
 \label{sec:t2grid:sort_rocktypes}
+\index{TOUGH2 grids!rocktypes!sorting}
 
 Sorts the rocktype list into alphabetical order by name.
 
@@ -392,6 +427,8 @@ Sorts the rocktype list into alphabetical order by name.
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{wells}=False)}}
 \end{snugshade}
 \label{sec:t2grid:write_vtk}
+\index{TOUGH2 grids!writing!VTK files}
+\index{Visualization Tool Kit (VTK)}
 
 Writes a \texttt{t2grid} object to a VTK file on disk, for visualisation with VTK, Paraview, Mayavi etc.  The grid is written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written, in addition to the defaults arrays for the associated \texttt{mulgrid} object, are: rock type index, porosity and permeability for each block.  A separate VTK file for the wells in the grid can optionally be written.
 
@@ -411,6 +448,8 @@ A \texttt{t2grid} object contains lists of other types of objects: \texttt{rockt
 
 \subsection{\texttt{rocktype} objects}
 \label{rocktypeobjects}
+\index{PyTOUGH!classes!\texttt{rocktype}}
+\index{TOUGH2 grids!rocktypes}
 
 A \texttt{rocktype} object represents a TOUGH2 rock type.  The properties of a \texttt{rocktype} object, and their default values, are given in Table \ref{tb:rocktype_properties}.
 
@@ -428,6 +467,7 @@ declares a rocktype object called \texttt{r} with name `ignim', permeability of 
 
 (Note that when declaring rock types, the permeability can for convenience be specified as a list, which will be converted internally to an \texttt{np.array}.)
 
+\index{TOUGH2 grids!rocktypes!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{30mm}|l|}
@@ -459,6 +499,8 @@ declares a rocktype object called \texttt{r} with name `ignim', permeability of 
 
 \subsection{\texttt{t2block} objects}
 \label{t2blockobjects}
+\index{PyTOUGH!classes!\texttt{t2block}}
+\index{TOUGH2 grids!blocks}
 
 A \texttt{t2block} object represents a block in a TOUGH2 grid.  The properties of a \texttt{t2block} object are given in Table \ref{tb:t2block_properties}.  These reflect the specifications of a TOUGH2 block as given in a TOUGH2 data file, with the exception of the \texttt{atmosphere}, \texttt{centre}, \texttt{connection\_name}, \texttt{neighbour\_name} and \texttt{num\_connections} properties.
 
@@ -466,6 +508,7 @@ The \texttt{atmosphere} property determines whether the block is to be treated a
 
 A \texttt{t2block} object has no methods.
 
+\index{TOUGH2 grids!blocks!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|l|l|}
@@ -493,11 +536,14 @@ A \texttt{t2block} object has no methods.
 
 \subsection{\texttt{t2connection} objects}
 \label{t2connectionobjects}
+\index{PyTOUGH!classes!\texttt{t2connection}}
+\index{TOUGH2 grids!connections}
 
 A \texttt{t2connection} object represents a connections between two TOUGH2 blocks.  The properties of a \texttt{t2connnection} object are given in Table \ref{tb:t2connection_properties}.  These correspond to the properties of a connection specified in a TOUGH2 data file.  Note that the \texttt{block} property returns \hyperref[t2blockobjects]{\texttt{t2block}} objects, not just the names of the blocks in the connection.  Hence, for example, the volume of the first block in a connection object \texttt{con} is given simply by \texttt{con.block[0].volume}.
 
 A \texttt{t2connection} object has no methods.
 
+\index{TOUGH2 grids!connections!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|l|l|}
@@ -520,6 +566,7 @@ A \texttt{t2connection} object has no methods.
 \end{table}
 
 \section{Example}
+\index{examples!TOUGH2 grids}
 
 The following piece of Python script creates a rectangular 2-D slice TOUGH2 grid with two rock types, and assigns these rock types to blocks in the grid according to their position along the slice.
 

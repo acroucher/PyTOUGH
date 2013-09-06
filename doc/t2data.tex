@@ -1,5 +1,6 @@
 \chapter{TOUGH2 data files}
 \label{datafiles}
+\index{TOUGH2 data files}
 
 \section{Introduction}
 The \texttt{t2data} library in PyTOUGH contains classes and routines for creating, editing and saving TOUGH2 or AUTOUGH2 data files.  It can be imported using the command:
@@ -9,6 +10,9 @@ The \texttt{t2data} library in PyTOUGH contains classes and routines for creatin
 \end{lstlisting}
 
 \section{\texttt{t2data} objects}
+\index{PyTOUGH!classes!\texttt{t2data}}
+\index{TOUGH2 data files!creating}
+\index{TOUGH2 data files!objects}
 
 The \texttt{t2data} library defines a \texttt{t2data} class, used for representing TOUGH2 data files.
 
@@ -36,6 +40,7 @@ For example, the maximum number of time steps for the simulation is controlled b
 
 The details of all the \texttt{t2data} properties are given below.
 
+\index{TOUGH2 data files!properties}
 \begin{sidewaystable}
   \begin{center}
     \begin{tabular}{|l|l|l|l|}
@@ -83,6 +88,7 @@ The details of all the \texttt{t2data} properties are given below.
 \subsubsection{\texttt{capillarity} property}
 \end{snugshade}
 \label{sec:t2data:capillarity}
+\index{TOUGH2 data files!capillarity}
 
 A dictionary property specifying the capillarity function used, corresponding to the second line of the \textbf{RPCAP} input block in the TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:capillarity}.
 
@@ -105,6 +111,7 @@ A dictionary property specifying the capillarity function used, corresponding to
 \subsubsection{\texttt{diffusion} property}
 \end{snugshade}
 \label{sec:t2data:diffusion}
+\index{TOUGH2 data files!diffusion}
 
 A list property specifying diffusion coefficients for each mass component simulated, corresponding to the \textbf{DIFFU} input block in the TOUGH2 data file.  The list has length \texttt{multi['num\_components']} (i.e. NK in TOUGH2 terminology), and each element is a list of the diffusion coefficients for each component (with length \texttt{multi['num\_phases']}, or NPH).
 
@@ -112,6 +119,8 @@ A list property specifying diffusion coefficients for each mass component simula
 \subsubsection{\texttt{echo\_extra\_precision} property}
 \end{snugshade}
 \label{sec:t2data:echo_extra_precision}
+\index{TOUGH2 data files!extra precision}
+\index{TOUGH2!AUTOUGH2}
 
 A Boolean property (AUTOUGH2 only) governing whether data written to an auxiliary extra-precision file is also echoed to the main data file.  If \texttt{True}, all extra-precision data sections are echoed to the main file.
 
@@ -119,6 +128,7 @@ A Boolean property (AUTOUGH2 only) governing whether data written to an auxiliar
 \subsubsection{\texttt{end\_keyword} property}
 \end{snugshade}
 \label{sec:t2data:end_keyword}
+\index{TOUGH2 data files!end keyword}
 
 A string property containing the keyword used in the data file to end the file.  Normally this is `ENDCY', but `ENDFI' can also be used.
 
@@ -126,6 +136,8 @@ A string property containing the keyword used in the data file to end the file. 
 \subsubsection{\texttt{extra\_precision} property}
 \end{snugshade}
 \label{sec:t2data:extra_precision}
+\index{TOUGH2 data files!extra precision}
+\index{TOUGH2!AUTOUGH2}
 
 A list property determining which data sections will be written to an auxiliary extra-precision file (AUTOUGH2 only).  Recent versions of AUTOUGH2 support an additional data file containing some data written with extra precision.  Possible extra-precision data sections are ROCKS, RPCAP and GENER.  Typical usage of this extra-precision data is for automatic model calibration using PEST or similar software, where calculation of derivatives of model outputs with respect to model parameters requires higher precision than is possible with the standard TOUGH2 data file format.
 
@@ -137,6 +149,7 @@ The \hyperref[sec:t2data:read]{\texttt{read()}} method of a \texttt{t2data} obje
 \subsubsection{\texttt{filename} property}
 \end{snugshade}
 \label{sec:t2data:filename}
+\index{TOUGH2 data files!filename}
 
 A string property containing the name of the TOUGH2 data file on disk.  (This does not correspond to any parameter in the TOUGH2 data file.)
 
@@ -144,6 +157,7 @@ A string property containing the name of the TOUGH2 data file on disk.  (This do
 \subsubsection{\texttt{generator} property}
 \end{snugshade}
 \label{sec:t2data:generator}
+\index{TOUGH2 data files!generators}
 
 A dictionary property containing the generators for the simulation, accessed by tuples of block name and generator name.  Each generator is an object of type \hyperref[t2generatorobjects]{\texttt{t2generator}}, which is described in section \ref{t2generatorobjects}.
 
@@ -151,6 +165,7 @@ A dictionary property containing the generators for the simulation, accessed by 
 \subsubsection{\texttt{generatorlist} property}
 \end{snugshade}
 \label{sec:t2data:generatorlist}
+\index{TOUGH2 data files!generators}
 
 A list property containing the generators for the simulation, accessed by index.
 
@@ -158,6 +173,7 @@ A list property containing the generators for the simulation, accessed by index.
 \subsubsection{\texttt{grid} property}
 \end{snugshade}
 \label{sec:t2data:grid}
+\index{TOUGH2 data files!grid}
 
 A \hyperref[t2grids]{\texttt{t2grid}} object (see chapter \ref{t2grids}) representing the simulation grid, corresponding to the \textbf{ELEME} and \textbf{CONNE} input blocks in a TOUGH2 data file.
 
@@ -165,6 +181,8 @@ A \hyperref[t2grids]{\texttt{t2grid}} object (see chapter \ref{t2grids}) represe
 \subsubsection{\texttt{history\_block} property}
 \end{snugshade}
 \label{sec:t2data:history_block}
+\index{TOUGH2 data files!history blocks}
+\index{TOUGH2 data files!FOFT}
 
 A list property containing blocks for which time history output is required, corresponding to the \textbf{FOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \hyperref[t2blockobjects]{\texttt{t2block}} objects; otherwise, they are block names (i.e. strings).
 
@@ -172,6 +190,8 @@ A list property containing blocks for which time history output is required, cor
 \subsubsection{\texttt{history\_connection} property}
 \end{snugshade}
 \label{sec:t2data:history_connection}
+\index{TOUGH2 data files!history connections}
+\index{TOUGH2 data files!COFT}
 
 A list property containing connections for which time history output is required, corresponding to the \textbf{COFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \hyperref[t2connectionobjects]{\texttt{t2connection}} objects; otherwise, they are tuples of block names (i.e. tuples of strings).
 
@@ -179,6 +199,8 @@ A list property containing connections for which time history output is required
 \subsubsection{\texttt{history\_generator} property}
 \end{snugshade}
 \label{sec:t2data:history_generator}
+\index{TOUGH2 data files!history generators}
+\index{TOUGH2 data files!GOFT}
 
 A list property containing blocks in which generators are defined and for which time history output is required, corresponding to the \textbf{GOFT} input block in a TOUGH2 data file.  If the \texttt{t2data} object contains grid data, the items in this list are \hyperref[t2blockobjects]{\texttt{t2block}} objects; otherwise, they are block names (i.e. strings).
 
@@ -186,6 +208,8 @@ A list property containing blocks in which generators are defined and for which 
 \subsubsection{\texttt{incon} property}
 \end{snugshade}
 \label{sec:t2data:incon}
+\index{TOUGH2 data files!initial conditions}
+\index{TOUGH2 initial conditions!in data file}
 
 A dictionary property representing the initial conditions for the simulation, accessed by block name, corresponding to the \textbf{INCON} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the porosity of the block followed by the specified initial primary thermodynamic variables in the block.
 
@@ -195,6 +219,7 @@ For example, to specify porosity 0.1 and initial conditions (101.3E3, 20.0) in b
 \subsubsection{\texttt{indom} property}
 \end{snugshade}
 \label{sec:t2data:indom}
+\index{TOUGH2 data files!initial conditions!by rocktype}
 
 A dictionary property representing the initial conditions for the simulation, accessed by rocktype name, corresponding to the \textbf{INDOM} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the specified initial primary thermodynamic variables for the rocktype.
 
@@ -202,6 +227,8 @@ A dictionary property representing the initial conditions for the simulation, ac
 \subsubsection{\texttt{lineq} property}
 \end{snugshade}
 \label{sec:t2data:lineq}
+\index{TOUGH2 data files!linear equation solver!AUTOUGH2}
+\index{TOUGH2!AUTOUGH2}
 
 A dictionary property representing linear equation solver options, corresponding to the \textbf{LINEQ} input block in an AUTOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:lineq}.
 
@@ -227,6 +254,7 @@ A dictionary property representing linear equation solver options, corresponding
 \subsubsection{\texttt{meshfilename} property}
 \end{snugshade}
 \label{sec:t2data:meshfilename}
+\index{TOUGH2 data files!mesh file}
 
 A string property (or tuple of strings) containing the name(s) of files on disk containing the mesh data.  (This does not correspond to any parameter in the TOUGH2 data file.)  Its default value is an empty string which means mesh data will be read from the main data file.
 
@@ -238,6 +266,7 @@ If \texttt{meshfilename} is a tuple of two strings, these are interpreted as the
 \subsubsection{\texttt{meshmaker} property}
 \end{snugshade}
 \label{sec:t2data:meshmaker}
+\index{TOUGH2 data files!mesh maker}
 
 A list property representing mesh generation options, corresponding to the \textbf{MESHM} input block in a TOUGH2 data file.  For more detail on the use of \textbf{MESHM} data, consult the TOUGH2 users' guide \citep{tough2}.
 
@@ -340,6 +369,7 @@ Possible sub-section types for \texttt{rz2d} data are \texttt{radii}, \texttt{eq
 \subsubsection{\texttt{multi} property}
 \end{snugshade}
 \label{sec:t2data:multi}
+\index{TOUGH2 data files!equation of state}
 
 A dictionary property selecting the equation of state (EOS) module used and setting associated parameters, corresponding to the \textbf{MULTI} input block in a TOUGH2 or AUTOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:multi}.
 
@@ -373,6 +403,7 @@ A Boolean property specifying whether to suppress printing of version and date i
 \subsubsection{\texttt{num\_generators} property}
 \end{snugshade}
 \label{sec:t2data:num_generators}
+\index{TOUGH2 data files!generators!number of}
 
 A read-only integer property returning the number of generators.
 
@@ -380,6 +411,7 @@ A read-only integer property returning the number of generators.
 \subsubsection{\texttt{output\_times} property}
 \end{snugshade}
 \label{sec:t2data:output_times}
+\index{TOUGH2 data files!output times}
 
 A dictionary property specifying the times at which model output is required, corresponding to the \textbf{TIMES} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:outputtimes}.
 
@@ -405,6 +437,7 @@ A dictionary property specifying the times at which model output is required, co
 \subsubsection{\texttt{parameter} property}
 \end{snugshade}
 \label{sec:t2data:parameter}
+\index{TOUGH2 data files!simulation parameters}
 
 A dictionary property specifying run-time parameters, corresponding to the \textbf{PARAM} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:parameter}.
 
@@ -452,6 +485,7 @@ The \texttt{option} parameter (MOP array in TOUGH2) is an array of 24 integers, 
 \subsubsection{\texttt{relative\_permeability} property}
 \end{snugshade}
 \label{sec:t2data:relative_permeability}
+\index{TOUGH2 data files!relative permeability}
 
 A dictionary property specifying the relative permeability function used, corresponding to the first line of the \textbf{RPCAP} input block in the TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:relativepermeability}.
 
@@ -474,6 +508,7 @@ A dictionary property specifying the relative permeability function used, corres
 \subsubsection{\texttt{selection} property}
 \end{snugshade}
 \label{sec:t2data:selection}
+\index{TOUGH2 data files!selection parameters}
 
 A dictionary property representing selection parameters for the simulation (only used by some EOS modules, e.g. EOS7, EOS7R, EWASG), corresponding to the \textbf{SELEC} block in the TOUGH2 data file.
 
@@ -483,6 +518,8 @@ The dictionary contains two keys: `integer' and `float', the first of which acce
 \subsubsection{\texttt{short\_output} property}
 \end{snugshade}
 \label{sec:t2data:short_output}
+\index{TOUGH2 data files!short output}
+\index{TOUGH2!AUTOUGH2}
 
 A dictionary property representing blocks, connections and generators for which short output is required, corresponding to the \textbf{SHORT} input block in an AUTOUGH2 data file.
 
@@ -492,6 +529,7 @@ The dictionary contains four keys: `frequency', `block', `connection' and `gener
 \subsubsection{\texttt{simulator} property}
 \end{snugshade}
 \label{sec:t2data:simulator}
+\index{TOUGH2 data files!simulator type}
 
 A string property specifying the type of simulator, corresponding to the \textbf{SIMUL} input block in an AUTOUGH2 data file.
 
@@ -499,6 +537,7 @@ A string property specifying the type of simulator, corresponding to the \textbf
 \subsubsection{\texttt{solver} property}
 \end{snugshade}
 \label{sec:t2data:solver}
+\index{TOUGH2 data files!linear equation solver!TOUGH2}
 
 A dictionary property representing linear equation solver options, corresponding to the \textbf{SOLVR} input block in a TOUGH2 data file.  The individual keys of this property are given in Table \ref{tb:solver}.
 
@@ -524,6 +563,7 @@ A dictionary property representing linear equation solver options, corresponding
 \subsubsection{\texttt{start} property}
 \end{snugshade}
 \label{sec:t2data:start}
+\index{TOUGH2 data files!flexible start option}
 
 A Boolean property specifying whether the flexible start option is used, corresponding to the \textbf{START} input block in a TOUGH2 data file.
 
@@ -531,6 +571,7 @@ A Boolean property specifying whether the flexible start option is used, corresp
 \subsubsection{\texttt{title} property}
 \end{snugshade}
 \label{sec:t2data:title}
+\index{TOUGH2 data files!title}
 
 A string property containing the simulation title, corresponding to the \textbf{TITLE} input block in a TOUGH2 data file.
 
@@ -538,6 +579,9 @@ A string property containing the simulation title, corresponding to the \textbf{
 \subsubsection{\texttt{type} property}
 \end{snugshade}
 \label{sec:t2data:type}
+\index{TOUGH2 data files!simulator type}
+\index{TOUGH2}
+\index{TOUGH2!AUTOUGH2}
 
 A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Changing the value of this property will cause one of the \texttt{convert\_to\_TOUGH2()} or \texttt{convert\_to\_AUTOUGH2()} methods to be executed, with default method parameters.  Hence, changing the \texttt{type} property to `AUTOUGH2' causes the EOS to be set to the default `EW'.  It is also not possible to specify TOUGH2\_MP options when setting \texttt{type}.  For more control over how the conversion is carried out, use the conversion methods directly instead of setting \texttt{type}.
 
@@ -545,6 +589,7 @@ A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Chang
 
 The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_methods}.  Details of these methods are given below.
 
+\index{TOUGH2 data files!methods}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{65mm}|}
@@ -575,6 +620,8 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
 \subsubsection{\texttt{add\_generator(\emph{generator})}}
 \end{snugshade}
 \label{sec:t2data:add_generator}
+\index{TOUGH2 data files!adding!generators}
+\index{TOUGH2 data files!generators!adding}
 
 Adds a generator to the data file object.
 
@@ -589,6 +636,10 @@ Adds a generator to the data file object.
     \emph{eos}='EW')}}
 \end{snugshade}
 \label{sec:t2data:convert_to_AUTOUGH2}
+\index{TOUGH2 data files!converting!to AUTOUGH2}
+\index{TOUGH2 data files!simulator type}
+\index{TOUGH2!AUTOUGH2}
+\index{TOUGH2}
 
 Converts a TOUGH2 (or TOUGH2\_MP) data file for use with AUTOUGH2.  Various parameter options are altered to try to make the AUTOUGH2 simulation give similar results to the original TOUGH2 simulation.  If necessary, the \texttt{filename} property is changed to end in `.dat' (or `.DAT', depending on the case of the base file name), as required by AUTOUGH2.
 
@@ -610,6 +661,10 @@ The simulator and EOS name can also be specified, as AUTOUGH2 data files contain
 \subsubsection{\texttt{convert\_to\_TOUGH2(\emph{warn}=True, \emph{MP}=False)}}
 \end{snugshade}
 \label{sec:t2data:convert_to_TOUGH2}
+\index{TOUGH2 data files!converting!to TOUGH2}
+\index{TOUGH2 data files!simulator type}
+\index{TOUGH2!AUTOUGH2}
+\index{TOUGH2}
 
 Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators such as TOUGH2\_MP).  Various parameter options are altered to try to make the TOUGH2 simulation give similar results to the original AUTOUGH2 simulation.  This particularly affects AUTOUGH2 options related to backward compatibility with MULKOM.  In particular, if these are used then the heat conductivities in the ROCKS block have to be altered to give the same results.  Data blocks specific to AUTOUGH2 (e.g. SIMULATOR, LINEQ, and SHORT) are removed, and AUTOUGH2-specific generator types are converted to their TOUGH2 equivalents if possible, or otherwise deleted.
 
@@ -625,6 +680,8 @@ Converts an AUTOUGH2 data file for use with TOUGH2 (or compatible simulators suc
 \subsubsection{\texttt{clear\_generators()}}
 \end{snugshade}
 \label{sec:t2data:clear_generators}
+\index{TOUGH2 data files!generators!deleting}
+\index{TOUGH2 data files!deleting!generators}
 
 Deletes all generators from the data file object.
 
@@ -632,6 +689,8 @@ Deletes all generators from the data file object.
 \subsubsection{\texttt{delete\_generator(\emph{blocksourcenames})}}
 \end{snugshade}
 \label{sec:t2data:delete_generator}
+\index{TOUGH2 data files!generators!deleting}
+\index{TOUGH2 data files!deleting!generators}
 
 Deletes the generator with the specified block and generator (source) name, if it exists.
 
@@ -645,6 +704,8 @@ Deletes the generator with the specified block and generator (source) name, if i
 \subsubsection{\texttt{delete\_orphan\_generators()}}
 \end{snugshade}
 \label{sec:t2data:delete_orphan_generators}
+\index{TOUGH2 data files!generators!deleting}
+\index{TOUGH2 data files!deleting!generators}
 
 Deletes all generators with block names that are not in the grid.
 
@@ -652,6 +713,7 @@ Deletes all generators with block names that are not in the grid.
 \subsubsection{\texttt{generator\_index(\emph{blocksourcenames})}}
 \end{snugshade}
 \label{sec:t2data:generator_index}
+\index{TOUGH2 data files!generators!indices of}
 
 Returns the index (in the \texttt{generatorlist} list) of the generator with the specified block and generator name.
 
@@ -665,6 +727,7 @@ Returns the index (in the \texttt{generatorlist} list) of the generator with the
 \subsubsection{\texttt{read(\emph{filename}, \emph{meshfilename}='')}}
 \end{snugshade}
 \label{sec:t2data:read}
+\index{TOUGH2 data files!reading}
 
 Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data may optionally be read from auxiliary files, if it is not present in the main data file.  (Note that if the main data file does contain mesh information (the `ELEME' and `CONNE' sections), any auxiliary mesh files will not be read.)
 
@@ -683,11 +746,14 @@ Note that it is possible to create a \texttt{t2data} object and read its content
     \emph{silent}=False)}}
 \end{snugshade}
 \label{sec:t2data:run}
+\index{TOUGH2 data files!running}
 
 Runs an AUTOUGH2 or TOUGH2 (but not TOUGH2\_MP) simulation using the data file corresponding to a \texttt{t2data} object.  The contents of the \texttt{t2data} object must first have been written to disk using the \texttt{write} function.  If the file names for the save file or initial conditions file are not specified, they are constructed by changing the file extension of the data file name.  The name of the TOUGH2 executable can be specified.
 
+\index{TOUGH2}
 For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable must be specified via the \texttt{simulator} parameter.  However, the \texttt{save\_filename} and \texttt{incon\_filename} parameters do not need to be specified.  Initial conditions will be read from the file INCON and final results written to SAVE.  The listing file name will be the same as the data file name, but with the extension changed to *.listing.
 
+\index{TOUGH2!TOUGH2-MP}
 Running TOUGH2\_MP is generally done via MPI rather than directly, and the exact syntax for doing so may vary with different implementations of MPI (OpenMPI, MPICH2 etc.)  It is also necessary to specify the number of processors to use.  However it is still possible to run TOUGH2\_MP from a Python script using a system call, e.g.:
 
 \begin{lstlisting}
@@ -711,6 +777,7 @@ system("mpirun -np 16 t2eos1_mp")
 \subsubsection{\texttt{specific\_generation(\emph{type}='MASS', \emph{name}='')}}
 \end{snugshade}
 \label{sec:t2data:specific_generation}
+\index{TOUGH2 data files!generators!specific generation rates}
 
 Returns an \texttt{np.array} containing the total specific generation rate in each block (i.e. generation rate per unit volume) for the specified generator type and name.
 
@@ -728,6 +795,7 @@ Returns an \texttt{np.array} containing the total specific generation rate in ea
     \emph{preserve\_generation\_totals}=False)}}
 \end{snugshade}
 \label{sec:t2data:transfer_from}
+\index{TOUGH2 data files!transferring}
 
 Transfers data from another \texttt{t2data} object, and its associated \texttt{mulgrid} object.  Parameters, rock types and rock type assignments, and optionally initial conditions files are transferred.  In general the data for a given block in the geometry is found by identifying the nearest block in the source geometry and transferring data from that block.  There are, however, exceptions, such as for generators that need to remain on the surface or bottom of the model.  The \texttt{top\_generator} and \texttt{bottom\_generator} lists specify the `layer' part of the generator name for generators that should remain on the top or bottom of the model, respectively.
 
@@ -761,6 +829,7 @@ If both \texttt{sourceinconfilename} and \texttt{inconfilename} are specified, a
 \subsubsection{\texttt{total\_generation(\emph{type}='MASS', \emph{name}='')}}
 \end{snugshade}
 \label{sec:t2data:total_generation}
+\index{TOUGH2 data files!generators!total generation rates}
 
 Returns an \texttt{np.array} containing the total generation rate in each block for the specified generator type and name.
 
@@ -777,6 +846,9 @@ Returns an \texttt{np.array} containing the total generation rate in each block 
     \emph{echo\_extra\_precision}=None)}}
 \end{snugshade}
 \label{sec:t2data:write}
+\index{TOUGH2 data files!writing}
+\index{TOUGH2 data files!mesh file}
+\index{TOUGH2 data files!extra precision}
 
 Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{meshfilename} parameter is used, mesh information can be written to auxiliary mesh files.
 
@@ -794,9 +866,12 @@ Writes a \texttt{t2data} object to a TOUGH2 data file on disk.  If the \texttt{m
 
 \section{\texttt{t2generator} objects}
 \label{t2generatorobjects}
+\index{PyTOUGH!classes!\texttt{t2generator}}
+\index{TOUGH2 data files!generators}
 
 A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e. an item in the generation table).  The properties of a \texttt{t2generator} object are given in Table \ref{tb:t2generator_properties}.  These correspond closely to the parameters specified in the TOUGH2 \textbf{GENER} input block.  A \texttt{t2generator} object has no methods.
 
+\index{TOUGH2 data files!generators!properties}
 \begin{table}
   \begin{center}
     \begin{tabular}{|l|l|p{60mm}|p{20mm}|}
@@ -826,6 +901,7 @@ A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e
 \end{table}
 
 \section{Example}
+\index{examples!TOUGH2 data files}
 
 The following piece of Python script opens a MULgraph geometry file and TOUGH2 data file, changes some TOUGH2 run-time parameters and assigns heat generators to the blocks in the bottom layer inside a defined area, with the specified total heat divided uniformly amongst the generators.
 

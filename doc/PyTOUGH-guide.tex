@@ -4,6 +4,7 @@
 \usepackage{lmodern}
 \usepackage[T1]{fontenc}
 \usepackage{gensymb}
+\usepackage{makeidx}
 \usepackage{listings}
 \usepackage{framed,color}
 \definecolor{shadecolor}{gray}{0.9}
@@ -13,8 +14,10 @@
 \usepackage[authoryear,round]{natbib}   % for references
 \usepackage[hmargin=3.5cm]{geometry} % change margin
 \usepackage{rotating} % for sideways tables
-\usepackage[a4paper=true]{hyperref}
+\usepackage{hyperref}
 \usepackage{longtable}
+
+\makeindex
 
 \hypersetup{
   pdftitle = PyTOUGH User's Guide,
@@ -61,6 +64,11 @@
 \bibliographystyle{PyTOUGH}
 \addcontentsline{toc}{chapter}{References} % adds to table of contents
 \bibliography{PyTOUGH}
+
+\clearpage
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
 
 %------------------------------------------------------------------------
 
