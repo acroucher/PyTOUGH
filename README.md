@@ -16,6 +16,8 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 The latest stable version is 1.3.9, which has:
 
+* Improved user guide: added index, added hyperlinks from tables to descriptions of properties/methods, fixed bug which prevented searching PDF for strings containing underscores, added hyperlinks to external URLs, improved formatting of code examples (with syntax highlighting)
+
 * Better support for exporting grids containing columns with more than four sides to VTK
 
 * Ability to plot connection flow arrows on mulgrid layer and slice plots
