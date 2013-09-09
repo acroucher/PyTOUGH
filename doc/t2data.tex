@@ -28,7 +28,7 @@ creates an empty \texttt{t2data} object called \texttt{dat}.
 dat = t2data(filename)
 \end{lstlisting}
 
-creates a \texttt{t2data} object called \texttt{dat} and reads its contents from file \texttt{filename}.  (It is also possible to read the mesh part of the \texttt{t2data} object from separate files- see below.)
+creates a \texttt{t2data} object called \texttt{dat} and reads its contents from file \texttt{filename}.  (It is also possible to read the mesh part of the \texttt{t2data} object from separate files - see below.)
 
 Because a \texttt{t2data} object contains a large number of different parameters, it is usually easier to load one from an existing TOUGH2 data file and edit it, rather than creating a new one from scratch. 
 
@@ -784,7 +784,7 @@ Returns an \texttt{np.array} containing the total specific generation rate in ea
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{type}: string\\
-  Generation type (`HEAT', `MASS' etc.)- default is `MASS'.
+  Generation type (`HEAT', `MASS' etc.) -- default is `MASS'.
 \item \textbf{name}: string\\
   Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
 \end{itemize}
@@ -836,7 +836,7 @@ Returns an \texttt{np.array} containing the total generation rate in each block 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{type}: string\\
-  Generation type (`HEAT', `MASS' etc.)- default is `MASS'.
+  Generation type (`HEAT', `MASS' etc.) -- default is `MASS'.
 \item \textbf{name}: string\\
   Regular expression to match generator names (e.g. `SP...' (or `\^{}SP') will match all generators with names beginning with `SP'.)
 \end{itemize}

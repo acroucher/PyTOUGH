@@ -79,7 +79,7 @@ The grid block naming convention and atmosphere type used in the \texttt{mulgrid
 \subsubsection{Grid diagnostics}
 \index{MULgraph geometry!diagnostics}
 
-A \texttt{mulgrid} object has some properties (and methods) for evaluating its integrity.  The property \texttt{column\_angle\_ratio} returns an \texttt{np.array} of the `angle ratio' for each column (the ratio of largest to smallest interior angles -- see section \ref{columnobjects}), a measure of skewness.  The \texttt{column\_side\_ratio} returns an \texttt{np.array} of the `side ratio' for each column (the ratio of largest to smallest side length), a measure of elongation.  These array properties can be plotted using the \texttt{layer\_plot} method (see section \ref{mulgridmethods}) for a graphical overview of grid quality.
+A \texttt{mulgrid} object has some properties (and methods) for evaluating its integrity.  The property \texttt{column\_angle\_ratio} returns an \texttt{np.array} of the `angle ratio' for each column (the ratio of largest to smallest interior angles - see section \ref{columnobjects}), a measure of skewness.  The \texttt{column\_side\_ratio} returns an \texttt{np.array} of the `side ratio' for each column (the ratio of largest to smallest side length), a measure of elongation.  These array properties can be plotted using the \texttt{layer\_plot} method (see section \ref{mulgridmethods}) for a graphical overview of grid quality.
 
 There is also a \texttt{connection\_angle\_cosine} property, which returns an \texttt{np.array} of the angle cosine for each connection (the cosine of the angle between a line joining the nodes in the connection and a line joining the centres of the blocks in the connection).  In general it is desirable for these lines to be as close to perpendicular as possible, making the cosines close to zero.
 
@@ -644,9 +644,9 @@ Fits column surface elevations from data, using bilinear least-squares finite el
 \item \textbf{data}: \texttt{np.array}\\
   Two-dimensional array of data to fit.  Each row of the array should contain the x,y,z values for each data point.  Such an array can be conveniently read from a text file using the \texttt{np.loadtxt()} method.
 \item \textbf{alpha}: float\\
-  Smoothing parameter for first derivatives- increasing its value results in solutions with lower gradients (but may result in extrema being smoothed out).
+  Smoothing parameter for first derivatives - increasing its value results in solutions with lower gradients (but may result in extrema being smoothed out).
 \item \textbf{beta}: float\\
-  Smoothing parameter for second derivatives- increasing its value results in solutions with lower curvature.
+  Smoothing parameter for second derivatives - increasing its value results in solutions with lower curvature.
 \item \textbf{columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
   Columns, or names of columns to be fitted.  If empty (the default), then all columns will be fitted.
 \item \textbf{min\_columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
@@ -937,7 +937,7 @@ Returns a list of all nodes inside the specified polygon or rectangle.
 \index{MULgraph geometry!finding!nodes}
 \index{MULgraph geometry!nodes!finding}
 
-Returns the node nearest to a specified point.  An optional kd-tree structure can be specified to speed searching- useful if searching for many points.
+Returns the node nearest to a specified point.  An optional kd-tree structure can be specified to speed searching - useful if searching for many points.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -955,7 +955,7 @@ Returns the node nearest to a specified point.  An optional kd-tree structure ca
 
 Adjusts positions of the specified nodes to optimize grid quality.  If no nodes are specified, all node positions are optimized.  Grid quality can be defined as a combination of connection angle cosine, column aspect ratio and column skewness.  Increasing the weight for any of these increases its importance in the evaluation of grid quality.
 
-Note that an error will result if the connection angle weight and either of the other two weights is set to zero- in this case there are not enough constraints to fit the parameters.
+Note that an error will result if the connection angle weight and either of the other two weights is set to zero - in this case there are not enough constraints to fit the parameters.
 
 If the \texttt{pest} parameter is set to \texttt{True}, the PEST parameter estimation software is used to carry out the optimzation (this obviously requires that PEST is installed on your machine).  Otherwise, the \texttt{leastsq} routine in the \texttt{scipy} Python library is used.  Particularly for large problems, PEST may give quicker results.  PEST is free software and may be downloaded from \url{http://www.pesthomepage.org/}.  If PEST is used, a variety of intermediate files (named \texttt{pestmesh.*}) will be written to the working directory, including the PEST run record file (\texttt{pestmesh.rec}) which contains a detailed record of the optimization process.
 
@@ -1044,7 +1044,7 @@ Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid
 \item \textbf{justify}: string\\
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{case}: string\\
-  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.  Now deprecated- using the \texttt{chars} parameter is more flexible.
+  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.  Now deprecated - using the \texttt{chars} parameter is more flexible.
 \item \textbf{chars}: string\\
   Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \end{itemize}
@@ -1115,7 +1115,7 @@ Refines the specified layers in the grid.  If no layers are specified, all layer
 \index{MULgraph geometry!renaming!columns}
 \index{MULgraph geometry!columns!renaming}
 
-Renames a grid column.  Returns \texttt{True} if the column was found and renamed, or \texttt{False} if the specified column does not exist.  Multiple columns can be renamed at once by specifying lists of old and new column names- this is faster than calling the method multiple times, and the block and connection name lists are updated only once.
+Renames a grid column.  Returns \texttt{True} if the column was found and renamed, or \texttt{False} if the specified column does not exist.  Multiple columns can be renamed at once by specifying lists of old and new column names - this is faster than calling the method multiple times, and the block and connection name lists are updated only once.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -1130,7 +1130,7 @@ Renames a grid column.  Returns \texttt{True} if the column was found and rename
 \index{MULgraph geometry!renaming!layers}
 \index{MULgraph geometry!layers!renaming}
 
-Renames a grid layer.  Returns \texttt{True} if the layer was found and renamed, or \texttt{False} if the specified layer does not exist.  Multiple layers can be renamed at once by specifying lists of old and new layer names- this is faster than calling the method multiple times, and the block and connection name lists are updated only once.
+Renames a grid layer.  Returns \texttt{True} if the layer was found and renamed, or \texttt{False} if the specified layer does not exist.  Multiple layers can be renamed at once by specifying lists of old and new layer names - this is faster than calling the method multiple times, and the block and connection name lists are updated only once.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -1441,7 +1441,7 @@ A \texttt{node} object \texttt{n} can be created for example using the command \
 
 A \texttt{column} object represents a column in a \texttt{mulgrid} object.  The properties of a \texttt{column} object are listed in Table \ref{tb:column_properties}.
 
-The main properties defining a column are its \texttt{name} and \texttt{node} properties.  The \texttt{name} is specified according to the naming convention of the \texttt{mulgrid} object that the column belongs to.  The \texttt{node} property is a list of \texttt{node} objects (not node names) that belong to the column.  A \texttt{column}'s \texttt{neighbour} property is a set of other \texttt{columns} connected to that column via a \texttt{connection} (see section \ref{connectionobjects}), and its \texttt{connection} property is a set of connections the column is part of.  The \texttt{neighbourlist} property is a list of neighbouring columns, with each item corresponding to a column edge (\texttt{None} if the edge is on a grid boundary).  A \texttt{column}'s \texttt{centroid} property returns the average of the positions of its vertices- which is what the \texttt{centre} property is set to, unless otherwise specified.
+The main properties defining a column are its \texttt{name} and \texttt{node} properties.  The \texttt{name} is specified according to the naming convention of the \texttt{mulgrid} object that the column belongs to.  The \texttt{node} property is a list of \texttt{node} objects (not node names) that belong to the column.  A \texttt{column}'s \texttt{neighbour} property is a set of other \texttt{columns} connected to that column via a \texttt{connection} (see section \ref{connectionobjects}), and its \texttt{connection} property is a set of connections the column is part of.  The \texttt{neighbourlist} property is a list of neighbouring columns, with each item corresponding to a column edge (\texttt{None} if the edge is on a grid boundary).  A \texttt{column}'s \texttt{centroid} property returns the average of the positions of its vertices - which is what the \texttt{centre} property is set to, unless otherwise specified.
 
 A \texttt{column} object has two properties measuring `grid quality'.  The \texttt{angle\_ratio} property returns the ratio of largest to smallest interior angles in the column.  The \texttt{side\_ratio} property returns the ratio of largest to smallest side lengths (a generalisation of `aspect ratio' to columns with any number of sides).  Values as close as possible to 1.0 for both these measures are desirable (their values are both exactly 1.0 for any regular polygon, e.g. an equilateral triangle or square).  Columns with large angle ratios will be highly skewed, while those with large side ratios will be typically highly elongated in one direction.
 
@@ -1490,7 +1490,7 @@ Returns \texttt{true} if the column centre is inside the specified polygon or re
 \end{snugshade}
 \label{sec:column:is_against}
 
-Returns \texttt{true} if the column is `against' \texttt{othercolumn}- that is, if it shares more than one node with it.
+Returns \texttt{true} if the column is `against' \texttt{othercolumn} -- that is, if it shares more than one node with it.
 
 \textbf{Parameters:}
 \begin{itemize}

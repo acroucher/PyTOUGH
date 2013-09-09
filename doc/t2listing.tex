@@ -45,7 +45,7 @@ The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t
 \subsubsection{Element, connection and generation tables}
 \index{TOUGH2 listing files!tables}
 
-There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \hyperref[listingtableobjects]{\texttt{listingtable}} (see section \ref{listingtableobjects}) and provide access to the simulation results.  Not all of these tables will necessarily be present- this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  \index{TOUGH2!TOUGH+} TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
+There are three main `table' properties, corresponding to the \textbf{element}, \textbf{connection} and \textbf{generation} tables in the listing file.  These are all of type \hyperref[listingtableobjects]{\texttt{listingtable}} (see section \ref{listingtableobjects}) and provide access to the simulation results.  Not all of these tables will necessarily be present - this depends on the settings in the data file which produced the results.  For TOUGH2 results, a fourth \textbf{primary} table may also be present, containing primary variables and their changes, if the KDATA parameter is set to 3.  \index{TOUGH2!TOUGH+} TOUGH+ results can also contain additional element tables containing other calculated quantities; these are named \textbf{element1}, \textbf{element2} etc.  A list of names of all available tables is given by the \texttt{table\_names} property.
 
 For example, for a \texttt{t2listing} object \texttt{lst}, \texttt{lst.element['AR210']['Temperature']} gives the temperature at block `AR210', at the current time.  Blocks can also be identified by index rather than name, so that \texttt{lst.element[120]['Pressure']} gives the pressure at the block with (zero-based) index 120.
 
@@ -214,7 +214,7 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
   Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing \textbf{table type} (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the \textbf{block/ connection/ generator name} and the \textbf{table column name}.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)  For history of additional element tables in TOUGH+ results, use `e1', `e2' etc. instead of `e'.  Note that, as for listing tables, connection and generator names (or `keys') are specified as two-element tuples (see Table \ref{tb:listing_table_keys}).
 
 \item \textbf{short}: Boolean\\
-  Whether short output (AUTOUGH2 only) is to be included in the history results- default is \texttt{True}.
+  Whether short output (AUTOUGH2 only) is to be included in the history results - default is \texttt{True}.
 \end{itemize}
 
 \textbf{Example:}
@@ -270,7 +270,7 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
-  The \texttt{mulgrid} geometry object associated with the results.  For flexibility, this geometry need not be fully compatible with the results- for example, it may contain only a subset of the blocks for which results are present, or the blocks may be in a different order.  However, if it is not fully compatible, the writing process will be slower, and flux vectors will not be written (even if \texttt{flows} is set to \texttt{True}).
+  The \texttt{mulgrid} geometry object associated with the results.  For flexibility, this geometry need not be fully compatible with the results -- for example, it may contain only a subset of the blocks for which results are present, or the blocks may be in a different order.  However, if it is not fully compatible, the writing process will be slower, and flux vectors will not be written (even if \texttt{flows} is set to \texttt{True}).
 \item \textbf{filename}: string\\
   Name of the *.pvd file to be written.  Names of the individual *.vtu files for each time step are similar but with a time index appended and the file extension changed.
 \item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}}\\
@@ -317,7 +317,7 @@ Hence, the value in the element table for a given block and column can be access
 
 The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[\emph{blockname}]} gives the row in the table for a specified block, with the values arranged in a dictionary which can be accessed using the column names of the table (e.g. \texttt{lst.element['AR231']['Temperature']}).  This dictionary for each row also contains an additional \texttt{'key'} item which returns the key for that row.  Conversely, \texttt{lst.element[\emph{columnname}]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid, for an element table).
 
-The properties of a \texttt{listingtable} object are given in Table \ref{tb:listingtable_properties}.  The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.  The \texttt{num\_keys} property just returns the number of keys used to identify each row- generally 1 for an element table and 2 for connection and generation tables.
+The properties of a \texttt{listingtable} object are given in Table \ref{tb:listingtable_properties}.  The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.  The \texttt{num\_keys} property just returns the number of keys used to identify each row - generally 1 for an element table and 2 for connection and generation tables.
 
 \index{TOUGH2 listing files!tables!properties}
 \begin{table}
@@ -351,7 +351,7 @@ It is possible to perform addition and subtraction operations on \texttt{listing
 
 Returns a list of rows in the table with keys matching the specified regular expression string, \texttt{pattern}.
 
-For tables with multiple keys, \texttt{pattern} can be a list or tuple of regular expressions.  If a single string pattern is given for a multiple-key table, the pattern is matched on the index$^{th}$ key (and any value of the other key- unless the \texttt{match\_any} option is used; see below).
+For tables with multiple keys, \texttt{pattern} can be a list or tuple of regular expressions.  If a single string pattern is given for a multiple-key table, the pattern is matched on the index$^{th}$ key (and any value of the other key - unless the \texttt{match\_any} option is used; see below).
 
 If \texttt{match\_any} is set to \texttt{True}, rows are returned with keys matching any of the specified patterns (instead of all of them).  If this option is used in conjunction with a single string pattern, the specified pattern is applied to all keys.
 
@@ -362,7 +362,7 @@ If \texttt{match\_any} is set to \texttt{True}, rows are returned with keys matc
 \item \textbf{index}: integer\\
   Index of the key to which the pattern is to be applied, for multiple-key tables and when \texttt{pattern} is specified as a single string.
 \item \textbf{match\_any}: Boolean\\
-  If \texttt{False}, return only rows with keys matching \emph{all} of their corresponding patterns.  If \texttt{True}, return rows with keys matching \emph{any} of the specified patterns- and if a single string pattern is given, apply this to all keys.
+  If \texttt{False}, return only rows with keys matching \emph{all} of their corresponding patterns.  If \texttt{True}, return rows with keys matching \emph{any} of the specified patterns - and if a single string pattern is given, apply this to all keys.
 \end{itemize}
 
 \section{\texttt{t2historyfile} objects}

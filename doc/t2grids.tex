@@ -298,7 +298,7 @@ Deletes a rock type from the grid.
 \label{sec:t2grid:demote_block}
 \index{TOUGH2 grids!blocks!demoting}
 
-Shifts a block (or blocks) to the end of the blocklist.  This can be useful for making blocks inactive- by setting their volumes to zero or negative, and then shifting them to the end of the list (to avoid all blocks below them also being treated as inactive).
+Shifts a block (or blocks) to the end of the blocklist.  This can be useful for making blocks inactive - by setting their volumes to zero or negative, and then shifting them to the end of the list (to avoid all blocks below them also being treated as inactive).
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -392,9 +392,9 @@ The \emph{dimension} parameter sets the flow dimension for `generalized radial f
 \item \textbf{rblocks}, \textbf{zblocks}: list (or \texttt{np.array})\\
   Lists (or arrays) of block sizes in the \emph{r} and \emph{z} directions.
 \item \textbf{convention}: integer\\
-  Naming convention for grid columns and layers- same as the naming convention for a \texttt{mulgrid} object.
+  Naming convention for grid columns and layers - same as the naming convention for a \texttt{mulgrid} object.
 \item \textbf{atmos\_type}: integer\\
-  Type of atmosphere -- also the same as the atmosphere type for a \texttt{mulgrid} object.
+  Type of atmosphere - also the same as the atmosphere type for a \texttt{mulgrid} object.
 \item \textbf{origin}: list (or \texttt{np.array})\\
   Origin of the grid (of length 2 or 3).  The first entry is the radial origin, i.e. the starting radius of the grid.  The last entry is the vertical origin, i.e. the vertical position of the top of the grid.  If of length 3, the middle entry is ignored.
 \item \textbf{justify}: string\\
@@ -405,7 +405,7 @@ The \emph{dimension} parameter sets the flow dimension for `generalized radial f
   Dimension for `generalized radial flow', which can take any (possibly non-integer) value between 1 and 3.  Dimension 1 corresponds to flow in a linear `pipe', dimension 2 corresponds to standard radial flow in a disc-shaped reservoir and dimension 3 corresponds to flow in a spherically symmetric reservoir.
 \end{itemize}
 
-Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by creating a `dummy' vertical slice rectangular geometry, using the \texttt{mulgrid} \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular()}} method, using its $x$ direction for radius (and having only one block in the $y$ direction -- which is not used).  The \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot()}} method can then be used to plot results.
+Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by creating a `dummy' vertical slice rectangular geometry, using the \texttt{mulgrid} \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular()}} method, using its $x$ direction for radius (and having only one block in the $y$ direction - which is not used).  The \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot()}} method can then be used to plot results.
 
 \begin{snugshade}
 \subsubsection{\texttt{rocktype\_frequency(\emph{rockname})}}
