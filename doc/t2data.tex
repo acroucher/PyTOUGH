@@ -583,7 +583,7 @@ A string property containing the simulation title, corresponding to the \textbf{
 \index{TOUGH2}
 \index{TOUGH2!AUTOUGH2}
 
-A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Changing the value of this property will cause one of the \texttt{convert\_to\_TOUGH2()} or \texttt{convert\_to\_AUTOUGH2()} methods to be executed, with default method parameters.  Hence, changing the \texttt{type} property to `AUTOUGH2' causes the EOS to be set to the default `EW'.  It is also not possible to specify TOUGH2\_MP options when setting \texttt{type}.  For more control over how the conversion is carried out, use the conversion methods directly instead of setting \texttt{type}.
+A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Changing the value of this property will cause one of the \hyperref[sec:t2data:convert_to_TOUGH2]{\texttt{convert\_to\_TOUGH2()}} or \hyperref[sec:t2data:convert_to_AUTOUGH2]{\texttt{convert\_to\_AUTOUGH2()}} methods to be executed, with default method parameters.  Hence, changing the \texttt{type} property to `AUTOUGH2' causes the EOS to be set to the default `EW'.  It is also not possible to specify TOUGH2\_MP options when setting \texttt{type}.  For more control over how the conversion is carried out, use the conversion methods directly instead of setting \texttt{type}.
 
 \subsection{Methods}
 
@@ -764,9 +764,9 @@ system("mpirun -np 16 t2eos1_mp")
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{save\_filename}: string\\
-  Name of the save file to be written to disk during the simulation.  Default is \emph{base.save} where the AUTOUGH2 data file name is \emph{base.dat}.
+  Name of the save file to be written to disk during the simulation.  Default is `base.save' where the AUTOUGH2 data file name is `base.dat'.
 \item \textbf{incon\_filename}: string\\
-  Name of the initial conditions file for the simulation.  Default is \emph{base.incon} where the AUTOUGH2 data file name is \emph{base.dat}.
+  Name of the initial conditions file for the simulation.  Default is `base.incon' where the AUTOUGH2 data file name is `base.dat'.
 \item \textbf{simulator}: string\\
   Name of the AUTOUGH2 or TOUGH2 executable.  Default is `AUTOUGH2\_2'.
 \item \textbf{silent}: Boolean\\

@@ -37,7 +37,7 @@ creates a \texttt{t2incon} object called \texttt{inc} and reads its contents fro
 
 \subsection{Properties}
 
-The main properties of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_properties}.  Once a set of initial conditions is loaded into a \texttt{t2incon} object, conditions for individual blocks can be accessed by block name or index.  For example, for a \texttt{t2incon} object \texttt{inc}, the initial conditions in block \emph{blockname} are given simply by \texttt{inc[\emph{blockname}]}.  This returns a \hyperref[t2blockincons]{\texttt{t2blockincon}} object (see section \ref{t2blockincons}).  Similarly, \texttt{inc[\emph{i}]} returns the initial conditions at the block with (zero-based) index \texttt{\emph{i}}.
+The main properties of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_properties}.  Once a set of initial conditions is loaded into a \texttt{t2incon} object, conditions for individual blocks can be accessed by block name or index.  For example, for a \texttt{t2incon} object \texttt{inc}, the initial conditions in block `blockname' are given simply by \texttt{inc[blockname]}.  This returns a \hyperref[t2blockincons]{\texttt{t2blockincon}} object (see section \ref{t2blockincons}).  Similarly, \texttt{inc[i]} returns the initial conditions at the block with (zero-based) index \texttt{i}.
 
 Each column in the initial conditions file can be accessed by adding an integer (zero-based) index after the \texttt{t2blockincon} object, so for example:
 

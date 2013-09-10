@@ -88,7 +88,7 @@ The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, 
 Blocks at the ground surface that have very small vertical thickness can sometimes cause problems.  The \texttt{min\_surface\_block\_thickness} property gives a tuple containing the minimum surface block thickness and the name of the column in which it occurs.  Thin surface blocks of this type can be eliminated using the \texttt{snap\_columns\_to\_layers()} method.
 
 \subsubsection{Functions for reading data from file}
-\index{MULgraph geometry!reading functions}
+\index{MULgraph geometry!file format}
 
 A \texttt{mulgrid} object has a \texttt{read\_function} property which controls how data are read from file.  This property is a dictionary with six keys: `d', `f', `e', `g', `s' and `x', denoting respectively integer, float, exponential, general, string and blank.  Each item in the dictionary is a function which converts a string from the file on disk into the appropriate value.  For example, \texttt{read\_function['f']} converts a string to a floating point value.  By default, the built-in Python \texttt{float} function is used for this (although it is modified slightly so that it returns \texttt{None} if the input string is blank).  There is a dictionary of default reading functions included in PyTOUGH, called \texttt{default\_read\_function}.
 
@@ -328,7 +328,7 @@ Gives the name of the block containing a specified 3-D position in the grid (ret
 \item \textbf{pos}: \texttt{np.array}\\
   Position of point in 3-D
 \item \textbf{qtree}: \texttt{quadtree}\\
-  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
+  Quadtree object for fast searching of grid columns (can be constructed using the \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree()}} method).
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{check(\emph{fix}=False,\emph{silent}=False)}}\end{snugshade}
@@ -391,7 +391,7 @@ Returns the grid column containing the specified horizontal point.  If \texttt{c
  \item \textbf{bounds}: list of \texttt{np.array} (or \texttt{None})\\
   Polygon or rectangle representing e.g. the boundary of the grid: points outside this polygon will always return \texttt{None}.  If the polygon has only two points, it will be interpreted as a rectangle [bottom left, top right].
  \item \textbf{qtree}: \texttt{quadtree} \\
-   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using e.g. \texttt{qtree = geo.column\_quadtree(columns)}, where \texttt{columns} is the list of \texttt{column} objects to be searched.
+   A quadtree object for searching the columns of the grid.  If many points are to be located, this option can speed up the search.  The quadtree can be constructed before searching using the \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree()}} method.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{column\_mapping(\emph{geo})}}\end{snugshade}
@@ -435,7 +435,7 @@ From the given list or set of columns, finds sets of columns that are connected 
 \index{PyTOUGH!classes!\texttt{quadtree}}
 \index{quadtrees}
 
-Returns a quadtree structure for fast searching of grid columns, to find which column a given point lies in.  This can then be passed into various other \texttt{mulgrid} methods that do such searching, e.g. \texttt{block\_name\_containing\_point()} or \texttt{well\_values}, to speed them up (useful for large grids).
+Returns a quadtree structure for fast searching of grid columns, to find which column a given point lies in.  This can then be passed into various other \texttt{mulgrid} methods that do such searching, e.g. \hyperref[sec:mulgrid:block_name_containing_point]{\texttt{block\_name\_containing\_point()}} or \hyperref[sec:mulgrid:well_values]{\texttt{well\_values()}}, to speed them up (useful for large grids).
 
 The quadtree is an instance of a \texttt{quadtree} class, defined in the \texttt{mulgrids} module.
 
@@ -743,7 +743,7 @@ When a variable is plotted over the grid, contours at specified levels can also 
 
 Well tracks can also optionally be plotted.  Each well is drawn as a line following the well track, with the well name at the bottom (or optionally the top) of the well.  For surface plots (\texttt{layer} = \texttt{None}), wells are drawn with solid lines; otherwise, wells are drawn with dotted lines except where they pass through the specified layer, where they are drawn with solid lines.
 
-Rock types can be shown on the layer plot by specifying a \texttt{t2grid} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
+Rock types can be shown on the layer plot by specifying a \hyperref[t2grids]{\texttt{t2grid}} object as the \texttt{rocktypes} parameter.  It is possible to group similar rock types (e.g. those in the same geological formation but with slightly different permeabilities) to simplify the plot if there are a lot of rock types.
 
 Flows can be shown on the layer by specifying an array of connection flow values (e.g mass flow) as the \texttt{flow} parameter.  Flows will then be drawn on the slice by arrows at the block centres, each representing the average flux (flow per unit area) over the block, projected onto the layer.  (For example, connection values of mass flow in kg/s will be represented as block-average mass fluxes in kg/$m^2$/s.)  Alternatively, flows through the connection faces can be plotted by setting the \texttt{connection\_flows} parameter to \texttt{True}.
 
@@ -814,11 +814,11 @@ Flows can be shown on the layer by specifying an array of connection flow values
 \item \textbf{rockgroup}: tuple, list, string (or \texttt{None})\\
   To group similar rock types into one colour, specify a tuple or list of integers, representing the significant characters of the rock type names.  For example, to group rock types having the same first two characters, specify (0,1).  Alternatively, specify a 5-character string mask containing asterisks in positions that are not significant, and any other characters in the significant positions (e.g. `++***').
 \item \textbf{flow}: \texttt{np.array} (or \texttt{None})\\
-  To plot flows, specify an array of connection flow values (one floating point value for each connection in the grid).  These may for example be extracted from the columns of the connection table in a \texttt{t2listing} object.
+  To plot flows, specify an array of connection flow values (one floating point value for each connection in the grid).  These may for example be extracted from the columns of the connection table in a \hyperref[listingfiles]{\texttt{t2listing}} object.
 \item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}} (or \texttt{None})\\
   Specify a \texttt{t2grid} object associated with the grid, to be used to calculate the `flux matrix' which converts the connection flow values to block-average fluxes.  If this is not specified (and neither is the \texttt{flux\_matrix} parameter), then a \texttt{t2grid} object will be created internally.
 \item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix} (or \texttt{None})\\
-  A sparse matrix used to convert the connection flow values to block-average fluxes.  Such a matrix can be created using the \texttt{flux\_matrix()} method of a \texttt{t2grid} object and an appropriate \texttt{mulgrid} object.  If no flux matrix is specified, one will be created internally.  This can be time-consuming for large grids, so for multiple flow plots it is faster to pre-calculate a flux matrix in your script and pass it via this parameter.  If this parameter is specified, there is no need also to specify the \texttt{grid} parameter.
+  A sparse matrix used to convert the connection flow values to block-average fluxes.  Such a matrix can be created using the \hyperref[sec:t2grid:flux_matrix]{\texttt{flux\_matrix()}} method of a \texttt{t2grid} object and an appropriate \texttt{mulgrid} object.  If no flux matrix is specified, one will be created internally.  This can be time-consuming for large grids, so for multiple flow plots it is faster to pre-calculate a flux matrix in your script and pass it via this parameter.  If this parameter is specified, there is no need also to specify the \texttt{grid} parameter.
 \item \textbf{flow\_variable\_name}: string (or \texttt{None})\\
   Name of the flow variable (as it will appear on the scale of the plot).
 \item \textbf{flow\_unit}: string (or \texttt{None})\\
@@ -996,7 +996,7 @@ The routine returns a tuple of two arrays (\texttt{l},\texttt{v}), the first (\t
 \item \textbf{coordinate}: integer or Boolean\\
   If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0, 1 or 2) values.
 \item \textbf{qtree}: \texttt{quadtree}\\
-  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
+  Quadtree object for fast searching of grid columns (can be constructed using the \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree()}} method).
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{read(\emph{filename})}}\end{snugshade}
@@ -1014,13 +1014,13 @@ Reads a \texttt{mulgrid} object from a MULgraph geometry file on disk.
 \textbf{Example:}
 
 \begin{lstlisting}
-geo=mulgrid().read(filename)
+geo = mulgrid().read(filename)
 \end{lstlisting}
 
 creates a \texttt{mulgrid} object and reads its contents from file \texttt{filename}.  This can be done more simply just by passing the filename into the \texttt{mulgrid} creation command:
 
 \begin{lstlisting}
-geo=mulgrid(filename)
+geo = mulgrid(filename)
 \end{lstlisting}
 
 \begin{snugshade}
@@ -1374,7 +1374,7 @@ The routine returns a tuple of two arrays (\texttt{d},\texttt{v}), the first (\t
 \item \textbf{deviations}: Boolean\\
   Set to \texttt{True} to return values at deviation nodes, rather than intersections of layer centres with the well track.
 \item \textbf{qtree}: \texttt{quadtree}\\
-  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
+  Quadtree object for fast searching of grid columns (can be constructed using the \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree()}} method).
 \item \textbf{extend}: Boolean\\
   Set \texttt{True} to artificially extend the well trace to the bottom of the model.
 \end{itemize}

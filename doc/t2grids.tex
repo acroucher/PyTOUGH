@@ -15,7 +15,7 @@ The \texttt{t2grids} library in PyTOUGH contains classes and routines for manipu
 
 The \texttt{t2grids} library defines a \texttt{t2grid} class, used for representing TOUGH2 grids.  This gives access via Python to the grid's rock types, blocks, connections and other parameters.
 
-Normally a TOUGH2 grid is not created directly, but is either read from a TOUGH2 data file, or constructed from a \hyperref[mulgrids]{\texttt{mulgrid}} geometry object (see chapter \ref{mulgrids}) using the \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} method.
+Normally a TOUGH2 grid is not created directly, but is either read from a TOUGH2 data file, or constructed from a \hyperref[mulgrids]{\texttt{mulgrid}} geometry object (see chapter \ref{mulgrids}) using the \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo()}} method.
 
 Printing a \texttt{t2grid} object (e.g. \texttt{print grid}) displays a summary of information about the grid: how many rock types, blocks and connections it contains.
 
@@ -198,7 +198,7 @@ Calculates geometrical centres of all blocks in the grid, based on the specified
 
 Checks a grid for errors and optionally fixes them.  Errors checked for are: blocks not connected to any other blocks, and blocks with isolated rocktypes (not shared with any neighbouring blocks).  Returns \texttt{True} if no errors were found, and \texttt{False} otherwise.  If \texttt{fix} is \texttt{True}, any identified problems will be fixed.  If \texttt{silent} is \texttt{True}, there is no printout (only really useful if \texttt{fix} is \texttt{True}).
 
-Blocks not connected to any others are fixed by deleting them.  Isolated-rocktype blocks are fixed by assigning them the most popular rocktype of their neighbours.  Blocks with large volumes ($>$ 1E20 m$^3$) are never considered isolated (because they often have a special rocktype, such as an atmosphere one, that their neighbours will never share).
+Blocks not connected to any others are fixed by deleting them.  Isolated-rocktype blocks are fixed by assigning them the most popular rocktype of their neighbours.  Blocks with large volumes ($> 10^{20}$ m$^3$) are never considered isolated (because they often have a special rocktype, such as an atmosphere one, that their neighbours will never share).
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -336,7 +336,7 @@ Empties the grid of all its blocks, rock types and connections.
 \label{sec:t2grid:flux_matrix}
 \index{TOUGH2 grids!flux matrices}
 
-Takes the grid and a corresponding \texttt{mulgrid} object, and constructs a sparse matrix (of type \texttt{scipy.sparse.lil\_matrix}) which can be used to convert connection flow values on the grid to block-average fluxes (flows per unit area).  Specifically, if an array of connection flow values (one for each connection in the grid) is multiplied by this sparse matrix, the result is a partitioned array containing the 3-component block-average flux for each of the (non-atmosphere) blocks.
+Takes the grid and a corresponding \hyperref[mulgrids]{\texttt{mulgrid}} object, and constructs a sparse matrix (of type \texttt{scipy.sparse.lil\_matrix}) which can be used to convert connection flow values on the grid to block-average fluxes (flows per unit area).  Specifically, if an array of connection flow values (one for each connection in the grid) is multiplied by this sparse matrix, the result is a partitioned array containing the 3-component block-average flux for each of the (non-atmosphere) blocks.
 
 The method for constructing the matrix is as follows.  For each block, a distribution of flux is fitted to agree as closely as possible with the connection flow values.  This distribution is either constant or linear, depending on how many connections the block has (linear for blocks with at least 6 connections).  Fitting the connection values results in a small linear system to solve, which may be under- or over-determined, depending on the number of connections and the type of flux distribution.  A pseudo-inverse matrix is calculated which will find the least-squares solution of this system.  The total matrix is formed by assembling these matrices for each of the blocks into a global matrix.
 
@@ -383,18 +383,18 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 \label{sec:t2grid:radial}
 \index{TOUGH2 grids!creating!radial}
 
-Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.  Grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \emph{justify} and \emph{case} parameters control the formatting of the character part of the block names.
+Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.  Grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.
 
-The \emph{dimension} parameter sets the flow dimension for `generalized radial flow', which can represent flow in fractured rocks and modifies the block volumes and areas (see \cite{barker_1988}).  The default \emph{dimension} = 2 corresponds to standard radial flow.
+The \texttt{dimension} parameter sets the flow dimension for `generalized radial flow', which can represent flow in fractured rocks and modifies the block volumes and areas (see \cite{barker_1988}).  The default \texttt{dimension} = 2 corresponds to standard radial flow.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{rblocks}, \textbf{zblocks}: list (or \texttt{np.array})\\
   Lists (or arrays) of block sizes in the \emph{r} and \emph{z} directions.
 \item \textbf{convention}: integer\\
-  Naming convention for grid columns and layers - same as the naming convention for a \texttt{mulgrid} object.
+  Naming convention for grid columns and layers - same as the naming convention for a \hyperref[mulgrids]{\texttt{mulgrid}} object.
 \item \textbf{atmos\_type}: integer\\
-  Type of atmosphere - also the same as the atmosphere type for a \texttt{mulgrid} object.
+  Type of atmosphere - also the same as the atmosphere type for a \hyperref[mulgrids]{\texttt{mulgrid}} object.
 \item \textbf{origin}: list (or \texttt{np.array})\\
   Origin of the grid (of length 2 or 3).  The first entry is the radial origin, i.e. the starting radius of the grid.  The last entry is the vertical origin, i.e. the vertical position of the top of the grid.  If of length 3, the middle entry is ignored.
 \item \textbf{justify}: string\\
