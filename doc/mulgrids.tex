@@ -212,8 +212,8 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:layer_mapping]{\texttt{layer\_mapping}} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
   \hyperref[sec:mulgrid:layer_name]{\texttt{layer\_name}} & string & layer name of a block name\\ 
   \hyperref[sec:mulgrid:layer_plot]{\texttt{layer\_plot}} & -- & plots a variable over a layer of the grid\\
-  \hyperref[sec:mulgrid:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
   \hyperref[sec:mulgrid:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
+  \hyperref[sec:mulgrid:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
   \hyperref[sec:mulgrid:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
   \hyperref[sec:mulgrid:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
   \hyperref[sec:mulgrid:node_nearest_to]{\texttt{node\_nearest\_to}} & \hyperref[nodeobjects]{\texttt{node}} & node nearest to a specified point\\ 
@@ -888,32 +888,6 @@ geo.layer_plot(-500., t, 'Temperature', '$\degree$C', contours = np.arange(100,2
 
 plots the variable \texttt{t} at elevation -500 m over the grid, with the values as Temperature ($\degree$C), and with contours drawn from 100$\degree$C to 200$\degree$C with a contour interval of 25$\degree$C.
 
-\begin{snugshade}\subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False},\\
-      \emph{qtree}=None)}}\end{snugshade}
-\label{sec:mulgrid:line_values}
-\index{MULgraph geometry!values!along a line}
-
-Returns values of a specified variable along an arbitrary line through the grid.  The start and end points of the line (\texttt{start} and \texttt{end}) are 3-element lists, tuples or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
-
-The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{l}) containing the distance from the start (or the appropriate coordinate (0,1, or 2) if \texttt{coordinate} is specified) for each point along the line, and the second (\emph{v}) containing the value of the variable at that point.  The value of the variable at any point is the (block average) value at the block containing the point.
-
-\index{MULgraph geometry!columns!quadtrees}
-\index{quadtrees}
-
-\textbf{Parameters:}
-\begin{itemize}
-\item \textbf{start}, \textbf{end}: list, tuple or \texttt{np.array} (of length 3)\\
-  Start and end points of the line in 3D.
-\item \textbf{variable}: list (or \texttt{np.array})\\
-  Variable to be plotted, of length equal to the number of blocks in the grid.
-\item \textbf{divisions}: integer\\
-  Number of segments the line is divided up into (default 100).
-\item \textbf{coordinate}: integer or Boolean\\
-  If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0,1 or 2) values.
-\item \textbf{qtree}: \texttt{quadtree}\\
-  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
-\end{itemize}
-
 \begin{snugshade}
 \subsubsection{\texttt{line\_plot(\emph{start}=None, \emph{end}=None, \emph{variable}, \emph{variable\_name}=None,\\
 \emph{unit}=None, \emph{divisions}=100, \emph{plt}=None, \emph{subplot}=111, \emph{title}='',\\
@@ -952,6 +926,32 @@ geo.line_plot([0.,0.,500.], [1000.,0.,500.], t, 'Temperature', '$\degree$C')
 \end{lstlisting}
 
 plots the variable \texttt{t} along a line from (0,0,500) to (1000,0,500) through the grid, with the values as Temperature ($\degree$C).
+
+\begin{snugshade}\subsubsection{\texttt{line\_values(\emph{start}, \emph{end}, \emph{variable}, \emph{divisions}=100, \emph{coordinate}=\texttt{False},\\
+      \emph{qtree}=None)}}\end{snugshade}
+\label{sec:mulgrid:line_values}
+\index{MULgraph geometry!values!along a line}
+
+Returns values of a specified variable along an arbitrary line through the grid.  The start and end points of the line (\texttt{start} and \texttt{end}) are 3-element lists, tuples or \texttt{np.arrays} specifying points in 3D.  The variable can be a list or \texttt{np.array} containing a value for every block in the grid.  The number of divisions along the line (default 100) can be optionally specified.
+
+The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{l}) containing the distance from the start (or the appropriate coordinate (0,1, or 2) if \texttt{coordinate} is specified) for each point along the line, and the second (\emph{v}) containing the value of the variable at that point.  The value of the variable at any point is the (block average) value at the block containing the point.
+
+\index{MULgraph geometry!columns!quadtrees}
+\index{quadtrees}
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{start}, \textbf{end}: list, tuple or \texttt{np.array} (of length 3)\\
+  Start and end points of the line in 3D.
+\item \textbf{variable}: list (or \texttt{np.array})\\
+  Variable to be plotted, of length equal to the number of blocks in the grid.
+\item \textbf{divisions}: integer\\
+  Number of segments the line is divided up into (default 100).
+\item \textbf{coordinate}: integer or Boolean\\
+  If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0,1 or 2) values.
+\item \textbf{qtree}: \texttt{quadtree}\\
+  Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
+\end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}\end{snugshade}
 \label{sec:mulgrid:nodes_in_columns}
