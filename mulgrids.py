@@ -685,9 +685,16 @@ class mulgrid(object):
     right_justified_names=property(get_right_justified_names)
 
     def new_node_name(self, istart = 0, justfn = rjust, chars = ascii_lowercase):
-        return new_dict_key(self.node, istart, justfn, self.colname_length, chars)
+        name,i = new_dict_key(self.node, istart, justfn, self.colname_length, chars)
+        if len(name) > self.colname_length:
+            raise NamingConventionError("Node name is too long for the grid naming convention.")
+        else: return name,i
+
     def new_column_name(self, istart = 0, justfn = rjust, chars = ascii_lowercase):
-        return new_dict_key(self.column, istart, justfn, self.colname_length, chars)
+        name,i = new_dict_key(self.column, istart, justfn, self.colname_length, chars)
+        if len(name) > self.colname_length:
+            raise NamingConventionError("Column name is too long for the grid naming convention.")
+        else: return name,i
 
     def column_bounds(self,columns):
         """Returns horizontal bounding box for a list of columns."""
