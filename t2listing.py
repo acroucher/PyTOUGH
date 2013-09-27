@@ -25,7 +25,8 @@ class listingtable(object):
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
     e.g. table[i] returns the ith row (as a dictionary), table[rowname] returns the row with the specified name,
     and table[colname] returns the column with the specified name."""
-    def __init__(self,cols,rows,row_format=None,row_line=None,num_keys=1,allow_reverse_keys=False, header_skiplines = 0):
+    def __init__(self, cols, rows, row_format = None, row_line = None, num_keys = 1, allow_reverse_keys = False,
+                 header_skiplines = 0, skiplines = []):
         """The row_format parameter is a dictionary with three keys, 'key','index' and 'values'.  These contain the positions,
         in each row of the table, of the start of the keys, index and data fields.  The row_line parameter is a list containing,
         for each row of the table, the number of lines before it in the listing file, from the start of the table.  This is
@@ -37,6 +38,7 @@ class listingtable(object):
         self.num_keys=num_keys
         self.allow_reverse_keys=allow_reverse_keys
         self.header_skiplines = header_skiplines
+        self.skiplines = skiplines
         self._col=dict([(c,i) for i,c in enumerate(cols)])
         self._row=dict([(r,i) for i,r in enumerate(rows)])
         self._data=np.zeros((len(rows),len(cols)),float64)
@@ -636,29 +638,44 @@ class t2listing(file):
         start=self.start_of_values(line)
         keypos=self.key_positions(line[:start],nkeys)
         if keypos:
-            index_pos=[keypos[-1]+5,start]
-            # determine row names:
-            longest_line=line
-            rowdict={}
-            count,index=0,-1
+            index_pos = [keypos[-1]+5, start]
+            longest_line = line
+            rowdict = {}
+            count,index = 0,-1
+            skiplines = []
+            lsep = 60
+            more = True
             def count_read(count): return self.readline(),count+1
             def is_header(line): return all([col in line for col in cols])
-            while line.strip() and not line[1:].startswith('@@@@@'):
-                keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
-                if len(keyval)>1: keyval=tuple(keyval)
-                else: keyval=keyval[0]
-                indexstr=line[index_pos[0]:index_pos[1]]
-                try: index=int(indexstr)-1
-                except ValueError: index+=1    # to handle overflow (****) in index field: assume indices continue
-                rowdict[index]=(count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
-                if len(line.strip())>len(longest_line): longest_line=line
-                line,count=count_read(count)
-                if line.startswith('\f') or is_header(line): # handle internal headers
-                    while not is_header(line):
-                        line,count = count_read(count)
-                        if line.strip() == self.title: break # some TOUGH2_MP output ends with \f
+            def is_separator(line): return len(line)>lsep and line[1:lsep+1] == line[1]*lsep
+            while more:
+                keyval = [fix_blockname(line[kp:kp+5]) for kp in keypos]
+                if len(keyval) > 1: keyval = tuple(keyval)
+                else: keyval = keyval[0]
+                indexstr = line[index_pos[0]:index_pos[1]]
+                try: index = int(indexstr) - 1
+                except ValueError: index += 1    # to handle overflow (****) in index field: assume indices continue
+                rowdict[index] = (count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
+                if len(line.strip()) > len(longest_line): longest_line = line
+                pos = self.tell()
+                last_count = count
+                line,count = count_read(count)
+                internal_header = False
+                if is_header(line): internal_header = True
+                elif is_separator(line): # end of table
+                    more = False
+                    self.seek(pos)
+                elif not line.strip(): # blank- check next line:
+                    pos = self.tell()
+                    line,count = count_read(count)
+                    stripline = line.strip()
+                    if is_header(line): internal_header = True
+                    elif is_separator(line) or stripline == self.title or not stripline:
+                        more = False  # end of table
+                        self.seek(pos)
+                if more and internal_header: 
                     for i in xrange(header_skiplines): line,count = count_read(count)
-            # sort rows (needed for TOUGH2_MP):
+                skiplines.append(count - last_count - 1)
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
             rows=[rowdict[index][1] for index in indices]
@@ -666,7 +683,7 @@ class t2listing(file):
             row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
             allow_rev=tablename=='connection'
             self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys, allow_reverse_keys=allow_rev,
-                                                header_skiplines = header_skiplines)
+                                                header_skiplines = header_skiplines, skiplines = skiplines)
         else: print 'Error parsing '+tablename+' table keys: table not created.'
 
     def read_header_AUTOUGH2(self):
@@ -779,30 +796,15 @@ class t2listing(file):
         ncols = table.num_columns
         fmt = table.row_format
         self.skiplines(table.header_skiplines)
-        line = self.readline()
-        while line.strip() and not line[1:].startswith('@@@@@'):
-            key = table.key_from_line(line)
-            table[key] = self.read_table_line_TOUGH2(line,ncols,fmt)
+        for skip in table.skiplines:
             line = self.readline()
-            line = self.skip_internal_table_header_TOUGH2(table, line)
+            key = table.key_from_line(line)
+            table[key] = self.read_table_line_TOUGH2(line, ncols, fmt)
+            self.skiplines(skip)
 
     def skip_table_TOUGH2(self,tablename):
         table = self._table[tablename]
-        self.skiplines(table.header_skiplines)
-        line = self.readline()
-        while line.strip() and not line[1:].startswith('@@@@@'):
-            line = self.readline()
-            line = self.skip_internal_table_header_TOUGH2(table, line)
-
-    def skip_internal_table_header_TOUGH2(self, table, line):
-        """For TOUGH2 listings, returns next line after an internal table header, if one has
-        been encountered."""
-        if line.startswith('\f') or table.is_header(line):
-            while not table.is_header(line):
-                line = self.readline()
-                if line.strip()==self.title: return '' # some TOUGH2_MP output ends with \f
-            for i in xrange(table.header_skiplines): line = self.readline()
-        return line
+        self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
 
     def history(self,selection,short=True):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
