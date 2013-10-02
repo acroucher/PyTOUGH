@@ -545,37 +545,43 @@ class t2listing(file):
         if len(keypos)<>nkeys: return None
         else: return keypos
 
+    def parse_table_header_AUTOUGH2(self):
+        """Parses table header line for AUTOUGH2, returning the number of keys and the column names."""
+        cols = []
+        headline = self.readline()
+        headstrs = headline.strip().split()
+        indexstr = 'INDEX'
+        nkeys = headstrs.index(indexstr)
+        for s in headstrs[nkeys+1:]:
+            if s[0] == s[0].upper(): cols.append(s)
+            else: cols[-1] += ' ' + s
+        return nkeys,cols
+
     def setup_table_AUTOUGH2(self,tablename):
         """Sets up table from AUTOUGH2 listing file."""
-        keyword=tablename[0].upper()*5
+        keyword = tablename[0].upper()*5
         self.skiplines(3)
-        # Read column names (joining lowercase words to previous names):
-        headline=self.readline()
-        strs=headline.strip().split()
-        indexstr='INDEX'
-        nkeys=strs.index(indexstr)
-        rows,cols=[],[]
-        for s in strs[nkeys+1:]:
-            if s[0]==s[0].upper(): cols.append(s)
-            else: cols[-1]+=' '+s
+        nkeys, cols = self.parse_table_header_AUTOUGH2()
         self.readline()
-        line=self.readline()
-        start=self.start_of_values(line)
+        line = self.readline()
+        start = self.start_of_values(line)
+        rows = []
         # Double-check number of columns:
-        nvalues=len([s for s in line[start:].strip().split()])
-        if (len(cols)==nvalues):
-            keypos=self.key_positions(line[:start],nkeys)
+        nvalues = len([s for s in line[start:].strip().split()])
+        if (len(cols) == nvalues):
+            keypos = self.key_positions(line[:start],nkeys)
             if keypos:
                 # determine row names:
-                while line[1:6]<>keyword:
-                    keyval=[fix_blockname(line[kp:kp+5]) for kp in keypos]
-                    if len(keyval)>1: keyval=tuple(keyval)
-                    else: keyval=keyval[0]
+                while line[1:6] != keyword:
+                    keyval = [fix_blockname(line[kp:kp+5]) for kp in keypos]
+                    if len(keyval)>1: keyval = tuple(keyval)
+                    else: keyval = keyval[0]
                     rows.append(keyval)
-                    line=self.readline()
-                row_format={'key':keypos, 'values':[start]}
-                allow_rev=tablename=='connection'
-                self._table[tablename]=listingtable(cols,rows,row_format,num_keys=nkeys,allow_reverse_keys=allow_rev)
+                    line = self.readline()
+                row_format = {'key':keypos, 'values':[start]}
+                allow_rev = tablename == 'connection'
+                self._table[tablename] = listingtable(cols, rows, row_format, num_keys = nkeys,
+                                                      allow_reverse_keys = allow_rev)
                 self.readline()
             else: print 'Error parsing '+tablename+' table keys: table not created.'
         else:
@@ -609,34 +615,38 @@ class t2listing(file):
             lasts=s
         return numpos+[len(line)]
 
+    def parse_table_header_TOUGH2(self):
+        """Parses table header line for TOUGH2, returning the number of keys and the column names."""
+        cols = []
+        if self.simulator in ['TOUGH2','TOUGH2_MP']: flow_headers = ['RATE']
+        else: flow_headers = ['Flow','Veloc']
+        headline = self.readline().strip()
+        headstrs = headline.split()
+        indexstrs = ['INDEX','IND.'] # for EWASG
+        for s in indexstrs:
+            if s in headstrs:
+                nkeys = headstrs.index(s)
+                break
+        for s in headstrs[nkeys+1:]:
+            if s in flow_headers: cols[-1] += ' ' + s
+            else: cols.append(s)
+        return nkeys,cols
+
     def setup_table_TOUGH2(self,tablename):
         """Sets up table from TOUGH2 (or TOUGH+) listing file."""
-        # Read column names (joining flow items to previous names):
-        if self.simulator in ['TOUGH2','TOUGH2_MP']: flow_headers=['RATE']
-        else: flow_headers=['Flow','Veloc']
-        headline = self.readline().strip()
-        strs = headline.split()
-        indexstrs=['INDEX','IND.'] # for EWASG
-        for s in indexstrs:
-            if s in strs:
-                indexstr=s
-                nkeys=strs.index(s)
-                break
+        nkeys,cols = self.parse_table_header_TOUGH2()
+        import re
+        def is_results(line): return len(re.findall('\.[0-9]{3}', line)) >= 2
         found, header_skiplines = False, 1
         while not found:
             pos = self.tell()
             line = self.readline().strip()
-            unitline = '(' in line and ')' in line
-            found = (line != '') and not unitline and (line != '_'*len(line))
+            found = is_results(line)
             if found: self.seek(pos)
             else: header_skiplines += 1
-        rows,cols=[],[]
-        for s in strs[nkeys+1:]:
-            if s in flow_headers: cols[-1]+=' '+s
-            else: cols.append(s)
-        line=self.readline()
-        start=self.start_of_values(line)
-        keypos=self.key_positions(line[:start],nkeys)
+        line = self.readline()
+        start = self.start_of_values(line)
+        keypos = self.key_positions(line[:start],nkeys)
         if keypos:
             index_pos = [keypos[-1]+5, start]
             longest_line = line
@@ -645,6 +655,7 @@ class t2listing(file):
             skiplines = []
             lsep = 60
             more = True
+            internal_header_skiplines = None
             def count_read(count): return self.readline(),count+1
             def is_header(line): return all([col in line for col in cols])
             def is_separator(line): return len(line)>lsep and line[1:lsep+1] == line[1]*lsep
@@ -673,8 +684,15 @@ class t2listing(file):
                     elif is_separator(line) or stripline == self.title or not stripline:
                         more = False  # end of table
                         self.seek(pos)
-                if more and internal_header: 
-                    for i in xrange(header_skiplines): line,count = count_read(count)
+                if more and internal_header:
+                    if internal_header_skiplines is None:
+                        found, internal_header_skiplines = False, 1
+                        while not found:
+                            line,count = count_read(count)
+                            found = is_results(line)
+                            if not found: internal_header_skiplines += 1
+                    else:
+                        for i in xrange(internal_header_skiplines): line,count = count_read(count)
                 skiplines.append(count - last_count - 1)
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
