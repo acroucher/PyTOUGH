@@ -115,6 +115,7 @@ class listingtable(object):
         spacings from the top header, so a simple string comparison doesn't always work."""
         return all([col in line for col in self.column_name])
 
+
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
        via the element, connection and generation fields.  (For example, the pressure in block 'aa100' is
@@ -632,18 +633,36 @@ class t2listing(file):
             else: cols.append(s)
         return nkeys,cols
 
-    def setup_table_TOUGH2(self,tablename):
-        """Sets up table from TOUGH2 (or TOUGH+) listing file."""
-        nkeys,cols = self.parse_table_header_TOUGH2()
-        import re
-        def is_results(line): return len(re.findall('\.[0-9]{3}', line)) >= 2
-        found, header_skiplines = False, 1
+    def is_results_line(self, line, expected_floats):
+        """Detects whether the given string represents a line of results values, by seeing if
+        it contains at least expected_floats floating point numbers."""
+        from re import findall
+        return len(findall('\.[0-9]+', line)) >= expected_floats
+
+    def skip_to_results_line(self, expected_floats):
+        """Skips to the start of the next line of results values, returning the number
+        of lines skipped."""
+        found, num_lines = False, 1
         while not found:
             pos = self.tell()
             line = self.readline().strip()
-            found = is_results(line)
+            found = self.is_results_line(line, expected_floats)
             if found: self.seek(pos)
-            else: header_skiplines += 1
+            else: num_lines += 1
+        return num_lines
+
+    def table_expected_floats(self, tablename, num_columns):
+        """Returns number of floating point numbers expected in each line of the table.
+        For most tables this is the number of table columns, but generation tables can
+        have incomplete lines in them and sometimes have as few as two values per line."""
+        return 2 if tablename == 'generation' else num_columns
+
+    def setup_table_TOUGH2(self, tablename):
+        """Sets up table from TOUGH2 (or TOUGH+) listing file."""
+        nkeys,cols = self.parse_table_header_TOUGH2()
+        ncols = len(cols)
+        expected_floats = self.table_expected_floats(tablename, ncols)
+        header_skiplines = self.skip_to_results_line(expected_floats)
         line = self.readline()
         start = self.start_of_values(line)
         keypos = self.key_positions(line[:start],nkeys)
@@ -686,11 +705,9 @@ class t2listing(file):
                         self.seek(pos)
                 if more and internal_header:
                     if internal_header_skiplines is None:
-                        found, internal_header_skiplines = False, 1
-                        while not found:
-                            line,count = count_read(count)
-                            found = is_results(line)
-                            if not found: internal_header_skiplines += 1
+                        internal_header_skiplines = self.skip_to_results_line(expected_floats)
+                        count += internal_header_skiplines
+                        line = self.readline()
                     else:
                         for i in xrange(internal_header_skiplines): line,count = count_read(count)
                 skiplines.append(count - last_count - 1)
@@ -904,12 +921,12 @@ class t2listing(file):
                     if not (is_short and not (tablename in self.short_types)):
                         self.skip_to_table(tname,last_tname,nelt_tables)
                         if tname.startswith('element'): nelt_tables+=1
-                        self.skip_to_blank()
-                        self.skip_to_nonblank()
-                        ncols=self._table[tname].num_columns
-                        fmt=self._table[tname].row_format
-                        index=0
-                        line=self.readline()
+                        ncols = self._table[tname].num_columns
+                        expected_floats = self.table_expected_floats(tname, ncols)
+                        self.skip_to_results_line(expected_floats)
+                        fmt = self._table[tname].row_format
+                        index = 0
+                        line = self.readline()
                         ts = tselect_short if is_short else tselect
                         for (lineindex,colname,reverse,sel_index) in ts:
                             if lineindex is not None:
