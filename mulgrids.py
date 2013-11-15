@@ -449,7 +449,7 @@ class mulgrid(object):
         self.atmosphere_volume=atmos_volume
         self.atmosphere_connection=atmos_connection
         self.unit_type=unit_type
-        self.gdcx, self.gdcy = None, None # not supported
+        self.gdcx, self.gdcy = None, None
         self.cntype = None # not supported
         self.permeability_angle=permeability_angle
         self.read_function = read_function
@@ -540,6 +540,19 @@ class mulgrid(object):
         return np.array([con.angle_cosine for con in self.connectionlist])
     connection_angle_cosine=property(get_connection_angle_cosine)
 
+    def get_tilt_vector(self):
+        """Returns a tilt vector, used to calculate gravity cosines of TOUGH2 grid connections when
+        the GDCX or GDCY grid tilting options are used."""
+        from math import sqrt
+        gdcx = 0. if self.gdcx is None else self.gdcx
+        gdcy = 0. if self.gdcy is None else self.gdcy
+        sintheta = -gdcy
+        costheta = sqrt(1. - min(sintheta * sintheta,1.))
+        sinphi = gdcx / costheta
+        cosphi = sqrt(1. - min(sinphi * sinphi,1.))
+        return np.array([costheta*sinphi, -sintheta, -costheta*cosphi])
+    tilt_vector = property(get_tilt_vector)
+        
     def empty(self):
         """Empties grid contents"""
         self.nodelist=[]
@@ -962,7 +975,6 @@ class mulgrid(object):
         self.convention = self._convention
         self.atmosphere_type = self._atmosphere_type
         self.unit_type = self._unit_type
-        if (self.gdcx is not None) or (self.gdcy is not None): print 'GDCX, GDCY options not supported.'
         if self.cntype is not None: print 'CNTYPE option not supported.'
 
     def read_nodes(self,geo):
