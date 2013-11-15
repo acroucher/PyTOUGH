@@ -331,48 +331,49 @@ class t2grid(object):
 
     def add_connections(self,geo):
         """Add connections from geometry"""
+        tilt = geo.tilt_vector
         for lay in geo.layerlist[1:]:
-            layercols=[col for col in geo.columnlist if col.surface>lay.bottom]
-            self.add_vertical_layer_connections(geo,lay,layercols)
-            self.add_horizontal_layer_connections(geo,lay,layercols)
+            layercols = [col for col in geo.columnlist if col.surface > lay.bottom]
+            self.add_vertical_layer_connections(geo, lay, layercols, tilt)
+            self.add_horizontal_layer_connections(geo, lay, layercols, tilt)
 
-    def add_vertical_layer_connections(self,geo,lay,layercols=[]):
+    def add_vertical_layer_connections(self, geo, lay, layercols=[], tilt = np.array([0.,0.,-1.])):
         """Add vertical connections in layer"""
         for col in layercols:
-            thisblk=self.block[geo.block_name(lay.name,col.name)]
-            if (geo.layerlist.index(lay)==1) or (col.surface<=lay.top): # connection to atmosphere
-                abovelayer=geo.layerlist[0]
-                abovedist=geo.atmosphere_connection
-                belowdist=col.surface-thisblk.centre[2]
-                if geo.atmosphere_type==0:
-                    aboveblk=self.blocklist[0]
-                elif geo.atmosphere_type==1:
-                    aboveblk=self.block[geo.block_name(abovelayer.name,col.name)]
+            thisblk = self.block[geo.block_name(lay.name,col.name)]
+            if (geo.layerlist.index(lay) == 1) or (col.surface <= lay.top): # connection to atmosphere
+                abovelayer = geo.layerlist[0]
+                abovedist = geo.atmosphere_connection
+                belowdist = col.surface - thisblk.centre[2]
+                if geo.atmosphere_type == 0:
+                    aboveblk = self.blocklist[0]
+                elif geo.atmosphere_type == 1:
+                    aboveblk = self.block[geo.block_name(abovelayer.name,col.name)]
                 else: # no atmosphere blocks
                     continue
             else:
-                ilayer=geo.layerlist.index(lay)
-                abovelayer=geo.layerlist[ilayer-1]
-                aboveblk=self.block[geo.block_name(abovelayer.name,col.name)]
-                abovedist=aboveblk.centre[2]-abovelayer.bottom
-                belowdist=lay.top-lay.centre
-            con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],col.area,-1.0)
+                ilayer = geo.layerlist.index(lay)
+                abovelayer = geo.layerlist[ilayer-1]
+                aboveblk = self.block[geo.block_name(abovelayer.name,col.name)]
+                abovedist = aboveblk.centre[2] - abovelayer.bottom
+                belowdist = lay.top - lay.centre
+            con = t2connection([thisblk,aboveblk],3,[belowdist,abovedist],col.area,tilt[2])
             self.add_connection(con)
 
-    def add_horizontal_layer_connections(self,geo,lay,layercols=[]):
+    def add_horizontal_layer_connections(self, geo, lay, layercols=[], tilt = np.array([0.,0.,-1.])):
         """Add horizontal connections in layer"""
         from math import cos,sin
-        layercolset=set(layercols)
-        anglerad=geo.permeability_angle*np.pi/180.
-        c,s=cos(anglerad),sin(anglerad)
-        rotation=np.array([[c,s],[-s,c]])
+        layercolset = set(layercols)
+        anglerad = geo.permeability_angle*np.pi/180.
+        c,s = cos(anglerad),sin(anglerad)
+        rotation = np.array([[c,s],[-s,c]])
         for con in [con for con in geo.connectionlist if set(con.column).issubset(layercolset)]:
-            conblocks=[self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
-            [dist,area]=geo.connection_params(con,lay)
-            d=conblocks[1].centre-conblocks[0].centre
-            d2=np.dot(rotation,d[0:2])
-            direction=np.argmax(abs(d2))+1
-            dircos=-d[2]/np.linalg.norm(d)
+            conblocks = [self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
+            [dist,area] = geo.connection_params(con,lay)
+            d = conblocks[1].centre - conblocks[0].centre
+            d2 = np.dot(rotation,d[0:2])
+            direction = np.argmax(abs(d2))+1
+            dircos = np.dot(d,tilt)/np.linalg.norm(d)
             self.add_connection(t2connection(conblocks,direction,dist,area,dircos))
 
     def copy_connection_directions(self,geo,grid):
