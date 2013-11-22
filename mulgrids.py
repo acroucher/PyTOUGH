@@ -546,11 +546,14 @@ class mulgrid(object):
         from math import sqrt
         gdcx = 0. if self.gdcx is None else self.gdcx
         gdcy = 0. if self.gdcy is None else self.gdcy
+        def cosfromsin(sinangle): return sqrt(1. - min(sinangle * sinangle,1.))
         sintheta = -gdcy
-        costheta = sqrt(1. - min(sintheta * sintheta,1.))
-        sinphi = gdcx / costheta
-        cosphi = sqrt(1. - min(sinphi * sinphi,1.))
-        return np.array([costheta*sinphi, -sintheta, -costheta*cosphi])
+        costheta = cosfromsin(sintheta)
+        try:
+            sinphi = gdcx / costheta
+            cosphi = cosfromsin(sinphi)
+            return np.array([costheta*sinphi, -sintheta, -costheta*cosphi])
+        except ZeroDivisionError: return np.array([0., -sintheta, 0.]) # theta = pi/2
     tilt_vector = property(get_tilt_vector)
         
     def empty(self):
