@@ -361,18 +361,18 @@ class t2grid(object):
 
     def add_horizontal_layer_connections(self,geo,lay,layercols=[]):
         """Add horizontal connections in layer"""
-        from math import cos,sin
-        layercolset=set(layercols)
-        anglerad=geo.permeability_angle*np.pi/180.
-        c,s=cos(anglerad),sin(anglerad)
-        rotation=np.array([[c,s],[-s,c]])
+        from math import cos,sin,radians
+        layercolset = set(layercols)
+        anglerad = radians(geo.permeability_angle)
+        c,s = cos(anglerad),sin(anglerad)
+        rotation = np.array([[c,s],[-s,c]])
         for con in [con for con in geo.connectionlist if set(con.column).issubset(layercolset)]:
-            conblocks=[self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
-            [dist,area]=geo.connection_params(con,lay)
-            d=conblocks[1].centre-conblocks[0].centre
-            d2=np.dot(rotation,d[0:2])
-            direction=np.argmax(abs(d2))+1
-            dircos=-d[2]/np.linalg.norm(d)
+            conblocks = [self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
+            [dist,area] = geo.connection_params(con,lay)
+            d = conblocks[1].centre - conblocks[0].centre
+            d2 = np.dot(rotation,d[0:2])
+            direction = np.argmax(abs(d2)) + 1
+            dircos = -d[2]/np.linalg.norm(d)
             self.add_connection(t2connection(conblocks,direction,dist,area,dircos))
 
     def copy_connection_directions(self,geo,grid):
