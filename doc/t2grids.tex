@@ -354,6 +354,8 @@ The method for constructing the matrix is as follows.  For each block, a distrib
 
 Returns a grid constructed from a \texttt{mulgrid} geometry object.  (Any previous contents of the grid are first emptied.)
 
+Note that non-horizontal (i.e. tilted) grids can be constructed by setting the \texttt{mulgrid} properties \texttt{gdcx} and \texttt{gdcy} non-zero. These properties represent the cosines of the angles the x- and y-axes make with the gravity vector. By default they are both zero, giving a horizontal grid. A geometry with \texttt{gdcx} = 1 can be used to construct a 2-D vertical slice grid with a non-layered structure. Setting these properties affects only the gravity cosines of the connections in the resulting \texttt{t2grid} object.
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
