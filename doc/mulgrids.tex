@@ -100,6 +100,12 @@ The reading functions for a \texttt{mulgrid} object can be specified when the ob
 geo = mulgrid('geom.dat', read_function = fortran_read_function)
 \end{lstlisting}
 
+\subsubsection{Tilted geometries}
+\index{MULgraph geometry!tilting}
+
+Non-horizontal (i.e. tilted) geometries can be constructed by setting the \texttt{mulgrid} properties \texttt{gdcx} and \texttt{gdcy} non-zero. These properties represent the cosines of the angles the x- and y-axes make with the gravity vector. By default they are both zero, giving a horizontal grid. A geometry with \texttt{gdcx} = 1 can be used to construct a 2-D vertical slice grid with a non-layered structure. When a \texttt{t2grid} object is created from a tilted geometry, e.g. using the \texttt{t2grid} \hyperref[sec:t2grid:fromgeo]{fromgeo()} method, only the gravity cosines of the connections are affected.
+
+
 \index{MULgraph geometry!properties}
 \begin{center}
   \begin{longtable}{|l|l|p{75mm}|}
@@ -131,6 +137,7 @@ geo = mulgrid('geom.dat', read_function = fortran_read_function)
     \texttt{default\_surface} & Boolean  & \texttt{True} if all columns have default surface elevation\\
     \texttt{extra\_connections} & set & connections defined between columns that are not against each other\\
     \texttt{filename} & string  & file name on disk\\
+    \texttt{gdcx}, \texttt{gdcy} & float  & cosines of angles x- and y-axes make with gravity vector\\
     \texttt{node\_kdtree} & \texttt{cKDTree} & tree structure for fast searching for nodes \\
     \texttt{layerlist} & list & layers (by index)\\
     \texttt{layer} & dictionary & layers (by name)\\
