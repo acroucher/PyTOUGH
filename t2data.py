@@ -243,6 +243,8 @@ class t2data(object):
                 else: return 0  # just after header for TOUGH2
             elif section == 'RPCAP':
                 return self._sections.index('PARAM') + 1
+            elif section == 'TIMES':
+                return self._sections.index('PARAM') + 1
             elif section == 'GENER':
                 return self._sections.index('CONNE') + 1
             elif section == 'LINEQ':
