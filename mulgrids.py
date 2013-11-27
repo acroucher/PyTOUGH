@@ -2464,11 +2464,11 @@ class mulgrid(object):
         nodes=self.nodes_in_columns(columns)
         blacklist_connections=[]
         def next_bdy_node(n):
-            for col in [c for c in n.column if c in columns]:
+            for col in [c for c in n.column if c in columns and c.num_nodes > 2]:
                 i=col.node.index(n)
                 n2=col.node[(i+1)%col.num_nodes]
                 con=self.connection_with_nodes([n,n2])
-                if not con: return n2
+                if not con or any([c.num_nodes <= 2 for c in con.column]): return n2
                 else:
                     if not (con in blacklist_connections) and \
                             not all([(c in columns) for c in con.column]): return n2
