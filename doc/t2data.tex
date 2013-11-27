@@ -878,7 +878,7 @@ A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e
       \hline
       \textbf{Property} & \textbf{Type} & \textbf{Description} & \textbf{TOUGH2 parameter}\\
       \hline
-      \texttt{block} & string & name of block containing the generator & SL, NS\\
+      \texttt{block} & string & name of block containing the generator & EL, NE\\
       \texttt{enthalpy} & list of float & generation enthalpies ($|$ltab$|>$1, itab$<>$`')& F1\\
       \texttt{ex} & float & enthalpy for injection & EX\\
       \texttt{gx} & float & generation rate (or productivity index for deliverability) & GX\\
@@ -888,7 +888,7 @@ A \texttt{t2generator} object represents a generator in a TOUGH2 simulation (i.e
       \texttt{ltab} & integer & number of generation times (or open layers for deliverability) & LTAB\\
       \texttt{nadd} & integer & successive block increment & NADD\\
       \texttt{nads} & integer & successive generator increment & NADS\\
-      \texttt{name} & string & generator name & EL, NE\\
+      \texttt{name} & string & generator name & SL, NS\\
       \texttt{nseq} & integer & number of additional generators & NSEQ\\
       \texttt{rate} & list of float & generation rates ($|$ltab$|>$1)& F2\\
       \texttt{time} & list of float & generation times ($|$ltab$|>$1)& F1\\
