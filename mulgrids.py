@@ -2424,8 +2424,9 @@ class mulgrid(object):
             self.filename = original_filename
         else:
             from scipy.optimize import leastsq
+            num_nodes = len(nodenames)
             def update_grid(x):
-                xpos = x.reshape((len(nodenames),2))
+                xpos = x.reshape((num_nodes,2))
                 for nodename,pos in zip(nodenames,xpos):
                     self.node[nodename].pos = pos
                 for colname in colnames:
@@ -2439,10 +2440,11 @@ class mulgrid(object):
                 if column_skewness_weight: 
                     result += [column_skewness_weight*(self.column[colname].angle_ratio-1.) for colname in colnames]
                 return np.array(result)
-            x0 = []
-            for nodename in nodenames: x0 += list(self.node[nodename].pos)
-            x1,success = leastsq(f, np.array(x0))
-            print success
+            x0 = np.array([self.node[nodename].pos for nodename in nodenames]).reshape(2*num_nodes)
+            x1, success = leastsq(f, x0)
+            if success > 4:
+                raise Exception, 'scipy leastsq() optimization routine did not converge.'
+            update_grid(x1)
             for colname in colnames: self.column[colname].get_area()
 
     def connection_with_nodes(self,nodes):
