@@ -2299,7 +2299,8 @@ class mulgrid(object):
         plt.title(title)
         if loneplot: plt.show()
 
-    def optimize(self,nodenames=None,connection_angle_weight=1.0,column_aspect_weight=0.0,column_skewness_weight=0.0,pest=False):
+    def optimize(self, nodenames=None, connection_angle_weight=1.0, column_aspect_weight=0.0, column_skewness_weight=0.0,
+                 pest=False):
         """Adjusts positions of specified nodes to optimize grid.  If nodenames list is not specified,
         all node positions are optimized.  Grid quality can be defined as a combination of connection
         angle cosine, column aspect ratio and column skewness.  Increasing the weight for any of these
@@ -2309,13 +2310,13 @@ class mulgrid(object):
         If pest is set to True, the PEST parameter estimation software is used to perform the optimization."""
         if nodenames is None: nodenames=self.node.keys()
         # identify which columns are affected:
-        colnames=[col.name for col in self.columnlist if (set(nodenames) & set([node.name for node in col.node]))]
-        for colname in colnames:
-            if self.column[colname].centre_specified: self.column[colname].centre_specified=0
+        colnames = [col.name for col in self.columnlist if (set(nodenames) & set([node.name for node in col.node]))]
+        for colname in colnames: self.column[colname].centre_specified = 0
         if connection_angle_weight>0.0: # identify which connections are affected:
             cons=[con for con in self.connectionlist if (set(col.name for col in con.column) & set(colnames))]
         if pest:
-            gridfilename='gpestmesh.dat'
+            original_filename = self.filename
+            gridfilename = 'gpestmesh.dat'
             self.write(gridfilename)
             obsgroups=['angle','aspect','skew']
             obsweight={}
@@ -2366,33 +2367,29 @@ class mulgrid(object):
                             'pestmesh.ins  pestmesh.out','* prior information\n']))
                 pst.close()
             def write_pest_model_file():
-                mod=open('pestmesh_model.py','w')
+                mod = open('pestmesh_model.py','w')
                 mod.write('\n'.join([
                         "from mulgrids import *",
-                        "geo=mulgrid('"+gridfilename.strip()+"')",
-                        "nodenames=[node.replace('\\n','') for node in open('pestmesh_nodes.txt').readlines()]",
-                        "dat=open('pestmesh.in').readlines()",
-                        "nnodes=len(dat)/2",
-                        "for i in xrange(nnodes):",
-                        "    x,y=float(dat[2*i][0:20]),float(dat[2*i+1][0:20])",
-                        "    nodename=nodenames[i]",
-                        "    geo.node[nodename].pos=np.array([x,y])",
-                        "colnames=[col.replace('\\n','') for col in open('pestmesh_columns.txt').readlines()]",
+                        "geo = mulgrid('"+gridfilename.strip()+"')",
+                        "nodenames = np.load('pestmesh_nodes.npy')",
+                        "nnodes = len(nodenames)",
+                        "dat = np.loadtxt('pestmesh.in').reshape((nnodes,2))",
+                        "for pos,nodename in zip(dat,nodenames):",
+                        "    geo.node[nodename].pos = pos",
+                        "colnames = np.load('pestmesh_columns.npy')",
                         "for colname in colnames:",
-                        "    geo.column[colname].centre_specified=0",
-                        "    geo.column[colname].centre=geo.column[colname].centroid",
+                        "    geo.column[colname].centre = geo.column[colname].centroid",
                         "result=[]\n"]))
                 if 'angle' in obsweight:
-                    mod.write("connames=[tuple(names.replace('\\n','').split(',')) for names in open('pestmesh_connections.txt').readlines()]\n")
-                    mod.write("result+=[geo.connection[conname].angle_cosine for conname in connames]\n")
+                    mod.write("connames = np.load('pestmesh_connections.npy')\n")
+                    mod.write("result += [geo.connection[tuple(conname)].angle_cosine for conname in connames]\n")
                 if 'aspect' in obsweight:
-                    mod.write("result+=[geo.column[colname].side_ratio for colname in colnames]\n")
+                    mod.write("result += [geo.column[colname].side_ratio for colname in colnames]\n")
                 if 'skew' in obsweight:
-                    mod.write("result+=[geo.column[colname].angle_ratio for colname in colnames]\n")
+                    mod.write("result += [geo.column[colname].angle_ratio for colname in colnames]\n")
                 mod.write('\n'.join([
-                            "f=open('pestmesh.out','w')",
-                            "for r in result:",
-                            "    f.write('%20.5f\\n'%r)",
+                            "f = open('pestmesh.out','w')",
+                            "for r in result: f.write('%20.5f\\n'%r)",
                             "f.close()"]))
                 mod.close()
             def write_pest_templates():
@@ -2410,42 +2407,43 @@ class mulgrid(object):
                         else: n=len(colnames)
                         for i in xrange(n): ins.write("l1 ["+group+str(i)+"]1:20\n")
                 ins.close()
-            file('pestmesh_nodes.txt','w').write('\n'.join(nodenames))
-            file('pestmesh_columns.txt','w').write('\n'.join(colnames))
+            np.save('pestmesh_nodes.npy', np.array(nodenames))
+            np.save('pestmesh_columns.npy', np.array(colnames))
             if 'angle' in obsweight:
-                file('pestmesh_connections.txt','w').write('\n'.join([','.join([col.name for col in con.column]) for con in cons]))
+                np.save('pestmesh_connections.npy', np.array([[col.name for col in con.column] for con in cons]))
             write_pest_control_file()
             write_pest_templates()
             write_pest_model_file()
             from os import system
             system('pest pestmesh.pst')
-            dat=open('pestmesh.in').readlines()
-            for i,nodename in enumerate(nodenames):
-                x,y=float(dat[2*i][0:20]),float(dat[2*i+1][0:20])
-                self.node[nodename].pos=np.array([x,y])
+            dat = np.loadtxt('pestmesh.in').reshape((len(nodenames),2))
+            for pos,nodename in zip(dat,nodenames): self.node[nodename].pos = pos
             for colname in colnames:
                 self.column[colname].centre = self.column[colname].centroid
                 self.column[colname].get_area()
+            self.filename = original_filename
         else:
             from scipy.optimize import leastsq
-            def update_grid(xnode):
-                for xn,nodename in zip(xnode,nodenames): self.node[nodename].pos=xn
+            def update_grid(x):
+                xpos = x.reshape((len(nodenames),2))
+                for nodename,pos in zip(nodenames,xpos):
+                    self.node[nodename].pos = pos
                 for colname in colnames:
                     self.column[colname].centre = self.column[colname].centroid
-                    self.column[colname].get_area()
             def f(x):
-                xpos=[np.array([x[2*i],x[2*i+1]]) for i in xrange(len(nodenames))]
-                update_grid(xpos)
-                if connection_angle_weight: con_angle=[connection_angle_weight*con.angle_cosine for con in cons]
-                else: con_angle=[]
-                if column_aspect_weight: col_aspect=[column_aspect_weight*(self.column[colname].side_ratio-1.0) for colname in colnames]
-                else: col_aspect=[]
-                if column_skewness_weight: col_skewness=[column_skewness_weight*(self.column[colname].angle_ratio-1.0) for colname in colnames]
-                else: col_skewness=[]
-                return np.array(con_angle+col_aspect+col_skewness)
-            x0=[]
-            for nodename in nodenames: x0+=list(self.node[nodename].pos)
-            leastsq(f,np.array(x0))
+                update_grid(x)
+                result = []
+                if connection_angle_weight: result += [connection_angle_weight*con.angle_cosine for con in cons]
+                if column_aspect_weight:
+                    result += [column_aspect_weight*(self.column[colname].side_ratio-1.) for colname in colnames]
+                if column_skewness_weight: 
+                    result += [column_skewness_weight*(self.column[colname].angle_ratio-1.) for colname in colnames]
+                return np.array(result)
+            x0 = []
+            for nodename in nodenames: x0 += list(self.node[nodename].pos)
+            x1,success = leastsq(f, np.array(x0))
+            print success
+            for colname in colnames: self.column[colname].get_area()
 
     def connection_with_nodes(self,nodes):
         """Returns a connection, if one exists, containing the specified two nodes."""
