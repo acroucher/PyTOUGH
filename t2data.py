@@ -222,6 +222,17 @@ class t2data(object):
         if not self.echo_extra_precision: 
             for section in self.extra_precision: self.read_fn[section] = skip_fn[section]
 
+    def get_present_sections(self):
+        """Returns a list of TOUGH2 section keywords for which there are corresponding data in the t2data object."""
+        data_present = dict(zip(t2data_sections,
+            [self.simulator, self.grid and self.grid.rocktypelist, self.meshmaker, self.parameter, self.start,
+             self.noversion, self.relative_permeability or self.capillarity, self.lineq, self.solver, self.multi,
+             self.output_times, self.selection, self.diffusion, self.grid and self.grid.blocklist,
+             self.grid and self.grid.connectionlist, self.generatorlist, self.short_output, self.history_block,
+             self.history_connection, self.history_generator, self.incon, self.indom]))
+        return [keyword for keyword in t2data_sections if data_present[keyword]]
+    present_sections = property(get_present_sections)
+
     def insert_section(self, section):
         """Inserts a new section into the internal list of data file sections."""
         if section not in self._sections:
@@ -252,6 +263,14 @@ class t2data(object):
                 else: return self._sections.index('PARAM') + 1
             else: return len(self._sections) # at end
         except ValueError: return len(self._sections)
+
+    def update_sections(self):
+        """Updates internal section list, based on which properties are present."""
+        present = self.present_sections
+        missing = [keyword for keyword in present if keyword not in self._sections]
+        for keyword in missing: self.insert_section(keyword)
+        extra = [keyword for keyword in self._sections if keyword not in present]
+        for keyword in extra: self.delete_section(keyword)
 
     def __repr__(self): return self.title
 
@@ -1193,6 +1212,7 @@ class t2data(object):
         sections will also be written to the main data file."""
         if filename: self.filename = filename
         if self.filename =='': self.filename = 't2data.dat'
+        self.update_sections()
         mesh_sections = []
         if meshfilename: self.meshfilename = meshfilename
         if self.meshfilename:
@@ -1210,12 +1230,10 @@ class t2data(object):
         outfile = t2data_parser(self.filename,'w')
         self.write_title(outfile)
         for keyword in self._sections:
-            if keyword not in mesh_sections: self.write_fn[keyword](outfile)
-        additional_sections = [keyword for keyword in t2data_sections if 
-                               (keyword not in self._sections) and (keyword not in mesh_sections) and
-                               ((keyword not in self.extra_precision) or
-                                (keyword in self.extra_precision and self.echo_extra_precision))]
-        for keyword in additional_sections: self.write_fn[keyword](outfile)
+            if (keyword not in mesh_sections) and \
+                    ((keyword not in self.extra_precision) or
+                     (keyword in self.extra_precision and self.echo_extra_precision)):
+                    self.write_fn[keyword](outfile)
         outfile.write(self.end_keyword+'\n')
         outfile.close()
     
