@@ -251,10 +251,19 @@ class t2data(object):
             listindex = t2data_sections.index(section)
             if listindex == 0: return 0  # SIMUL section
             else:
+                # first look for sections above the one specified,
+                # and put new one just after the last found:
                 for i in reversed(range(listindex)):
                     try:
                         section_index = self._sections.index(t2data_sections[i])
-                        return section_index + 1
+                        return min(section_index + 1, len(self._sections))
+                    except ValueError: pass
+                # look for sections below the one specified,
+                # and put new one just before the first found:
+                for i in xrange(listindex, len(t2data_sections)):
+                    try:
+                        section_index = self._sections.index(t2data_sections[i])
+                        return section_index
                     except ValueError: pass
                 return len(self._sections)
         except ValueError: return len(self._sections)
