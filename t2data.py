@@ -256,7 +256,7 @@ class t2data(object):
                 for i in reversed(range(listindex)):
                     try:
                         section_index = self._sections.index(t2data_sections[i])
-                        return min(section_index + 1, len(self._sections))
+                        return section_index + 1
                     except ValueError: pass
                 # look for sections below the one specified,
                 # and put new one just before the first found:
