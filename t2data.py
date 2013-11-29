@@ -247,21 +247,16 @@ class t2data(object):
     def section_insertion_index(self, section):
         """Determines an appropriate position to insert the specified section in the internal list of 
         data file sections."""
-        try: 
-            if section == 'SIMUL': return 0
-            elif section == 'ROCKS':
-                if self.type == 'AUTOUGH2': return self._sections.index('SIMUL') + 1
-                else: return 0  # just after header for TOUGH2
-            elif section == 'RPCAP':
-                return self._sections.index('PARAM') + 1
-            elif section == 'TIMES':
-                return self._sections.index('PARAM') + 1
-            elif section == 'GENER':
-                return self._sections.index('CONNE') + 1
-            elif section == 'LINEQ':
-                if 'MULTI' in self._sections: return self._sections.index('MULTI') - 1
-                else: return self._sections.index('PARAM') + 1
-            else: return len(self._sections) # at end
+        try:
+            listindex = t2data_sections.index(section)
+            if listindex == 0: return 0  # SIMUL section
+            else:
+                for i in reversed(range(listindex)):
+                    try:
+                        section_index = self._sections.index(t2data_sections[i])
+                        return section_index + 1
+                    except ValueError: pass
+                return len(self._sections)
         except ValueError: return len(self._sections)
 
     def update_sections(self):
