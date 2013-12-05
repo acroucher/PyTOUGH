@@ -592,10 +592,16 @@ class t2data(object):
 
     def delete_orphan_generators(self):
         """Deletes any generators specified in blocks which do not exist in the grid."""
-        delgens=[]
-        for gen in self.generatorlist:
-            if not (gen.block in self.grid.block): delgens.append((gen.block,gen.name))
-        for bg in delgens: self.delete_generator(bg)
+        delgenindices, delgens = [], set([])
+        # Delete items from the generator list and dictionary separately (rather than using
+        # self.delete_generator() in case there are multiple generators in the list with the
+        # same dictionary key.
+        for i,gen in enumerate(self.generatorlist):
+            if not (gen.block in self.grid.block):
+                delgenindices.append(i)
+                delgens.add((gen.block,gen.name))
+        for bg in delgens: del self.generator[bg]
+        for i in reversed(delgenindices): del self.generatorlist[i]
 
     def read_generator(self,line,infile):
         """Returns generator read from line in file"""
