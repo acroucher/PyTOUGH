@@ -1137,7 +1137,10 @@ class mulgrid(object):
 
     def block_name(self,layername,colname):
         """Returns block name from layer and column names, depending on the naming convention"""
-        return [colname[0:3]+layername[0:2],layername[0:3]+colname[0:2],layername[0:2]+colname[0:3]][self.convention]
+        if self.convention == 0: name = colname[0:3] + layername[0:2]
+        elif self.convention == 1: name = layername[0:3] + colname[0:2]
+        else: name = layername[0:2] + colname[0:3]
+        return fix_blockname(name)
 
     def write(self,filename=''):
         """Writes a MULgraph grid to file"""
