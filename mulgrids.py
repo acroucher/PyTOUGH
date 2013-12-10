@@ -2464,46 +2464,51 @@ class mulgrid(object):
         
     def column_boundary_nodes(self,columns):
         """Returns an ordered list of the nodes on the outer boundary of the group of specified columns."""
-        nodes=self.nodes_in_columns(columns)
-        blacklist_connections=[]
+        nodes = self.nodes_in_columns(columns)
+        blacklist_connections, blacklist_nodes = [],[]
         def next_bdy_node(n):
             for col in [c for c in n.column if c in columns and c.num_nodes > 2]:
-                i=col.node.index(n)
-                n2=col.node[(i+1)%col.num_nodes]
-                con=self.connection_with_nodes([n,n2])
-                if not con or any([c.num_nodes <= 2 for c in con.column]): return n2
-                else:
-                    if not (con in blacklist_connections) and \
-                            not all([(c in columns) for c in con.column]): return n2
+                i = col.node.index(n)
+                n2 = col.node[(i+1)%col.num_nodes]
+                if n2 not in blacklist_nodes:
+                    con = self.connection_with_nodes([n,n2])
+                    if not con or any([c.num_nodes <= 2 for c in con.column]): return n2
+                    else:
+                        if not (con in blacklist_connections) and \
+                                not all([(c in columns) for c in con.column]): return n2
             return None
         # look for a starting node along the left-hand edge of the selection (this avoids
         # picking up any interior boundaries):
         startnode=None
-        xmin=bounds_of_points([node.pos for node in nodes])[0][0]
-        leftnodes=[node for node in nodes if node.pos[0]==xmin]
+        xmin = bounds_of_points([node.pos for node in nodes])[0][0]
+        leftnodes = [node for node in nodes if node.pos[0]==xmin]
         for node in leftnodes:
-            nextnode=next_bdy_node(node)
+            nextnode = next_bdy_node(node)
             if nextnode:
-                startnode=node
+                startnode = node
                 break
         if startnode:
-            bdynodes=[]
-            node=startnode
-            back=False
+            bdynodes = []
+            node = startnode
+            back = False
             while not back:
                 bdynodes.append(node)
-                node=next_bdy_node(node)
-                back=node.name==startnode.name
-                if (node in bdynodes) and not back : # loop in boundary
-                    nodei=bdynodes.index(node)
-                    nnodes=len(bdynodes)
-                    loopcount=nnodes-nodei-1
-                    for i in xrange(loopcount):
-                        n1,n2=bdynodes[-2],bdynodes[-1]
-                        con=self.connection_with_nodes([n1,n2])
-                        if con: blacklist_connections.append(con)
-                        bdynodes.pop()
-                    node=bdynodes.pop()
+                node = next_bdy_node(node)
+                if node is None:
+                    raise Exception('Could not detect column boundary nodes.')
+                else:
+                    back = node.name == startnode.name
+                    if (node in bdynodes) and not back : # loop in boundary
+                        nodei = bdynodes.index(node)
+                        nnodes = len(bdynodes)
+                        loopcount = nnodes-nodei - 1
+                        for i in xrange(loopcount):
+                            n1,n2 = bdynodes[-2], bdynodes[-1]
+                            lastnode = bdynodes.pop()
+                            con = self.connection_with_nodes([n1,n2])
+                            if con: blacklist_connections.append(con)
+                            else: blacklist_nodes.append(lastnode)
+                        node = bdynodes.pop()
             return bdynodes
         else: return []
     def get_boundary_nodes(self): return self.column_boundary_nodes(self.columnlist)
