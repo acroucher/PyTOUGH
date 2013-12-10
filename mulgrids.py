@@ -2446,7 +2446,7 @@ class mulgrid(object):
             x0 = np.array([self.node[nodename].pos for nodename in nodenames]).reshape(2*num_nodes)
             x1, success = leastsq(f, x0)
             if success > 4:
-                raise Exception, 'scipy leastsq() optimization routine did not converge.'
+                raise Exception('scipy leastsq() optimization routine did not converge.')
             update_grid(x1)
             for colname in colnames: self.column[colname].get_area()
 
