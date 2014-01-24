@@ -818,8 +818,7 @@ class t2listing(file):
 
     def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
         start=fmt['values'][0]
-        # vals=[fortran_float(s) for s in line[start:].strip().split()]
-        vals = np.fromstring(line[start:].strip(), sep = " ")
+        vals=[fortran_float(s) for s in line[start:].strip().split()]
         return vals
 
     def read_table_line_TOUGH2(self,line,num_columns,fmt):
