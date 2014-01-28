@@ -1467,24 +1467,27 @@ class toughreact_tecplot(file):
         if more: self.index -= 1
         return more
 
-    def skipto(self, keyword):
+    def skipto(self, keyword, count = False):
         """Advances file to next line starting with specified keyword, returning the line."""
         line = ''
+        num_lines = 0
         while not line.startswith(keyword):
             line = self.readline()
-            if line == '': return None
-        return line
+            num_lines += 1
+            if line == '': return None, None
+        if count: return line, num_lines
+        else: return line
         
     def find_next_time(self):
         """Advances to set of results at next time, and returns the time value."""
-        line = self.skipto('ZONE')
-        if line is None: return None
+        line, num_lines = self.skipto('ZONE', count = True)
+        if line is None: return None, None
         quotepos = line.find('"')
         if quotepos >= 0:
             spacepos = line.find(' ', quotepos)
-            if spacepos >= 0: return float(line[quotepos+1:spacepos])
-            else: return None
-        else: return None
+            if spacepos >= 0: return float(line[quotepos+1:spacepos]), num_lines
+            else: return None, num_lines
+        else: return None, num_lines
 
     def setup_pos(self):
         """Sets up _pos list for TOUGHREACT Tecplot files, containing file position at the start
@@ -1493,22 +1496,27 @@ class toughreact_tecplot(file):
         self._pos = []
         t = []
         endfile = False
+        num_blocks = None
         while not endfile:
-            time = self.find_next_time()
+            time, num_lines = self.find_next_time()
             if time is not None:
                 self._pos.append(self.tell())
                 t.append(time)
+                if num_lines: num_blocks = num_lines - 1
             else: endfile = True
         self.times = np.array(t)
+        self._num_blocks = num_blocks
 
     def setup_table(self, blocks):
         """Sets up element table structure. Table columns are read from the VARIABLES line in the file.
         Table rows are block names, supplied as a list of strings, or taken from a mulgrid or t2data
         object."""
         import mulgrids as mg
-        import t2data as t2d
+        import t2grids as t2g
         if isinstance(blocks, mg.mulgrid): blocks = blocks.block_name_list
-        elif isinstance(blocks, t2d.t2data): blocks = [blk.name for blk in  blocks.grid.blocklist]
+        elif isinstance(blocks, t2g.t2grid): blocks = [blk.name for blk in  blocks.blocklist]
+        if len(blocks) != self._num_blocks:
+            raise Exception("Specified block name list is the wrong length for TOUGHREACT Tecplot file "+ self.filename)
         self.seek(0)
         line = self.skipto('VARIABLES')
         if line is not None:
@@ -1572,7 +1580,7 @@ class toughreact_tecplot(file):
         nele = geo.num_underground_blocks
         arrays = {'Block':{}, 'Node':{}}
         for name in self.element.column_name: arrays['Block'][name] = vtkFloatArray()
-        array_length={'Block':nele, 'Node':0}
+        array_length = {'Block':nele, 'Node':0}
         array_data = {'Block':{}, 'Node':{}}
         for array_type,array_dict in arrays.items():
             for name,array in array_dict.items():
@@ -1616,7 +1624,7 @@ class toughreact_tecplot(file):
         writer = vtkXMLUnstructuredGridWriter()
         for i in indices:
             self.index = i
-            t= start_time + self.time/timescale
+            t = start_time + self.time/timescale
             filename_time = base+'_'+str(i)+'.vtu'
             results_arrays = self.get_vtk_data(geo, grid, geo_matches=geo_matches)
             for array_type,array_dict in arrays.items():
