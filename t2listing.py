@@ -1418,7 +1418,7 @@ class toughreact_tecplot(file):
             self.first()
         else: raise Exception('No results found in TOUGHREACT Tecplot file ' + filename)
 
-    def __repr__(self): return "TOUGHREACT results for " + str(self.element.num_rows) + "blocks"
+    def __repr__(self): return "TOUGHREACT results for " + str(self.element.num_rows) + " blocks"
 
     def get_index(self): return self._index
     def set_index(self,i):
