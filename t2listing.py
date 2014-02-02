@@ -1440,15 +1440,6 @@ class toughreact_tecplot(file):
     def get_num_times(self): return len(self.times)
     num_times = property(get_num_times)
 
-    def get_step(self): return self._step
-    def set_step(self,step):
-        if step < self.steps[0]: self.index = 0
-        elif step > self.steps[-1]: self.index = -1
-        else:
-            dstep = np.abs(self.steps - step)
-            self.index = np.argmin(dstep)
-    step = property(get_step, set_step)
-
     def rewind(self):
         """Rewinds to start (without reading any results)"""
         self.seek(0)
