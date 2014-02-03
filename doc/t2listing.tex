@@ -14,7 +14,7 @@ The \texttt{t2listing} library in PyTOUGH contains classes and routines for read
 \index{TOUGH2!TOUGH+}
 \index{TOUGH2!TOUGHREACT}
 
-Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP and TOUGH+ have different formats but are all supported.  The main listing files produced by TOUGHREACT are also supported.
+Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP and TOUGH+ have different formats but are all supported.  The main listing files produced by TOUGHREACT are also supported. (There is also a separate \hyperref[toughreact_tecplot]{\texttt{toughreact\_tecplot}} class for handling the additional Tecplot output files produced by TOUGHREACT.)
 
 \section{\texttt{t2listing} objects}
 \index{PyTOUGH!classes!\texttt{t2listing}}
@@ -38,6 +38,7 @@ lst = t2listing(filename)
 creates a \texttt{t2listing} object called \texttt{lst} and reads its contents from file \texttt{filename}.
 
 \subsection{Properties}
+\label{t2listing_properties}
 \index{TOUGH2 listing files!properties}
 
 The main properties of a \texttt{t2listing} object are listed in Table \ref{tb:t2listing_properties}.
@@ -447,6 +448,166 @@ The properties of a \texttt{t2historyfile} object are given in Table \ref{tb:his
     \label{tb:historyfile_properties}
   \end{center}
 \end{table}
+
+\section{\texttt{toughreact\_tecplot} objects}
+\label{toughreact_tecplot}
+\index{TOUGHREACT Tecplot files}
+\index{PyTOUGH!classes!\texttt{toughreact\_tecplot}}
+\index{TOUGH2!TOUGHREACT}
+
+The \texttt{t2listing} library also defines a \texttt{toughreact\_tecplot} class, used for representing the additional Tecplot output files produced by TOUGHREACT.
+
+\textbf{Example:}
+
+\begin{lstlisting}
+tp = toughreact_tecplot(filename, blocks)
+\end{lstlisting}
+
+creates a \texttt{toughreact\_tecplot} object called \texttt{tp} and reads its contents from file \texttt{filename}. The \texttt{blocks} object passed in as a second parameter specifies the block names (see \ref{toughreact_tecplot_blocknames}).
+
+\subsection{Differences from \texttt{t2listing} objects}
+
+A \texttt{toughreact\_tecplot} object is similar to a \hyperref[listingfiles]{\texttt{t2listing}} object in many respects. Apart from the need to specify the block names on creation (see \ref{toughreact_tecplot_blocknames}), the other main difference is that unlike a \texttt{t2listing} object, which usually contains several \texttt{listingtable} objects, a \texttt{toughreact\_tecplot} object contains only one: the \texttt{element} table. Because of this, when using the \texttt{history} method, tables need not be specified.
+
+These Tecplot files do not contain any information about time step numbers, so \texttt{t2listing} properties like \texttt{step} and \texttt{steps} are not present in a \texttt{toughreact\_tecplot} object. There is also no \texttt{title} property, as this is not present in the Tecplot file.
+
+There is also no `short' output in a Tecplot file, so a \texttt{toughreact\_tecplot} object does not have properties like \texttt{fulltimes}, as this would just be the same as the \texttt{times} property. There are also no diagnostic methods like \texttt{convergence} or \texttt{reductions}.
+
+\subsection{Specifying block names}
+\label{toughreact_tecplot_blocknames}
+\index{TOUGHREACT Tecplot files!block names}
+
+In the Tecplot file, results are not associated with block names, though they appear in the same order as in the TOUGH2 data file used to generate the results. To make results accessible by block name, a second parameter containing the block names must be specified when a \texttt{toughreact\_tecplot} object is created. This parameter is not optional. It can be either:
+
+\begin{itemize}
+\item a list of strings specifying the block names
+\item a \hyperref[mulgrids]{\texttt{mulgrid}} geometry object
+\item a \hyperref[t2grids]{\texttt{t2grid}} object
+\end{itemize}
+
+\subsection{Properties}
+\index{TOUGHREACT Tecplot files!properties}
+
+The main properties of a \texttt{toughreact\_tecplot} object are listed in Table \ref{tb:toughreact_tecplot_properties}. For more details, see the corresponding properties of the \hyperref[t2listing_properties]{\texttt{t2listing}} class.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{70mm}|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{element} & \hyperref[listingtableobjects]{\texttt{listingtable}} & element table for current set of results\\
+      \texttt{filename} & string & name of listing file on disk\\
+      \texttt{index} & integer & index of current set of results\\
+      \texttt{num\_times} & integer & number of sets of results\\
+      \texttt{time} & float & time of current set of results\\
+      \texttt{times} & \texttt{np.array} & array of times (float) for all results\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{toughreact\_tecplot} object}
+    \label{tb:toughreact_tecplot_properties}
+  \end{center}
+\end{table}
+
+\subsection{Methods}
+\index{TOUGHREACT Tecplot files!methods}
+
+The methods of a \texttt{toughreact\_tecplot} object are listed in Table \ref{tb:toughreact_tecplot_methods}. Details of these methods are given below.
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{90mm}|}
+      \hline
+      \textbf{Method} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \hyperref[sec:toughreact_tecplot:first]{\texttt{first}} & -- & navigates to the first set of full results\\
+      \hyperref[sec:toughreact_tecplot:history]{\texttt{history}} & list or tuple & time history for a selection of locations and table columns\\
+      \hyperref[sec:toughreact_tecplot:last]{\texttt{last}} & -- & navigates to the last set of full results\\
+      \hyperref[sec:toughreact_tecplot:next]{\texttt{next}} & Boolean & navigates to the next set of full results\\
+      \hyperref[sec:toughreact_tecplot:prev]{\texttt{prev}} & Boolean & navigates to the previous set of full results\\
+      \hyperref[sec:toughreact_tecplot:write_vtk]{\texttt{write\_vtk}} & -- & writes results to VTK file\\
+      \hline
+    \end{tabular}
+    \caption{Methods of a \texttt{toughreact\_tecplot} object}
+    \label{tb:toughreact_tecplot_methods}
+  \end{center}
+\end{table}
+
+\begin{snugshade}
+\subsubsection{\texttt{first()}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:first}
+\index{TOUGHREACT Tecplot files!navigating in time}
+
+Navigates to the first set of results in the Tecplot file.
+
+\begin{snugshade}
+\subsubsection{\texttt{history(\emph{selection})}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:history}
+\index{TOUGHREACT Tecplot files!time histories}
+
+Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element table.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{selection}: list of tuples\\
+  Selection of locations (or indices) and table columns to produce histories for.  Each tuple contains two elements: \textbf{block name} and \textbf{table column name}.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)
+\end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{last()}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:last}
+\index{TOUGHREACT Tecplot files!navigating in time}
+
+Navigates to the last set of results in the Tecplot file.
+
+\begin{snugshade}
+\subsubsection{\texttt{next()}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:next}
+\index{TOUGHREACT Tecplot files!navigating in time}
+
+Navigates to the next set of results in the Tecplot file.  Returns \texttt{False} if already at the last set of results (and \texttt{True} otherwise).
+
+\begin{snugshade}
+\subsubsection{\texttt{prev()}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:prev}
+\index{TOUGHREACT Tecplot files!navigating in time}
+
+Navigates to the previous set of results in the Tecplot file.  Returns \texttt{False} if already at the first set of results (and \texttt{True} otherwise).
+
+\begin{snugshade}
+\subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{start\_time}=0,\\
+    \emph{time\_unit}='s')}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:write_vtk}
+\index{TOUGHREACT Tecplot files!writing!VTK files}
+\index{Visualization Tool Kit (VTK)}
+
+Writes a \texttt{toughreact\_tecplot} object to a set of VTK files on disk, for visualisation with VTK, Paraview, Mayavi etc.  The results in the element table of the Tecplot file object are written as an `unstructured grid' VTK object with data arrays defined on cells.  The data arrays written correspond to the variables given in the columns of the element table of the \texttt{toughreact\_tecplot} object. In addition, data arrays from an associated \texttt{mulgrid} and (optionally) \texttt{t2grid} objects can be included.
+
+One *.vtu file is produced for each time step in the \texttt{toughreact\_tecplot} object, and a *.pvd file is also written.  This is usually the file that should actually be opened in Paraview or other software as it contains time information associated with each *.vtu file.
+
+Optionally, only a subset of the time indices present in the \texttt{toughreact\_tecplot} can be written, according to the \texttt{indices} parameter.  A start time and time unit for the output can optionally be specified.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
+  The \texttt{mulgrid} geometry object associated with the results.  For flexibility, this geometry need not be fully compatible with the results -- for example, it may contain only a subset of the blocks for which results are present, or the blocks may be in a different order.  However, if it is not fully compatible, the writing process will be slower.
+\item \textbf{filename}: string\\
+  Name of the *.pvd file to be written.  Names of the individual *.vtu files for each time step are similar but with a time index appended and the file extension changed.
+\item \textbf{grid}: \hyperref[t2grids]{\texttt{t2grid}}\\
+  Name of optional \texttt{t2grid} object associated with the results.
+\item \textbf{indices}: list or tuple\\
+  Optional specification of time indices to include in the output.  If set to \texttt{None} (the default), all time indices will be included.
+\item \textbf{start\_time}: float\\
+  Optional start time of the simulation, i.e. time associated with the first set of results.  Default is zero.
+\item \textbf{time\_unit}: string\\
+  Optional time unit for the output.  TOUGHREACT Tecplot results are given at times in years, but this option allows them to be converted to other units.  Options are: `s', `h', `d' and `y', for seconds, hours, days and years respectively.  Default is `s'.
+\end{itemize}
 
 \section{Examples}
 \index{examples!TOUGH2 listing files}
