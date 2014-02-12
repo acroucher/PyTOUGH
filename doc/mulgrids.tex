@@ -71,8 +71,12 @@ geo = mulgrid('geom.dat', read_function = fortran_read_function)
 \subsubsection{Tilted geometries}
 \index{MULgraph geometry!tilting}
 
-Non-horizontal (i.e. tilted) geometries can be constructed by setting the \texttt{mulgrid} properties \texttt{gdcx} and \texttt{gdcy} non-zero. These properties represent the cosines of the angles the x- and y-axes make with the gravity vector. By default they are both zero, giving a horizontal grid. A geometry with \texttt{gdcx} = 1 can be used to construct a 2-D vertical slice grid with a non-layered structure. When a \texttt{t2grid} object is created from a tilted geometry, e.g. using the \texttt{t2grid} \hyperref[sec:t2grid:fromgeo]{fromgeo()} method, only the gravity cosines of the connections are affected.
+Non-horizontal (i.e. tilted) geometries can be constructed by setting the \texttt{mulgrid} properties \texttt{gdcx} and \texttt{gdcy} non-zero. These properties represent the cosines of the angles the x- and y-axes make with the gravity vector. By default they are both zero, giving a horizontal grid. A geometry with \texttt{gdcx} = 1 can be used to construct a 2-D vertical slice grid with a non-layered structure. When a \texttt{t2grid} object is created from a tilted geometry, e.g. using the \texttt{t2grid} \hyperref[sec:t2grid:fromgeo]{fromgeo()} method, only the gravity cosines of the connections are affected (the \texttt{dircos} property of each connection).
 
+\subsubsection{Rotating permeability directions}
+\index{MULgraph geometry!permeability directions}
+
+It is possible to rotate the permeability principal directions of a \texttt{mulgrid} object with respect to the coordinate axes- for example, to align permeabilities with a dominant fault direction- by specifying the \texttt{permeability\_angle} property. When a \texttt{t2grid} object is created, e.g. using the \texttt{t2grid} \hyperref[sec:t2grid:fromgeo]{fromgeo()} method, this can change the \texttt{direction} property of each connection.
 
 \index{MULgraph geometry!properties}
 \begin{center}

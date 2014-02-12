@@ -9,13 +9,25 @@ MULgraph geometry files were originally developed for use with MULgraph, a graph
 
 \section{Grid structure}
 \index{MULgraph geometry!grid structure}
+
+\subsection{Layers and columns}
+\index{MULgraph geometry!layers}
+\index{MULgraph geometry!columns}
 MULgraph geometry files implicitly assume a layered structure, with blocks arranged in layers and columns, and the same arrangement of columns in each layer. The only exception to this is at the top surface of the model, where layers are allowed to be incomplete (i.e. not contain all columns) in order to represent topography.
 
 The layers are always of constant vertical thickness. However, the blocks in the top layer are allowed to vary in height, again to represent variations in ground surface elevation.
 
+\subsection{Atmosphere blocks}
+\index{MULgraph geometry!blocks!atmosphere}
 The blocks in the top layer may optionally be connected to the atmosphere- either a single atmosphere block connected to all columns, or a separate atmosphere block over each column (see section \ref{geometry_format_conventions}).
 
+\subsection{Tilted geometries}
+\index{MULgraph geometry!tilting}
 It is possible to tilt the geometry coordinate axes with respect to the vertical, to represent non-horizontal geometries. When a TOUGH2 grid is created from such a tilted geometry, only the gravity cosines of the grid connections are affected.
+
+\subsection{Rotating permeability directions}
+\index{MULgraph geometry!permeability directions}
+It is also possible to rotate the permeability principal directions with respect to the coordinate axes- for example, to align permeabilities with a dominant fault direction. When a TOUGH2 grid is created, this can change the permeability index associated with each connection.
 
 \section{Geometry types}
 \index{MULgraph geometry!geometry type}
