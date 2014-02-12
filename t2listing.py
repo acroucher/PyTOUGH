@@ -654,8 +654,8 @@ class t2listing(file):
     def table_expected_floats(self, tablename, num_columns):
         """Returns number of floating point numbers expected in each line of the table.
         For most tables this is the number of table columns, but generation tables can
-        have incomplete lines in them and sometimes have as few as two values per line."""
-        return 2 if tablename == 'generation' else num_columns
+        have incomplete lines in them and sometimes have as few as one value per line."""
+        return 1 if tablename == 'generation' else num_columns
 
     def setup_table_TOUGH2(self, tablename):
         """Sets up table from TOUGH2 (or TOUGH+) listing file."""
