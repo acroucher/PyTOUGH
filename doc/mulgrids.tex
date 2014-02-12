@@ -31,6 +31,8 @@ creates a \texttt{mulgrid} object called \texttt{geo} and reads its contents fro
 
 Printing a \texttt{mulgrid} object (e.g. \texttt{print geo}) displays a summary of information about the grid: how many nodes, columns, layers, blocks and wells it contains, as well as its naming convention and atmosphere type.
 
+A specification of the MULgraph geometry file format can be found in Appendix \ref{geometry_file_format}.
+
 \subsection{Properties}
 \index{MULgraph geometry!properties}
 
@@ -41,40 +43,6 @@ The most important properties of a \texttt{mulgrid} object are \texttt{node}, \t
 Connections are slightly different from nodes, columns etc. in that they are not named individually.  However, they can be accessed by the names of the columns connected by the connection.  For example, the connection between columns ` 10' and ` 11' in a \texttt{mulgrid} called \texttt{geo} is given by \texttt{geo.connection[' 10',' 11']}.
 
 The elements of these lists and dictionaries are of type \texttt{node}, \texttt{column}, \texttt{connection}, \texttt{layer} and \texttt{well} respectively.  These are additional object classes to represent nodes, columns, connections, layers and wells, defined in the \texttt{mulgrids} library (see section \ref{other_mulgrid_objects}).
-
-\subsubsection{Naming conventions and atmosphere types}
-\index{MULgraph geometry!blocks!naming convention}
-\index{MULgraph geometry!atmosphere type}
-
-The grid block naming convention and atmosphere type used in the \texttt{mulgrid} object, specified by the \texttt{convention} and \texttt{atmosphere\_type} parameters, are both integers which can be given the value 0, 1 or 2.  The meanings of these values are shown in Table \ref{tb:mulgrid_conventions} and \ref{tb:mulgrid_atmosphere_types}.
-
-\begin{table}
-  \begin{center}
-    \begin{tabular}{|l|l|}
-      \hline
-      0 & 3 characters for column followed by 2 digits for layer \\
-      1 & 3 characters for layer followed by 2 digits for column \\
-      2 & 2 characters for layer followed by 3 digits for column \\
-      \hline
-    \end{tabular}
-    \caption{Naming conventions of a \texttt{mulgrid} object}
-    \label{tb:mulgrid_conventions}
-  \end{center}
-\end{table}
-
-\begin{table}
-  \begin{center}
-    \begin{tabular}{|l|l|}
-      \hline
-      0 & A single atmosphere block \\
-      1 & One atmosphere block over each column \\
-      2 & No atmosphere blocks \\
-      \hline
-    \end{tabular}
-    \caption{Atmosphere types of a \texttt{mulgrid} object}
-    \label{tb:mulgrid_atmosphere_types}
-  \end{center}
-\end{table}
 
 \subsubsection{Grid diagnostics}
 \index{MULgraph geometry!diagnostics}
