@@ -1465,14 +1465,14 @@ class toughreact_tecplot(file):
         while not line.startswith(keyword):
             line = self.readline()
             num_lines += 1
-            if line == '': return None, None
+            if line == '': return None, num_lines
         if count: return line, num_lines
         else: return line
         
     def find_next_time(self):
         """Advances to set of results at next time, and returns the time value."""
         line, num_lines = self.skipto('ZONE', count = True)
-        if line is None: return None, None
+        if line is None: return None, num_lines
         quotepos = line.find('"')
         if quotepos >= 0:
             spacepos = line.find(' ', quotepos)
@@ -1493,8 +1493,8 @@ class toughreact_tecplot(file):
             if time is not None:
                 self._pos.append(self.tell())
                 t.append(time)
-                if num_lines: num_blocks = num_lines - 1
             else: endfile = True
+            if num_lines: num_blocks = num_lines - 1
         self.times = np.array(t)
         self._num_blocks = num_blocks
 
