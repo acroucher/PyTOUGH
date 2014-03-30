@@ -14,23 +14,17 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.3.9, which has:
+The latest stable version is 1.3.10, which has:
 
-* Improved user guide: added index, added hyperlinks from tables to descriptions of properties/methods, fixed bug which prevented searching PDF for strings containing underscores, added hyperlinks to external URLs, improved formatting of code examples (with syntax highlighting)
+* Support for tilted geometries in the mulgrid class
 
-* Better support for exporting grids containing columns with more than four sides to VTK
+* Support for reading TOUGHREACT Tecplot output
 
-* Ability to plot connection flow arrows on mulgrid layer and slice plots
+* Improvements to the mulgrid optimize() method when using scipy optimizer
 
-* Improved calculation of column centroids
+* Improved handling of ordering sections added to a t2data object and then written to file
 
-* Improved calculation of connection geometry parameters and flux matrices
-
-* new demote_block() method for t2grids- to move blocks to the end of the block list
-
-* improved reading of some AUTOUGH2 listing files
-
-* improved reading of some exotically-formatted Fortran floating point data
+* Further improvements to the User Guide, including a new appendix with details of the MULgraph geometry file format
 
 as well as various bug fixes and other minor enhancements.
 
