@@ -518,12 +518,21 @@ class t2listing(file):
     def start_of_values(self,line):
         """Returns start index of values in a table line.  Characters before this start index are taken to contain
         the key(s) and row index."""
-        dotpos=line.find('.')
-        if dotpos>=2:
-            pos=dotpos-1 # numeral before decimal point in first value
-            c=line[pos-1]
-            if c.isdigit(): return pos
-            elif c in ['-',' ']: return pos-1
+        pt = line.find('.')
+        if pt >= 2:
+            nextpt = line.find('.', pt + 1)
+            if nextpt < 0 : nextpt = len(line)
+            s = line[pt + 1: nextpt - 1].lower()
+            exponential = s.find('e') >= 0 or s.find('+') >= 0 or s.find('-') >= 0
+            if exponential:
+                c = line[pt - 2]
+                if c in ['-',' ']: return pt - 2
+                elif c.isdigit(): return pt - 1
+            else:
+                pos = pt - 1 
+                while line[pos] != ' ' and pos > 0 : pos -= 1
+                while line[pos] == ' ' and pos > 0 : pos -= 1
+                if pos > 0 : return pos + 1
         return None
         
     def key_positions(self,line,nkeys):
@@ -588,34 +597,27 @@ class t2listing(file):
         else:
             print 'Error parsing '+tablename+' table columns: table not created.'
 
-    def parse_table_line(self,line,start):
+    def parse_table_line(self, line, start):
         """Parses line of a table and returns starting indices of each column"""
-        numpos=[]
+        numpos = [start]
         from re import finditer,escape
         # find all decimal points:
-        pts=[match.start() for match in finditer(escape('.'), line)]+[len(line)]
-        exponential=False
-        for i,pt in enumerate(pts[:-1]):
-            nextpt=pts[i+1]
-            s=line[pt:nextpt].lower()
-            if 'e' in s: # exponential format
-                c=line[pt-2]
-                if c in [' ','-']: numstart=pt-2
-                elif c.isdigit(): numstart=pt-1
-                else: numstart=pt-1 # shouldn't normally occur
-                exponential=True
-            else: # floating point format
-                if i==0: numstart=start
-                else:
-                    pos=[p for p in [lasts.find(delim) for delim in [' ','-']] if p>0]
-                    if len(pos)>0: numstart=pts[i-1]+min(pos)
-                    elif exponential: numstart=pts[i-1]+lasts.lower().find('e')+4
-                    else: numstart=pt-1 # consecutive floats with no delimiter- can't really parse
-                exponential=False
-            numpos.append(numstart)
-            lasts=s
-        return numpos+[len(line)]
-
+        pts = [match.start() for match in finditer(escape('.'), line)]
+        for i, pt in enumerate(pts[: -1]):
+            nextpt = pts[i+1]
+            pstart, pend = pt+1, nextpt-1
+            spacepos = line.find(' ', pstart, pend)
+            if spacepos > 0: next_start = spacepos
+            else: # no space at end
+                exppos = line.find('E', pstart, pend)
+                if exppos > 0:
+                    endpos = exppos + 3
+                    next_start = endpos + 1
+                else: raise Exception("Unable to parse table line:\n" + line)
+            numpos.append(next_start)
+        numpos.append(len(line))
+        return numpos
+            
     def parse_table_header_TOUGH2(self):
         """Parses table header line for TOUGH2, returning the number of keys and the column names."""
         cols = []
