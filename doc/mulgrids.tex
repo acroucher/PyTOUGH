@@ -213,6 +213,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:well_values]{\texttt{well\_values}} & tuple & values of a variable down a well\\
   \hyperref[sec:mulgrid:write]{\texttt{write}} & -- & writes to geometry file on disk\\
   \hyperref[sec:mulgrid:write_bna]{\texttt{write\_bna}} & -- & writes to Atlas BNA file on disk\\ 
+  \hyperref[sec:mulgrid:write_exodusii]{\texttt{write\_exodusii}} &  -- & writes to ExodusII file on disk\\
   \hyperref[sec:mulgrid:write_vtk]{\texttt{write\_vtk}} &  -- & writes to VTK file on disk\\
   \hline
   \caption{Methods of a \texttt{mulgrid} object}
@@ -1429,6 +1430,22 @@ Writes a geometry object to an Atlas BNA file on disk, for visualisation with Su
 \begin{itemize}
 \item \textbf{filename}: string\\
   Name of the BNA file to be written.  If no file name is specified, the object's own \texttt{filename} property is used, with the extension changed to *.bna.  If the object's \texttt{filename} property is not set, the default name `geometry.bna' is used.
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{write\_exodusii(\emph{filename}='', \emph{arrays}=None)}}\end{snugshade}
+\label{sec:mulgrid:write_exodusii}
+\index{MULgraph geometry!writing!ExodusII files}
+
+Writes a \texttt{mulgrid} object to an ExodusII file on disk, for visualisation or export to other software.
+
+(Note: this method uses the VTK-Python library, so you will need that installed on your machine before you can use it.)
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Name of the ExodusII file to be written.  If no file name is specified, the object's own \texttt{filename} property is used, with the extension changed to *.exo.  If the object's \texttt{filename} property is not set, the default name `geometry.exo' is used.
+\item \textbf{arrays}: dictionary or \texttt{None}\\
+  Data arrays to be included in the ExodusII file.  If set to \texttt{None}, default arrays (layer index, column index, column area, column elevation, block number and volume) are included.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False)}}\end{snugshade}
