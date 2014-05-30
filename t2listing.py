@@ -405,6 +405,7 @@ class t2listing(file):
     def setup_tables_AUTOUGH2(self):
         """Sets up configuration of element, connection and generation tables."""
         self._table={}
+        self._tablenames = []
         tablename='element'
         self.seek(self._fullpos[0])
         while tablename:
@@ -416,6 +417,7 @@ class t2listing(file):
     def setup_tables_TOUGH2(self):
         self.read_title()
         self._table={}
+        self._tablenames = []
         tablename='element'
         self.seek(self._fullpos[0])
         self.read_header() # only one header at each time
@@ -427,6 +429,7 @@ class t2listing(file):
     def setup_tables_TOUGHplus(self):
         self.read_title()
         self._table={}
+        self._tablenames = []
         tablename='element'
         self.seek(self._fullpos[0])
         self.read_header() # only one header at each time
@@ -592,6 +595,7 @@ class t2listing(file):
                 allow_rev = tablename == 'connection'
                 self._table[tablename] = listingtable(cols, rows, row_format, num_keys = nkeys,
                                                       allow_reverse_keys = allow_rev)
+                self._tablenames.append(tablename)
                 self.readline()
             else: print 'Error parsing '+tablename+' table keys: table not created.'
         else:
@@ -721,6 +725,7 @@ class t2listing(file):
             allow_rev=tablename=='connection'
             self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys, allow_reverse_keys=allow_rev,
                                                 header_skiplines = header_skiplines, skiplines = skiplines)
+            self._tablenames.append(tablename)
         else: print 'Error parsing '+tablename+' table keys: table not created.'
 
     def read_header_AUTOUGH2(self):
@@ -768,6 +773,13 @@ class t2listing(file):
         self.readline()
         self.title=self.readline().strip()
 
+    def next_tablename(self, tablename):
+        """Returns name of table after the specified one, or None if it is the last."""
+        if tablename is None: return self._tablenames[0]
+        i = self._tablenames.index(tablename)
+        if i < len(self._tablenames): return self._tablenames[i+1]
+        else: return None
+
     def read_tables_AUTOUGH2(self):
         tablename='element'
         while tablename:
@@ -777,12 +789,17 @@ class t2listing(file):
             tablename=self.next_table()
 
     def read_tables_TOUGH2(self):
-        tablename='element'
+        tablename = 'element'
         self.read_header() # only one header at each time
+        last_tablename = None
         while tablename:
             if tablename in self.skip_tables: self.skip_table(tablename)
-            else: self.read_table(tablename)
-            tablename=self.next_table()
+            elif tablename in self._table: self.read_table(tablename)
+            else: # tables not present at first time step
+                next_tablename = self.next_tablename(last_tablename)
+                if next_tablename: self.skip_to_table(next_tablename, last_tablename, 1)
+            last_tablename = tablename
+            tablename = self.next_table()
 
     def read_tables_TOUGHplus(self):
         tablename='element'
