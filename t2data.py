@@ -16,85 +16,87 @@ from t2grids import *
 from t2incons import *
 from math import ceil
 
+t2data_format_specification = {
+    'title':[['title'],['80s']],
+    'simulator':[['simulator'],['80s']],
+    'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
+              ['5s','5d']+['10.4e']*7],
+    'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['10.4e']*7],
+    'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
+    'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
+    'param1_autough2':[['max_iterations','print_level','max_timesteps','max_duration','print_interval',
+                        '_option_str','diff0','texp','be'],
+                       ['2d']*2+['4d']*3+['24s']+['10.3e']*3],
+    'param1':[['max_iterations','print_level','max_timesteps','max_duration','print_interval','_option_str','texp','be'],
+              ['2d']*2+['4d']*3+['24s']+['10.3e']*2],
+    'param2':[['tstart','tstop','const_timestep','max_timestep','print_block','','gravity','timestep_reduction','scale'],
+              ['10.3e']*4+['5s','5x']+['10.4e']*3],
+    'param3':[['relative_error','absolute_error','pivot','upstream_weight','newton_weight','derivative_increment'],
+              ['10.4e']*6],
+    'timestep': [['timestep']*8,['10.4e']*8],
+    'multi': [['num_components','num_equations','num_phases','num_secondary_parameters','num_inc'], ['5d']*5],
+    'multi_autough2': [['num_components','num_equations','num_phases','num_secondary_parameters','eos'], ['5d']*4+['4s']],
+    'lineq':[['type','epsilon','max_iterations','gauss','num_orthog'],['2d','10.4e','4d','1d','4d']],
+    'default_incons':[['incon']*4,['20.14e']*4],
+    'output_times1':[['num_times_specified','num_times','max_timestep','time_increment'],['5d']*2+['10.4e']*2],
+    'output_times2':[['time']*8,['10.4e']*8],
+    'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
+    'capillarity':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
+    'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['10.4e']*3+
+              ['10.3e']*3],
+    'connections':[['block1','block2','nseq','nad1','nad2','direction','distance1','distance2','area','dircos','sigma'],
+                   ['5s']*2+['5d']*4+['10.4e']*3+['10.7f','10.4e']],
+    'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
+                 ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['10.3e']*4],
+    'generation_times':[['time']*4,['14.7e']*4],
+    'generation_rates':[['rate']*4,['14.7e']*4],
+    'generation_enthalpy':[['enthalpy']*4,['14.7e']*4],
+    'short':[['','frequency'],['5x','2d']],
+    'incon1':[['block','','','porosity'],['5s']+['5x']*2+['15.9e']],
+    'incon2':[['incon']*3,['20.14e']*3],
+    'solver':[['type','','z_precond','','o_precond','relative_max_iterations','closure'],
+              ['1d','2x','2s','3x','2s']+['10.4e']*2],
+    'indom2':[['indom']*4,['20.13e']*4],
+    'diffusion': [['diff']*8,['10.4e']*8],
+    'selec1': [['int_selec']*16,['5d']*16],
+    'selec2': [['float_selec']*8,['10.4e']*8],
+    'radii1': [['nrad'],['5d']],
+    'radii2': [['radius']*8,['10.4e']*8],
+    'equid' : [['nequ','','dr'],['5d','5x','10.4e']],
+    'logar' : [['nlog','','rlog','dr'],['5d','5x']+['10.4e']*2],
+    'layer1': [['nlay'],['5d']],
+    'layer2': [['layer']*8,['10.4e']*8],
+    'xyz1'  : [['deg'],['10.4e']],
+    'xyz2'  : [['ntype','','no','del'],['2s','3x','5d','10.4e']],
+    'xyz3'  : [['deli']*8,['10.4e']*8],
+    'minc'  : [['part','type','','dual'],['5s']*2+['5x','5s']],
+    'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['4s']+['10.4e']*7],
+    'part2' : [['vol']*8,['10.4e']*8]
+    }
+
+t2data_extra_precision_format_specification = {
+    'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
+              ['5s','5d']+['15.4e']*7],
+    'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['15.4e']*7],
+    'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+    'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+    'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+    'capillarity':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+    'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
+                 ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['15.4e']*4],
+    'generation_times':[['time']*4,['15.4e']*4],
+    'generation_rates':[['rate']*4,['15.4e']*4],
+    'generation_enthalpy':[['enthalpy']*4,['15.4e']*4]}
+
 class t2data_parser(fixed_format_file):
     """Class for parsing TOUGH2 data file."""
     def __init__(self, filename, mode, read_function = default_read_function):
-        specification = {
-            'title':[['title'],['80s']],
-            'simulator':[['simulator'],['80s']],
-            'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
-                      ['5s','5d']+['10.4e']*7],
-            'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['10.4e']*7],
-            'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
-            'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
-            'param1_autough2':[['max_iterations','print_level','max_timesteps','max_duration','print_interval',
-                       '_option_str','diff0','texp','be'],
-                      ['2d']*2+['4d']*3+['24s']+['10.3e']*3],
-            'param1':[['max_iterations','print_level','max_timesteps','max_duration','print_interval','_option_str','texp','be'],
-                      ['2d']*2+['4d']*3+['24s']+['10.3e']*2],
-            'param2':[['tstart','tstop','const_timestep','max_timestep','print_block','','gravity','timestep_reduction','scale'],
-                      ['10.3e']*4+['5s','5x']+['10.4e']*3],
-            'param3':[['relative_error','absolute_error','pivot','upstream_weight','newton_weight','derivative_increment'],
-                      ['10.4e']*6],
-            'timestep': [['timestep']*8,['10.4e']*8],
-            'multi': [['num_components','num_equations','num_phases','num_secondary_parameters','num_inc'], ['5d']*5],
-            'multi_autough2': [['num_components','num_equations','num_phases','num_secondary_parameters','eos'], ['5d']*4+['4s']],
-            'lineq':[['type','epsilon','max_iterations','gauss','num_orthog'],['2d','10.4e','4d','1d','4d']],
-            'default_incons':[['incon']*4,['20.14e']*4],
-            'output_times1':[['num_times_specified','num_times','max_timestep','time_increment'],['5d']*2+['10.4e']*2],
-            'output_times2':[['time']*8,['10.4e']*8],
-            'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
-            'capillarity':[['type','']+['parameter']*7,['5d','5x']+['10.3e']*7],
-            'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['10.4e']*3+
-                      ['10.3e']*3],
-            'connections':[['block1','block2','nseq','nad1','nad2','direction','distance1','distance2','area','dircos','sigma'],
-                           ['5s']*2+['5d']*4+['10.4e']*3+['10.7f','10.4e']],
-            'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
-                         ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['10.3e']*4],
-            'generation_times':[['time']*4,['14.7e']*4],
-            'generation_rates':[['rate']*4,['14.7e']*4],
-            'generation_enthalpy':[['enthalpy']*4,['14.7e']*4],
-            'short':[['','frequency'],['5x','2d']],
-            'incon1':[['block','','','porosity'],['5s']+['5x']*2+['15.9e']],
-            'incon2':[['incon']*3,['20.14e']*3],
-            'solver':[['type','','z_precond','','o_precond','relative_max_iterations','closure'],
-                     ['1d','2x','2s','3x','2s']+['10.4e']*2],
-            'indom2':[['indom']*4,['20.13e']*4],
-            'diffusion': [['diff']*8,['10.4e']*8],
-            'selec1': [['int_selec']*16,['5d']*16],
-            'selec2': [['float_selec']*8,['10.4e']*8],
-            'radii1': [['nrad'],['5d']],
-            'radii2': [['radius']*8,['10.4e']*8],
-            'equid' : [['nequ','','dr'],['5d','5x','10.4e']],
-            'logar' : [['nlog','','rlog','dr'],['5d','5x']+['10.4e']*2],
-            'layer1': [['nlay'],['5d']],
-            'layer2': [['layer']*8,['10.4e']*8],
-            'xyz1'  : [['deg'],['10.4e']],
-            'xyz2'  : [['ntype','','no','del'],['2s','3x','5d','10.4e']],
-            'xyz3'  : [['deli']*8,['10.4e']*8],
-            'minc'  : [['part','type','','dual'],['5s']*2+['5x','5s']],
-            'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['4s']+['10.4e']*7],
-            'part2' : [['vol']*8,['10.4e']*8]
-            }
-        super(t2data_parser,self).__init__(filename, mode, specification, read_function)
+        super(t2data_parser,self).__init__(filename, mode, t2data_format_specification, read_function)
 
 class t2_extra_precision_data_parser(fixed_format_file):
     """Class for parsing AUTOUGH2 extra-precision auxiliary data file."""
     def __init__(self, filename, mode, read_function = default_read_function):
-        specification = {
-            'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
-                      ['5s','5d']+['15.4e']*7],
-            'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['15.4e']*7],
-            'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-            'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-            'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-            'capillarity':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-            'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
-                         ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['15.4e']*4],
-            'generation_times':[['time']*4,['15.4e']*4],
-            'generation_rates':[['rate']*4,['15.4e']*4],
-            'generation_enthalpy':[['enthalpy']*4,['15.4e']*4]}
-        super(t2_extra_precision_data_parser,self).__init__(filename, mode, specification, read_function)
+        super(t2_extra_precision_data_parser,self).__init__(filename, mode, t2data_extra_precision_format_specification, read_function)
 
 import struct
 class fortran_unformatted_file(file):
