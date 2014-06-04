@@ -80,6 +80,10 @@ t2data_extra_precision_format_specification = {
     'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['15.4e']*7],
     'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
     'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+    'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['15.4e']*3+
+              ['15.3e']*3],
+    'connections':[['block1','block2','nseq','nad1','nad2','direction','distance1','distance2','area','dircos','sigma'],
+                   ['5s']*2+['5d']*4+['15.4e']*3+['15.7f','15.4e']],
     'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
     'capillarity':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
     'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
@@ -143,7 +147,7 @@ default_parameters = {'max_iterations':None, 'print_level':None, 'max_timesteps'
 t2data_sections = ['SIMUL','ROCKS','MESHM','PARAM','START','NOVER','RPCAP','LINEQ','SOLVR','MULTI','TIMES',
                    'SELEC','DIFFU','ELEME','CONNE','GENER','SHORT','FOFT','COFT','GOFT','INCON','INDOM']
 
-t2_extra_precision_sections = ['ROCKS', 'RPCAP', 'GENER']
+t2_extra_precision_sections = ['ROCKS', 'ELEME', 'CONNE', 'RPCAP', 'GENER']
 
 class t2data(object):
     """Class for TOUGH2 data"""
