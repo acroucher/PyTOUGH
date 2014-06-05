@@ -224,7 +224,8 @@ class t2data(object):
                  self.write_connections, self.write_generators, self.write_short_output, self.write_history_blocks,
                  self.write_history_connections, self.write_history_generators, self.write_incons, self.write_indom]))
         skip_fn = dict(zip(t2_extra_precision_sections,
-                           [self.skip_rocktypes, self.skip_rpcap, self.skip_generators]))
+                           [self.skip_rocktypes, self.skip_blocks, self.skip_connections, 
+                            self.skip_rpcap, self.skip_generators]))
         if not self.echo_extra_precision: 
             for section in self.extra_precision: self.read_fn[section] = skip_fn[section]
 
@@ -546,6 +547,10 @@ class t2data(object):
             self.grid.add_block(t2block(name,volume,rocktype,centre=centre,ahtx=ahtx,pmx=pmx,nseq=nseq,nadd=nadd))
             line=padstring(infile.readline())
 
+    def skip_blocks(self, infile):
+        """Skips blocks section in file"""
+        while infile.readline().strip(): pass
+
     def write_blocks(self,outfile):
         if self.grid.num_blocks>0:
             outfile.write('ELEME\n')
@@ -572,6 +577,10 @@ class t2data(object):
             if nad2==0: nad2=None
             self.grid.add_connection(t2connection([self.grid.block[name1],self.grid.block[name2]],isot,[d1,d2],areax,betax,sigx,nseq,nad1,nad2))
             line=padstring(infile.readline())
+
+    def skip_connections(self, infile):
+        """Skips connections section in file"""
+        while infile.readline().strip(): pass
 
     def write_connections(self,outfile):
         if self.grid.num_connections>0:
@@ -1157,7 +1166,8 @@ class t2data(object):
             xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'rU',
                                                     read_function = self.read_function)
             read_fn = dict(zip(t2_extra_precision_sections,
-                               [self.read_rocktypes, self.read_rpcap, self.read_generators]))
+                               [self.read_rocktypes, self.read_blocks, self.read_connections,
+                                self.read_rpcap, self.read_generators]))
             more = True
             while more:
                 line = xpfile.readline()
@@ -1181,7 +1191,8 @@ class t2data(object):
         if self.extra_precision:
             xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'w')
             write_fn = dict(zip(t2_extra_precision_sections,
-                                [self.write_rocktypes, self.write_rpcap, self.write_generators]))
+                                [self.write_rocktypes, self.write_blocks, self.write_connections,
+                                 self.write_rpcap, self.write_generators]))
             for section in self.extra_precision:
                 write_fn[section](xpfile)
                 if section in self._sections and not self.echo_extra_precision: self._sections.remove(section)
