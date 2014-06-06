@@ -76,21 +76,21 @@ t2data_format_specification = {
 
 t2data_extra_precision_format_specification = {
     'rocks1':[['name','nad','density','porosity','k1','k2','k3','conductivity','specific_heat'],
-              ['5s','5d']+['15.4e']*7],
-    'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['15.4e']*7],
-    'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-    'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-    'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['15.4e']*3+
-              ['15.3e']*3],
+              ['5s','5d']+['15.8e']*7],
+    'rocks1.1':[['compressibility','expansivity','dry_conductivity','tortuosity','klinkenberg','xkd3','xkd4'], ['15.8e']*7],
+    'rocks1.2':[['type','']+['parameter']*7,['5d','5x']+['15.8e']*7],
+    'rocks1.3':[['type','']+['parameter']*7,['5d','5x']+['15.8e']*7],
+    'blocks':[['name','nseq','nadd','rocktype','volume','ahtx','pmx','x','y','z'],['5s','5d','5d','5s']+['15.8e']*3+
+              ['15.8e']*3],
     'connections':[['block1','block2','nseq','nad1','nad2','direction','distance1','distance2','area','dircos','sigma'],
-                   ['5s']*2+['5d']*4+['15.4e']*3+['15.7f','15.4e']],
-    'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
-    'capillarity':[['type','']+['parameter']*7,['5d','5x']+['15.4e']*7],
+                   ['5s']*2+['5d']*4+['15.8e']*3+['15.8f','15.8e']],
+    'relative_permeability':[['type','']+['parameter']*7,['5d','5x']+['15.8e']*7],
+    'capillarity':[['type','']+['parameter']*7,['5d','5x']+['15.8e']*7],
     'generator':[['block','name','nseq','nadd','nads','ltab','','type','itab','gx','ex','hg','fg'],
-                 ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['15.4e']*4],
-    'generation_times':[['time']*4,['15.4e']*4],
-    'generation_rates':[['rate']*4,['15.4e']*4],
-    'generation_enthalpy':[['enthalpy']*4,['15.4e']*4]}
+                 ['5s']*2+['5d']*3+['5d','5x','4s','1s']+['15.8e']*4],
+    'generation_times':[['time']*4,['15.8e']*4],
+    'generation_rates':[['rate']*4,['15.8e']*4],
+    'generation_enthalpy':[['enthalpy']*4,['15.8e']*4]}
 
 class t2data_parser(fixed_format_file):
     """Class for parsing TOUGH2 data file."""
