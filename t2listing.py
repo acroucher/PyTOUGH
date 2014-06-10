@@ -777,7 +777,7 @@ class t2listing(file):
         """Returns name of table after the specified one, or None if it is the last."""
         if tablename is None: return self._tablenames[0]
         i = self._tablenames.index(tablename)
-        if i < len(self._tablenames): return self._tablenames[i+1]
+        if i < len(self._tablenames)-1: return self._tablenames[i+1]
         else: return None
 
     def read_tables_AUTOUGH2(self):
