@@ -1114,6 +1114,8 @@ class mulgrid(object):
         except for surface blocks with column surface lower than the layer top.  For surface blocks with column surface
         higher than the layer top, the vertical centre is still the layer centre, to give a uniform pressure reference,
         even though this is not geometrically correct."""
+        if isinstance(lay, str): lay = self.layer[lay]
+        if isinstance(col, str): col = self.column[col]
         if lay.name==self.layerlist[0].name:
             if self.atmosphere_type==1: midelev=lay.centre
             else: return None

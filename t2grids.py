@@ -116,11 +116,9 @@ class t2grid(object):
             self.blocklist[0].centre=None  # centre not well defined for single atmosphere block
         else: istart=0
         for blk in self.blocklist[istart:]:
-            layername=geo.layer_name(blk.name)
-            lay=geo.layer[layername]
-            colname=geo.column_name(blk.name)
-            col=geo.column[colname]
-            blk.centre=geo.block_centre(lay,col)
+            layername = geo.layer_name(blk.name)
+            colname = geo.column_name(blk.name)
+            blk.centre = geo.block_centre(layername, colname)
 
     def calculate_connection_centres(self, geo):
         """Calculates centre (and normal vector) for each connection face.  Note that the 'centre'
