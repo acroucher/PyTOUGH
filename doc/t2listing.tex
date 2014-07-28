@@ -318,6 +318,8 @@ Hence, the value in the element table for a given block and column can be access
 
 The values for an entire row or column of the table can also be accessed, for example \texttt{lst.element[blockname]} gives the row in the table for a specified block, with the values arranged in a dictionary which can be accessed using the column names of the table (e.g. \texttt{lst.element['AR231']['Temperature']}).  This dictionary for each row also contains an additional \texttt{'key'} item which returns the key for that row.  Conversely, \texttt{lst.element[columnname]} gives the column in the table for a specified column name, with the values returned in an \texttt{np.array} (one value for each block in the grid, for an element table).
 
+\subsection{\texttt{listingtable} properties}
+
 The properties of a \texttt{listingtable} object are given in Table \ref{tb:listingtable_properties}.  The entire list of key values for a \texttt{listingtable} may be accessed via the \texttt{row\_name} property, which contains the key value for each row.  The column headings of the table can similarly be accessed via the \texttt{column\_name} list property.  The \texttt{num\_rows} and \texttt{num\_columns} properties of a \texttt{listingtable} object return the numbers of rows and columns respectively.  The \texttt{num\_keys} property just returns the number of keys used to identify each row - generally 1 for an element table and 2 for connection and generation tables.
 
 \index{TOUGH2 listing files!tables!properties}
@@ -328,6 +330,7 @@ The properties of a \texttt{listingtable} object are given in Table \ref{tb:list
       \textbf{Property} & \textbf{Type} & \textbf{Description}\\
       \hline
       \texttt{column\_name} & list & column headings\\
+      \texttt{DataFrame} & pandas DataFrame & data in DataFrame format\\
       \texttt{num\_columns} & integer & number of columns \\
       \texttt{num\_keys} & integer & number of keys per row \\
       \texttt{num\_rows} & integer & number of rows \\
@@ -339,8 +342,15 @@ The properties of a \texttt{listingtable} object are given in Table \ref{tb:list
   \end{center}
 \end{table}
 
+\subsection{Adding and subtracting}
 \index{TOUGH2 listing files!tables!adding and subtracting}
 It is possible to perform addition and subtraction operations on \texttt{listingtable} objects.  Subtraction can be useful, for example, when comparing results from different runs.  These operations can only be carried out when the row and column names of the two tables are identical.  The resulting table will have the same row and column names as the original tables, but will contain the element-wise sums or differences.
+
+\subsection{Converting to DataFrames}
+
+A \texttt{listingtable} object has a \texttt{DataFrame} property which returns the entire table in the form of a \texttt{pandas} (\url{http://pandas.pydata.org/}) DataFrame object. \texttt{pandas} is a Python library for data analysis, which you will need to have installed before you can use the \texttt{DataFrame} property. With \texttt{pandas} you can do advanced data analysis on your TOUGH2 results. See the \texttt{pandas} documentation for more details.
+
+\subsection{\texttt{listingtable} methods}
 
 \texttt{listingtable} objects have one method as described below.
 

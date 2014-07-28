@@ -22,9 +22,11 @@ from mulgrids import fix_blockname, valid_blockname
 from fixed_format_file import fortran_float, fortran_int
 
 class listingtable(object):
+
     """Class for table in listing file, with values addressable by index (0-based) or row name, and column name:
     e.g. table[i] returns the ith row (as a dictionary), table[rowname] returns the row with the specified name,
     and table[colname] returns the column with the specified name."""
+
     def __init__(self, cols, rows, row_format = None, row_line = None, num_keys = 1, allow_reverse_keys = False,
                  header_skiplines = 0, skiplines = []):
         """The row_format parameter is a dictionary with three keys, 'key','index' and 'values'.  These contain the positions,
@@ -42,7 +44,9 @@ class listingtable(object):
         self._col=dict([(c,i) for i,c in enumerate(cols)])
         self._row=dict([(r,i) for i,r in enumerate(rows)])
         self._data=np.zeros((len(rows),len(cols)),float64)
+
     def __repr__(self): return repr(self.column_name)+'\n'+repr(self._data)
+
     def __getitem__(self,key):
         if isinstance(key,int): return dict(zip(['key']+self.column_name,[self.row_name[key]]+list(self._data[key,:])))
         else:
@@ -56,19 +60,24 @@ class listingtable(object):
                     rowindex=self._row[revkey]
                     return dict(zip(['key']+self.column_name,[self.row_name[rowindex][::-1]]+list(-self._data[rowindex,:])))
             else: return None 
+
     def __setitem__(self,key,value):
         if isinstance(key,int): self._data[key,:]=value
         else: self._data[self._row[key],:]=value
+
     def get_num_columns(self):
         return len(self.column_name)
     num_columns=property(get_num_columns)
+
     def get_num_rows(self):
         return len(self.row_name)
     num_rows=property(get_num_rows)
+
     def key_from_line(self,line):
         key=[fix_blockname(line[pos:pos+5]) for pos in self.row_format['key']]
         if len(key)==1: return key[0]
         else: return tuple(key)
+
     def rows_matching(self,pattern,index=0,match_any=False):
         """Returns rows in the table with keys matching the specified regular expression pattern
         string.
@@ -91,6 +100,7 @@ class listingtable(object):
                 else: return []
             combine=[all,any][match_any]
             return [self[key] for key in self.row_name if combine([search(p,n) for p,n in zip(pattern,key)])]
+
     def __add__(self, other):
         """Adds two listing tables together."""
         if self.column_name == other.column_name and self.row_name == other.row_name:
@@ -100,6 +110,7 @@ class listingtable(object):
             result._data = self._data + other._data
             return result
         else: raise Exception("Incompatible tables: can't be added together.")
+
     def __sub__(self, other):
         """Subtracts one listing table from another."""
         if self.column_name == other.column_name and self.row_name == other.row_name:
@@ -109,12 +120,21 @@ class listingtable(object):
             result._data = self._data - other._data
             return result
         else: raise Exception("Incompatible tables: can't be subtracted.")
+
     def is_header(self, line):
         """Returns True if all column headers in the table are present in the given line.  Used for
         detecting internal table headers in TOUGH2 listings.  Some internal header lines have different
         spacings from the top header, so a simple string comparison doesn't always work."""
         return all([col in line for col in self.column_name])
 
+    def get_DataFrame(self):
+        """Returns data in the table as a pandas DataFrame object."""
+        import pandas as pd
+        row_header = 'row'
+        datadict = {row_header: self.row_name}
+        for colname in self.column_name: datadict[colname] = self[colname]
+        return pd.DataFrame(datadict, columns = [row_header] + self.column_name)
+    DataFrame = property(get_DataFrame)
 
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
