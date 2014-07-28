@@ -202,23 +202,28 @@ Returns dictionary of maximum differences, and locations of difference, of all e
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{history(\emph{selection}, \emph{short}=True)}}
+\subsubsection{\texttt{history(\emph{selection},  \emph{short}=True, \emph{start\_datetime}=None})}
 \end{snugshade}
 \label{sec:t2listing:history}
 \index{TOUGH2 listing files!time histories}
 
-Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.  Short output (AUTOUGH2 only) can be omitted from the history results by setting the \texttt{short} parameter to \texttt{False}.
+Returns a list of time histories (as \texttt{np.arrays}) for specified locations and table columns in the element, connection or generation tables.  For each selection, a tuple of two \texttt{np.arrays} is returned, one each for times and values.  Short output (AUTOUGH2 only) can be omitted from the history results by setting the \texttt{short} parameter to \texttt{False}. If the \texttt{start\_datetime} parameter is given, times in the output are given as datetimes rather than seconds from the start.
 
 \textbf{Parameters:}
 \begin{itemize}
+
 \item \textbf{selection}: list of tuples\\
   Selection of listing tables, locations (or indices) and table columns to produce histories for.  Each tuple contains three elements: the listing \textbf{table type} (`e', `c', `p' or `g' for element, connection, primary or generation table respectively), the \textbf{block/ connection/ generator name} and the \textbf{table column name}.  (If only a single tuple is given instead of a list of tuples, just the single tuple of times and values for that selection is returned.)  For history of additional element tables in TOUGH+ results, use `e1', `e2' etc. instead of `e'.  Note that, as for listing tables, connection and generator names (or `keys') are specified as two-element tuples (see Table \ref{tb:listing_table_keys}).
 
 \item \textbf{short}: Boolean\\
   Whether short output (AUTOUGH2 only) is to be included in the history results - default is \texttt{True}.
+
+\item \textbf{start\_datetime}: datetime or \texttt{None}\\
+  Datetime of the start of the simulation. If \texttt{None} (the default), output times are given as seconds from the start of the simulation. If a Python datetime is given, then output times are given as datetimes.
+
 \end{itemize}
 
-\textbf{Example:}
+\textbf{Examples:}
 
 \begin{lstlisting}
 [(tt,temp), (tq,q), (tg,g)] = lst.history([('e', 'AR210', 'Temperature'),
@@ -226,6 +231,14 @@ Returns a list of time histories (as \texttt{np.arrays}) for specified locations
 \end{lstlisting}
 
 returns a list of three tuples of \texttt{np.arrays}, \texttt{(tt,temp)}, \texttt{(tq,q)} and \texttt{(tg,g)}, giving the times and values of temperature at block `AR210', mass flow at the connection between blocks `AB300' and `AC300', and generation rate in the generator `SO  1' in block `BR110' respectively.
+
+\begin{lstlisting}
+  from datetime import datetime
+  t0 = datetime(1955, 1, 1)
+  t,T = lst.history(('e', 'AR210', 'Temperature'), start_datetime = t0)
+\end{lstlisting}
+
+returns \texttt{T} as an \texttt{np.array} of temperature values, and \texttt{t} as an \texttt{np.array} of Python datetimes, starting at 1 January 1955.
 
 \begin{snugshade}
 \subsubsection{\texttt{last()}}

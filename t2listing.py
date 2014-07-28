@@ -880,12 +880,13 @@ class t2listing(file):
         table = self._table[tablename]
         self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
 
-    def history(self,selection,short=True):
+    def history(self, selection, short = True, start_datetime = None):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
            Table type is specified as 'e','c','g' or 'p' (upper or lower case) for element table,
            connection table, generation table or primary table respectively.  For TOUGH+ results, additional
            element tables may be specified as 'e1' or 'e2'.  If the short parameter is True, results from 
-           'short output' (AUTOUGH2 only) are included in the results."""
+           'short output' (AUTOUGH2 only) are included in the results. If a start_datetime is specified
+           (a Python datetime object) then times will be returned as datetimes."""
 
         # This can obviously be done much more simply using next(), and accessing self._table,
         # but that is too slow for large listing files.  This method reads only the required data lines
@@ -978,7 +979,12 @@ class t2listing(file):
                     last_tname=tname
 
         self._index=old_index
-        result=[([self.times,self.fulltimes][len(h)==self.num_fulltimes],np.array(h)) for sel_index,h in enumerate(hist)]
+        short_times, all_times = self.times, self.fulltimes
+        if start_datetime is not None:
+            from datetime import datetime, timedelta
+            def datetime_array(t): return np.array([start_datetime + timedelta(0, s) for s in t])
+            short_times, all_times = datetime_array(short_times), datetime_array(all_times)
+        result=[([short_times,all_times][len(h)==self.num_fulltimes],np.array(h)) for sel_index,h in enumerate(hist)]
         if len(result)==1: result=result[0]
         return result
 
