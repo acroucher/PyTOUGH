@@ -53,7 +53,7 @@ t2data_format_specification = {
     'generation_enthalpy':[['enthalpy']*4,['14.7e']*4],
     'short':[['','frequency'],['5x','2d']],
     'incon1':[['block','','','porosity'],['5s']+['5x']*2+['15.9e']],
-    'incon2':[['incon']*3,['20.14e']*3],
+    'incon2':[['incon']*4,['20.14e']*4],
     'solver':[['type','','z_precond','','o_precond','relative_max_iterations','closure'],
               ['1d','2x','2s','3x','2s']+['10.4e']*2],
     'indom2':[['indom']*4,['20.13e']*4],
