@@ -33,6 +33,11 @@ supst_b_data=[16.83599274,28.56067796,-54.38923329,0.4330662834,-0.6547711697,8.
 supst_b=dict(zip(supst_b_index,supst_b_data))
 supst_sb={0:7.633333333e-1, 61:4.006073948e-1, 71:8.636081627e-2, 81:-8.532322921e-1, 82:3.460208861e-1}
 
+Pc1 = 22101000.
+Tc1 = 647.3
+L0, L1, L2 = 1.574373327e1, -3.417061978e1, 1.931380707e1
+tc_k = 273.15
+
 from math import sqrt,exp
 
 def cowat(t,p):
@@ -272,3 +277,8 @@ def separated_steam_fraction(h, separator_pressure, separator_pressure2 = None):
     frac = hl*h+hs
     return max(min(frac,1.0),0.0)
 
+def b23p(t):
+    """Returns the pressure on the boundary between regions 2 and 3,
+    given a temperature t (deg C)."""
+    theta = (t + tc_k) / Tc1
+    return Pc1 * (L0 + theta * (L1 + L2 * theta))
