@@ -315,3 +315,16 @@ def b23p(t):
     given a temperature t (deg C)."""
     theta = (t + tc_k) / Tc1
     return Pc1 * (L0 + theta * (L1 + L2 * theta))
+
+def region(t, p):
+    """Returns thermodynamic region corresponding to the given temperature and pressure,
+    or None if out of bounds."""
+    if (0.01 <= t <= 800.) and (0. <= p <= 1.e8):
+        if t <= Tc1_C:
+            if p > sat(t): return 1 if t <= 350. else 4
+            else: return 2
+        elif t <= 590.:
+            if p > b23p(t): return 3
+            else: return 2
+        else: return 2
+    else: return None
