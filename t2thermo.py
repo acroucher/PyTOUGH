@@ -33,7 +33,7 @@ supst_b_data=[16.83599274,28.56067796,-54.38923329,0.4330662834,-0.6547711697,8.
 supst_b=dict(zip(supst_b_index,supst_b_data))
 supst_sb={0:7.633333333e-1, 61:4.006073948e-1, 71:8.636081627e-2, 81:-8.532322921e-1, 82:3.460208861e-1}
 
-Pc1 = 22101000.
+Pc1 = 22120000.
 Tc1 = 647.3
 L0, L1, L2 = 1.574373327e1, -3.417061978e1, 1.931380707e1
 tc_k = 273.15
@@ -239,10 +239,10 @@ def sat(t, bounds = False):
     a=[0.,-7.691234564,-2.608023696e1,-1.681706546e2,6.423285504e1,
        -1.189646225e2,4.167117320,2.097506760e1,1.0e9,6.0]
     if bounds:
-        ok = (1. <= t <= Tc1_C)
+        ok = (0.01 <= t <= Tc1_C)
     else: ok = True
     if ok:
-        if (1.0<=t<=500.0): # arbitrary limit in TOUGH2 implementation
+        if (0.01 <= t <= 500.0): # arbitrary upper limit in TOUGH2 implementation
             TC=(t+273.15)/647.3
             X1=1.0-TC
             X2=X1*X1
