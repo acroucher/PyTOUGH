@@ -417,7 +417,7 @@ Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by 
 \index{MULgraph geometry!creating!from rectangular TOUGH2 grid}
 \index{TOUGH2 grids!rectangular}
 
-Creates a \hyperref[mulgrids]{\texttt{mulgrid}} geometry object from a rectangular TOUGH2 grid, together with a dictionary defining the mapping between the geometry block names and the grid block names. This block mapping can be used when the naming convention used by the original TOUGH2 grid is not compatible with the layer/column naming conventions assumed by a \texttt{mulgrid} geometry.
+Creates a \hyperref[mulgrids]{\texttt{mulgrid}} geometry object from a rectangular TOUGH2 grid. It also returns a dictionary defining the mapping from the geometry block names to the grid block names. This block mapping can be used when the block naming convention used by the original TOUGH2 grid is not compatible with the layer/column based \hyperref[geometry_format_conventions]{naming conventions} assumed by a \texttt{mulgrid} geometry.
 
 The method works within the following assumptions:
 \begin{itemize}
@@ -433,7 +433,7 @@ The method should work on rectangular TOUGH2 grids that have been translated and
 \item \textbf{origin\_block}: string, \hyperref[t2blockobjects]{\texttt{t2block}} or \texttt{None}\\
   The block on the bottom layer of the geometry, at the origin of the axes defined by permeability directions 1 and 2. If \texttt{None}, it will be detected. Specify it manually if the algorithm does not detect it correctly.
   \item \textbf{atmos\_volume}: float\\
-    Maximum block volume for blocks to be considered part of the geometrical grid. Blocks with volume greater than this will be assumed o be boundary condition blocks and will not be represented geometrically.
+    Maximum block volume for blocks to be considered part of the geometrical grid. Blocks with volume greater than this will be assumed to be boundary condition blocks and will not be represented geometrically.
   \item \textbf{remove\_inactive}: Boolean\\
     Set \texttt{True} to remove inactive blocks from the geometry. TOUGH2 treats all blocks with zero or negative volume, and all subsequent blocks in the block list, to be inactive. If this option is used, the inactive blocks will be used to detect the surface elevations of the columns in the geometry. Otherwise, inactive blocks will be retained in the geometry.
 \item \textbf{convention}: integer\\
