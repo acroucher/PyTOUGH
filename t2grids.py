@@ -635,3 +635,205 @@ class t2grid(object):
                             break
                     if not done: break
         return groups
+
+    def rectgeo(self, origin_block = None, atmos_volume = 1.e25, remove_inactive = False,
+                             convention = 0, atmos_type = 2, justify = 'r',
+                             case = None, chars = ascii_lowercase, layer_snap = 0.1):
+        """For a rectangular grid, returns a mulgrid object representing the geometry. The 'origin block'
+        (the block on the bottom layer of the grid, at the origin of the permeability direction 1 & 2 axes)
+        can optionally be specified manually. If the remove_inactive parameter is True, the mulgrid
+        surface property will be determined by the positions of inactive blocks in the grid. The
+        atmos_volume parameter specifies the maximum block volume considered to be part of the geometrical
+        grid. The layer_snap parameter can be used to eliminate blocks with very small volumes at the
+        ground surface.
+        The method also returns a block mapping dictionary, mapping geometry block names into 
+        grid block names."""
+
+        def blockelevs(grid):
+            """Returns array of block elevations."""
+            return np.array([np.nan if blk.centre is None else blk.centre[2] for blk in grid.blocklist])
+
+        def topmost_block(grid):
+            """"Returns block with highest centre in the grid."""
+            itop = np.nanargmax(blockelevs(grid))
+            return grid.blocklist[itop]
+
+        def find_origin_block(grid):
+            """Returns block in bottom layer of rectangular mesh at horizontal position corresponding to
+            the origin of the coordinate system, defined by the permeability directions assigned to the
+            connections. It's assumed that the origin is the first block in the bottom layer."""
+            iorigin = np.nanargmin(blockelevs(grid))
+            return grid.blocklist[iorigin]
+
+        def con_name_index(con, blkname):
+            """Index of block name in connection block names."""
+            if con[0] == blkname: return 0
+            elif con[1] == blkname: return 1
+            else: return None
+
+        def next_block_in_direction(blk, last, direction, grid, max_volume = None):
+            """Finds next block in specified direction, and connection connecting them."""
+            cons = [con for con in blk.connection_name if grid.connection[con].direction == direction]
+            if last: cons = [con for con in cons if last.name not in con]
+            nextblk, nextcon, found = None, None, None
+            for con in cons:
+                i = con_name_index(con, blk.name)
+                i2 = (i+1)%2
+                nextblk = grid.block[con[i2]]
+                nextcon = con
+                if max_volume is None: found = True
+                else:
+                    if nextblk.volume < max_volume: found = True
+                if found: break
+            if found: return nextblk, nextcon
+            else: return None, None
+
+        def block_direction_track(grid, start_block, dirn, max_volume = None):
+            """Returns list of blocks and block sizes found by following specified
+            direction from the starting block. Specify max_volume as a float to set
+            maximum allowed block volume- used for excluding boundary condition
+            blocks."""
+            blks, sizes = [], []
+            con, last, last_con = None, None, None
+            blk = start_block
+            done = False
+            while not done:
+                if max_volume is not None: ok = blk.volume < max_volume
+                else: ok = True
+                if ok: blks.append(blk)
+                last_con = con
+                next_blk,con = next_block_in_direction(blk, last, dirn, grid, max_volume)
+                if next_blk:
+                    if ok:
+                        i = con_name_index(con, blk.name)
+                        sizes.append(2. * grid.connection[con].distance[i])
+                    last = blk
+                    blk = next_blk
+                else:
+                    done = True
+                    if last_con:
+                        i = con_name_index(last_con, blk.name)
+                        sizes.append(2. * grid.connection[last_con].distance[i])
+            return blks, sizes
+
+        def block_spacings(grid, ob, max_volume):
+            """Calculate block spacings in each direction"""
+            spacings = {}
+            for dirn in xrange(1, 4):
+                if dirn < 3: blk = ob
+                else: blk = topmost_block(grid)
+                blks, spacings[dirn] = block_direction_track(grid, blk, dirn, max_volume)
+                if dirn == 3 and blks[0].centre[2] < blks[-1].centre[2]: spacings[dirn].reverse()
+            # calculate missing spacing for 2D meshes:
+            missing_dirns = [i for i in xrange(1,4) if len(spacings[i]) == 0]
+            num_missing = len(missing_dirns)
+            if num_missing == 1:
+                dirn = missing_dirns[0]
+                present_dirns = [1,2,3]; present_dirns.remove(dirn)
+                d = ob.volume
+                for pd in present_dirns:
+                    con = [con for con in ob.connection_name if grid.connection[con].direction == pd][0]
+                    i = con_name_index(con, ob.name)
+                    d /= (2.*grid.connection[con].distance[i])
+                spacings[dirn].append(d)
+            elif num_missing == 2:
+                raise Exception("Mesh appears to be 1-D: can't reconstruct geometry.")
+            return spacings
+
+        def find_surface(geo, grid, blockmap, remove_inactive, max_volume):
+            """Determines surface of mulgrid from the positions of missing or inactive
+            blocks in grid. The blockmap parameter maps mulgrid block names to grid
+            block names."""
+            inactive_blocks = []
+            inactive = False
+            for blk in grid.blocklist:
+                if remove_inactive and blk.volume <= 0.: inactive = True
+                if inactive: inactive_blocks.append(blk)
+            bottom_layer = geo.layerlist[-1]
+            for col in geo.columnlist:
+                geoblkname = geo.block_name(bottom_layer.name, col.name)
+                blkname = blockmap[geoblkname]
+                bottom_block = grid.block[blkname]
+                colblocks, layerthicks = block_direction_track(grid, bottom_block, 3, max_volume)
+                if colblocks:
+                    remove = [blk for blk in colblocks if blk in inactive_blocks]
+                    for blk in remove:
+                        i = colblocks.index(blk)
+                        del colblocks[i]; del layerthicks[i]
+                    block_height = colblocks[-1].volume / col.area
+                    zc = colblocks[-1].centre[2]
+                    if layerthicks: lt = layerthicks[-1]
+                    else: lt = block_height
+                    if block_height <= lt: surface = zc + 0.5 * block_height
+                    else: surface = zc - 0.5 * lt + block_height
+                    col.surface = surface
+                    geo.set_column_num_layers(col)
+            geo.setup_block_name_index()
+            geo.setup_block_connection_name_index()
+            return geo
+
+        def match_position(geo, grid, ob):
+            """Rotate and translate geometry as needed."""
+            blks, sp = block_direction_track(grid, ob, 1)
+            angle =  0.5 * np.pi - vector_heading(blks[-1].centre[0:2] - ob.centre[:2])
+            from math import degrees
+            angle = degrees(angle)
+            geo.rotate(-angle, np.zeros(2))
+            geo.permeability_angle = angle
+            col = geo.columnlist[0]
+            lay = geo.layerlist[-1]
+            origin = geo.block_centre(lay, col)
+            trans = ob.centre - origin
+            geo.translate(trans)
+            return geo
+
+        def block_mapping(geo, grid, ob, nblks, max_volume):
+            """Generates a mapping from geometry block names to grid block names."""
+            mapping = {} 
+            icol = 0
+            start2, last2 = ob, None
+            for i2 in xrange(nblks[2]):
+                last1, start1 = None, start2
+                for i1 in xrange(nblks[1]):
+                    col = geo.columnlist[icol]
+                    blk, last3 = start1, None
+                    for lay in geo.layerlist[::-1]:
+                        geoblkname = geo.block_name(lay.name, col.name)
+                        mapping[geoblkname] = blk.name
+                        next_blk,con = next_block_in_direction(blk, last3, 3, grid, max_volume)
+                        if next_blk is None: # incomplete column
+                            atm_blk,con = next_block_in_direction(blk, last3, 3, grid)
+                            if atm_blk:
+                                if geo.atmosphere_type == 0:
+                                    atmblockname = geo.block_name(geo.layerlist[0].name, 
+                                                                  geo.atmosphere_column_name)
+                                    mapping[atmblockname] = atm_blk.name
+                                elif geo.atmosphere_type == 1:
+                                    atmblockname = geo.block_name(geo.layerlist[0].name, col.name)
+                                    mapping[atmblockname] = atm_blk.name
+                            break
+                        last3 = blk; blk = next_blk
+                    icol += 1
+                    next1,con = next_block_in_direction(start1, last1, 1, grid)
+                    last1 = start1; start1 = next1
+                next2,con = next_block_in_direction(start2, last2, 2, grid)
+                last2 = start2; start2 = next2
+            return mapping
+
+        if not self.block_centres_defined: raise Exception("Grid block centres not defined.")
+        else:
+            if isinstance(origin_block, str): ob = self.block[origin_block]
+            elif isinstance(origin_block, t2block): ob = origin_block
+            else: ob = find_origin_block(self)
+            if ob is None: raise Exception("Can't find origin block for grid.")
+            else:
+                spacings = block_spacings(self, ob, atmos_volume)
+                nblks = dict([(i, len(spacings[i])) for i in xrange(1,4)])
+                geo = mulgrid().rectangular(spacings[1], spacings[2], spacings[3],
+                                            convention = convention, atmos_type = atmos_type,
+                                            justify = justify, case = case, chars = chars)
+                blockmap = block_mapping(geo, self, ob, nblks, atmos_volume)
+                geo = match_position(geo, self, ob)
+                geo = find_surface(geo, self, blockmap, remove_inactive, atmos_volume)
+                geo.snap_columns_to_layers(layer_snap)
+                return geo, blockmap
