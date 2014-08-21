@@ -638,7 +638,7 @@ class t2grid(object):
 
     def rectgeo(self, origin_block = None, atmos_volume = 1.e25, remove_inactive = False,
                              convention = 0, atmos_type = 2, justify = 'r',
-                             case = None, chars = ascii_lowercase, layer_snap = 0.1):
+                             chars = ascii_lowercase, layer_snap = 0.1):
         """For a rectangular grid, returns a mulgrid object representing the geometry. The 'origin block'
         (the block on the bottom layer of the grid, at the origin of the permeability direction 1 & 2 axes)
         can optionally be specified manually. If the remove_inactive parameter is True, the mulgrid
@@ -831,7 +831,7 @@ class t2grid(object):
                 nblks = dict([(i, len(spacings[i])) for i in xrange(1,4)])
                 geo = mulgrid().rectangular(spacings[1], spacings[2], spacings[3],
                                             convention = convention, atmos_type = atmos_type,
-                                            justify = justify, case = case, chars = chars)
+                                            justify = justify, chars = chars)
                 blockmap = block_mapping(geo, self, ob, nblks, atmos_volume)
                 geo = match_position(geo, self, ob)
                 geo = find_surface(geo, self, blockmap, remove_inactive, atmos_volume)
