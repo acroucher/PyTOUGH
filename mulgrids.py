@@ -2018,7 +2018,7 @@ class mulgrid(object):
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = False,
                    rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
                    flow_variable_name = None, flow_unit = None, flow_scale = None, flow_scale_pos = (0.5, 0.02),
-                   flow_arrow_width = None, connection_flows = False):
+                   flow_arrow_width = None, connection_flows = False, blockmap = {}):
         """Produces a vertical slice plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
        A unit string can be specified for annotation.  Block names can be optionally superimposed, and the colour 
        map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -2063,8 +2063,9 @@ class mulgrid(object):
             else: varname='Value'
             if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
             if block_names:
-                if not isinstance(block_names,list): block_names=self.block_name_list
-            else: block_names=[]
+                if block_names == True: block_names = [blockmap[blk] if blk in blockmap
+                                                       else blk for blk in self.block_name_list]
+            else: block_names = []
 
             track=self.column_track(l)
             if track:
@@ -2115,8 +2116,9 @@ class mulgrid(object):
                             top = self.block_surface(lay,col)
                             centre = self.block_centre(lay,col)
                             verts.append(((din,lay.bottom),(din,top),(dout,top),(dout,lay.bottom)))
-                            if blkname in block_names:
-                                ax.text(dcol, centre[2], blkname, clip_on = True, horizontalalignment = 'center')
+                            mapped_blkname = blockmap[blkname] if blkname in blockmap else blkname
+                            if mapped_blkname in block_names:
+                                ax.text(dcol, centre[2], mapped_blkname, clip_on = True, horizontalalignment = 'center')
                             xc.append(dcol); yc.append(centre[2])
                             if flow is not None and not connection_flows:
                                 blkindex = self.block_name_index[blkname] - natm
