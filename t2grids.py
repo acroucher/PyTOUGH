@@ -744,11 +744,11 @@ class t2grid(object):
             """Determines surface of mulgrid from the positions of missing or inactive
             blocks in grid. The blockmap parameter maps mulgrid block names to grid
             block names."""
-            inactive_blocks = []
+            remove_blocks = []
             inactive = False
             for blk in grid.blocklist:
                 if remove_inactive and blk.volume <= 0.: inactive = True
-                if inactive: inactive_blocks.append(blk)
+                if inactive: remove_blocks.append(blk)
             bottom_layer = geo.layerlist[-1]
             for col in geo.columnlist:
                 geoblkname = geo.block_name(bottom_layer.name, col.name)
@@ -756,16 +756,20 @@ class t2grid(object):
                 bottom_block = grid.block[blkname]
                 colblocks, layerthicks = block_direction_track(grid, bottom_block, 3, max_volume)
                 if colblocks:
-                    remove = [blk for blk in colblocks if blk in inactive_blocks]
-                    for blk in remove:
+                    remove_col = [blk for blk in colblocks if blk in remove_blocks]
+                    for blk in remove_col:
                         i = colblocks.index(blk)
                         del colblocks[i]; del layerthicks[i]
-                    block_height = colblocks[-1].volume / col.area
-                    zc = colblocks[-1].centre[2]
-                    if layerthicks: lt = layerthicks[-1]
-                    else: lt = block_height
-                    if block_height <= lt: surface = zc + 0.5 * block_height
-                    else: surface = zc - 0.5 * lt + block_height
+                    topblock = colblocks[-1]
+                    zc = topblock.centre[2]
+                    if topblock.volume > 0.:
+                        block_height = colblocks[-1].volume / col.area
+                        if layerthicks: lt = layerthicks[-1]
+                        else: lt = block_height
+                        if block_height <= lt: surface = zc + 0.5 * block_height
+                        else: surface = zc - 0.5 * lt + block_height
+                    else: # top block is inactive
+                        surface = zc + 0.5 * layerthicks[-1]
                     col.surface = surface
                     geo.set_column_num_layers(col)
             geo.setup_block_name_index()
