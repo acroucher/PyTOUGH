@@ -2611,17 +2611,20 @@ class mulgrid(object):
                 for key in sortedkeys: grid.GetPointData().AddArray(array_dict[key])
         return grid
 
-    def get_vtk_data(self):
+    def get_vtk_data(self, blockmap = {}):
         """Returns a dictionary of VTK data arrays from the grid (layer and column indices (zero-based), column areas, 
         block numbers and volumes for each block."""
-        from vtk import vtkFloatArray,vtkIntArray,vtkCharArray
-        arrays={'Block':{'Name':vtkCharArray(),'Layer index':vtkIntArray(),'Column index':vtkIntArray(),'Column area':vtkFloatArray(),'Column elevation':vtkFloatArray(),'Block number':vtkIntArray(),'Volume':vtkFloatArray()},'Node':{}}
-        nele=self.num_underground_blocks
-        string_properties=['Name']
-        string_length=5
-        array_length={'Block':nele,'Node':0}
-        for array_type,array_dict in arrays.items():
-            for name,array in array_dict.items():
+        from vtk import vtkFloatArray, vtkIntArray, vtkCharArray
+        arrays = {'Block':{'Name': vtkCharArray(),'Layer index': vtkIntArray(),'Column index': vtkIntArray(),
+                           'Column area': vtkFloatArray(),'Column elevation': vtkFloatArray(),
+                           'Block number': vtkIntArray(),'Volume': vtkFloatArray()},
+                  'Node': {}}
+        nele = self.num_underground_blocks
+        string_properties = ['Name']
+        string_length = 5
+        array_length = {'Block': nele, 'Node': 0}
+        for array_type, array_dict in arrays.items():
+            for name, array in array_dict.items():
                 array.SetName(name)
                 if name in string_properties:
                     array.SetNumberOfComponents(string_length)
@@ -2629,20 +2632,20 @@ class mulgrid(object):
                 else:
                     array.SetNumberOfValues(array_length[array_type])
                     array.SetNumberOfComponents(1)
-        layerindex=self.layer_index
-        colindex=self.column_index
+        layerindex = self.layer_index
+        colindex = self.column_index
         for iblk,blockname in enumerate(self.block_name_list[self.num_atmosphere_blocks:]):
-            layname,colname=self.layer_name(blockname),self.column_name(blockname)
-            lay,col=self.layer[layname],self.column[colname]
-            arrays['Block']['Name'].SetTupleValue(iblk,blockname)
-            arrays['Block']['Layer index'].SetValue(iblk,layerindex[layname])
-            arrays['Block']['Column index'].SetValue(iblk,colindex[colname])
-            arrays['Block']['Column area'].SetValue(iblk,col.area)
-            arrays['Block']['Column elevation'].SetValue(iblk,col.surface)
-            arrays['Block']['Block number'].SetValue(iblk,self.block_name_index[blockname]+1)
-            arrays['Block']['Volume'].SetValue(iblk,self.block_volume(lay,col))
+            layname, colname = self.layer_name(blockname),self.column_name(blockname)
+            lay,col = self.layer[layname],self.column[colname]
+            mapped_name = blockmap[blockname] if blockname in blockmap else blockname
+            arrays['Block']['Name'].SetTupleValue(iblk, mapped_name)
+            arrays['Block']['Layer index'].SetValue(iblk, layerindex[layname])
+            arrays['Block']['Column index'].SetValue(iblk, colindex[colname])
+            arrays['Block']['Column area'].SetValue(iblk, col.area)
+            arrays['Block']['Column elevation'].SetValue(iblk, col.surface)
+            arrays['Block']['Block number'].SetValue(iblk, self.block_name_index[blockname] + 1)
+            arrays['Block']['Volume'].SetValue(iblk, self.block_volume(lay,col))
         return arrays
-    vtk_data=property(get_vtk_data)
 
     def filename_base(self,filename=''):
         """Returns base of filename (with extension removed).  If specified filename is blank,
@@ -2713,16 +2716,16 @@ class mulgrid(object):
         self.write_layer_bln(filename,aspect,left)
         self.write_layer_bln_labels(filename,aspect,left)
 
-    def write_vtk(self,filename='',arrays=None,wells=False):
+    def write_vtk(self, filename = '', arrays = None, wells = False, blockmap = {}):
         """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D, with the specified filename,
         for visualisation with VTK."""
         from vtk import vtkXMLUnstructuredGridWriter
-        base=self.filename_base(filename)
-        filename=base+'.vtu'
+        base = self.filename_base(filename)
+        filename = base + '.vtu'
         if wells: self.write_well_vtk(filename)
-        if arrays is None: arrays=self.vtk_data
-        vtu=self.get_vtk_grid(arrays)
-        writer=vtkXMLUnstructuredGridWriter()
+        if arrays is None: arrays = self.get_vtk_data(blockmap)
+        vtu = self.get_vtk_grid(arrays)
+        writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
         writer.SetInput(vtu)
         writer.Write()

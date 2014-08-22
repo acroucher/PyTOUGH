@@ -1458,7 +1458,7 @@ Writes a \texttt{mulgrid} object to an ExodusII file on disk, for visualisation 
   Data arrays to be included in the ExodusII file.  If set to \texttt{None}, default arrays (layer index, column index, column area, column elevation, block number and volume) are included.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False)}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False, \emph{blockmap}=\{\})}}\end{snugshade}
 \label{sec:mulgrid:write_vtk}
 \index{MULgraph geometry!writing!VTK files}
 \index{Visualization Tool Kit (VTK)}
@@ -1473,6 +1473,8 @@ Writes a \texttt{mulgrid} object to a VTK file on disk, for visualisation with V
   Data arrays to be included in the VTK file.  If set to \texttt{None}, default arrays (layer index, column index, column area, column elevation, block number and volume) are included.
 \item \textbf{wells}: Boolean\\
   If set to \texttt{True}, a separate VTK file is written representing the wells in the grid.
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to another block naming system.
 \end{itemize}
 
 \section{Other objects (\texttt{node}, \texttt{column}, \texttt{layer}, \texttt{connection} and \texttt{well})}
