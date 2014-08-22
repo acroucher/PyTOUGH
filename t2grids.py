@@ -302,7 +302,7 @@ class t2grid(object):
         self.add_connections(geo, blockmap)
         return self
 
-    def add_blocks(self, geo, blockmap = None):
+    def add_blocks(self, geo, blockmap = {}):
         """Adds blocks to grid from MULgraph geometry file"""
         self.add_atmosphereblocks(geo, blockmap)
         self.add_underground_blocks(geo, blockmap)
