@@ -2770,13 +2770,13 @@ class mulgrid(object):
         writer.SetInput(vtu)
         writer.Write()
 
-    def write_exodusii(self, filename = '', arrays = None):
+    def write_exodusii(self, filename = '', arrays = None, blockmap = {}):
         """Writes ExodusII file for a vtkUnstructuredGrid object corresponding to the grid in 3D,
         with the specified filename."""
         from vtk import vtkExodusIIWriter
         base = self.filename_base(filename)
         filename = base + '.exo'
-        if arrays is None: arrays = self.vtk_data
+        if arrays is None: arrays = self.get_vtk_data(blockmap)
         vtu = self.get_vtk_grid(arrays)
         writer = vtkExodusIIWriter()
         writer.SetFileName(filename)
