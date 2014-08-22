@@ -300,17 +300,21 @@ Returns a dictionary mapping each block name in the \texttt{mulgrid} object \tex
   If \texttt{True}, the column mapping will also be returned (i.e. the function will return a tuple containing the block mapping and the column mapping).  Default value is \texttt{False}.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{block\_name(\emph{layer\_name}, \emph{column\_name})}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{block\_name(\emph{layer\_name}, \emph{column\_name}, \emph{blockmap} = \{\})}}\end{snugshade}
 \label{sec:mulgrid:block_name}
 \index{MULgraph geometry!blocks!names}
 \index{MULgraph geometry!names!of blocks}
 
 Gives the name of the block corresponding to the specified layer and column names, according to the naming convention of the grid.
 
+An optional block name mapping can be applied.
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{layer\_name}, \textbf{column\_name}: string\\
   Name of layer and column (the widths of these strings are determined by the grid's naming convention).
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to another block naming system. This dictionary need not contain entries for all blocks in the geometry- those not included in the mapping will not be altered.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{block\_name\_containing\_point(\emph{pos}, \emph{qtree}=None)}}\end{snugshade}
