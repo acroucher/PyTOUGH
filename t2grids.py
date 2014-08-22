@@ -293,52 +293,53 @@ class t2grid(object):
             return self.connectionlist.index(self.connection[connectionnames])
         else: return None
 
-    def fromgeo(self,geo):
-        """Converts a MULgraph grid to a TOUGH2 grid"""
+    def fromgeo(self, geo, blockmap = {}):
+        """Converts a MULgraph grid to a TOUGH2 grid. The blockmap parameter applies an optional
+        mapping to the block names from the geometry."""
         self.empty()
         self.add_rocktype(rocktype()) # add default rock type
-        self.add_blocks(geo)
-        self.add_connections(geo)
+        self.add_blocks(geo, blockmap)
+        self.add_connections(geo, blockmap)
         return self
 
-    def add_blocks(self,geo):
+    def add_blocks(self, geo, blockmap = None):
         """Adds blocks to grid from MULgraph geometry file"""
-        self.add_atmosphereblocks(geo)
-        self.add_underground_blocks(geo)
+        self.add_atmosphereblocks(geo, blockmap)
+        self.add_underground_blocks(geo, blockmap)
 
-    def add_atmosphereblocks(self,geo):
+    def add_atmosphereblocks(self, geo, blockmap = {}):
         """Adds atmosphere blocks from geometry"""
-        atmosrocktype=self.rocktypelist[0]
-        if geo.atmosphere_type==0: # one atmosphere block
-            atmblockname=geo.block_name(geo.layerlist[0].name,geo.atmosphere_column_name)
-            centre=None
+        atmosrocktype = self.rocktypelist[0]
+        if geo.atmosphere_type == 0: # one atmosphere block
+            atmblockname = geo.block_name(geo.layerlist[0].name, geo.atmosphere_column_name, blockmap)
+            centre = None
             self.add_block(t2block(atmblockname,geo.atmosphere_volume,atmosrocktype,centre=centre,atmosphere=True))
-        elif geo.atmosphere_type==1: # one atmosphere block per column
+        elif geo.atmosphere_type == 1: # one atmosphere block per column
             for col in geo.columnlist:
-                atmblockname=geo.block_name(geo.layerlist[0].name,col.name)
-                centre=geo.block_centre(geo.layerlist[0],col)
+                atmblockname = geo.block_name(geo.layerlist[0].name, col.name, blockmap)
+                centre = geo.block_centre(geo.layerlist[0],col)
                 self.add_block(t2block(atmblockname,geo.atmosphere_volume,atmosrocktype,centre=centre,atmosphere=True))
 
-    def add_underground_blocks(self,geo):
+    def add_underground_blocks(self, geo, blockmap = {}):
         """Add underground blocks from geometry"""
         for lay in geo.layerlist[1:]:
-            for col in [col for col in geo.columnlist if col.surface>lay.bottom]:
-                name=geo.block_name(lay.name,col.name)
-                centre=geo.block_centre(lay,col)
+            for col in [col for col in geo.columnlist if col.surface > lay.bottom]:
+                name = geo.block_name(lay.name,col.name, blockmap)
+                centre = geo.block_centre(lay,col)
                 self.add_block(t2block(name,geo.block_volume(lay,col),self.rocktypelist[0],centre=centre))
 
-    def add_connections(self,geo):
+    def add_connections(self, geo, blockmap = {}):
         """Add connections from geometry"""
         tilt = geo.tilt_vector
         for lay in geo.layerlist[1:]:
             layercols = [col for col in geo.columnlist if col.surface > lay.bottom]
-            self.add_vertical_layer_connections(geo, lay, layercols, tilt)
-            self.add_horizontal_layer_connections(geo, lay, layercols, tilt)
+            self.add_vertical_layer_connections(geo, lay, layercols, tilt, blockmap)
+            self.add_horizontal_layer_connections(geo, lay, layercols, tilt, blockmap)
 
-    def add_vertical_layer_connections(self, geo, lay, layercols=[], tilt = np.array([0.,0.,-1.])):
+    def add_vertical_layer_connections(self, geo, lay, layercols=[], tilt = np.array([0.,0.,-1.]), blockmap = {}):
         """Add vertical connections in layer"""
         for col in layercols:
-            thisblk = self.block[geo.block_name(lay.name,col.name)]
+            thisblk = self.block[geo.block_name(lay.name,col.name, blockmap)]
             if (geo.layerlist.index(lay) == 1) or (col.surface <= lay.top): # connection to atmosphere
                 abovelayer = geo.layerlist[0]
                 abovedist = geo.atmosphere_connection
@@ -346,27 +347,28 @@ class t2grid(object):
                 if geo.atmosphere_type == 0:
                     aboveblk = self.blocklist[0]
                 elif geo.atmosphere_type == 1:
-                    aboveblk = self.block[geo.block_name(abovelayer.name,col.name)]
+                    aboveblk = self.block[geo.block_name(abovelayer.name, col.name, blockmap)]
                 else: # no atmosphere blocks
                     continue
             else:
                 ilayer = geo.layerlist.index(lay)
                 abovelayer = geo.layerlist[ilayer-1]
-                aboveblk = self.block[geo.block_name(abovelayer.name,col.name)]
+                aboveblk = self.block[geo.block_name(abovelayer.name, col.name, blockmap)]
                 abovedist = aboveblk.centre[2] - abovelayer.bottom
                 belowdist = lay.top - lay.centre
             con = t2connection([thisblk,aboveblk],3,[belowdist,abovedist],col.area,tilt[2])
             self.add_connection(con)
 
-    def add_horizontal_layer_connections(self, geo, lay, layercols=[], tilt = np.array([0.,0.,-1.])):
+    def add_horizontal_layer_connections(self, geo, lay, layercols=[], tilt = np.array([0.,0.,-1.]), blockmap = {}):
         """Add horizontal connections in layer"""
-        from math import cos,sin,radians
+        from math import cos, sin, radians
         layercolset = set(layercols)
         anglerad = radians(geo.permeability_angle)
         c,s = cos(anglerad),sin(anglerad)
         rotation = np.array([[c,s],[-s,c]])
         for con in [con for con in geo.connectionlist if set(con.column).issubset(layercolset)]:
-            conblocks = [self.block[geo.block_name(lay.name,concol.name)] for concol in con.column]
+            conblocks = [self.block[geo.block_name(lay.name, concol.name, blockmap)]
+                         for concol in con.column]
             [dist,area] = geo.connection_params(con,lay)
             d = conblocks[1].centre - conblocks[0].centre
             d2 = np.dot(rotation,d[0:2])
@@ -512,7 +514,8 @@ class t2grid(object):
                     for ip in xrange(3): A[ib3+ip,icons[ic]] = Ablk[ip,ic]
         return A
 
-    def radial(self,rblocks,zblocks,convention=0,atmos_type=2,origin=np.array([0.,0.]),justify='r',case='l',dimension=2):
+    def radial(self, rblocks, zblocks, convention=0, atmos_type=2, origin = np.array([0.,0.]), justify='r',
+               case='l', dimension=2, blockmap = {}):
         """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
         The arguments are arrays of the block sizes in each dimension (r,z).
         Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
@@ -525,76 +528,76 @@ class t2grid(object):
         tests in fractured rock", Water Resources Research 24(10), 1796-1804.  In this case it probably doesn't
         make much sense to have more than one block in the z direction. """
 
-        if isinstance(rblocks,list): rblocks=np.array(rblocks)
-        if isinstance(zblocks,list): zblocks=np.array(zblocks)
-        if isinstance(origin,list): origin=np.array(origin)
-        if len(origin)>2: origin=origin[[0,2]]
+        if isinstance(rblocks,list): rblocks = np.array(rblocks)
+        if isinstance(zblocks,list): zblocks = np.array(zblocks)
+        if isinstance(origin,list): origin = np.array(origin)
+        if len(origin) > 2: origin = origin[[0,2]]
 
         from string import ljust,rjust,lowercase,uppercase
-        justfn=[rjust,ljust][justify=='l']
-        casefn=[uppercase,lowercase][case=='l']
+        justfn = [rjust,ljust][justify=='l']
+        casefn = [uppercase,lowercase][case=='l']
 
-        n2=0.5*dimension
+        n2 = 0.5 * dimension
         if dimension<>2: # need gamma function
             try:
                 from math import gamma # included for Python 2.7 or later
             except ImportError:
                 from scipy.special import gamma
-            gamman2=gamma(n2)
-        else: gamman2=1.0
-        alpha=2./gamman2*np.pi**n2
+            gamman2 = gamma(n2)
+        else: gamman2 = 1.0
+        alpha = 2. / gamman2 * np.pi**n2
 
-        b=np.sum(zblocks) # total thickness
-        b2n=b**(2-dimension)
-        r=origin[0]+np.concatenate((np.zeros(1),np.cumsum(rblocks)))
-        rin,rout=r[:-1],r[1:] # inner and outer radii
-        rc=0.5*(rin+rout) # centre radius
-        A=alpha*b2n/dimension*np.diff(r**dimension) # "top area"
-        c=alpha*b2n*rout**(dimension-1) # "outer circumference"
-        ncols=len(rblocks)
+        b = np.sum(zblocks) # total thickness
+        b2n = b**(2-dimension)
+        r = origin[0] + np.concatenate((np.zeros(1), np.cumsum(rblocks)))
+        rin, rout=r[:-1], r[1:] # inner and outer radii
+        rc = 0.5*(rin + rout) # centre radius
+        A = alpha * b2n / dimension * np.diff(r**dimension) # "top area"
+        c = alpha * b2n * rout**(dimension-1) # "outer circumference"
+        ncols = len(rblocks)
 
         grid=t2grid()
         grid.add_rocktype(rocktype()) # add default rock type
 
         # dummy geometry for creating block names etc:
-        geo=mulgrid(type='GENER',convention=convention,atmos_type=atmos_type)
+        geo = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
         for ir,dr in enumerate(rblocks):
-            colname=geo.column_name_from_number(ir+1,justfn,casefn)
-            geo.add_column(column(colname,[],centre=np.array([rc[ir],0.])))
-        geo.add_layers(zblocks,origin[1],justify,case)
+            colname = geo.column_name_from_number(ir+1,justfn,casefn)
+            geo.add_column(column(colname, [], centre = np.array([rc[ir],0.])))
+        geo.add_layers(zblocks, origin[1], justify, case)
         grid.add_atmosphereblocks(geo)
 
         for lay in geo.layerlist[1:]: # add blocks
-            V=A*lay.thickness
+            V = A * lay.thickness
             for col,rcentre,vol in zip(geo.columnlist,rc,V):
-                name=geo.block_name(lay.name,col.name)
-                centre=np.array([rcentre,0.,lay.centre])
-                grid.add_block(t2block(name,vol,grid.rocktypelist[0],centre=centre))
+                name = geo.block_name(lay.name, col.name, blockmap)
+                centre = np.array([rcentre,0.,lay.centre])
+                grid.add_block(t2block(name, vol, grid.rocktypelist[0], centre = centre))
 
         for ilay,lay in enumerate(geo.layerlist[1:]):
-            Ar=c*lay.thickness
+            Ar = c * lay.thickness
             for icol,col in enumerate(geo.columnlist): # vertical connections
-                top_area=A[icol]
-                blkindex=ilay*ncols+icol+geo.num_atmosphere_blocks
-                thisblk=grid.blocklist[blkindex]
-                if ilay==0: # atmosphere connections
-                    abovedist=geo.atmosphere_connection
-                    belowdist=0.5*geo.layerlist[1].thickness
-                    if atmos_type==0: aboveblk=grid.blocklist[0]
-                    elif atmos_type==1: aboveblk=grid.blocklist[icol]
+                top_area = A[icol]
+                blkindex = ilay * ncols + icol + geo.num_atmosphere_blocks
+                thisblk = grid.blocklist[blkindex]
+                if ilay == 0: # atmosphere connections
+                    abovedist = geo.atmosphere_connection
+                    belowdist = 0.5*geo.layerlist[1].thickness
+                    if atmos_type == 0: aboveblk = grid.blocklist[0]
+                    elif atmos_type == 1: aboveblk = grid.blocklist[icol]
                     else: continue
                 else:
-                    abovelayer=geo.layerlist[ilay]
-                    aboveblk=grid.blocklist[blkindex-ncols]
-                    abovedist=aboveblk.centre[2]-abovelayer.bottom
-                    belowdist=lay.top-lay.centre
-                con=t2connection([thisblk,aboveblk],3,[belowdist,abovedist],top_area,-1.0)
+                    abovelayer = geo.layerlist[ilay]
+                    aboveblk = grid.blocklist[blkindex-ncols]
+                    abovedist = aboveblk.centre[2] - abovelayer.bottom
+                    belowdist = lay.top - lay.centre
+                con = t2connection([thisblk,aboveblk],3,[belowdist,abovedist],top_area,-1.0)
                 grid.add_connection(con)
             for icol,col in enumerate(geo.columnlist[:-1]): # radial connections
-                nextcol=geo.columnlist[icol+1]
-                conblocks=[grid.block[geo.block_name(lay.name,acol.name)] for acol in [col,nextcol]]
-                dist,area=[0.5*rblocks[icol],0.5*rblocks[icol+1]],Ar[icol]
-                direction,dircos=1,0.0
+                nextcol = geo.columnlist[icol+1]
+                conblocks = [grid.block[geo.block_name(lay.name,acol.name,blockmap)] for acol in [col,nextcol]]
+                dist,area = [0.5*rblocks[icol], 0.5*rblocks[icol+1]],Ar[icol]
+                direction,dircos = 1, 0.0
                 grid.add_connection(t2connection(conblocks,direction,dist,area,dircos))
 
         return grid
