@@ -768,7 +768,9 @@ Gives the name of the layer corresponding to the specified block name, according
 \index{MULgraph geometry!layers!plotting}
 \index{MULgraph geometry!plotting!layers}
 
-Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).  The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
+Plots a variable over a layer of the grid, using the \texttt{matplotlib} plotting library.  The required layer can be specified by name or as an elevation (in which case the routine will find the corresponding layer).  Specifying the layer as \texttt{None} gives a plot over the ground surface of the geometry (i.e. the surface layer for each column).
+
+The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid, in the order given by the \texttt{block\_name\_list} property of the geometry. If no variable is specified, only the grid in the layer is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
 The name and units of the variable can optionally be specified, and the names of the columns and nodes can also optionally be displayed on the plot, as well as the column centres (represented by crosses).  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the title and x- and y-axis labels, and the plot limits.
 
@@ -1218,7 +1220,7 @@ rotates the grid \texttt{geo} clockwise by 30$\degree$ about its centre in the h
 
 Plots a variable over a vertical slice through the grid, using the \texttt{matplotlib} plotting library.  The required slice is specified by a horizontal line through the grid, defined as either a two-element list of (\emph{x},\emph{y}) points (\texttt{np.arrays}), or as a string `x' or `y' which defines the \emph{x}- or \emph{y}-axes respectively, or as a northing (in degrees) through the centre of the grid.  If no line is specified, the line is taken to be across the bounds of the grid.  For slice plots along the x- or y-axis, the horizontal coordinate represents the x- or y-coordinate; for other slice directions it represents distance along the slice line.
 
-The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid.  If no variable is specified, only the grid is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
+The variable can be a list or \texttt{np.array} containing a value for every block (or column) in the grid, in the order given by the \texttt{block\_name\_list} property of the geometry.  If no variable is specified, only the grid is plotted, without shading.  If the variable contains a value for each column in the grid, these values are extended down each column to fill the entire grid.
 
 The name and units of the variable can optionally be specified, and the name of each block can also optionally be displayed on the plot.  The colour map and limits of the variable shading, the line width of the grid columns and the aspect ratio of the plot can also be set, as can the plot title and x- and z-axis labels, and the plot limits.
 
