@@ -1560,14 +1560,14 @@ class mulgrid(object):
         if column_mapping: return (mapping,col_mapping)
         else: return mapping
 
-    def block_name_containing_point(self, pos, qtree = None):
+    def block_name_containing_point(self, pos, qtree = None, blockmap = {}):
         """Returns name of grid block containing 3D point (or None if the point is outside the grid)."""
         blkname = None
         col = self.column_containing_point(pos[0:2], qtree = qtree)
         if col:
             if self.layerlist[0].bottom < pos[2] <= col.surface: layer = self.layerlist[1] 
             else: layer = self.layer_containing_elevation(pos[2])
-            if (col.surface > layer.bottom): blkname = self.block_name(layer.name, col.name)
+            if (col.surface > layer.bottom): blkname = self.block_name(layer.name, col.name, blockmap)
         return blkname
 
     def block_contains_point(self,blockname,pos):

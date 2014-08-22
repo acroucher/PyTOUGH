@@ -317,7 +317,7 @@ An optional block name mapping can be applied.
   Dictionary mapping the block names in the geometry to another block naming system. This dictionary need not contain entries for all blocks in the geometry- those not included in the mapping will not be altered.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{block\_name\_containing\_point(\emph{pos}, \emph{qtree}=None)}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{block\_name\_containing\_point(\emph{pos}, \emph{qtree}=None, \emph{blockmap}=\{\})}}\end{snugshade}
 \label{sec:mulgrid:block_name_containing_point}
 \index{MULgraph geometry!finding!blocks}
 \index{MULgraph geometry!blocks!finding}
@@ -332,6 +332,8 @@ Gives the name of the block containing a specified 3-D position in the grid (ret
   Position of point in 3-D
 \item \textbf{qtree}: \texttt{quadtree}\\
   Quadtree object for fast searching of grid columns (can be constructed using the \hyperref[sec:mulgrid:column_quadtree]{\texttt{column\_quadtree()}} method).
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to another block naming system.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{block\_surface(\emph{lay}, \emph{col})}}\end{snugshade}
