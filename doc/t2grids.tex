@@ -470,7 +470,7 @@ Returns the frequency of use of the rock type with the specified name, i.e. how 
 Sorts the rocktype list into alphabetical order by name.
 
 \begin{snugshade}
-\subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{wells}=False)}}
+\subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{wells}=False, \emph{blockmap} = \{\})}}
 \end{snugshade}
 \label{sec:t2grid:write_vtk}
 \index{TOUGH2 grids!writing!VTK files}
@@ -486,6 +486,8 @@ Writes a \texttt{t2grid} object to a VTK file on disk, for visualisation with VT
   Name of the VTK file to be written.  This is also required.
 \item \textbf{wells}: Boolean\\
   Set to \texttt{True} if the wells from the \texttt{mulgrid} object are to be written to a separate VTK file.
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to another block naming system.
 \end{itemize}
 
 \section{Other objects (\texttt{rocktype}, \texttt{t2block} and \texttt{t2connection})}

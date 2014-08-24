@@ -438,18 +438,18 @@ class t2grid(object):
         return np.array([rockdict[blk.rocktype.name] for blk in self.blocklist])
     rocktype_indices=property(get_rocktype_indices)
 
-    def get_vtk_data(self,geo):
+    def get_vtk_data(self, geo, blockmap = {}):
         """Returns dictionary of VTK data arrays from rock types.  The geometry object geo must be passed in."""
         from vtk import vtkIntArray,vtkFloatArray,vtkCharArray
-        arrays={'Block':{'Rock type index':vtkIntArray(),'Porosity':vtkFloatArray(),
-                         'Permeability':vtkFloatArray(),'Name':vtkCharArray()},'Node':{}}
-        vector_properties=['Permeability']
-        string_properties=['Name']
-        string_length=5
-        nele=geo.num_underground_blocks
-        array_length={'Block':nele,'Node':0}
-        for array_type,array_dict in arrays.items():
-            for name,array in array_dict.items():
+        arrays = {'Block':{'Rock type index': vtkIntArray(), 'Porosity': vtkFloatArray(),
+                         'Permeability': vtkFloatArray(), 'Name': vtkCharArray()}, 'Node': {}}
+        vector_properties = ['Permeability']
+        string_properties = ['Name']
+        string_length = 5
+        nele = geo.num_underground_blocks
+        array_length = {'Block': nele, 'Node': 0}
+        for array_type, array_dict in arrays.items():
+            for name, array in array_dict.items():
                 array.SetName(name)
                 if name in vector_properties:
                     array.SetNumberOfComponents(3)
@@ -460,29 +460,30 @@ class t2grid(object):
                 else: 
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
-        natm=geo.num_atmosphere_blocks
-        rindex=self.rocktype_indices[natm:]
-        for i,ri in enumerate(rindex):
+        natm = geo.num_atmosphere_blocks
+        rindex = self.rocktype_indices[natm:]
+        for i, ri in enumerate(rindex):
             arrays['Block']['Rock type index'].SetValue(i,ri)
-            rt=self.rocktypelist[ri]
+            rt = self.rocktypelist[ri]
             arrays['Block']['Porosity'].SetValue(i,rt.porosity)
-            k=rt.permeability
-            arrays['Block']['Permeability'].SetTuple3(i,k[0],k[1],k[2])
-        for i,blk in enumerate(self.blocklist[natm:]):
-            arrays['Block']['Name'].SetTupleValue(i,blk.name)
+            k = rt.permeability
+            arrays['Block']['Permeability'].SetTuple3(i, k[0], k[1], k[2])
+        for i, blk in enumerate(self.blocklist[natm:]):
+            mapped_name = blockmap[blk.name] if blk.name in blockmap else blk.name            
+            arrays['Block']['Name'].SetTupleValue(i, mapped_name)
         return arrays
 
-    def write_vtk(self,geo,filename,wells=False):
+    def write_vtk(self, geo, filename, wells = False, blockmap = {}):
         """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D, with the specified filename,
         for visualisation with VTK."""
         from vtk import vtkXMLUnstructuredGridWriter
         if wells: geo.write_well_vtk()
-        arrays=geo.vtk_data
-        grid_arrays=self.get_vtk_data(geo)
+        arrays = geo.vtk_data
+        grid_arrays = self.get_vtk_data(geo, blockmap)
         for array_type,array_dict in arrays.items():
             array_dict.update(grid_arrays[array_type])
-        vtu=geo.get_vtk_grid(arrays)
-        writer=vtkXMLUnstructuredGridWriter()
+        vtu = geo.get_vtk_grid(arrays)
+        writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
         writer.SetInput(vtu)
         writer.Write()
