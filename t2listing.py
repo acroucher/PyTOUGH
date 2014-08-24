@@ -1042,53 +1042,56 @@ class t2listing(file):
         return cvg
     convergence=property(get_difference)
 
-    def get_vtk_data(self,geo,grid=None,flows=False,flux_matrix=None,geo_matches=True):
+    def get_vtk_data(self, geo, grid = None, flows = False, flux_matrix = None, geo_matches = True, blockmap = {}):
         """Returns dictionary of VTK data arrays from listing file at current time.  If flows is True, average flux vectors
         are also calculated from connection data at the block centres."""
         from vtk import vtkFloatArray
-        natm=geo.num_atmosphere_blocks
-        nele=geo.num_underground_blocks
-        arrays={'Block':{},'Node':{}}
-        elt_tablenames=[key for key in self._table.keys() if key.startswith('element')]
+        natm = geo.num_atmosphere_blocks
+        nele = geo.num_underground_blocks
+        arrays = {'Block': {}, 'Node': {}}
+        elt_tablenames = [key for key in self._table.keys() if key.startswith('element')]
         for tablename in elt_tablenames:
-            for name in self._table[tablename].column_name: arrays['Block'][name]=vtkFloatArray()
-        flownames=[]
+            for name in self._table[tablename].column_name: arrays['Block'][name] = vtkFloatArray()
+        flownames = []
         def is_flowname(name):
-            name=name.lower()
+            name = name.lower()
             return name.startswith('flo') or name.endswith('flo') or name.endswith('flow') or name.endswith('veloc')
         if flows:
-            if flux_matrix is None: flux_matrix=grid.flux_matrix(geo)
-            flownames=[name for name in self.connection.column_name if is_flowname(name)]
-            for name in flownames: arrays['Block'][name]=vtkFloatArray()
-        array_length={'Block':nele,'Node':0}
-        array_data={'Block':{},'Node':{}}
-        for array_type,array_dict in arrays.items():
-            for name,array in array_dict.items():
+            if flux_matrix is None: flux_matrix = grid.flux_matrix(geo)
+            flownames = [name for name in self.connection.column_name if is_flowname(name)]
+            for name in flownames: arrays['Block'][name] = vtkFloatArray()
+        array_length = {'Block': nele, 'Node': 0}
+        array_data = {'Block': {}, 'Node': {}}
+        def mname(blk): return blockmap[blk] if blk in blockmap else blk
+        for array_type, array_dict in arrays.items():
+            for name, array in array_dict.items():
                 if name in flownames:
-                    array.SetName(name+'/area')
+                    array.SetName(name + '/area')
                     array.SetNumberOfComponents(3)
                     array.SetNumberOfTuples(array_length[array_type])
-                    array_data[array_type][name]=flux_matrix*self.connection[name]
+                    array_data[array_type][name] = flux_matrix * self.connection[name]
                 else:
                     array.SetName(name)
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
                     for tablename in elt_tablenames:
-                        if geo_matches: array_data[array_type][name]=self._table[tablename][name][natm:] # faster
+                        if geo_matches: array_data[array_type][name] = self._table[tablename][name][natm:] # faster
                         else:  # more flexible
-                            array_data[array_type][name]=np.array([self._table[tablename][blk][name] for blk in geo.block_name_list[natm:]])
-        for array_type,data_dict in array_data.items():
-            for name,data in data_dict.items():
+                            array_data[array_type][name] = \
+                                np.array([self._table[tablename][mname(blk)][name]
+                                          for blk in geo.block_name_list[natm:]])
+        for array_type, data_dict in array_data.items():
+            for name, data in data_dict.items():
                 if name in flownames:
                     for iblk in xrange(nele):
-                        arrays[array_type][name].SetTuple3(iblk,data[3*iblk],data[3*iblk+1],data[3*iblk+2])
+                        arrays[array_type][name].SetTuple3(iblk, data[3*iblk], data[3*iblk+1], data[3*iblk+2])
                 else:    
                     for iblk in xrange(nele):
-                        arrays[array_type][name].SetValue(iblk,data[iblk])
+                        arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
     def write_vtk(self, geo, filename, grid = None, indices = None, flows = False, wells = False, start_time = 0.0,
-                  time_unit = 's', flux_matrix = None):
+                  time_unit = 's', flux_matrix = None, blockmap = {}):
         """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the listing data,
         with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
         data as well.  A list of the required time indices can optionally be specified.  If a grid is specified, flows is True,
@@ -1096,53 +1099,54 @@ class t2listing(file):
         block centres from the connection data."""
         from vtk import vtkXMLUnstructuredGridWriter
         from os.path import splitext
-        base,ext=splitext(filename)
+        base, ext = splitext(filename)
         if wells: geo.write_well_vtk()
-        geo_matches=geo.block_name_list==self.element.row_name
+        geo_matches = geo.block_name_list == self.element.row_name
         doflows = False
         if flows and (self.connection is not None):
             if geo_matches:
                 if grid is not None: doflows = True
                 else: raise Exception("t2listing.write_vtk(): if flows == True, a t2grid object must be specified.")
             else: raise Exception("t2listing.write_vtk(): if flows == True, block names in the listing file and geometry must match.")
-        arrays=geo.vtk_data
+        arrays = geo.get_vtk_data(blockmap)
         if grid is not None:
-            grid_arrays=grid.get_vtk_data(geo)
-            for array_type,array_dict in arrays.items():
+            grid_arrays = grid.get_vtk_data(geo, blockmap)
+            for array_type, array_dict in arrays.items():
                 array_dict.update(grid_arrays[array_type])
         if doflows and flux_matrix is None: flux_matrix = grid.flux_matrix(geo)
         import xml.dom.minidom
-        pvd=xml.dom.minidom.Document()
-        vtkfile=pvd.createElement('VTKFile')
+        pvd = xml.dom.minidom.Document()
+        vtkfile = pvd.createElement('VTKFile')
         vtkfile.setAttribute('type','Collection')
         pvd.appendChild(vtkfile)
-        collection=pvd.createElement('Collection')
-        initial_index=self.index
-        if indices is None: indices=range(self.num_fulltimes)
-        timescales={'s':1.0,'h':3600.,'d':3600.*24,'y':3600.*24*365.25}
-        if time_unit in timescales: timescale=timescales[time_unit]
-        else: timescale=1.0
-        writer=vtkXMLUnstructuredGridWriter()
+        collection = pvd.createElement('Collection')
+        initial_index = self.index
+        if indices is None: indices = range(self.num_fulltimes)
+        timescales = {'s':1.0,'h':3600.,'d':3600.*24,'y':3600.*24*365.25}
+        if time_unit in timescales: timescale = timescales[time_unit]
+        else: timescale = 1.0
+        writer = vtkXMLUnstructuredGridWriter()
         for i in indices:
-            self.index=i
-            t=start_time+self.time/timescale
-            filename_time=base+'_'+str(i)+'.vtu'
-            results_arrays=self.get_vtk_data(geo,grid,flows=doflows,flux_matrix=flux_matrix,geo_matches=geo_matches)
+            self.index = i
+            t = start_time + self.time / timescale
+            filename_time = base + '_' + str(i) + '.vtu'
+            results_arrays = self.get_vtk_data(geo, grid, flows = doflows, flux_matrix = flux_matrix, 
+                                               geo_matches = geo_matches, blockmap = blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(results_arrays[array_type])
-            vtu=geo.get_vtk_grid(arrays)
+            vtu = geo.get_vtk_grid(arrays)
             writer.SetFileName(filename_time)
             writer.SetInput(vtu)
             writer.Write()
-            dataset=pvd.createElement('DataSet')
+            dataset = pvd.createElement('DataSet')
             dataset.setAttribute('timestep',str(t))
             dataset.setAttribute('file',filename_time)
             collection.appendChild(dataset)
         vtkfile.appendChild(collection)
-        pvdfile=open(base+'.pvd','w')
+        pvdfile = open(base+'.pvd','w')
         pvdfile.write(pvd.toprettyxml())
         pvdfile.close()
-        self.index=initial_index
+        self.index = initial_index
 
     def add_side_recharge(self,geo,dat):
         """Adds side recharge generators to a TOUGH2 data object for a production run,
