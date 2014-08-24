@@ -478,7 +478,7 @@ class t2grid(object):
         for visualisation with VTK."""
         from vtk import vtkXMLUnstructuredGridWriter
         if wells: geo.write_well_vtk()
-        arrays = geo.vtk_data
+        arrays = geo.get_vtk_data(blockmap)
         grid_arrays = self.get_vtk_data(geo, blockmap)
         for array_type,array_dict in arrays.items():
             array_dict.update(grid_arrays[array_type])
