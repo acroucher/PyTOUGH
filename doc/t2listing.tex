@@ -302,7 +302,7 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
 \item \textbf{flux\_matrix}: \texttt{scipy.sparse.lil\_matrix}\\
   Sparse matrix that multiplies a vector of connection values to produce a partition vector of 3-D block average flows at the (underground) block centres.  One of these can be produced using the \texttt{t2grid.flux\_matrix()} method, and a corresponding \texttt{mulgrid} object.  A flux matrix will be calculated internally if not supplied.
 \item \textbf{blockmap}: dictionary\\
-  Dictionary mapping the block names in the geometry to another block naming system.
+  Dictionary mapping the block names in the geometry to the block naming system used in the listing.
 \end{itemize}
 
 \section{\texttt{listingtable} objects}
