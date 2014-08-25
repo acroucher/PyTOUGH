@@ -102,7 +102,7 @@ class t2grid(object):
     def get_block_centres_defined(self):
         if self.num_atmosphere_blocks==1: istart=1
         else: istart=0
-        return any([blk.centre is not None for blk in self.blocklist[istart:]])
+        return all([blk.centre is not None for blk in self.blocklist[istart:]])
     block_centres_defined=property(get_block_centres_defined)
 
     def get_connection_centres_defined(self):
