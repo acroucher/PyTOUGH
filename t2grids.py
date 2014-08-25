@@ -106,7 +106,7 @@ class t2grid(object):
     block_centres_defined=property(get_block_centres_defined)
 
     def get_connection_centres_defined(self):
-        return any([con.centre is not None for con in self.connectionlist])
+        return all([con.centre is not None for con in self.connectionlist])
     connection_centres_defined = property(get_connection_centres_defined)
 
     def calculate_block_centres(self, geo, blockmap = {}):

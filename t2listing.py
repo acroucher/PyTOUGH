@@ -1057,7 +1057,7 @@ class t2listing(file):
             name = name.lower()
             return name.startswith('flo') or name.endswith('flo') or name.endswith('flow') or name.endswith('veloc')
         if flows:
-            if flux_matrix is None: flux_matrix = grid.flux_matrix(geo)
+            if flux_matrix is None: flux_matrix = grid.flux_matrix(geo, blockmap)
             flownames = [name for name in self.connection.column_name if is_flowname(name)]
             for name in flownames: arrays['Block'][name] = vtkFloatArray()
         array_length = {'Block': nele, 'Node': 0}
@@ -1104,16 +1104,20 @@ class t2listing(file):
         geo_matches = geo.block_name_list == self.element.row_name
         doflows = False
         if flows and (self.connection is not None):
-            if geo_matches:
-                if grid is not None: doflows = True
-                else: raise Exception("t2listing.write_vtk(): if flows == True, a t2grid object must be specified.")
-            else: raise Exception("t2listing.write_vtk(): if flows == True, block names in the listing file and geometry must match.")
+            if grid is None:
+                raise Exception("t2listing.write_vtk(): if flows == True, a t2grid object must be specified.")
+            else:
+                if geo_matches or len(blockmap) > 0: doflows = True
+                else:
+                    raise Exception("t2listing.write_vtk(): if flows == True, " + 
+                                    "block names in the listing file and geometry must match, or " +
+                                    "a block mapping must be specified.")                    
         arrays = geo.get_vtk_data(blockmap)
         if grid is not None:
             grid_arrays = grid.get_vtk_data(geo, blockmap)
             for array_type, array_dict in arrays.items():
                 array_dict.update(grid_arrays[array_type])
-        if doflows and flux_matrix is None: flux_matrix = grid.flux_matrix(geo)
+        if doflows and flux_matrix is None: flux_matrix = grid.flux_matrix(geo, blockmap)
         import xml.dom.minidom
         pvd = xml.dom.minidom.Document()
         vtkfile = pvd.createElement('VTKFile')
