@@ -494,17 +494,21 @@ class t2grid(object):
         writer.SetInput(vtu)
         writer.Write()
 
-    def flux_matrix(self,geo):
+    def flux_matrix(self, geo, blockmap = {}):
         """Returns a sparse matrix which can be used to multiply a vector of connection table values for underground
         blocks, to give approximate average fluxes of those values at the block centres."""
         natm = geo.num_atmosphere_blocks
         nele = geo.num_underground_blocks
-        conindex = dict([((c.block[0].name,c.block[1].name),i) for i,c in enumerate(self.connectionlist)])
+        conindex = dict([((c.block[0].name, c.block[1].name), i) for i,c in enumerate(self.connectionlist)])
         from scipy import sparse
         A = sparse.lil_matrix((3*nele, self.num_connections))
-        if not self.block_centres_defined: self.calculate_block_centres(geo)
-        if not self.connection_centres_defined: self.calculate_connection_centres(geo)
-        for iblk,blk in enumerate(self.blocklist[natm:]):
+        if not self.block_centres_defined: self.calculate_block_centres(geo, blockmap)
+        if not self.connection_centres_defined: self.calculate_connection_centres(geo, blockmap)
+        def mname(blk): return blockmap[blk] if blk in blockmap else blk
+        for iblk, geoblkname in enumerate(geo.block_name_list[natm:]):
+        # for iblk,blk in enumerate(self.blocklist[natm:]):
+            blkname = mname(geoblkname)
+            blk = self.block[blkname]
             ncons = blk.num_connections
             if ncons > 0:
                 M,icons = [],[]

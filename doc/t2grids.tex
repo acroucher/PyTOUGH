@@ -332,7 +332,7 @@ Returns a grid with a subgrid embedded inside one of its blocks.  The connection
 Empties the grid of all its blocks, rock types and connections.
 
 \begin{snugshade}
-\subsubsection{\texttt{flux\_matrix(\emph{geo})}}
+\subsubsection{\texttt{flux\_matrix(\emph{geo}, \emph{blockmap} = \{\})}}
 \end{snugshade}
 \label{sec:t2grid:flux_matrix}
 \index{TOUGH2 grids!flux matrices}
@@ -345,6 +345,8 @@ The method for constructing the matrix is as follows.  For each block, a distrib
 \begin{itemize}
 \item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The \texttt{mulgrid} geometry object (see chapter \ref{mulgrids}).
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to the block naming system used in the grid.
 \end{itemize}
 
 \begin{snugshade}
