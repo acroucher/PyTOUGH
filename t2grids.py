@@ -506,7 +506,6 @@ class t2grid(object):
         if not self.connection_centres_defined: self.calculate_connection_centres(geo, blockmap)
         def mname(blk): return blockmap[blk] if blk in blockmap else blk
         for iblk, geoblkname in enumerate(geo.block_name_list[natm:]):
-        # for iblk,blk in enumerate(self.blocklist[natm:]):
             blkname = mname(geoblkname)
             blk = self.block[blkname]
             ncons = blk.num_connections
