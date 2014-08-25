@@ -1613,7 +1613,7 @@ class toughreact_tecplot(file):
         if len(result)==1: result = result[0]
         return result
 
-    def get_vtk_data(self, geo, grid=None, geo_matches=True):
+    def get_vtk_data(self, geo, grid = None, geo_matches = True, blockmap = {}):
         """Returns dictionary of VTK data arrays from Tecplot file at current time."""
         from vtk import vtkFloatArray
         natm = geo.num_atmosphere_blocks
@@ -1622,6 +1622,7 @@ class toughreact_tecplot(file):
         for name in self.element.column_name: arrays['Block'][name] = vtkFloatArray()
         array_length = {'Block':nele, 'Node':0}
         array_data = {'Block':{}, 'Node':{}}
+        def mname(blk): return blockmap[blk] if blk in blockmap else blk
         for array_type,array_dict in arrays.items():
             for name,array in array_dict.items():
                 array.SetName(name)
@@ -1629,14 +1630,15 @@ class toughreact_tecplot(file):
                 array.SetNumberOfValues(array_length[array_type])
                 if geo_matches: array_data[array_type][name] = self.element[name][natm:] # faster
                 else:  # more flexible
-                    array_data[array_type][name] = np.array([self.element[blk][name] for blk in geo.block_name_list[natm:]])
+                    array_data[array_type][name] = np.array([self.element[mname(blk)][name]
+                                                             for blk in geo.block_name_list[natm:]])
 
         for array_type,data_dict in array_data.items():
             for name,data in data_dict.items():
                 for iblk in xrange(nele): arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
-    def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0, time_unit = 's'):
+    def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0, time_unit = 's', blockmap = {}):
         """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the Tecplot data,
         with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
         data as well.  A list of the required time indices can optionally be specified."""
@@ -1644,9 +1646,9 @@ class toughreact_tecplot(file):
         from os.path import splitext
         base, ext = splitext(filename)
         geo_matches = geo.block_name_list == self.element.row_name
-        arrays = geo.vtk_data
+        arrays = geo.get_vtk_data(blockmap)
         if grid is not None:
-            grid_arrays = grid.get_vtk_data(geo)
+            grid_arrays = grid.get_vtk_data(geo, blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(grid_arrays[array_type])
         import xml.dom.minidom
@@ -1666,7 +1668,7 @@ class toughreact_tecplot(file):
             self.index = i
             t = start_time + self.time/timescale
             filename_time = base+'_'+str(i)+'.vtu'
-            results_arrays = self.get_vtk_data(geo, grid, geo_matches=geo_matches)
+            results_arrays = self.get_vtk_data(geo, grid, geo_matches=geo_matches, blockmap = blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(results_arrays[array_type])
             vtu = geo.get_vtk_grid(arrays)

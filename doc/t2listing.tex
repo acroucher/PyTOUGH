@@ -606,7 +606,7 @@ Navigates to the previous set of results in the Tecplot file.  Returns \texttt{F
 
 \begin{snugshade}
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{start\_time}=0,\\
-    \emph{time\_unit}='s')}}
+    \emph{time\_unit}='s', \emph{blockmap} = \{\})}}
 \end{snugshade}
 \label{sec:toughreact_tecplot:write_vtk}
 \index{TOUGHREACT Tecplot files!writing!VTK files}
@@ -632,6 +632,8 @@ Optionally, only a subset of the time indices present in the \texttt{toughreact\
   Optional start time of the simulation, i.e. time associated with the first set of results.  Default is zero.
 \item \textbf{time\_unit}: string\\
   Optional time unit for the output.  TOUGHREACT Tecplot results are given at times in years, but this option allows them to be converted to other units.  Options are: `s', `h', `d' and `y', for seconds, hours, days and years respectively.  Default is `s'.
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to the block naming system used in the Tecplot output.
 \end{itemize}
 
 \section{Examples}
