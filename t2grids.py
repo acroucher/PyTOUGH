@@ -122,18 +122,21 @@ class t2grid(object):
             colname = geo.column_name(blkname)
             self.block[mapname(blkname)].centre = geo.block_centre(layername, colname)
 
-    def calculate_connection_centres(self, geo):
+    def calculate_connection_centres(self, geo, blockmap = {}):
         """Calculates centre (and normal vector) for each connection face.  Note that the 'centre'
         depends on which block the connection is approached from- in the case where the connection
         face is not orthogonal to the line between the block centres.  Hence there are two 'centres'.
         The mipoint is just midway between the connection face nodes."""
         layindex = dict([(lay.name,i) for i,lay in enumerate(geo.layerlist)])
+        iblockmap = dict([(v,k) for k,v in blockmap.iteritems()])
+        def imapblock(blk): return iblockmap[blk] if blk in iblockmap else blk
         for con in self.connectionlist:
             con.centre = {}
-            layernames = [geo.layer_name(blk.name) for blk in con.block]
+            geoblks = [imapblock(blk.name) for blk in con.block]
+            layernames = [geo.layer_name(blk) for blk in geoblks]
             if layernames[0] == layernames[1]: # horizontal connection
                 lay = geo.layer[layernames[0]]
-                colnames = tuple([geo.column_name(blk.name) for blk in con.block])
+                colnames = tuple([geo.column_name(blk) for blk in geoblks])
                 geocon = geo.connection[colnames]
                 nodepos = [node.pos for node in geocon.node]
                 dpos = nodepos[1] - nodepos[0]
@@ -148,11 +151,11 @@ class t2grid(object):
             else: # vertical connection
                 layindices = np.array([layindex[layname] for layname in layernames])
                 ilower = np.argmax(layindices)
-                colname = geo.column_name(con.block[ilower].name)
+                colname = geo.column_name(geoblks[ilower])
                 col = geo.column[colname]
                 hcentre = col.centre
                 lay = geo.layer[layernames[ilower]]
-                vcentre = geo.block_surface(lay,col)
+                vcentre = geo.block_surface(lay, col)
                 sgn = [1.,-1.][ilower]
                 con.normal = np.array([0., 0., sgn])
                 con.midpoint = np.hstack((hcentre, np.array([vcentre])))
