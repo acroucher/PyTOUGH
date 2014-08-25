@@ -461,16 +461,17 @@ class t2grid(object):
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
         natm = geo.num_atmosphere_blocks
-        rindex = self.rocktype_indices[natm:]
-        for i, ri in enumerate(rindex):
-            arrays['Block']['Rock type index'].SetValue(i,ri)
+        rindex = self.rocktype_indices
+        rockdict = dict(zip([blk.name for blk in self.blocklist], rindex))
+        for i, blkname in enumerate(geo.block_name_list[natm:]):
+            mapped_name = blockmap[blkname] if blkname in blockmap else blkname           
+            arrays['Block']['Name'].SetTupleValue(i, mapped_name)
+            ri = rockdict[mapped_name]
+            arrays['Block']['Rock type index'].SetValue(i, ri)
             rt = self.rocktypelist[ri]
-            arrays['Block']['Porosity'].SetValue(i,rt.porosity)
+            arrays['Block']['Porosity'].SetValue(i, rt.porosity)
             k = rt.permeability
             arrays['Block']['Permeability'].SetTuple3(i, k[0], k[1], k[2])
-        for i, blk in enumerate(self.blocklist[natm:]):
-            mapped_name = blockmap[blk.name] if blk.name in blockmap else blk.name            
-            arrays['Block']['Name'].SetTupleValue(i, mapped_name)
         return arrays
 
     def write_vtk(self, geo, filename, wells = False, blockmap = {}):
