@@ -1066,6 +1066,8 @@ geo = mulgrid(filename)
 
 Gives a \texttt{mulgrid} geometry object a rectangular grid structure.  The grid sizes in the \emph{x}, \emph{y} and \emph{z} directions can be non-uniform, and the grid column and layer naming convention, atmosphere type and origin can be specified.  The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{chars} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
 
+Note that it is also possible to reverse-engineer a rectangular geometry from an existing TOUGH2 data file or \texttt{t2grid} object, using the \hyperref[sec:t2grid:rectgeo]{\texttt{rectgeo()}} method.
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{xblocks}, \textbf{yblocks}, \textbf{zblocks}: list, tuple or \texttt{np.array}\\
@@ -1822,4 +1824,31 @@ This function reverses the effect of \texttt{fix\_blockname()}.
 \item \textbf{name}: string\\
   Block name.
 \end{itemize}
+
+\section{Block mappings: handling other block naming conventions}
+\label{sec:mulgrid:blockmappings}
+\index{TOUGH2 grids!blocks!mappings}
+
+The MULgraph geometry format names blocks according to one of its three \hyperref[geometry_format_conventions]{naming conventions}. All of these conventions use part of the block name to indicate the layer and part of it to indicate the column.
+
+However, in PyTOUGH it is possible to make a \texttt{mulgrid} object handle other block naming conventions by means of a \textbf{block mapping}. This is simply a dictionary that maps the block names in a \texttt{mulgrid} to block names in a \texttt{t2grid} object. The block names in the \texttt{t2grid} can follow an arbitrary convention, not based on layers and columns. For example, blocks in TOUGH2 grids created by PetraSim may be simply numbered.
+
+A block mapping dictionary can be passed in as an optional parameter to many PyTOUGH methods that involve both a MULgraph geometry and TOUGH2 grid, for example the \texttt{mulgrid} \hyperref[sec:mulgrid:block_name]{\texttt{block\_name()}}, \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot()}} and \hyperref[sec:mulgrid:write_vtk]{\texttt{write\_vtk()}} methods, and the \texttt{write\_vtk()} methods of the \hyperref[sec:t2grid:write_vtk]{\texttt{t2grid}} and \hyperref[sec:t2listing:write_vtk]{\texttt{t2listing}} classes.
+
+When the \hyperref[sec:t2grid:rectgeo]{\texttt{rectgeo()}} method is used to create a \texttt{mulgrid} object from a \texttt{t2grid}, a block mapping is also created, and may be used in the PyTOUGH methods that can accept a block mapping.
+
+A block mapping need not contain entries for all blocks. If for example a model follows the naming convention of a MULgraph geometry in most blocks, and only a few are different, then only entries for the different block names need be present in the mapping dictionary.
+
+Block mappings can be saved to and loaded from disk (like any other Python object) using the \texttt{pickle} library. This is part of the standard Python library collection. For example a block mapping called \texttt{blockmap} can be saved to a file called \texttt{'blockmap.pkl'} as follows:
+
+\begin{lstlisting}
+  import pickle
+  pickle.dump(blockmap, file('blockmap.pkl', 'w'))
+\end{lstlisting}
+
+It can be loaded back in again like this:
+
+\begin{lstlisting}
+  blockmap = pickle.load(file('blockmap.pkl'))
+\end{lstlisting}
 

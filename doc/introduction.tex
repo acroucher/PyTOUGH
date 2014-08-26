@@ -38,6 +38,8 @@ For this reason, a separate \textbf{geometry file} can be used to create grids f
 
 The MULgraph geometry file assumes the grid has a layered structure, with blocks arranged in layers and columns, and the same arrangement of columns on each layer.  (At the top of the model grid, blocks in some columns may be missing, to allow the grid to follow the surface topography.)
 
+If you do not have a MULgraph geometry file for your model, it is easy to create one for a \hyperref[sec:mulgrid:rectangular]{rectangular} grid. In fact, PyTOUGH is able to \hyperref[sec:t2grid:rectgeo]{reverse-engineer} a MULgraph geometry from a TOUGH2 data file containing a rectangular grid.
+
 A specification of the MULgraph geometry file format can be found in Appendix \ref{geometry_file_format}.
 
 \subsection{TOUGH2 listing files}
