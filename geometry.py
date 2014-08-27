@@ -101,13 +101,15 @@ def polygon_centroid(polygon):
     n = len(polygon)
     shift = polygon[0]
     polygon -= shift # shift to reduce roundoff for large coordinates
-    for j,p1 in enumerate(polygon):
-        p2 = polygon[(j+1)%n]
-        t = p1[0]*p2[1] - p2[0]*p1[1]
-        area += t
-        c += (p1 + p2) * t
-    area *= 0.5
-    return c / (6.*area) + shift
+    if n < 3: return sum(polygon) / n + shift
+    else: 
+        for j,p1 in enumerate(polygon):
+            p2 = polygon[(j+1)%n]
+            t = p1[0]*p2[1] - p2[0]*p1[1]
+            area += t
+            c += (p1 + p2) * t
+        area *= 0.5
+        return c / (6.*area) + shift
 
 def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False):
     """Returns a list of the intersection points at which a line crosses a polygon.  The list is sorted

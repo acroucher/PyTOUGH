@@ -340,6 +340,22 @@ class column(object):
                 else: return None
         else: return None
 
+    def index_plus(self, i, d):
+        """Adds d to index i around column."""
+        return (i + d) % self.num_nodes
+
+    def index_minus(self, i, d):
+        """Subtracts d from index i around column."""
+        result = i - d
+        if result < 0: result += self.num_nodes
+        return result
+
+    def index_dist(self, i1, i2):
+        """Returns distance between two integer indices around the column."""
+        d = abs(i1 - i2)
+        if 2*d > self.num_nodes: d = self.num_nodes - d
+        return d
+
     def __repr__(self): return self.name
 
 class connection(object):
@@ -2799,7 +2815,103 @@ class mulgrid(object):
             self.setup_block_name_index()
             self.setup_block_connection_name_index()
 
-    def fit_surface(self,data,alpha=0.1,beta=0.1,columns=[],min_columns=[],grid_boundary=False, layer_snap=0.0, silent = False):
+    def subdivide_column(self, column_name, i0, colnodelist):
+        """Replaces specified column with columns based on subdividing it according to the specified
+        local starting node index and list of column definitions (each a tuple of either local node
+        indices, or 'c' denoting a new node at the centre of the column. Returns a list of the names
+        of the new columns.."""
+        justfn = [ljust, rjust][self.right_justified_names]
+        chars = ascii_lowercase + ascii_uppercase
+        col = self.column[column_name]
+        if any(['c' in newcol for newcol in colnodelist]):
+            newnodename, nodenumber = self.new_node_name(justfn = justfn, chars = chars)
+            centrenode = node(newnodename, col.centre)
+            self.add_node(centrenode)
+        colnumber = 0
+        newcolnames = []
+        for colnodes in colnodelist:
+            nodes = [centrenode if i == 'c' else col.node[col.index_plus(i0,i)] for i in colnodes]
+            name, colnumber = self.new_column_name(colnumber, justfn, chars)
+            self.add_column(column(name, nodes, surface = col.surface))
+            self.columnlist[-1].num_layers = col.num_layers
+            newcolnames.append(name)
+        self.delete_column(column_name)
+        return newcolnames
+
+    def triangulate_column(self, column_name, replace = True):
+        """Replaces specified column with triangulated columns based on a new node at its centre,
+        and returns list of new columns created."""
+        colnodelist = []
+        col = self.column[column_name]
+        for i,node in enumerate(col.node):
+            inext = col.index_plus(i, 1)
+            colnodelist.append((i, inext, 'c'))
+        colnames = self.subdivide_column(column_name, 0, colnodelist)
+        return colnames
+
+    def column_to_tri_quad(self, column_name):
+        """Replaces specified column with triangular or quadrilateral columns covering the original one, and 
+        returns a list of the new columns.
+        There are special cases for columns with lower numbers of sides, and 'straight' nodes (i.e. nodes
+        that are on a straight line between their adjacent nodes)."""
+        col = self.column[column_name]
+        nn = col.num_nodes
+        if nn <= 4: return [column_name]
+        elif nn <= 8:
+            angles = col.interior_angles
+            tol = 1.e-3
+            straight = [i for i,angle in enumerate(angles) if angle > np.pi - tol]
+            ns = len(straight)
+            if (nn,ns) == (5,1):
+                return self.subdivide_column(column_name, straight[0], [(0,1,2),(0,2,3),(0,3,4)])
+            elif (nn,ns) == (6,2):
+                d = col.index_dist(straight[0], straight[1])
+                if d == 2:
+                    last2 = [col.index_minus(i, 2) for i in straight]
+                    start = [s for s,l in zip(straight, last2) if l not in straight][0]
+                    return self.subdivide_column(column_name, start,
+                                                 [(0,1,2,'c'),(2,3,'c'),(3,4,'c'),(4,5,'c'),(5,0,'c')])
+                elif d == 3:
+                    return self.subdivide_column(column_name, straight[0], [(0,1,2,3),(3,4,5,0)])
+                else: return self.triangulate_column(column_name)
+            elif (nn,ns) == (7,3):
+                last2 = [col.index_minus(i, 2) for i in straight]
+                start = [s for s,l in zip(straight, last2) if l not in straight][0]
+                return self.subdivide_column(column_name, start, [(0,1,2),(2,3,4),(0,2,4),(4,5,6,0)])
+            elif (nn,ns) == (8,4):
+                return self.subdivide_column(column_name, straight[0],
+                                             [(1,2,'c',0),(2,3,4,'c'),(4,5,6,'c'),(6,7,0,'c')])
+            else: return self.triangulate_column(column_name)
+        else: return self.triangulate_column(column_name)
+
+    def columns_to_tri_quad(self, mapping = False):
+        """Returns a geometry with the same column structure as the original, but with columns with more than four
+        nodes reduced down to triangles and quadrilaterals. Also optionally returns a dictionary mapping columns in
+        the original geometry to lists of corresponding reduced columns in the output geometry."""
+        geo = mulgrid(convention = self.convention, atmos_type = self.atmosphere_type,
+                      atmos_volume = self.atmosphere_volume, atmos_connection = self.atmosphere_connection,
+                      unit_type = self.unit_type, permeability_angle = self.permeability_angle,
+                      read_function = self.read_function)
+        for n in self.nodelist: geo.add_node(node(n.name, n.pos))
+        colmap = {}
+        cols = []
+        for col in self.columnlist:
+            newcol = column(col.name, [geo.node[n.name] for n in col.node])
+            geo.add_column(newcol)
+            if col.num_nodes > 4: cols.append(col.name)
+        for colname in cols: colmap[colname] = geo.column_to_tri_quad(colname)
+        for c in geo.missing_connections: geo.add_connection(c)
+        geo.copy_layers_from(self)
+        geo.copy_wells_from(self)
+        geo.set_default_surface()
+        geo.identify_neighbours()
+        geo.setup_block_name_index()
+        geo.setup_block_connection_name_index()
+        return geo, colmap if mapping else geo
+
+    def fit_surface(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
+                    layer_snap = 0.0, silent = False):
+
         """Fits column surface elevations to the grid from the data, using least-squares bilinear finite element fitting with
         Sobolev smoothing.  The parameter data should be in the form of a 3-column array with x,y,z data in each row.
         The smoothing parameters alpha and beta control the first and second derivatives of the surface.
@@ -2811,67 +2923,68 @@ class mulgrid(object):
         to avoid the creation of very thin top surface layers, if the fitted elevation is very close to the bottom of a layer.
         In this case the value of layer_snap is a tolerance representing the smallest permissible layer thickness."""
 
-        if columns==[]: columns=self.columnlist
+        geo, colmap = self.columns_to_tri_quad(mapping = True)
+            
+        if columns == []: columns = self.columnlist
         else: 
-            if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
-        if min_columns<>[]:
-            if not isinstance(min_columns[0],str): min_columns=[col.name for col in min_columns]
-        if all([col.num_nodes in [3,4] for col in columns]):
-            nodes=self.nodes_in_columns(columns)
-            node_index=dict([(node.name,i) for i,node in enumerate(nodes)])
-            num_nodes=len(nodes)
-            # assemble least squares FEM fitting system:
-            from scipy import sparse
-            A=sparse.lil_matrix((num_nodes,num_nodes))
-            b=np.zeros(num_nodes)
-            guess=None
-            if grid_boundary: bounds=self.boundary_polygon
-            else: bounds=None
-            qtree=self.column_quadtree(columns)
-            import sys
-            nd=len(data)
-            for idata,d in enumerate(data):
-                col=self.column_containing_point(d[0:2],columns,guess,bounds,qtree)
-                percent=100.*idata/nd
-                if not silent:
-                    ps='fit_surface %3.0f%% done'% percent
-                    sys.stdout.write('%s\r' % ps)
-                    sys.stdout.flush()
-                if col:
-                    xi=col.local_pos(d[0:2])
-                    if xi is not None:
-                        guess=col
-                        psi=col.basis(xi)
-                        for i,nodei in enumerate(col.node):
-                            I=node_index[nodei.name]
-                            for j,nodej in enumerate(col.node):
-                                J=node_index[nodej.name]
-                                A[I,J]+=psi[i]*psi[j]
-                            b[I]+=psi[i]*d[2]
-            # add smoothing:
-            smooth={3: 0.5*alpha*np.array([[1.,0.,-1.],[0.,1.,-1.],[-1.,-1.,2.]]),
-                    4: alpha/6.*np.array([[4.,-1.,-2.,-1.],[-1.,4.,-1.,-2.],[-2.,-1.,4.,-1.],[-1.,-2.,-1.,4.]])+
-                    beta*np.array([[1.,-1.,1.,-1.],[-1.,1.,-1.,1.],[1.,-1.,1.,-1.],[-1.,1.,-1.,1.]])}
-            for col in columns:
-                for i,nodei in enumerate(col.node):
-                    I=node_index[nodei.name]
-                    for j,nodej in enumerate(col.node):
-                        J=node_index[nodej.name]
-                        A[I,J]+=smooth[col.num_nodes][i,j]
-            A=A.tocsr()
-            from scipy.sparse.linalg import spsolve, use_solver
-            use_solver(useUmfpack = False)
-            z = spsolve(A, b)
-            # assign nodal elevations to columns:
-            for col in columns:
-                nodez=[z[node_index[node.name]] for node in col.node]
-                if col.name in min_columns: col.surface=min(nodez)
-                else: col.surface=(sum(nodez))/col.num_nodes
-                self.set_column_num_layers(col)
-            self.snap_columns_to_layers(layer_snap,columns)
-            self.setup_block_name_index()
-            self.setup_block_connection_name_index()
-        else: raise Exception('Grid selection contains columns with more than 4 nodes: not supported.')
+            if isinstance(columns[0],str): columns = [self.column[col] for col in columns]
+        if min_columns != []:
+            if not isinstance(min_columns[0],str): min_columns = [col.name for col in min_columns]
+
+        nodes = self.nodes_in_columns(columns)
+        node_index = dict([(node.name,i) for i,node in enumerate(nodes)])
+        num_nodes = len(nodes)
+        # assemble least squares FEM fitting system:
+        from scipy import sparse
+        A = sparse.lil_matrix((num_nodes,num_nodes))
+        b = np.zeros(num_nodes)
+        guess = None
+        if grid_boundary: bounds = self.boundary_polygon
+        else: bounds = None
+        qtree = self.column_quadtree(columns)
+        import sys
+        nd = len(data)
+        for idata,d in enumerate(data):
+            col = self.column_containing_point(d[0:2], columns, guess, bounds, qtree)
+            percent = 100. * idata / nd
+            if not silent:
+                ps = 'fit_surface %3.0f%% done'% percent
+                sys.stdout.write('%s\r' % ps)
+                sys.stdout.flush()
+            if col:
+                xi = col.local_pos(d[0:2])
+                if xi is not None:
+                    guess = col
+                    psi = col.basis(xi)
+                    for i,nodei in enumerate(col.node):
+                        I = node_index[nodei.name]
+                        for j,nodej in enumerate(col.node):
+                            J = node_index[nodej.name]
+                            A[I,J] += psi[i] * psi[j]
+                        b[I] += psi[i] * d[2]
+        # add smoothing:
+        smooth = {3: 0.5*alpha*np.array([[1.,0.,-1.],[0.,1.,-1.],[-1.,-1.,2.]]),
+                  4: alpha/6.*np.array([[4.,-1.,-2.,-1.],[-1.,4.,-1.,-2.],[-2.,-1.,4.,-1.],[-1.,-2.,-1.,4.]])+
+                  beta * np.array([[1.,-1.,1.,-1.],[-1.,1.,-1.,1.],[1.,-1.,1.,-1.],[-1.,1.,-1.,1.]])}
+        for col in columns:
+            for i,nodei in enumerate(col.node):
+                I = node_index[nodei.name]
+                for j,nodej in enumerate(col.node):
+                    J = node_index[nodej.name]
+                    A[I,J] += smooth[col.num_nodes][i,j]
+        A = A.tocsr()
+        from scipy.sparse.linalg import spsolve, use_solver
+        use_solver(useUmfpack = False)
+        z = spsolve(A, b)
+        # assign nodal elevations to columns:
+        for col in columns:
+            nodez = [z[node_index[node.name]] for node in col.node]
+            if col.name in min_columns: col.surface = min(nodez)
+            else: col.surface = (sum(nodez)) / col.num_nodes
+            self.set_column_num_layers(col)
+        self.snap_columns_to_layers(layer_snap,columns)
+        self.setup_block_name_index()
+        self.setup_block_connection_name_index()
 
     def refine(self,columns=[],bisect=False,bisect_edge_columns=[], chars = ascii_lowercase):
         """Refines selected columns in the grid.  If no columns are specified, all columns are refined.
