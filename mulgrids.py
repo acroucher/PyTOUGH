@@ -2884,22 +2884,26 @@ class mulgrid(object):
             else: return self.triangulate_column(column_name)
         else: return self.triangulate_column(column_name)
 
-    def columns_to_tri_quad(self, mapping = False):
-        """Returns a geometry with the same column structure as the original, but with columns with more than four
-        nodes reduced down to triangles and quadrilaterals. Also optionally returns a dictionary mapping columns in
-        the original geometry to lists of corresponding reduced columns in the output geometry."""
+    def columns_to_tri_quad(self, columns = [], mapping = False):
+        """Returns a geometry with the same column structure as the original, but with selected columns with more
+        than four nodes reduced down to triangles and quadrilaterals. Also optionally returns a dictionary
+        mapping columns in the original geometry to lists of corresponding reduced columns in the output geometry."""
+        if columns == []: columns = self.columnlist
+        else: 
+            if isinstance(columns[0], str): columns = [self.column[col] for col in columns]
+
         geo = mulgrid(convention = self.convention, atmos_type = self.atmosphere_type,
                       atmos_volume = self.atmosphere_volume, atmos_connection = self.atmosphere_connection,
                       unit_type = self.unit_type, permeability_angle = self.permeability_angle,
                       read_function = self.read_function)
         for n in self.nodelist: geo.add_node(node(n.name, n.pos))
         colmap = {}
-        cols = []
-        for col in self.columnlist:
+        affected_cols = []
+        for col in columns:
             newcol = column(col.name, [geo.node[n.name] for n in col.node])
             geo.add_column(newcol)
-            if col.num_nodes > 4: cols.append(col.name)
-        for colname in cols: colmap[colname] = geo.column_to_tri_quad(colname)
+            if col.num_nodes > 4: affected_cols.append(col.name)
+        for colname in affected_cols: colmap[colname] = geo.column_to_tri_quad(colname)
         for c in geo.missing_connections: geo.add_connection(c)
         geo.copy_layers_from(self)
         geo.copy_wells_from(self)
