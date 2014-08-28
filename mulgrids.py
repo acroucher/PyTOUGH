@@ -2903,6 +2903,7 @@ class mulgrid(object):
             newcol = column(col.name, [geo.node[n.name] for n in col.node])
             geo.add_column(newcol)
             if col.num_nodes > 4: affected_cols.append(col.name)
+            else: colmap[col.name] = [col.name]
         for colname in affected_cols: colmap[colname] = geo.column_to_tri_quad(colname)
         for c in geo.missing_connections: geo.add_connection(c)
         geo.copy_layers_from(self)
@@ -2927,29 +2928,31 @@ class mulgrid(object):
         to avoid the creation of very thin top surface layers, if the fitted elevation is very close to the bottom of a layer.
         In this case the value of layer_snap is a tolerance representing the smallest permissible layer thickness."""
 
-        geo, colmap = self.columns_to_tri_quad(mapping = True)
-            
         if columns == []: columns = self.columnlist
         else: 
             if isinstance(columns[0],str): columns = [self.column[col] for col in columns]
         if min_columns != []:
             if not isinstance(min_columns[0],str): min_columns = [col.name for col in min_columns]
 
-        nodes = self.nodes_in_columns(columns)
+        geo, colmap = self.columns_to_tri_quad(columns, mapping = True)
+        geo_columns = []
+        for col in columns: geo_columns += [geo.column[geocol] for geocol in colmap[col.name]]
+            
+        nodes = geo.nodes_in_columns(geo_columns)
         node_index = dict([(node.name,i) for i,node in enumerate(nodes)])
         num_nodes = len(nodes)
         # assemble least squares FEM fitting system:
         from scipy import sparse
-        A = sparse.lil_matrix((num_nodes,num_nodes))
+        A = sparse.lil_matrix((num_nodes, num_nodes))
         b = np.zeros(num_nodes)
         guess = None
-        if grid_boundary: bounds = self.boundary_polygon
+        if grid_boundary: bounds = geo.boundary_polygon
         else: bounds = None
-        qtree = self.column_quadtree(columns)
+        qtree = geo.column_quadtree(columns)
         import sys
         nd = len(data)
         for idata,d in enumerate(data):
-            col = self.column_containing_point(d[0:2], columns, guess, bounds, qtree)
+            col = geo.column_containing_point(d[0:2], geo_columns, guess, bounds, qtree)
             percent = 100. * idata / nd
             if not silent:
                 ps = 'fit_surface %3.0f%% done'% percent
@@ -2970,7 +2973,7 @@ class mulgrid(object):
         smooth = {3: 0.5*alpha*np.array([[1.,0.,-1.],[0.,1.,-1.],[-1.,-1.,2.]]),
                   4: alpha/6.*np.array([[4.,-1.,-2.,-1.],[-1.,4.,-1.,-2.],[-2.,-1.,4.,-1.],[-1.,-2.,-1.,4.]])+
                   beta * np.array([[1.,-1.,1.,-1.],[-1.,1.,-1.,1.],[1.,-1.,1.,-1.],[-1.,1.,-1.,1.]])}
-        for col in columns:
+        for col in geo_columns:
             for i,nodei in enumerate(col.node):
                 I = node_index[nodei.name]
                 for j,nodej in enumerate(col.node):
@@ -2981,10 +2984,25 @@ class mulgrid(object):
         use_solver(useUmfpack = False)
         z = spsolve(A, b)
         # assign nodal elevations to columns:
+        def colnodez(col): return [z[node_index[node.name]] for node in col.node]
         for col in columns:
-            nodez = [z[node_index[node.name]] for node in col.node]
-            if col.name in min_columns: col.surface = min(nodez)
-            else: col.surface = (sum(nodez)) / col.num_nodes
+            if col.name in min_columns:
+                geocol_min = None
+                for geocolname in colmap[col.name]:
+                    geocol = geo.column[geocolname]
+                    nodez = colnodez(geocol)
+                    minnodez = min(nodez)
+                    if geocol_min is None: geocol_min = minnodez
+                    else: geocol_min = min(geocol_min, minnodez)
+                col.surface = geocol_min
+            else:
+                geocol_area, geocol_elev = [],[]
+                for geocolname in colmap[col.name]:
+                    geocol = geo.column[geocolname]
+                    nodez = colnodez(geocol)
+                    geocol_area.append(geocol.area)
+                    geocol_elev.append(sum(nodez) / geocol.num_nodes)
+                col.surface = sum([area * elev for area, elev in zip(geocol_area, geocol_elev)]) / sum(geocol_area)
             self.set_column_num_layers(col)
         self.snap_columns_to_layers(layer_snap,columns)
         self.setup_block_name_index()
