@@ -371,67 +371,6 @@ def b23t(p):
 
 #------------------------------------------------------------------------
 
-def test():
-
-    """Prints test values for testing cowat,supst and super functions.
-    Tests are from Wagner et al., 1997."""
-
-    cowat_test=(((300.,3.e6),(0.100215168e-2,0.112324818e6)),
-                ((300.,80.e6),(0.971180894e-3,0.106448356e6)),
-                ((500.,3.e6),(0.120241800e-2,0.971934985e6)))
-    supst_test=(((300.,0.0035e6),(0.394913866e2,0.241169160e7)),
-                ((700.,0.0035e6),(0.923015898e2,0.301262819e7)),
-                ((700.,30.e6),(0.542946619e-2,0.246861076e7)))
-    super_test=(((650.,500.),(0.255837018e8,0.181226279e7)),
-                ((650.,200.),(0.222930643e8,0.226365868e7)),
-                ((750.,500.),(0.783095639e8,0.210206932e7)))
-    sat_test=((300.,0.353658941e4),(500.,0.263889776e7),(600.,0.123443146e8))
-    visc_test=(((298.15,998.),889.735100e-6),
-               ((298.15,1200.),1437.649467e-6),
-               ((373.15,1000.),307.883622e-6),
-               ((873.15,600.),77.430195e-6),
-               ((1173.15,100.),47.640433e-6))
-
-    print "Testing cowat... errors:"
-    for i,((tk,p),goal) in enumerate(cowat_test):
-        res=cowat(tk-tc_k,p)
-        calc=(1./res[0],res[1])
-        err=[g-c for (g,c) in zip(goal,calc)]
-        print "%d: %+5.2e m3/kg, %+5.2e kJ" % (i+1,err[0],err[1]*1.e-3)
-
-    print "\nTesting supst... errors:"
-    for i,((tk,p),goal) in enumerate(supst_test):
-        res=supst(tk-tc_k,p)
-        calc=(1./res[0],res[1])
-        err=[g-c for (g,c) in zip(goal,calc)]
-        print "%d: %+5.2e m3/kg, %+5.2e kJ" % (i+1,err[0],err[1]*1.e-3)
-
-    print "\nTesting super... errors:"
-    for i,((tk,d),goal) in enumerate(super_test):
-        calc=super(d,tk-tc_k)
-        err=[g-c for (g,c) in zip(goal,calc)]
-        print "%d: %+5.2e MPa, %+5.2e kJ" % (i+1,err[0]*1.e-6,err[1]*1.e-3)
-
-    print "\nTesting sat... errors:"
-    for i,(tk,goal) in enumerate(sat_test):
-        calc=sat(tk-tc_k)
-        err=goal-calc
-        print "%d: %+5.2e MPa" % (i+1,err*1.e-6)
-
-    print "\nTesting tsat... errors:"
-    for i,(goal,p) in enumerate(sat_test):
-        calc=tsat(p)
-        err=goal-tc_k-calc
-        print "%d: %+5.2e deg C" % (i+1,err)
-
-    print "\nTesting visc... errors:"
-    for i,((tk,d),goal) in enumerate(visc_test):
-        calc=visc(d,tk-tc_k)
-        err=goal-calc
-        print "%d: %+5.2e muPa.s" % (i+1,err*1.e6)
-
-#------------------------------------------------------------------------
-
 def pressure_temperature_plot(plt,subplot=111):
     """Plots IAPWS-97 pressure-temperature region boundaries on plot plt"""
 

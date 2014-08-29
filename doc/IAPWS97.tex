@@ -49,7 +49,6 @@ The functions available through the \texttt{IAPWS97} library are listed in Table
       \hyperref[sec:iapws97:sat]{\texttt{sat}} & float & saturation pressure as a function of temperature\\
       \hyperref[sec:iapws97:super]{\texttt{super}} & tuple & pressure and internal energy of supercritical fluid\\
       \hyperref[sec:iapws97:supst]{\texttt{supst}} & tuple & density and internal energy of dry steam\\
-      \hyperref[sec:iapws97:test]{\texttt{test}} & -- & prints results of verification tests from \cite{iapws_2000}\\
       \hyperref[sec:iapws97:tsat]{\texttt{tsat}} & float & saturation temperature as a function of pressure\\
       \hyperref[sec:iapws97:visc]{\texttt{visc}} & float & dynamic viscosity of water, steam or supercritical fluid\\
       \hline
@@ -223,11 +222,3 @@ Draws the IAPWS-97 thermodynamic region boundaries on a density-temperature diag
 \item \textbf{plt}: \texttt{matplotlib.pyplot} instance\\
   An instance of the \texttt{matplotlib.pyplot} library, imported in the calling script using e.g. \texttt{import matplotlib.pyplot as plt}.
 \end{itemize}
-
-\begin{snugshade}
-\section{Testing: \texttt{test()}}
-\end{snugshade}
-\label{sec:iapws97:test}
-\index{thermodynamics!IAPWS-97!testing}
-
-The \texttt{test} function prints the results of the verification tests in \cite{iapws_2000} for the \texttt{cowat}, \texttt{supst} and \texttt{super} functions.
