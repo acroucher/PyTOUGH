@@ -176,6 +176,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:connects]{\texttt{connects}} & Boolean & whether the grid has a connection between two specified columns\\ 
   \hyperref[sec:mulgrid:copy_layers_from]{\texttt{copy\_layers\_from}} & -- & copies layer structure from another geometry\\ 
   \hyperref[sec:mulgrid:copy_wells_from]{\texttt{copy\_wells\_from}} & -- & copies wells from another geometry\\ 
+  \hyperref[sec:mulgrid:decompose_columns]{\texttt{decompose\_columns}} & -- & decomposes columns into triangles and quadrilaterals\\ 
   \hyperref[sec:mulgrid:delete_column]{\texttt{delete\_column}} & -- & deletes a column from the grid\\ 
   \hyperref[sec:mulgrid:delete_connection]{\texttt{delete\_connection}} & -- & deletes a connection from the grid\\ 
   \hyperref[sec:mulgrid:delete_layer]{\texttt{delete\_layer}} & -- & deletes a layer from the grid\\ 
@@ -552,6 +553,24 @@ Copies the wells from the geometry \texttt{geo} (deleting any existing wells fir
 \begin{itemize}
 \item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
   The geometry to copy wells from.
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{decompose\_columns(\emph{columns} = [], \emph{mapping} = False, \emph{chars} = ascii\_lowercase)}}\end{snugshade}
+\label{sec:mulgrid:decompose_columns}
+\index{MULgraph geometry!columns!decomposing}
+
+Decomposes columns with more than four sides into triangular and quadrilateral columns. This can be useful when carrying out calculations on the geometry that rely on finite element methods (e.g. the \texttt{fit\_surface()} method uses it).
+
+In general, columns are decomposed by adding a node at the column centroid and forming triangles around it. However, there are special cases for columns with lower numbers of sides (less than 9) and `straight' nodes, i.e. nodes on a straight line between their neighbouring nodes in the column). These make use of simpler decompositions.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{columns}: list\\
+  List of columns to be decomposed. If the list is empty (the default), all columns are decomposed.
+\item \textbf{mapping}: Boolean\\
+  If \texttt{True}, return a dictionary mapping each original column name to a list of decomposed columns that replace it.
+\item \textbf{chars}: string\\
+  Specifies a string of characters to use when forming new node and column names.  Default is lowercase letters.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{delete\_column(\emph{colname})}}\end{snugshade}
