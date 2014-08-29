@@ -2819,7 +2819,7 @@ class mulgrid(object):
         """Replaces specified column with columns based on subdividing it according to the specified
         local starting node index and list of column definitions (each a tuple of either local node
         indices, or 'c' denoting a new node at the centre of the column. Returns a list of the names
-        of the new columns.."""
+        of the new columns."""
         justfn = [ljust, rjust][self.right_justified_names]
         chars = ascii_lowercase + ascii_uppercase
         col = self.column[column_name]
@@ -2849,11 +2849,12 @@ class mulgrid(object):
         colnames = self.subdivide_column(column_name, 0, colnodelist)
         return colnames
 
-    def column_to_tri_quad(self, column_name):
+    def decompose_column(self, column_name):
         """Replaces specified column with triangular or quadrilateral columns covering the original one, and 
         returns a list of the new columns.
         There are special cases for columns with lower numbers of sides, and 'straight' nodes (i.e. nodes
-        that are on a straight line between their adjacent nodes)."""
+        that are on a straight line between their adjacent nodes).
+        Returns a list of names of columns that decompose the original column."""
         col = self.column[column_name]
         nn = col.num_nodes
         if nn <= 4: return [column_name]
@@ -2884,35 +2885,17 @@ class mulgrid(object):
             else: return self.triangulate_column(column_name)
         else: return self.triangulate_column(column_name)
 
-    def columns_to_tri_quad(self, columns = [], mapping = False):
-        """Returns a geometry with the same column structure as the original, but with selected columns with more
-        than four nodes reduced down to triangles and quadrilaterals. Also optionally returns a dictionary
-        mapping columns in the original geometry to lists of corresponding reduced columns in the output geometry."""
+    def decompose_columns(self, columns = [], mapping = False):
+        """Decomposes columns with more than four sides to triangles and quadrilaterals. Optionally returns a dictionary
+        mapping column names in the original geometry to lists of corresponding column names in the reduced geometry."""
         if columns == []: columns = self.columnlist
         else: 
             if isinstance(columns[0], str): columns = [self.column[col] for col in columns]
-
-        geo = mulgrid(convention = self.convention, atmos_type = self.atmosphere_type,
-                      atmos_volume = self.atmosphere_volume, atmos_connection = self.atmosphere_connection,
-                      unit_type = self.unit_type, permeability_angle = self.permeability_angle,
-                      read_function = self.read_function)
-        for n in self.nodelist: geo.add_node(node(n.name, n.pos))
-        colmap = {}
-        affected_cols = []
-        for col in columns:
-            newcol = column(col.name, [geo.node[n.name] for n in col.node])
-            geo.add_column(newcol)
-            if col.num_nodes > 4: affected_cols.append(col.name)
-            else: colmap[col.name] = [col.name]
-        for colname in affected_cols: colmap[colname] = geo.column_to_tri_quad(colname)
-        for c in geo.missing_connections: geo.add_connection(c)
-        geo.copy_layers_from(self)
-        geo.copy_wells_from(self)
-        geo.set_default_surface()
-        geo.identify_neighbours()
-        geo.setup_block_name_index()
-        geo.setup_block_connection_name_index()
-        return geo, colmap if mapping else geo
+        colmap = dict([(col.name, self.decompose_column(col.name)) for col in columns])
+        for c in self.missing_connections: self.add_connection(c)
+        self.setup_block_name_index()
+        self.setup_block_connection_name_index()
+        if mapping: return colmap
 
     def fit_surface(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
                     layer_snap = 0.0, silent = False):
@@ -2934,12 +2917,17 @@ class mulgrid(object):
         if min_columns != []:
             if not isinstance(min_columns[0],str): min_columns = [col.name for col in min_columns]
 
-        geo, colmap = self.columns_to_tri_quad(columns, mapping = True)
+        # make copy of geometry and decompose into 3,4 sided columns:
+        geo = mulgrid(convention = self.convention)
+        for n in self.nodelist: geo.add_node(node(n.name, n.pos))
+        for col in self.columnlist:
+            geo.add_column(column(col.name, [geo.node[n.name] for n in col.node]))
+        colmap = geo.decompose_columns(columns, mapping = True)
         geo_columns = []
         for col in columns: geo_columns += [geo.column[geocol] for geocol in colmap[col.name]]
             
         nodes = geo.nodes_in_columns(geo_columns)
-        node_index = dict([(node.name,i) for i,node in enumerate(nodes)])
+        node_index = dict([(n.name,i) for i,n in enumerate(nodes)])
         num_nodes = len(nodes)
         # assemble least squares FEM fitting system:
         from scipy import sparse
