@@ -371,6 +371,19 @@ def b23t(p):
 
 #------------------------------------------------------------------------
 
+def region(t, p):
+    """Returns thermodynamic region corresponding to the given temperature and pressure,
+    or None if out of bounds."""
+    if (0.01 <= t <= 800.) and (0. <= p <= 100.e6):
+        if t <= 350.:
+            return 1 if p > sat(t) else 2
+        elif t <= 590.:
+            return 3 if p > b23p(t) else 2
+        else: return 2
+    else: return None
+
+#------------------------------------------------------------------------
+
 def pressure_temperature_plot(plt,subplot=111):
     """Plots IAPWS-97 pressure-temperature region boundaries on plot plt"""
 
