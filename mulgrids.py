@@ -2815,13 +2815,12 @@ class mulgrid(object):
             self.setup_block_name_index()
             self.setup_block_connection_name_index()
 
-    def subdivide_column(self, column_name, i0, colnodelist):
+    def subdivide_column(self, column_name, i0, colnodelist, chars = ascii_lowercase):
         """Replaces specified column with columns based on subdividing it according to the specified
         local starting node index and list of column definitions (each a tuple of either local node
         indices, or 'c' denoting a new node at the centre of the column. Returns a list of the names
         of the new columns."""
         justfn = [ljust, rjust][self.right_justified_names]
-        chars = ascii_lowercase + ascii_uppercase
         col = self.column[column_name]
         if any(['c' in newcol for newcol in colnodelist]):
             newnodename, nodenumber = self.new_node_name(justfn = justfn, chars = chars)
@@ -2838,7 +2837,7 @@ class mulgrid(object):
         self.delete_column(column_name)
         return newcolnames
 
-    def triangulate_column(self, column_name, replace = True):
+    def triangulate_column(self, column_name, replace = True, chars = ascii_lowercase):
         """Replaces specified column with triangulated columns based on a new node at its centre,
         and returns list of new columns created."""
         colnodelist = []
@@ -2846,10 +2845,10 @@ class mulgrid(object):
         for i,node in enumerate(col.node):
             inext = col.index_plus(i, 1)
             colnodelist.append((i, inext, 'c'))
-        colnames = self.subdivide_column(column_name, 0, colnodelist)
+        colnames = self.subdivide_column(column_name, 0, colnodelist, chars)
         return colnames
 
-    def decompose_column(self, column_name):
+    def decompose_column(self, column_name, chars = ascii_lowercase):
         """Replaces specified column with triangular or quadrilateral columns covering the original one, and 
         returns a list of the new columns.
         There are special cases for columns with lower numbers of sides, and 'straight' nodes (i.e. nodes
@@ -2864,34 +2863,34 @@ class mulgrid(object):
             straight = [i for i,angle in enumerate(angles) if angle > np.pi - tol]
             ns = len(straight)
             if (nn,ns) == (5,1):
-                return self.subdivide_column(column_name, straight[0], [(0,1,2),(0,2,3),(0,3,4)])
+                return self.subdivide_column(column_name, straight[0], [(0,1,2),(0,2,3),(0,3,4)], chars)
             elif (nn,ns) == (6,2):
                 d = col.index_dist(straight[0], straight[1])
                 if d == 2:
                     last2 = [col.index_minus(i, 2) for i in straight]
                     start = [s for s,l in zip(straight, last2) if l not in straight][0]
                     return self.subdivide_column(column_name, start,
-                                                 [(0,1,2,'c'),(2,3,'c'),(3,4,'c'),(4,5,'c'),(5,0,'c')])
+                                                 [(0,1,2,'c'),(2,3,'c'),(3,4,'c'),(4,5,'c'),(5,0,'c')], chars)
                 elif d == 3:
-                    return self.subdivide_column(column_name, straight[0], [(0,1,2,3),(3,4,5,0)])
-                else: return self.triangulate_column(column_name)
+                    return self.subdivide_column(column_name, straight[0], [(0,1,2,3),(3,4,5,0)], chars)
+                else: return self.triangulate_column(column_name, chars)
             elif (nn,ns) == (7,3):
                 last2 = [col.index_minus(i, 2) for i in straight]
                 start = [s for s,l in zip(straight, last2) if l not in straight][0]
-                return self.subdivide_column(column_name, start, [(0,1,2),(2,3,4),(0,2,4),(4,5,6,0)])
+                return self.subdivide_column(column_name, start, [(0,1,2),(2,3,4),(0,2,4),(4,5,6,0)], chars)
             elif (nn,ns) == (8,4):
                 return self.subdivide_column(column_name, straight[0],
-                                             [(1,2,'c',0),(2,3,4,'c'),(4,5,6,'c'),(6,7,0,'c')])
-            else: return self.triangulate_column(column_name)
-        else: return self.triangulate_column(column_name)
+                                             [(1,2,'c',0),(2,3,4,'c'),(4,5,6,'c'),(6,7,0,'c')], chars)
+            else: return self.triangulate_column(column_name, chars)
+        else: return self.triangulate_column(column_name, chars)
 
-    def decompose_columns(self, columns = [], mapping = False):
+    def decompose_columns(self, columns = [], mapping = False, chars = ascii_lowercase):
         """Decomposes columns with more than four sides to triangles and quadrilaterals. Optionally returns a dictionary
         mapping column names in the original geometry to lists of corresponding column names in the reduced geometry."""
         if columns == []: columns = self.columnlist
         else: 
             if isinstance(columns[0], str): columns = [self.column[col] for col in columns]
-        colmap = dict([(col.name, self.decompose_column(col.name)) for col in columns])
+        colmap = dict([(col.name, self.decompose_column(col.name, chars)) for col in columns])
         for c in self.missing_connections: self.add_connection(c)
         self.setup_block_name_index()
         self.setup_block_connection_name_index()
@@ -2922,7 +2921,7 @@ class mulgrid(object):
         for n in self.nodelist: geo.add_node(node(n.name, n.pos))
         for col in self.columnlist:
             geo.add_column(column(col.name, [geo.node[n.name] for n in col.node]))
-        colmap = geo.decompose_columns(columns, mapping = True)
+        colmap = geo.decompose_columns(columns, mapping = True, chars = ascii_lowercase + ascii_uppercase)
         geo_columns = []
         for col in columns: geo_columns += [geo.column[geocol] for geocol in colmap[col.name]]
             
