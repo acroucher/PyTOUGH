@@ -319,12 +319,13 @@ def b23p(t):
 def region(t, p):
     """Returns thermodynamic region corresponding to the given temperature and pressure,
     or None if out of bounds."""
-    if (0.01 <= t <= 800.) and (0. <= p <= 1.e8):
-        if t <= Tc1_C:
-            if p > sat(t): return 1 if t <= 350. else 4
-            else: return 2
+    if (0.01 <= t <= 800.) and (0. <= p <= 100.e6):
+        if t <= 350.:
+            return 2 if p < sat(t) else 1
+        elif t <= Tc1_C:
+            if p <= b23p(t): return 2
+            else: return 3 if p < sat(t) else 4
         elif t <= 590.:
-            if p > b23p(t): return 3
-            else: return 2
+            return 2 if p < b23p(t) else 3
         else: return 2
     else: return None
