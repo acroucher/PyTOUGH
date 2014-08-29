@@ -46,6 +46,7 @@ The functions available through the \texttt{IAPWS97} library are listed in Table
       \hyperref[sec:iapws97:cowat]{\texttt{cowat}} & tuple & density and internal energy of liquid water\\
       \hyperref[sec:iapws97:density_temperature_plot]{\texttt{density\_temperature\_plot}} & -- & draws region boundaries on a density-temperature plot\\
       \hyperref[sec:iapws97:pressure_temperature_plot]{\texttt{pressure\_temperature\_plot}} & -- & draws region boundaries on a pressure-temperature plot\\
+      \hyperref[sec:iapws97:region]{\texttt{region}} & integer & thermodynamic region\\
       \hyperref[sec:iapws97:sat]{\texttt{sat}} & float & saturation pressure as a function of temperature\\
       \hyperref[sec:iapws97:super]{\texttt{super}} & tuple & pressure and internal energy of supercritical fluid\\
       \hyperref[sec:iapws97:supst]{\texttt{supst}} & tuple & density and internal energy of dry steam\\
@@ -188,6 +189,32 @@ The \texttt{b23t} function returns the temperature ($\degree$C) on the boundary 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{p}: float\\
+  Pressure (Pa)
+\end{itemize}
+
+\section{Determining thermodynamic region}
+
+\begin{snugshade}
+\subsubsection{\texttt{region(\emph{t}, \emph{p})}}
+\end{snugshade}
+\label{sec:iapws97:region}
+\index{thermodynamics!IAPWS97!region}
+
+Returns the thermodynamic region (integer, or \texttt{None}) corresponding to the given temperature ($\degree$C) and pressure (Pa), as defined by the IAPWS-97 specification. The regions are:
+
+\begin{enumerate}
+  \item liquid water
+  \item dry steam
+  \item supercritical
+\end{enumerate}
+
+If the input temperature and/or pressure are outside the operating range of the IAPWS-97 formulation, the routine will return \texttt{None}.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{t}: float\\
+  Temperature ($\degree$C)
+\item \textbf{Pressure}: float\\
   Pressure (Pa)
 \end{itemize}
 
