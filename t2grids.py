@@ -696,7 +696,7 @@ class t2grid(object):
                 nextcon = con
                 if max_volume is None: found = True
                 else:
-                    if nextblk.volume < max_volume: found = True
+                    if 0. < nextblk.volume < max_volume: found = True
                 if found: break
             if found: return nextblk, nextcon
             else: return None, None
@@ -711,7 +711,7 @@ class t2grid(object):
             blk = start_block
             done = False
             while not done:
-                if max_volume is not None: ok = blk.volume < max_volume
+                if max_volume is not None: ok = 0. < blk.volume < max_volume
                 else: ok = True
                 if ok: blks.append(blk)
                 last_con = con
@@ -831,9 +831,9 @@ class t2grid(object):
                             break
                         last3 = blk; blk = next_blk
                     icol += 1
-                    next1,con = next_block_in_direction(start1, last1, 1, grid)
+                    next1,con = next_block_in_direction(start1, last1, 1, grid, max_volume)
                     last1 = start1; start1 = next1
-                next2,con = next_block_in_direction(start2, last2, 2, grid)
+                next2,con = next_block_in_direction(start2, last2, 2, grid, max_volume)
                 last2 = start2; start2 = next2
             return mapping
 
