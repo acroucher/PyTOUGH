@@ -2897,7 +2897,7 @@ class mulgrid(object):
         if mapping: return colmap
 
     def fit_columns(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
-                    silent = False):
+                    silent = False, output_dict = False):
 
         """Fits scattered data to the column centres of the geometry, using least-squares bilinear finite element fitting with
         Sobolev smoothing.  The parameter data should be in the form of a 3-column array with x,y,z data in each row.
@@ -2906,7 +2906,9 @@ class mulgrid(object):
         For columns with names in min_columns, column centre values will be calculated as the minimum of the fitted nodal
         values.  For all other columns, the average of the nodal values is used.  If grid_boundary is True, only data
         inside the bounding polygon of the grid are used- this can speed up the fitting if there are many data outside the 
-        grid, and the grid has a simply-shaped boundary."""
+        grid, and the grid has a simply-shaped boundary.
+        The result is by default an array of fitted values corresponding to each of the columns. If output_dict is True,
+        the result is a dictionary of fitted values indexed by column names."""
 
         if columns == []: columns = self.columnlist
         else: 
@@ -3000,7 +3002,8 @@ class mulgrid(object):
                     geocol_values.append(sum(nodez) / geocol.num_nodes)
                 val = sum([area * val for area, val in zip(geocol_area, geocol_values)]) / sum(geocol_area)
                 column_values.append(val)
-        return np.array(column_values)
+        if output_dict: return dict(zip([col.name for col in columns], column_values))
+        else: return np.array(column_values)
 
     def fit_surface(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
                     layer_snap = 0.0, silent = False):
