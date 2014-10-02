@@ -692,12 +692,12 @@ Exports the grid to files on disk useful for visualization in Surfer.  Six files
 
 Fits scattered data to column centres, using bilinear least-squares finite element fitting with Sobolev smoothing.  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points).
 
-This method returns an \texttt{np.array} with length given by the number of columns in the geometry. Each value in the array represents the fitted data value at the centre of the corresponding column.
+This method returns an \texttt{np.array} with length given by the number of columns to be fitted. Each value in the array represents the fitted data value at the centre of the corresponding column.
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{data}: \texttt{np.array}\\
-  Two-dimensional array of data to fit.  Each row of the array should contain the x,y,z values for each data point.  Such an array can be conveniently read from a text file using the \texttt{np.loadtxt()} method.
+  Two-dimensional array of data to fit.  Each row of the array should contain the x,y co-ordinates for each data point, followed by the corresponding data value.  Such an array can be conveniently read from a text file using the \texttt{np.loadtxt()} method.
 \item \textbf{alpha}: float\\
   Smoothing parameter for first derivatives - increasing its value results in solutions with lower gradients (but may result in extrema being smoothed out).
 \item \textbf{beta}: float\\
@@ -705,7 +705,7 @@ This method returns an \texttt{np.array} with length given by the number of colu
 \item \textbf{columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
   Columns, or names of columns to be fitted.  If empty (the default), then all columns will be fitted.
 \item \textbf{min\_columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
-  Columns, or names of columns for which elevations will be determined from the minimum of the fitted nodal elevations (elevations at all other columns are determined from the average of the fitted nodal elevations).
+  Columns, or names of columns for which fitted data will be determined from the minimum of the fitted nodal values (fitted values at all other columns are determined from the average of the fitted nodal values).
 \item \textbf{grid\_boundary}: Boolean\\
   If \texttt{True}, test each data point first to see if it lies inside the boundary polygon of the grid.  This can speed up the fitting process if there are many data points outside the grid, and the grid has a simple boundary (e.g. a rectangle).  In general if there are many data points outside the grid, it is best to clip the data set before fitting, particularly if it is to be used more than once.
 \item \textbf{silent}: Boolean\\
