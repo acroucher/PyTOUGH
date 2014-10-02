@@ -2896,19 +2896,17 @@ class mulgrid(object):
         self.setup_block_connection_name_index()
         if mapping: return colmap
 
-    def fit_surface(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
-                    layer_snap = 0.0, silent = False):
+    def fit_columns(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
+                    silent = False):
 
-        """Fits column surface elevations to the grid from the data, using least-squares bilinear finite element fitting with
+        """Fits scattered data to the column centres of the geometry, using least-squares bilinear finite element fitting with
         Sobolev smoothing.  The parameter data should be in the form of a 3-column array with x,y,z data in each row.
         The smoothing parameters alpha and beta control the first and second derivatives of the surface.
-        If the parameter columns is specified, elevations will only be fitted for the specified column names.
-        For columns with names in min_columns, column elevations will be calculated as the minimum of the fitted nodal
-        elevations.  For all other columns, the average of the nodal values is used.  If grid_boundary is True, only data
+        If the parameter columns is specified, data will only be fitted for the specified column names.
+        For columns with names in min_columns, column centre values will be calculated as the minimum of the fitted nodal
+        values.  For all other columns, the average of the nodal values is used.  If grid_boundary is True, only data
         inside the bounding polygon of the grid are used- this can speed up the fitting if there are many data outside the 
-        grid, and the grid has a simply-shaped boundary.  The layer_snap parameter can be specified as a positive number
-        to avoid the creation of very thin top surface layers, if the fitted elevation is very close to the bottom of a layer.
-        In this case the value of layer_snap is a tolerance representing the smallest permissible layer thickness."""
+        grid, and the grid has a simply-shaped boundary."""
 
         if columns == []: columns = self.columnlist
         else: 
@@ -2942,7 +2940,7 @@ class mulgrid(object):
             col = geo.column_containing_point(d[0:2], geo_columns, guess, bounds, qtree)
             percent = 100. * idata / nd
             if not silent:
-                ps = 'fit_surface %3.0f%% done'% percent
+                ps = 'fit_columns %3.0f%% done'% percent
                 sys.stdout.write('%s\r' % ps)
                 sys.stdout.flush()
             if col:
@@ -2956,21 +2954,32 @@ class mulgrid(object):
                             J = node_index[nodej.name]
                             A[I,J] += psi[i] * psi[j]
                         b[I] += psi[i] * d[2]
+
         # add smoothing:
-        smooth = {3: 0.5*alpha*np.array([[1.,0.,-1.],[0.,1.,-1.],[-1.,-1.,2.]]),
-                  4: alpha/6.*np.array([[4.,-1.,-2.,-1.],[-1.,4.,-1.,-2.],[-2.,-1.,4.,-1.],[-1.,-2.,-1.,4.]])+
-                  beta * np.array([[1.,-1.,1.,-1.],[-1.,1.,-1.,1.],[1.,-1.,1.,-1.],[-1.,1.,-1.,1.]])}
+        smooth = {3: 0.5 * alpha * np.array([[1.,0.,-1.],
+                                             [0.,1.,-1.],
+                                             [-1.,-1.,2.]]),
+                  4: alpha / 6. * np.array([[4.,-1.,-2.,-1.],
+                                            [-1.,4.,-1.,-2.],
+                                            [-2.,-1.,4.,-1.],
+                                            [-1.,-2.,-1.,4.]]) + \
+                      beta * np.array([[1.,-1.,1.,-1.],
+                                       [-1.,1.,-1.,1.],
+                                       [1.,-1.,1.,-1.],
+                                       [-1.,1.,-1.,1.]])}
         for col in geo_columns:
             for i,nodei in enumerate(col.node):
                 I = node_index[nodei.name]
                 for j,nodej in enumerate(col.node):
                     J = node_index[nodej.name]
                     A[I,J] += smooth[col.num_nodes][i,j]
+
         A = A.tocsr()
         from scipy.sparse.linalg import spsolve, use_solver
         use_solver(useUmfpack = False)
         z = spsolve(A, b)
-        # assign nodal elevations to columns:
+
+        column_values = []
         def colnodez(col): return [z[node_index[node.name]] for node in col.node]
         for col in columns:
             if col.name in min_columns:
@@ -2981,17 +2990,37 @@ class mulgrid(object):
                     minnodez = min(nodez)
                     if geocol_min is None: geocol_min = minnodez
                     else: geocol_min = min(geocol_min, minnodez)
-                col.surface = geocol_min
+                column_values.append(geocol_min)
             else:
-                geocol_area, geocol_elev = [],[]
+                geocol_area, geocol_values = [],[]
                 for geocolname in colmap[col.name]:
                     geocol = geo.column[geocolname]
                     nodez = colnodez(geocol)
                     geocol_area.append(geocol.area)
-                    geocol_elev.append(sum(nodez) / geocol.num_nodes)
-                col.surface = sum([area * elev for area, elev in zip(geocol_area, geocol_elev)]) / sum(geocol_area)
+                    geocol_values.append(sum(nodez) / geocol.num_nodes)
+                val = sum([area * val for area, val in zip(geocol_area, geocol_values)]) / sum(geocol_area)
+                column_values.append(val)
+        return np.array(column_values)
+
+    def fit_surface(self, data, alpha = 0.1, beta = 0.1, columns = [], min_columns = [], grid_boundary = False,
+                    layer_snap = 0.0, silent = False):
+
+        """Fits column surface elevations to the grid from the data, using the fit_columns() method (see documentation
+        for that method for more detail). The layer_snap parameter can be specified as a positive number
+        to avoid the creation of very thin top surface layers, if the fitted elevation is very close to the bottom of a layer.
+        In this case the value of layer_snap is a tolerance representing the smallest permissible layer thickness."""
+
+        if columns == []: columns = self.columnlist
+        else: 
+            if isinstance(columns[0],str): columns = [self.column[col] for col in columns]
+
+        col_elevations = self.fit_columns(data, alpha, beta, columns, min_columns, grid_boundary, silent)
+        
+        for col, elev in zip(columns, col_elevations):
+            col.surface = elev
             self.set_column_num_layers(col)
-        self.snap_columns_to_layers(layer_snap,columns)
+
+        self.snap_columns_to_layers(layer_snap, columns)
         self.setup_block_name_index()
         self.setup_block_connection_name_index()
 
