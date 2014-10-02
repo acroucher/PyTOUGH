@@ -186,7 +186,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:delete_well]{\texttt{delete\_well}} & -- & deletes a well from the grid\\ 
   \hyperref[sec:mulgrid:empty]{\texttt{empty}} & --  & empties contents of grid\\
   \hyperref[sec:mulgrid:export_surfer]{\texttt{export\_surfer}} & -- & exports to various files on disk for visualization in Surfer\\ 
-  \hyperref[sec:mulgrid:fit_columns]{\texttt{fit\_columns}} & \texttt{np.array} & fits scattered data to column centres\\ 
+  \hyperref[sec:mulgrid:fit_columns]{\texttt{fit\_columns}} & \texttt{np.array} or dictionary & fits scattered data to column centres\\ 
   \hyperref[sec:mulgrid:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
   \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & imports a grid from a \texttt{gmsh} mesh\\ 
   \hyperref[sec:mulgrid:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
@@ -685,14 +685,14 @@ Exports the grid to files on disk useful for visualization in Surfer.  Six files
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{fit\_columns(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
-    \emph{grid\_boundary}=False, \emph{silent}=False)}}\end{snugshade}
+    \emph{grid\_boundary}=False, \emph{silent}=False, \emph{output\_dict}=False)}}\end{snugshade}
 \label{sec:mulgrid:fit_columns}
 \index{MULgraph geometry!fitting data to columns}
 \index{MULgraph geometry!columns!fitting data}
 
 Fits scattered data to column centres, using bilinear least-squares finite element fitting with Sobolev smoothing.  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points).
 
-This method returns an \texttt{np.array} with length given by the number of columns to be fitted. Each value in the array represents the fitted data value at the centre of the corresponding column.
+By default, this method returns an \texttt{np.array} with length given by the number of columns to be fitted. Each value in the array represents the fitted data value at the centre of the corresponding column. If the \texttt{output\_dict} parameter is set to \texttt{True}, a dictionary is returned, with fitted values indexed by column names.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -710,6 +710,8 @@ This method returns an \texttt{np.array} with length given by the number of colu
   If \texttt{True}, test each data point first to see if it lies inside the boundary polygon of the grid.  This can speed up the fitting process if there are many data points outside the grid, and the grid has a simple boundary (e.g. a rectangle).  In general if there are many data points outside the grid, it is best to clip the data set before fitting, particularly if it is to be used more than once.
 \item \textbf{silent}: Boolean\\
   Set to \texttt{True} to suppress printing fitting progress.
+\item \textbf{output\_dict}: Boolean\\
+  Set \texttt{True} to return results as a dictionary of fitted values indexed by column names, instead of an array.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{fit\_surface(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
