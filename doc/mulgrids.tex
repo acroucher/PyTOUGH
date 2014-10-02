@@ -186,6 +186,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:delete_well]{\texttt{delete\_well}} & -- & deletes a well from the grid\\ 
   \hyperref[sec:mulgrid:empty]{\texttt{empty}} & --  & empties contents of grid\\
   \hyperref[sec:mulgrid:export_surfer]{\texttt{export\_surfer}} & -- & exports to various files on disk for visualization in Surfer\\ 
+  \hyperref[sec:mulgrid:fit_columns]{\texttt{fit\_columns}} & \texttt{np.array} & fits scattered data to column centres\\ 
   \hyperref[sec:mulgrid:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
   \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & imports a grid from a \texttt{gmsh} mesh\\ 
   \hyperref[sec:mulgrid:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
@@ -559,7 +560,7 @@ Copies the wells from the geometry \texttt{geo} (deleting any existing wells fir
 \label{sec:mulgrid:decompose_columns}
 \index{MULgraph geometry!columns!decomposing}
 
-Decomposes columns with more than four sides into triangular and quadrilateral columns. This can be useful when carrying out calculations on the geometry that rely on finite element methods (e.g. the \texttt{fit\_surface()} method uses it).
+Decomposes columns with more than four sides into triangular and quadrilateral columns. This can be useful when carrying out calculations on the geometry that rely on finite element methods (e.g. the \texttt{fit\_columns()} method uses it).
 
 In general, columns are decomposed by adding a node at the column centroid and forming triangles around it. However, there are special cases for columns with lower numbers of sides (less than 9) and `straight' nodes, i.e. nodes on a straight line between their neighbouring nodes in the column). These make use of simpler decompositions.
 
@@ -683,13 +684,41 @@ Exports the grid to files on disk useful for visualization in Surfer.  Six files
   Coordinate value of the left hand side of the layer plot (default zero).
 \end{itemize}
 
+\begin{snugshade}\subsubsection{\texttt{fit\_columns(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
+    \emph{grid\_boundary}=False, \emph{silent}=False)}}\end{snugshade}
+\label{sec:mulgrid:fit_columns}
+\index{MULgraph geometry!fitting data to columns}
+\index{MULgraph geometry!columns!fitting data}
+
+Fits scattered data to column centres, using bilinear least-squares finite element fitting with Sobolev smoothing.  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points).
+
+This method returns an \texttt{np.array} with length given by the number of columns in the geometry. Each value in the array represents the fitted data value at the centre of the corresponding column.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{data}: \texttt{np.array}\\
+  Two-dimensional array of data to fit.  Each row of the array should contain the x,y,z values for each data point.  Such an array can be conveniently read from a text file using the \texttt{np.loadtxt()} method.
+\item \textbf{alpha}: float\\
+  Smoothing parameter for first derivatives - increasing its value results in solutions with lower gradients (but may result in extrema being smoothed out).
+\item \textbf{beta}: float\\
+  Smoothing parameter for second derivatives - increasing its value results in solutions with lower curvature.
+\item \textbf{columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
+  Columns, or names of columns to be fitted.  If empty (the default), then all columns will be fitted.
+\item \textbf{min\_columns}: list of string or \hyperref[columnobjects]{\texttt{column}}\\
+  Columns, or names of columns for which elevations will be determined from the minimum of the fitted nodal elevations (elevations at all other columns are determined from the average of the fitted nodal elevations).
+\item \textbf{grid\_boundary}: Boolean\\
+  If \texttt{True}, test each data point first to see if it lies inside the boundary polygon of the grid.  This can speed up the fitting process if there are many data points outside the grid, and the grid has a simple boundary (e.g. a rectangle).  In general if there are many data points outside the grid, it is best to clip the data set before fitting, particularly if it is to be used more than once.
+\item \textbf{silent}: Boolean\\
+  Set to \texttt{True} to suppress printing fitting progress.
+\end{itemize}
+
 \begin{snugshade}\subsubsection{\texttt{fit\_surface(\emph{data}, \emph{alpha}=0.0, \emph{beta}=0.0, \emph{columns}=[], \emph{min\_columns}=[], \\
     \emph{grid\_boundary}=False, \emph{layer\_snap}=0.0, \emph{silent}=False)}}\end{snugshade}
 \label{sec:mulgrid:fit_surface}
 \index{MULgraph geometry!fitting surface elevations}
 \index{MULgraph geometry!columns!surface elevation}
 
-Fits column surface elevations from data, using bilinear least-squares finite element fitting with Sobolev smoothing.  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points).
+Fits column surface elevations from data, using bilinear least-squares finite element fitting with Sobolev smoothing (using the \hyperref[sec:mulgrid:fit_columns]{\texttt{fit\_columns()}} method).  Smoothing is useful when data density is low in some areas of the grid, in which case least-squares fitting without smoothing can fail (e.g. if there are any columns which do not contain any data points). Use the \texttt{layer\_snap} parameter to eliminate surface blocks with very small thickness.
 
 \textbf{Parameters:}
 \begin{itemize}
