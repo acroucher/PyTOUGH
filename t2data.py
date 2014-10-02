@@ -651,18 +651,18 @@ class t2data(object):
             nlines=int(ceil(ntimes/4.))
             for i in xrange(nlines):
                 i1,i2=i*4,min((i+1)*4,ntimes)
-                vals=gen.time[i1:i2]
+                vals = list(gen.time[i1:i2])
                 if len(vals)<4: vals+=[None]*(4-len(vals))
                 outfile.write_values(vals,'generation_times')
             for i in xrange(nlines):
                 i1,i2=i*4,min((i+1)*4,ntimes)
-                vals=gen.rate[i1:i2]
+                vals = list(gen.rate[i1:i2])
                 if len(vals)<4: vals+=[None]*(4-len(vals))
                 outfile.write_values(vals,'generation_rates')
             if gen.enthalpy:
                 for i in xrange(nlines):
                     i1,i2=i*4,min((i+1)*4,ntimes)
-                    vals=gen.enthalpy[i1:i2]
+                    vals = list(gen.enthalpy[i1:i2])
                     if len(vals)<4: vals+=[None]*(4-len(vals))
                     outfile.write_values(vals,'generation_enthalpy')
 
