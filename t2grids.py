@@ -662,13 +662,19 @@ class t2grid(object):
         The method also returns a block mapping dictionary, mapping geometry block names into 
         grid block names."""
 
-        def blockelevs(grid):
+        def blockelevs(grid, max_volume = None):
             """Returns array of block elevations."""
-            return np.array([np.nan if blk.centre is None else blk.centre[2] for blk in grid.blocklist])
+            def elev(block, max_volume = None):
+                if blk.centre is None: return np.nan
+                elif max_volume is None: return blk.centre[2]
+                elif 0. < blk.volume <= max_volume: return blk.centre[2]
+                else: return np.nan
+            return np.array([elev(blk, max_volume) for blk in grid.blocklist])
 
-        def topmost_block(grid):
-            """"Returns block with highest centre in the grid."""
-            itop = np.nanargmax(blockelevs(grid))
+        def topmost_block(grid, max_volume = None):
+            """"Returns block with highest centre in the grid. If max_volume is given, only blocks
+            with volume greater than zero and less than max_volume are considered."""
+            itop = np.nanargmax(blockelevs(grid, max_volume))
             return grid.blocklist[itop]
 
         def find_origin_block(grid):
@@ -734,7 +740,7 @@ class t2grid(object):
             spacings = {}
             for dirn in xrange(1, 4):
                 if dirn < 3: blk = ob
-                else: blk = topmost_block(grid)
+                else: blk = topmost_block(grid, max_volume)
                 blks, spacings[dirn] = block_direction_track(grid, blk, dirn, max_volume)
                 if dirn == 3 and blks[0].centre[2] < blks[-1].centre[2]: spacings[dirn].reverse()
             # calculate missing spacing for 2D meshes:
