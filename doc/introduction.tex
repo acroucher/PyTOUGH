@@ -163,7 +163,9 @@ On Linux systems you can download and install these libraries via your package m
 
 \texttt{aptitude install python-matplotlib python-scipy libvtk5.8 python-vtk}
 
-On Windows you will need to download and install them yourself from the internet (see links above) or elsewhere.  At the time of writing there is not yet an official 64-bit build of Scientific Python for Windows.  However an unofficial build can be found at \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.  Use of this version of Scientific Python requires that their version of Numerical Python is also used.  As for Numerical Python, make sure you install the versions of these libraries corresponding to your computer architecture (32- or 64-bit) and Python version (e.g. 2.6 or 2.7).
+On Windows you will need to download and install them yourself from the internet (see links above) or elsewhere.  At the time of writing there is not yet an official 64-bit build of Scientific Python for Windows.  However an unofficial build can be found at Christoph Gohlke's Python package site: \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.  Use of this version of Scientific Python requires that his version of Numerical Python is also used.  As for Numerical Python, make sure you install the versions of these libraries corresponding to your computer architecture (32- or 64-bit) and Python version (e.g. 2.6 or 2.7).
+
+If you are installing a recent version of \texttt{matplotlib} (around 1.3.0 or later) on Windows, you will probably also need to install some other Python packages (\texttt{dateutil}, \texttt{pytz}, \texttt{pyparsing}, \texttt{six} and \texttt{setuptools}). If installing from Christoph Gohlke's site (see above), the entry for \texttt{matplotlib} lists these dependencies and gives links for downloading them. If you don't install them, you will encounter an error \texttt{``Import error: matpotlib requires dateutil"} when you try to run your script.
 
 \subsubsection{Installing VTK-Python on Windows}
 \index{Visualization Tool Kit (VTK)}
