@@ -1667,26 +1667,32 @@ class mulgrid(object):
             """Finds track segment starting from the specified position and column."""
             track = []
             cols, more, inpos, colnbr = set(), True, pos, col.neighbourlist
-            lined=np.linalg.norm(linesegment[1] - linesegment[0])
+            lined = np.linalg.norm(linesegment[1] - linesegment[0])
             while more:
                 cols.add(col)
-                outpos,ind = furthest_intersection(col.polygon,linesegment)
-                d = np.linalg.norm(outpos - linesegment[0])
-                if d >= lined: # gone past end of line
-                    outpos = linesegment[1]
-                    more = False
-                if np.linalg.norm(outpos - inpos) > 0.: track.append(tuple([col,inpos,outpos]))
-                if more: # find next column
-                    inpos = outpos
-                    nextcol = colnbr[ind]
-                    if nextcol:
-                        if nextcol in cols:
-                            nextcol,more = next_corner_column(col,outpos,more,cols)
-                            if nextcol is None: nextcol,more = next_neighbour_column(col,more,cols)
-                    else: nextcol,more = next_corner_column(col,outpos,more,cols)
-                    col = nextcol
-                    if col: colnbr = col.neighbourlist
-                    else: more = False
+                outpos, ind = furthest_intersection(col.polygon,linesegment)
+                if outpos is not None:
+                    d = np.linalg.norm(outpos - linesegment[0])
+                    if d >= lined: # gone past end of line
+                        outpos = linesegment[1]
+                        more = False
+                    if np.linalg.norm(outpos - inpos) > 0.: track.append(tuple([col,inpos,outpos]))
+                    if more: # find next column
+                        inpos = outpos
+                        nextcol = colnbr[ind]
+                        if nextcol:
+                            if nextcol in cols:
+                                nextcol, more = next_corner_column(col, outpos, more, cols)
+                                if nextcol is None:
+                                    nextcol, more = next_neighbour_column(col, more, cols)
+                                    nbr_base_col = col
+                        else: nextcol, more = next_corner_column(col, outpos, more, cols)
+                else:
+                    nextcol, more = next_neighbour_column(nbr_base_col, more, cols)
+                col = nextcol
+                if col: colnbr = col.neighbourlist
+                else: more = False
+
             return track
 
         def reverse_track(track): return [tuple([tk[0],tk[2],tk[1]]) for tk in track][::-1]
