@@ -912,7 +912,7 @@ class t2listing(file):
             for sel_index,(tspec,key,h) in enumerate(selection):  # convert keys to indices as necessary, and expand table names
                 tablename=tablename_from_specification(tspec)
                 if tablename in tables:
-                    if isinstance(key,int): index=key
+                    if isinstance(key,int): index, reverse = key, False
                     else:
                         index,reverse=None,False
                         if key in tables[tablename].row_name: index=tables[tablename]._row[key]
