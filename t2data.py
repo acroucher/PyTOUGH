@@ -59,7 +59,7 @@ t2data_format_specification = {
     'indom2':[['indom']*4,['20.13e']*4],
     'diffusion': [['diff']*8,['10.4e']*8],
     'selec1': [['int_selec']*16,['5d']*16],
-    'selec2': [['float_selec']*8,['10.4e']*8],
+    'selec2': [['float_selec']*8,['10.3e']*8],
     'radii1': [['nrad'],['5d']],
     'radii2': [['radius']*8,['10.4e']*8],
     'equid' : [['nequ','','dr'],['5d','5x','10.4e']],
