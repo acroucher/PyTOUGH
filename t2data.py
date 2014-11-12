@@ -462,7 +462,13 @@ class t2data(object):
         outfile.write_value_line(paramw,'param2')
         self.write_timesteps(outfile)
         outfile.write_value_line(self.parameter,'param3')
-        outfile.write_values(self.parameter['default_incons'],'default_incons')
+        num_vars = len(self.parameter['default_incons'])
+        nlines = int(ceil(num_vars / 4.))
+        for i in xrange(nlines):
+            i1, i2 = i * 4, min((i + 1) * 4, num_vars)
+            vals = list(self.parameter['default_incons'][i1:i2])
+            if len(vals) < 4: vals += [None] * (4 - len(vals))
+            outfile.write_values(vals,'default_incons')
 
     def read_timesteps(self,infile):
         """Reads time step sizes from file"""
