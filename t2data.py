@@ -436,6 +436,20 @@ class t2data(object):
         self.read_timesteps(infile)
         infile.read_value_line(self.parameter,'param3')
         for val in infile.read_values('default_incons'): self.parameter['default_incons'].append(val)
+        # read any additional lines of default incons:
+        more = True
+        while more:
+            line = padstring(infile.readline())
+            if line.strip():
+                section = any([line.startswith(keyword) for keyword in t2data_sections])
+                if section: more = False
+                else:
+                    more_incons = infile.parse_string(line, 'default_incons')
+                    if more_incons:
+                        while more_incons[-1] is None: more_incons.pop()
+                    self.parameter['default_incons'] += more_incons
+            else: more, line = False, None
+        return line
 
     def write_parameters(self,outfile):
         outfile.write('PARAM\n')
@@ -1206,8 +1220,10 @@ class t2data(object):
         self.read_title(infile)
         self._sections = []
         more = True
+        next_line = None
         while more:
-            line = infile.readline()
+            if next_line: line = next_line
+            else: line = infile.readline()
             if line:
                 keyword = line[0:5].strip()
                 if keyword in ['ENDCY','ENDFI']:
@@ -1215,7 +1231,9 @@ class t2data(object):
                     self.end_keyword = keyword
                 elif keyword in t2data_sections:
                     fn = self.read_fn[keyword]
+                    next_line = None
                     if keyword == 'SHORT': fn(infile,line)
+                    elif keyword == 'PARAM': next_line = fn(infile)
                     else: fn(infile)
                     self._sections.append(keyword)
             else: more = False
