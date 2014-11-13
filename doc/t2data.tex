@@ -587,6 +587,11 @@ A string property containing the simulation title, corresponding to the \textbf{
 
 A string property specifying the simulator type (`AUTOUGH2' or `TOUGH2').  Changing the value of this property will cause one of the \hyperref[sec:t2data:convert_to_TOUGH2]{\texttt{convert\_to\_TOUGH2()}} or \hyperref[sec:t2data:convert_to_AUTOUGH2]{\texttt{convert\_to\_AUTOUGH2()}} methods to be executed, with default method parameters.  Hence, changing the \texttt{type} property to `AUTOUGH2' causes the EOS to be set to the default `EW'.  It is also not possible to specify TOUGH2\_MP options when setting \texttt{type}.  For more control over how the conversion is carried out, use the conversion methods directly instead of setting \texttt{type}.
 
+\subsection{Functions for reading data from file}
+\index{TOUGH2 data files!reading}
+
+It is possible to specify customized functions to control how data are read from a TOUGH2 data file. This is done using the optional \texttt{read\_function} parameter when a \texttt{t2data} object is created- in exactly the same way it is done for a \texttt{mulgrid} object. For more details, see the corresponding documentation for \texttt{mulgrid} objects in section \ref{mulgridreadfunctions}. By default, the read functions for \texttt{t2data} objects are given by the \texttt{default\_read\_function} dictionary.
+
 \subsection{Methods}
 
 The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_methods}.  Details of these methods are given below.

@@ -104,6 +104,11 @@ The \texttt{simulator} string property is `TOUGH2' by default, and is set to `TO
   \end{center}
 \end{table}
 
+\subsubsection{Functions for reading data from file}
+\index{TOUGH2 initial conditions!reading}
+
+It is possible to specify customized functions to control how data are read from a TOUGH2 initial conditions file. This is done using the optional \texttt{read\_function} parameter when a \texttt{t2incon} object is created- in exactly the same way it is done for a \texttt{mulgrid} object. For more details, see the corresponding documentation for \texttt{mulgrid} objects in section \ref{mulgridreadfunctions}. By default, the read functions for \texttt{t2incon} objects are given by the \texttt{fortran\_read\_function} dictionary.
+
 \subsection{Methods}
 
 The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_methods}.  Details of these methods are given below.

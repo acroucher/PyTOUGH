@@ -12,7 +12,24 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
 from mulgrids import *
-from fixed_format_file import fortran_float, fortran_int
+from fixed_format_file import *
+
+t2incon_format_specification = {
+    'header': [['header'], ['80s']],
+    'incon1': [['name', 'nseq', 'nadd', 'porx', 'k1', 'k2', 'k3'],
+               ['5s', '5d', '5d'] + ['15.9e'] * 4],
+    'incon2': [['x1', 'x2', 'x3', 'x4'], ['20.14e'] * 4],
+    'timing': [['kcyc', 'iter', 'nm', 'tstart', 'sumtim'],
+               ['5d'] * 3 + ['15.9e'] * 2],
+    'timing_toughreact': [['kcyc', 'iter', 'nm', 'tstart', 'sumtim'],
+               ['6d'] * 2 + ['3d'] + ['15.9e'] * 2]
+}
+
+class t2incon_parser(fixed_format_file):
+    """Class for parsing TOUGH2 incon file."""
+    def __init__(self, filename, mode, read_function = fortran_read_function):
+        super(t2incon_parser,self).__init__(filename, mode,
+                                            t2incon_format_specification, read_function)
 
 class t2blockincon(object):
     """Class for a single set of initial conditions at one block."""
@@ -31,8 +48,10 @@ class t2blockincon(object):
 
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
-    def __init__(self,filename=''):
+    def __init__(self, filename = '', read_function = fortran_read_function):
+        self.header = ''
         self.simulator = 'TOUGH2'
+        self.read_function = read_function
         self.empty()
         if filename: self.read(filename)
 
@@ -125,44 +144,43 @@ class t2incon(object):
             del self._block[block]
             self._blocklist.remove(incon)
 
-    def read(self,filename):
+    def read(self, filename):
         """Reads initial conditions from file."""
         self.empty()
-        f=open(filename,'rU')
-        line=f.readline() # header
-        finished=False
-        timing=False
+        infile = t2incon_parser(filename, 'rU', read_function = self.read_function)
+        infile.read_value_line(self.__dict__, 'header')
+        finished = False
+        timing = False
         while not finished:
-            line=f.readline()
+            line = infile.readline()
             if line.strip():
                 if line.startswith('+++'):
-                    finished=True
-                    timing=True
+                    finished = True
+                    timing = True
                 else:
-                    blkname=fix_blockname(line[0:5])
-                    if len(line)>=30: porosity=fortran_float(line[15:30])
-                    else: porosity=None
-                    if len(line)>=75:
-                        permeability = np.array([fortran_float(line[i:i+15]) for i in [30,45,60]])
+                    line = padstring(line)
+                    [blkname, nseq, nadd, porosity, k1, k2, k3] = infile.parse_string(line, 'incon1')
+                    blkname = fix_blockname(blkname)
+                    if (k1 is None or k2 is None or k3 is None): permeability = None
+                    else:
+                        permeability = np.array([k1, k2, k3])
                         self.simulator = 'TOUGHREACT'
-                    else: permeability = None
-                    line=f.readline()
-                    linestrs=[line[i*20:(i+1)*20] for i in xrange(len(line)/20)]
-                    vals=tuple([fortran_float(s) for s in linestrs])
+                    vals = infile.read_values('incon2')
+                    while vals[-1] is None: vals.pop()
                     incon = t2blockincon(vals, blkname, porosity, permeability)
                     self.add_incon(incon)
-            else: finished=True
+            else: finished = True
         self.timing = None
         if timing:
-            line=f.readline().rstrip()
-            if len(line)>=45:
-                self.timing = {'tstart':float(line[15:30]),'sumtim':float(line[30:45])}
-                if self.simulator == 'TOUGH2':
-                    self.timing.update({'kcyc':fortran_int(line[0:5]),'iter':fortran_int(line[5:10]),
-                                        'nm':fortran_int(line[10:15])})
-                else: # TOUGHREACT
-                    self.timing.update({'kcyc':fortran_int(line[0:6]),'iter':fortran_int(line[6:12]),
-                                        'nm':fortran_int(line[12:15])})
+            line = infile.readline()
+            if line.strip():
+                line = padstring(line)
+                timing_fmt = 'timing'
+                if self.simulator == 'TOUGHREACT': timing_fmt += '_toughreact'
+                [kcyc, itr, nm, tstart, sumtim] = infile.parse_string(line, timing_fmt)
+                self.timing = {'kcyc': kcyc, 'iter': itr, 'nm': nm}
+                if tstart is not None: self.timing['tstart'] = tstart
+                if sumtim is not None: self.timing['sumtim'] = sumtim
 
     def write(self,filename,reset=True):
         """Writes initial conditions to file."""

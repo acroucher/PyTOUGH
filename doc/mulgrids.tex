@@ -56,7 +56,9 @@ The \texttt{bad\_columns}, \texttt{bad\_layers}, \texttt{missing\_connections}, 
 Blocks at the ground surface that have very small vertical thickness can sometimes cause problems.  The \texttt{min\_surface\_block\_thickness} property gives a tuple containing the minimum surface block thickness and the name of the column in which it occurs.  Thin surface blocks of this type can be eliminated using the \texttt{snap\_columns\_to\_layers()} method.
 
 \subsubsection{Functions for reading data from file}
+\label{mulgridreadfunctions}
 \index{MULgraph geometry!file format}
+\index{MULgraph geometry!reading}
 
 A \texttt{mulgrid} object has a \texttt{read\_function} property which controls how data are read from file.  This property is a dictionary with six keys: `d', `f', `e', `g', `s' and `x', denoting respectively integer, float, exponential, general, string and blank.  Each item in the dictionary is a function which converts a string from the file on disk into the appropriate value.  For example, \texttt{read\_function['f']} converts a string to a floating point value.  By default, the built-in Python \texttt{float} function is used for this (although it is modified slightly so that it returns \texttt{None} if the input string is blank).  There is a dictionary of default reading functions included in PyTOUGH, called \texttt{default\_read\_function}.
 
