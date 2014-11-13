@@ -199,9 +199,7 @@ class t2incon(object):
                                       list(incon.permeability), 'incon1_toughreact')
             else:
                 outfile.write_values([blkname, None, None, incon.porosity], 'incon1')
-            vals = list(incon.variable)
-            vals += [None] * (4 - len(vals))
-            outfile.write_values(vals, 'incon2')
+            outfile.write_values(list(incon.variable), 'incon2')
         if (self.timing is None) or reset: outfile.write('\n\n')
         else:
             outfile.write('+++\n')
