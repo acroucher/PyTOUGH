@@ -15,10 +15,13 @@ from mulgrids import *
 from fixed_format_file import *
 
 t2incon_format_specification = {
-    'header': [['header'], ['80s']],
-    'incon1': [['name', 'nseq', 'nadd', 'porx', 'k1', 'k2', 'k3'],
+    'header_short': [['title'], ['5s']],
+    'header_long': [['s1', 'nele', 's2', 'sumtim'], ['31s', '5d', '19s', '12.6e']],
+    'incon1': [['name', 'nseq', 'nadd', 'porx'],
+               ['5s', '5d', '5d', '15.9e']],
+    'incon1_toughreact': [['name', 'nseq', 'nadd', 'porx', 'k1', 'k2', 'k3'],
                ['5s', '5d', '5d'] + ['15.9e'] * 4],
-    'incon2': [['x1', 'x2', 'x3', 'x4'], ['20.14e'] * 4],
+    'incon2': [['x1', 'x2', 'x3', 'x4'], ['20.13e'] * 4],
     'timing': [['kcyc', 'iter', 'nm', 'tstart', 'sumtim'],
                ['5d'] * 3 + ['15.9e'] * 2],
     'timing_toughreact': [['kcyc', 'iter', 'nm', 'tstart', 'sumtim'],
@@ -49,7 +52,6 @@ class t2blockincon(object):
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
     def __init__(self, filename = '', read_function = fortran_read_function):
-        self.header = ''
         self.simulator = 'TOUGH2'
         self.read_function = read_function
         self.empty()
@@ -148,7 +150,7 @@ class t2incon(object):
         """Reads initial conditions from file."""
         self.empty()
         infile = t2incon_parser(filename, 'rU', read_function = self.read_function)
-        infile.read_value_line(self.__dict__, 'header')
+        infile.readline() # skip header
         finished = False
         timing = False
         while not finished:
@@ -159,7 +161,8 @@ class t2incon(object):
                     timing = True
                 else:
                     line = padstring(line)
-                    [blkname, nseq, nadd, porosity, k1, k2, k3] = infile.parse_string(line, 'incon1')
+                    [blkname, nseq, nadd, porosity, k1, k2, k3] = \
+                        infile.parse_string(line, 'incon1_toughreact')
                     blkname = fix_blockname(blkname)
                     if (k1 is None or k2 is None or k3 is None): permeability = None
                     else:
@@ -178,34 +181,34 @@ class t2incon(object):
                 timing_fmt = 'timing'
                 if self.simulator == 'TOUGHREACT': timing_fmt += '_toughreact'
                 [kcyc, itr, nm, tstart, sumtim] = infile.parse_string(line, timing_fmt)
-                self.timing = {'kcyc': kcyc, 'iter': itr, 'nm': nm}
-                if tstart is not None: self.timing['tstart'] = tstart
-                if sumtim is not None: self.timing['sumtim'] = sumtim
+                self.timing = {'kcyc': kcyc, 'iter': itr, 'nm': nm,
+                               'tstart': tstart, 'sumtim': sumtim}
 
-    def write(self,filename,reset=True):
+    def write(self, filename, reset = True):
         """Writes initial conditions to file."""
-        def list_fmt(x): return ['%20.14e','%20.13e'][abs(x)<1.e-99]
-        f=open(filename,'w')
+        outfile = t2incon_parser(filename, 'w')
         if (self.timing is None) or reset:
-            f.write('INCON\n')
+            outfile.write_values(['INCON'], 'header_short')
         else:
-            f.write('%s%5d%s%12.6e\n' % ('INCON -- INITIAL CONDITIONS FOR',self.num_blocks,' ELEMENTS AT TIME  ',self.timing['sumtim']))
+            outfile.write_values(['INCON -- INITIAL CONDITIONS FOR', self.num_blocks,
+                                  ' ELEMENTS AT TIME  ', self.timing['sumtim']], 'header_long')
         for incon in self._blocklist:
-            f.write('%5s'%unfix_blockname(incon.block))  # TOUGH2 needs mangled block names in the incon file
-            if incon.porosity is not None: f.write('          %15.9e'%incon.porosity)
+            blkname = unfix_blockname(incon.block)
             if self.simulator == 'TOUGHREACT' and incon.permeability is not None:
-                f.write(' %14.8e %14.8e %14.8e'%tuple(incon.permeability))
-            f.write('\n')
-            for v in incon.variable: f.write(list_fmt(v)%v)
-            f.write('\n')
-        if (self.timing is None) or reset: f.write('\n\n')
+                outfile.write_values([blkname, None, None, incon.porosity] +
+                                      list(incon.permeability), 'incon1_toughreact')
+            else:
+                outfile.write_values([blkname, None, None, incon.porosity], 'incon1')
+            vals = list(incon.variable)
+            vals += [None] * (4 - len(vals))
+            outfile.write_values(vals, 'incon2')
+        if (self.timing is None) or reset: outfile.write('\n\n')
         else:
-            f.write('+++\n')
-            if self.simulator == 'TOUGH2': time_fmt = '%5d%5d%5d%15.9e%15.9e\n'
-            else: time_fmt = '%6d%6d%3d%15.9e%15.9e\n' # TOUGHREACT
-            f.write(time_fmt%(self.timing['kcyc'],self.timing['iter'],self.timing['nm'],
-                              self.timing['tstart'],self.timing['sumtim']))
-        f.close()
+            outfile.write('+++\n')
+            timing_fmt = 'timing'
+            if self.simulator == 'TOUGHREACT': timing_fmt += '_toughreact'
+            outfile.write_value_line(self.timing, timing_fmt)
+        outfile.close()
 
     def transfer_from(self,sourceinc,sourcegeo,geo,mapping={},colmapping={}):
         """Transfers initial conditions from another t2incon object, using the two corresponding geometry objects, and the
