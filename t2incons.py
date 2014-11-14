@@ -169,7 +169,7 @@ class t2incon(object):
                         permeability = np.array([k1, k2, k3])
                         self.simulator = 'TOUGHREACT'
                     vals = infile.read_values('incon2')
-                    while vals[-1] is None: vals.pop()
+                    while vals and vals[-1] is None: vals.pop()
                     incon = t2blockincon(vals, blkname, porosity, permeability)
                     self.add_incon(incon)
             else: finished = True
