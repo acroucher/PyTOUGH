@@ -109,6 +109,22 @@ The \texttt{simulator} string property is `TOUGH2' by default, and is set to `TO
 
 It is possible to specify customized functions to control how data are read from a TOUGH2 initial conditions file. This is done using the optional \texttt{read\_function} parameter when a \texttt{t2incon} object is created- in exactly the same way it is done for a \texttt{mulgrid} object. For more details, see the corresponding documentation for \texttt{mulgrid} objects in section \ref{mulgridreadfunctions}. By default, the read functions for \texttt{t2incon} objects are given by the \texttt{fortran\_read\_function} dictionary.
 
+\subsubsection{Specifying the number of primary variables}
+\index{TOUGH2 initial conditions!number of primary variables}
+
+Most common TOUGH2 EOS modules have no more than four primary variables, in which case the variables for a given block all fit on one line in the initial conditions file. However, some EOS modules (e.g. EOS7c and EOS7r) have more than four primary variables. For these, the variables for a given block are specified over multiple lines in the initial conditions file.
+
+In this case, it is not possible for PyTOUGH to reliably detect the number of primary variables, as it does when there are no more than four variables. Instead, the number of primary variables must be specified when the \texttt{t2incon} object is created (or its \hyperref[sec:t2incon:read]{\texttt{read()}} method is executed). This can be done by setting the optional integer \texttt{num\_variables} parameter, which defaults to \texttt{None} (meaning PyTOUGH will detect the number of variables). For example:
+
+\begin{lstlisting}
+from t2incons import *
+inc = t2incon('model.incon', num_variables = 6)
+\end{lstlisting}
+
+opens initial conditions for an EOS using six primary variables.
+
+For writing initial conditions files with more than four primary variables, no extra parameters need be set, as the data stored in the \texttt{t2incon} object determines the number of primary variables, and they will be written out over multiple lines as required.
+
 \subsection{Methods}
 
 The main methods of a \texttt{t2incon} object are listed in Table \ref{tb:t2incon_methods}.  Details of these methods are given below.
@@ -187,7 +203,7 @@ Inserts a set of initial conditions for a single block at the specified index.
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{read(\emph{filename})}}
+\subsubsection{\texttt{read(\emph{filename}, \emph{num\_variables} = None)}}
 \end{snugshade}
 \label{sec:t2incon:read}
 \index{TOUGH2 initial conditions!reading}
@@ -198,6 +214,8 @@ Reads initial conditions from file.
 \begin{itemize}
 \item \textbf{filename}: string\\
   Name of the initial conditions file to be read.
+\item \textbf{num\_variables}: integer or \texttt{None}\\
+  If reading initial conditions files with more than four primary variables, set to the number of primary variables. Otherwise, the default \texttt{None} value can be used, in which case the number of primary variables will be detected automatically.
 \end{itemize}
 
 \begin{snugshade}

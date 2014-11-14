@@ -51,11 +51,11 @@ class t2blockincon(object):
 
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
-    def __init__(self, filename = '', read_function = fortran_read_function):
+    def __init__(self, filename = '', read_function = fortran_read_function, num_variables = None):
         self.simulator = 'TOUGH2'
         self.read_function = read_function
         self.empty()
-        if filename: self.read(filename)
+        if filename: self.read(filename, num_variables)
 
     def __getitem__(self,key):
         if isinstance(key,(int,slice)): return self._blocklist[key]
@@ -146,7 +146,7 @@ class t2incon(object):
             del self._block[block]
             self._blocklist.remove(incon)
 
-    def read(self, filename):
+    def read(self, filename, num_variables = None):
         """Reads initial conditions from file."""
         self.empty()
         infile = t2incon_parser(filename, 'rU', read_function = self.read_function)
@@ -163,15 +163,22 @@ class t2incon(object):
                     line = padstring(line)
                     [blkname, nseq, nadd, porosity, k1, k2, k3] = \
                         infile.parse_string(line, 'incon1_toughreact')
-                    blkname = fix_blockname(blkname)
-                    if (k1 is None or k2 is None or k3 is None): permeability = None
-                    else:
-                        permeability = np.array([k1, k2, k3])
-                        self.simulator = 'TOUGHREACT'
-                    vals = infile.read_values('incon2')
-                    while vals and vals[-1] is None: vals.pop()
-                    incon = t2blockincon(vals, blkname, porosity, permeability)
-                    self.add_incon(incon)
+                    if valid_blockname(blkname):
+                        blkname = fix_blockname(blkname)
+                        if (k1 is None or k2 is None or k3 is None): permeability = None
+                        else:
+                            permeability = np.array([k1, k2, k3])
+                            self.simulator = 'TOUGHREACT'
+                        vals, more = [], True
+                        while more:
+                            linevals = infile.read_values('incon2')
+                            while linevals and linevals[-1] is None: linevals.pop()
+                            vals += linevals
+                            more = False if num_variables is None else len(vals) < num_variables
+                        incon = t2blockincon(vals, blkname, porosity, permeability)
+                        self.add_incon(incon)
+                    else: raise Exception('Invalid block name (' + blkname + ') in incon file: ' +
+                                          filename)
             else: finished = True
         self.timing = None
         if timing:
@@ -199,7 +206,12 @@ class t2incon(object):
                                       list(incon.permeability), 'incon1_toughreact')
             else:
                 outfile.write_values([blkname, None, None, incon.porosity], 'incon1')
-            outfile.write_values(list(incon.variable), 'incon2')
+            vals = list(incon.variable)
+            while vals:
+                linelen = min(len(vals), 4)
+                linevals = vals[:linelen]
+                outfile.write_values(linevals, 'incon2')
+                vals = vals[linelen:]
         if (self.timing is None) or reset: outfile.write('\n\n')
         else:
             outfile.write('+++\n')
