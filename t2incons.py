@@ -36,17 +36,20 @@ class t2incon_parser(fixed_format_file):
 
 class t2blockincon(object):
     """Class for a single set of initial conditions at one block."""
-    def __init__(self, variable, block = '', porosity = None, permeability = None):
+    def __init__(self, variable, block = '', porosity = None, permeability = None,
+                 nseq = None, nadd = None):
         self.block = block
         self.variable = list(variable)
         self.porosity = porosity
         self.permeability = permeability
+        self.nseq, self.nadd = nseq, nadd
     def __getitem__(self,key): return self.variable[key]
     def __setitem__(self,key,value): self.variable[key]=value
     def __repr__(self):
         result=self.block+':'+str(self.variable)
-        if self.porosity: result+=' '+str(self.porosity)
-        if self.permeability: result += ' ' + str(self.permeability)
+        if self.porosity is not None: result += ' ' + str(self.porosity)
+        if self.permeability is not None: result += ' ' + str(self.permeability)
+        if self.nseq is not None: result += ' (' + str(self.nseq) + ', ' + str(self.nadd) + ')'
         return result
 
 class t2incon(object):
@@ -175,7 +178,7 @@ class t2incon(object):
                             while linevals and linevals[-1] is None: linevals.pop()
                             vals += linevals
                             more = False if num_variables is None else len(vals) < num_variables
-                        incon = t2blockincon(vals, blkname, porosity, permeability)
+                        incon = t2blockincon(vals, blkname, porosity, permeability, nseq, nadd)
                         self.add_incon(incon)
                     else: raise Exception('Invalid block name (' + blkname + ') in incon file: ' +
                                           filename)
@@ -202,10 +205,10 @@ class t2incon(object):
         for incon in self._blocklist:
             blkname = unfix_blockname(incon.block)
             if self.simulator == 'TOUGHREACT' and incon.permeability is not None:
-                outfile.write_values([blkname, None, None, incon.porosity] +
+                outfile.write_values([blkname, incon.nseq, incon.nadd, incon.porosity] +
                                       list(incon.permeability), 'incon1_toughreact')
             else:
-                outfile.write_values([blkname, None, None, incon.porosity], 'incon1')
+                outfile.write_values([blkname, incon.nseq, incon.nadd, incon.porosity], 'incon1')
             vals = list(incon.variable)
             while vals:
                 linelen = min(len(vals), 4)

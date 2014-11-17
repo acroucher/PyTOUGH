@@ -263,9 +263,34 @@ Writes initial conditions to file.
 \index{TOUGH2 initial conditions!at one block}
 \index{TOUGH2!TOUGHREACT}
 
-A \texttt{t2blockincon} object represents the initial conditions for a particular block.  A \texttt{t2blockincon} object has no methods, and four properties: \texttt{variable}, \texttt{block}, \texttt{porosity} and \texttt{permeability}.  These are respectively list, string, float and \texttt{np.array} properties which hold the variable values, the block name, the (optional) porosity value and the permeability (TOUGHREACT only) for each block.  If no values are given for porosity or permeability, their values are \texttt{None}.
+A \texttt{t2blockincon} object represents the initial conditions for a particular block.  The properties of a \texttt{t2blockincon} object are given in Table \ref{tb:t2blockincon_properties}. The \texttt{permeability} property is used only by TOUGHREACT.  If no values are specified for \texttt{porosity}, \texttt{permeability}, \texttt{nseq} or \texttt{nadd}, their values are \texttt{None}. A \texttt{t2blockincon} object has no methods.
 
 The \texttt{variable} property of a \texttt{t2blockincon} can be more easily accessed simply by adding the required (zero-based) variable index after the object.  For example, for a \texttt{t2blockincon} object \texttt{b}, the value of the second variable is given simply by \texttt{b[1]}.
+
+To create a new \texttt{t2blockincon} object, simply invoke the class name with values of the desired properties, e.g.:
+
+\begin{lstlisting}
+  binc = t2blockincon(block = 'abc10', porosity = 0.1, variable = [101.3e3, 28.])
+\end{lstlisting}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{|l|l|p{75mm}|}
+      \hline
+      \textbf{Property} & \textbf{Type} & \textbf{Description}\\
+      \hline
+      \texttt{block} & string & block name\\
+      \texttt{nadd} & integer or \texttt{None} & optional block index increment between additional blocks with the same initial conditions\\
+      \texttt{nseq} & integer or \texttt{None} & optional number of additional blocks with the same initial conditions\\
+      \texttt{permeability} & \texttt{np.array} or \texttt{None} & optional permeability for the block (TOUGHREACT only)\\
+      \texttt{porosity} & float or \texttt{None} & optional porosity for the block\\
+      \texttt{variable} & list & list of thermodynamic variable values for the block\\
+      \hline
+    \end{tabular}
+    \caption{Properties of a \texttt{t2blockincon} object}
+    \label{tb:t2blockincon_properties}
+  \end{center}
+\end{table}
 
 \section{Reading save files and converting to initial conditions}
 \index{TOUGH2 initial conditions!converting from save files}
