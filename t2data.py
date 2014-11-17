@@ -52,7 +52,7 @@ t2data_format_specification = {
     'generation_rates':[['rate']*4,['14.7e']*4],
     'generation_enthalpy':[['enthalpy']*4,['14.7e']*4],
     'short':[['','frequency'],['5x','2d']],
-    'incon1':[['block','','','porosity'],['5s']+['5x']*2+['15.9e']],
+    'incon1':[['block','nseq','nadd','porosity'],['5s']+['5d']*2+['15.9e']],
     'incon2':[['incon']*4,['20.14e']*4],
     'solver':[['type','','z_precond','','o_precond','relative_max_iterations','closure'],
               ['1d','2x','2s','3x','2s']+['10.4e']*2],
@@ -729,17 +729,23 @@ class t2data(object):
         """Reads initial conditions from file"""
         line=infile.readline()
         while line.strip():
-            [blockname,empty,empty,porosity]=infile.parse_string(line,'incon1')
+            [blockname, nseq, nadd, porosity] = infile.parse_string(line, 'incon1')
             blockname=fix_blockname(blockname)
             variables=infile.read_values('incon2')
-            self.incon[blockname]=[porosity,variables]
+            while variables and variables[-1] is None: variables.pop()
+            if nseq == 0: nseq = None
+            if nadd == 0: nadd = None
+            if nseq is None: self.incon[blockname] = [porosity, variables]
+            else: self.incon[blockname] = [porosity, variables, nseq, nadd]
             line=infile.readline()
 
     def write_incons(self,outfile):
         if self.incon:
             outfile.write('INCON\n')
             for blkname,inc in self.incon.iteritems():
-                vals=[unfix_blockname(blkname),inc[0]]
+                if len(inc) >= 4: nseq, nadd = inc[2], inc[3]
+                else: nseq, nadd = None, None
+                vals = [unfix_blockname(blkname), nseq, nadd, inc[0]]
                 outfile.write_values(vals,'incon1')
                 outfile.write_values(inc[1],'incon2')
             outfile.write('\n')
