@@ -211,9 +211,11 @@ A list property containing blocks in which generators are defined and for which 
 \index{TOUGH2 data files!initial conditions}
 \index{TOUGH2 initial conditions!in data file}
 
-A dictionary property representing the initial conditions for the simulation, accessed by block name, corresponding to the \textbf{INCON} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the porosity of the block, followed by a list of the specified initial primary thermodynamic variables in the block.
+A dictionary property representing the initial conditions for the simulation, accessed by block name, corresponding to the \textbf{INCON} input block in a TOUGH2 data file.  The value of each element of the dictionary is a list consisting of the porosity of the block, followed by a list of the specified initial primary thermodynamic variables in the block. If the TOUGH2 NSEQ and NADD values are used, these are stored after the thermodynamic variables. If they are not used, they can either be set to \texttt{None} or simply omitted.
 
 For example, to specify porosity 0.1 and initial conditions (101.3E3, 20.0) in block \texttt{'AB105'} of a \texttt{t2data} object called \texttt{dat}, set \texttt{dat.incon['AB105'] = [0.1, [101.3e3, 20.0]]}.
+
+To specify these same conditions but with NSEQ = 10 and NADD = 2, set \texttt{dat.incon['AB105'] = [0.1, [101.3e3, 20.0], 10, 2]}.
 
 Porosity can be specified as \texttt{None} if default porosity (from the rocktype) is to be used.
 
