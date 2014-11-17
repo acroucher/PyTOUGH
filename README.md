@@ -14,17 +14,31 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.3.10, which has:
+The latest stable version is 1.4.0, which has:
 
-* Support for tilted geometries in the mulgrid class
+* support for EOS modules with more than four primary variables in t2data and t2incons
 
-* Support for reading TOUGHREACT Tecplot output
+* support for TOUGH2 NSEQ, NADD parameters in initial conditions in t2data and t2incons
 
-* Improvements to the mulgrid optimize() method when using scipy optimizer
+* new mulgrid decompose_columns() method, for subdividing columns with more than four sides into triangles and quadrilaterals
 
-* Improved handling of ordering sections added to a t2data object and then written to file
+* new mulgrid fit_columns() method for fitting arbitrary (x,y,z) datasets to columns (not just surface elevations)
 
-* Further improvements to the User Guide, including a new appendix with details of the MULgraph geometry file format
+* fitting (x,y,z) datasets to mulgrids containing columns with more than four sides
+
+* new t2grids rectgeo() method, for reverse-engineering rectangular mulgrid geometry from a TOUGH2 data file (e.g. for working with models created by PetraSim)
+
+* block mappings, for using TOUGH2 meshes with naming conventions not supported by mulgrids
+
+* new region() method in t2thermo and IAPWS97 modules- to determine thermodynamic region for temperature and pressure
+
+* checking thermodynamic function input variables to see if they are within operating range
+
+* extracting t2listing histories with datetimes
+
+* exporting t2listing tables to Pandas DataFrames
+
+* exporting mulgrid geometries to ExodusII mesh file format
 
 as well as various bug fixes and other minor enhancements.
 
