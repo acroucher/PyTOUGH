@@ -2558,48 +2558,54 @@ class mulgrid(object):
     def get_grid3d(self):
         """Returns 3D nodes and elements for the grid, and a dictionary of 'extra nodes' needed
         at the top surface from varying surface elevation.  """
-        node3d={}
-        index=0
+        node3d = {}
+        index = 0
+        def surf(col): return col.surface if col.surface is not None else self.layerlist[0].bottom
         # create subsurface nodes
         for lay in self.layerlist[1:]:
             for node in self.nodelist:
-                if any([col.surface>lay.bottom for col in node.column]):
-                    pos3d=np.array(list(node.pos)+[lay.bottom])
-                    node3d[lay.name,node.name]=(index,pos3d)
-                    index+=1
+                if any([surf(col) > lay.bottom for col in node.column]):
+                    pos3d = np.array(list(node.pos) + [lay.bottom])
+                    node3d[lay.name, node.name] = (index, pos3d)
+                    index += 1
         # identify where 'extra' nodes are needed
-        extra_node={}
-        for col in [c for c in self.columnlist if c.surface is not None]:
-            for node in col.node:
-                if node.name in extra_node: extra_node[node.name].append(col.name)
-                else: extra_node[node.name]=[col.name]
+        extra_node, node_elev = {}, {}
+        for node in self.nodelist:
+            if node.column:
+                colsurf = [surf(col) for col in node.column]
+                if len(set(colsurf)) <= 1: node_elev[node.name] = colsurf[0]
+                else:
+                    for col in node.column:
+                        if node.name in extra_node: extra_node[node.name].append(col.name)
+                        else: extra_node[node.name] = [col.name]
         # create surface nodes
         for node in self.nodelist:
-            if any([(col.surface is None) for col in node.column]):
-                pos3d=np.array(list(node.pos)+[self.layerlist[0].bottom])
-                node3d[self.layerlist[0].name,node.name]=(index,pos3d)
-                index+=1
-            elif node.name in extra_node:
+            if node.name in extra_node:
                 for colname in extra_node[node.name]:
-                    pos3d=np.array(list(node.pos)+[self.column[colname].surface])
-                    node3d[self.layerlist[0].name,node.name,colname]=(index,pos3d)
-                    index+=1
+                    pos3d = np.array(list(node.pos) + [surf(self.column[colname])])
+                    node3d[self.layerlist[0].name, node.name, colname] = (index, pos3d)
+                    index += 1
+            else:
+                pos3d = np.array(list(node.pos)+[node_elev[node.name]])
+                node3d[self.layerlist[0].name, node.name] = (index, pos3d)
+                index += 1
+
         # create elements
-        elt3d=[]
-        atmlayer=self.layerlist[0]
-        for ilayer,lay in enumerate(self.layerlist[1:]):
-            for col in [c for c in self.columnlist if c.surface>lay.bottom]:
-                elt=[]
+        elt3d = []
+        atmlayer = self.layerlist[0]
+        for ilayer, lay in enumerate(self.layerlist[1:]):
+            for col in [c for c in self.columnlist if surf(c) > lay.bottom]:
+                elt = []
                 for node in col.node: elt.append(node3d[lay.name,node.name][0])
-                if ilayer==self.column_surface_layer_index(col)-1: # top block
+                if ilayer == self.column_surface_layer_index(col) - 1: # top block
                     for node in col.node:
-                        if node.name in extra_node: elt.append(node3d[atmlayer.name,node.name,col.name][0])
-                        else: elt.append(node3d[atmlayer.name,node.name][0])
+                        if node.name in extra_node: elt.append(node3d[atmlayer.name, node.name, col.name][0])
+                        else: elt.append(node3d[atmlayer.name, node.name][0])
                 else:
-                    for node in col.node: elt.append(node3d[self.layerlist[ilayer].name,node.name][0])
-                elt3d.append((lay,col,elt))
+                    for node in col.node: elt.append(node3d[self.layerlist[ilayer].name, node.name][0])
+                elt3d.append((lay, col, elt))
         return node3d,extra_node,elt3d
-    grid3d=property(get_grid3d)
+    grid3d = property(get_grid3d)
 
     def get_vtk_grid(self,arrays={}):
         """Returns a vtkUnstructuredGrid object (for visualisation with VTK) corresponding to the grid in 3D. 
