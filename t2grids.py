@@ -117,7 +117,7 @@ class t2grid(object):
             atmblockname = mapname(geo.block_name_list[0])
             self.block[atmblockname].centre = None  # centre not well defined for single atmosphere block
         else: istart = 0
-        for blkname in self.blocklist[istart:]:
+        for blkname in geo.block_name_list[istart:]:
             layername = geo.layer_name(blkname)
             colname = geo.column_name(blkname)
             self.block[mapname(blkname)].centre = geo.block_centre(layername, colname)
