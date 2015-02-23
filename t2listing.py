@@ -142,7 +142,7 @@ class t2listing(file):
        given by element['aa100']['Pressure'].)  It is possible to navigate through time in the listing by 
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
-    def __init__(self, filename=None, skip_tables = [], allow_short_only = True):
+    def __init__(self, filename=None, skip_tables = []):
         self._table={}
         self._tablenames = []
         self.filename=filename
@@ -160,8 +160,7 @@ class t2listing(file):
                 self.setup_short_indices()
                 self.first()
             else:
-                self.setup_short_indices()
-                if not allow_short_only: raise Exception('No full results found in listing file.')
+                raise Exception('No full results found in listing file.')
 
     def __repr__(self): return self.title
 
@@ -937,7 +936,7 @@ class t2listing(file):
                 tableselection.append((table, tselect, tselect_short))
             return tableselection
 
-        old_index=self.index
+        old_index = self.index
         if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
         tableselection=ordered_selection(selection,self._table,self.short_types,self.short_indices)
         if len(tableselection)==0: return None # no valid specifications
