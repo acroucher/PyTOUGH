@@ -381,7 +381,7 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 
 \begin{snugshade}
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
-    \emph{justify}='r', \emph{case}='l', \emph{dimension}=2)}}
+    \emph{justify}='r', \emph{case}=None, \emph{dimension}=2, \emph{blockmap}=\{\}, \emph{chars}=ascii\_lowercase)}}
 \end{snugshade}
 \label{sec:t2grid:radial}
 \index{TOUGH2 grids!creating!radial}
@@ -403,9 +403,13 @@ The \texttt{dimension} parameter sets the flow dimension for `generalized radial
 \item \textbf{justify}: string\\
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{case}: string\\
-  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.
+  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case. Alternatively, use the more flexible \texttt{chars} parameter (see below).
 \item \textbf{dimension}: float\\
   Dimension for `generalized radial flow', which can take any (possibly non-integer) value between 1 and 3.  Dimension 1 corresponds to flow in a linear `pipe', dimension 2 corresponds to standard radial flow in a disc-shaped reservoir and dimension 3 corresponds to flow in a spherically symmetric reservoir.
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to the block naming system used in the grid.
+\item \textbf{chars}: string\\
+  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \end{itemize}
 
 Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by creating a `dummy' vertical slice rectangular geometry, using the \texttt{mulgrid} \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular()}} method, using its $x$ direction for radius (and having only one block in the $y$ direction - which is not used).  The \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot()}} method can then be used to plot results.

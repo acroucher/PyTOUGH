@@ -525,14 +525,15 @@ class t2grid(object):
         return A
 
     def radial(self, rblocks, zblocks, convention=0, atmos_type=2, origin = np.array([0.,0.]), justify='r',
-               case='l', dimension=2, blockmap = {}):
+               case=None, dimension=2, blockmap = {}, chars = ascii_lowercase):
         """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
         The arguments are arrays of the block sizes in each dimension (r,z).
         Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
         (r,z) coordinates, so origin[0] is the starting radius of the grid.  (The origin can also be specified
         with three components, in which case the second one is ignored.)
         The optional justify and case parameters specify the format of the character part of the block names
-        (whether they are right or left justified, and lower or upper case).
+        (whether they are right or left justified, and lower or upper case). The case parameter is now
+        deprecated- the more flexible chars parameter should be used instead.
         Specifying dimension<>2 (between 1 and 3) simulates flow in fractured rock using the
         "generalized radial flow" concept of Barker, J.A. (1988), "A generalized radial flow model for hydraulic
         tests in fractured rock", Water Resources Research 24(10), 1796-1804.  In this case it probably doesn't
@@ -543,9 +544,13 @@ class t2grid(object):
         if isinstance(origin,list): origin = np.array(origin)
         if len(origin) > 2: origin = origin[[0,2]]
 
-        from string import ljust,rjust,lowercase,uppercase
+        from string import ljust,rjust
         justfn = [rjust,ljust][justify=='l']
-        casefn = [uppercase,lowercase][case=='l']
+        if case is not None:
+            from string import upper, lower
+            casefn = [upper,lower][case=='l']
+            chars = casefn(chars)
+        chars = uniqstring(chars)
 
         n2 = 0.5 * dimension
         if dimension<>2: # need gamma function
@@ -572,9 +577,9 @@ class t2grid(object):
         # dummy geometry for creating block names etc:
         geo = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
         for ir,dr in enumerate(rblocks):
-            colname = geo.column_name_from_number(ir+1,justfn,casefn)
+            colname = geo.column_name_from_number(ir+1, justfn, chars)
             geo.add_column(column(colname, [], centre = np.array([rc[ir],0.])))
-        geo.add_layers(zblocks, origin[1], justify, case)
+        geo.add_layers(zblocks, origin[1], justify, chars)
         grid.add_atmosphereblocks(geo)
 
         for lay in geo.layerlist[1:]: # add blocks
