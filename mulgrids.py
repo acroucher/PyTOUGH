@@ -1887,11 +1887,13 @@ class mulgrid(object):
             natm = self.num_atmosphere_blocks
             U,V = [],[]
 
+        layercols = []
         for col in self.columnlist:
             if layer is None: layername = self.column_surface_layer(col).name
             else: layername = layer.name
             blkname = self.block_name(layername,col.name)
             if blkname in self.block_name_index:
+                layercols.append(col)
                 xc.append(col.centre[0])
                 yc.append(col.centre[1])
                 if variable is not None: val = variable[self.block_name_index[blkname]]
@@ -1960,7 +1962,7 @@ class mulgrid(object):
                         U.append(-flow[con_index]*con.normal[0])
                         V.append(-flow[con_index]*con.normal[1])
             else:
-                ishow = [ind for ind,col in enumerate(self.columnlist) if col.num_nodes >= 3]
+                ishow = [ind for ind,col in enumerate(layercols) if col.num_nodes >= 3]
                 xflow,yflow = np.array(xc)[ishow],np.array(yc)[ishow]
                 U,V = np.array(U)[ishow], np.array(V)[ishow]
             self.plot_flows(plt, xflow, yflow, U, V, flow_variable_name, flow_unit, flow_scale, flow_scale_pos,
