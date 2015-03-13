@@ -876,7 +876,7 @@ class t2listing(file):
             table = self._table[tablename]
             self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
         else:
-            if self.simulator == 'TOUGH+' and tablename = 'primary': chars = '_____'
+            if self.simulator == 'TOUGH+' and tablename == 'primary': chars = '_____'
             else: chars = '@@@@@'
             self.skipto(chars)
 
