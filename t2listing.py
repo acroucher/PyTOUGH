@@ -872,8 +872,13 @@ class t2listing(file):
             self.skiplines(skip)
 
     def skip_table_TOUGH2(self,tablename):
-        table = self._table[tablename]
-        self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
+        if tablename in self._table:
+            table = self._table[tablename]
+            self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
+        else:
+            if self.simulator == 'TOUGH+' and tablename = 'primary': chars = '_____'
+            else: chars = '@@@@@'
+            self.skipto(chars)
 
     def history(self, selection, short = True, start_datetime = None):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
