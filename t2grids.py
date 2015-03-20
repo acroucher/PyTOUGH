@@ -491,7 +491,8 @@ class t2grid(object):
         vtu = geo.get_vtk_grid(arrays)
         writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
     def flux_matrix(self, geo, blockmap = {}):

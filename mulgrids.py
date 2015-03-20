@@ -2757,7 +2757,8 @@ class mulgrid(object):
         vtu = self.get_vtk_grid(arrays)
         writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
         
     def get_well_vtk_grid(self):
@@ -2797,7 +2798,8 @@ class mulgrid(object):
         vtu=self.get_well_vtk_grid()
         writer=vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
     def write_exodusii(self, filename = '', arrays = None, blockmap = {}):
