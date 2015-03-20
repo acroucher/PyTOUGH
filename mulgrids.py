@@ -2803,14 +2803,19 @@ class mulgrid(object):
     def write_exodusii(self, filename = '', arrays = None, blockmap = {}):
         """Writes ExodusII file for a vtkUnstructuredGrid object corresponding to the grid in 3D,
         with the specified filename."""
-        from vtk import vtkExodusIIWriter
+        try:
+            from vtk import vtkExodusIIWriter
+        except ImportError:
+            raise Exception("Either you don't have the Python VTK library installed, or it is too old.\n"+
+                            "On Windows you will need to have version 6.1 or later.")
         base = self.filename_base(filename)
         filename = base + '.exo'
         if arrays is None: arrays = self.get_vtk_data(blockmap)
         vtu = self.get_vtk_grid(arrays)
         writer = vtkExodusIIWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
     def snap_columns_to_layers(self,min_thickness=1.0,columns=[]):
