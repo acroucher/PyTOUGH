@@ -291,7 +291,7 @@ class t2data(object):
         they are constructed by changing the extensions of the data filename.  Set silent to True to suppress screen 
         output."""
         if self.filename:
-            from os.path import splitext
+            from os.path import splitext, basename
             from os import devnull,system,remove
             datbase,ext=splitext(self.filename)
             if (self.type=='AUTOUGH2'):
@@ -300,7 +300,7 @@ class t2data(object):
                 savebase,ext=splitext(save_filename)
                 inconbase,ext=splitext(incon_filename)
                 # write a file containing the filenames, to pipe into AUTOUGH2:
-                runfilename=simulator+'_input.dat'
+                runfilename = datbase + '_' + basename(simulator) + '.in'
                 f=open(runfilename,'w')
                 f.write(savebase+'\n')
                 f.write(inconbase+'\n')
