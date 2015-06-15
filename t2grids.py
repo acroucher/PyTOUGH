@@ -78,11 +78,11 @@ class t2grid(object):
     def get_num_rocktypes(self):
         return len(self.rocktypelist)
     num_rocktypes=property(get_num_rocktypes)
-        
+
     def get_num_blocks(self):
         return len(self.blocklist)
     num_blocks=property(get_num_blocks)
-        
+
     def get_num_connections(self):
         return len(self.connectionlist)
     num_connections=property(get_num_connections)
@@ -94,7 +94,7 @@ class t2grid(object):
     def get_num_underground_blocks(self):
         return self.num_blocks-self.num_atmosphere_blocks
     num_underground_blocks=property(get_num_underground_blocks)
-    
+
     def get_atmosphere_blocks(self):
         return [blk for blk in self.blocklist if blk.atmosphere]
     atmosphere_blocks=property(get_atmosphere_blocks)
@@ -165,7 +165,7 @@ class t2grid(object):
         """Returns how many times the rocktype with given name is used in the grid."""
         return [blk.rocktype.name for blk in self.blocklist].count(rockname)
     def get_rocktype_frequencies(self):
-        """Returns a list of tuples of occurring frequencies of rock types in the grid and the names of rocktypes with that frequency, 
+        """Returns a list of tuples of occurring frequencies of rock types in the grid and the names of rocktypes with that frequency,
         ordered by increasing frequency."""
         freq=[(rt.name,self.rocktype_frequency(rt.name)) for rt in self.rocktypelist]
         occurring_freqs=list(set([item[1] for item in freq]))
@@ -195,7 +195,7 @@ class t2grid(object):
 
     def embed(self,subgrid,connection):
         """Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids
-        are to be connected: the blocks to be connected and the connection distances, area etc. between them.  The first 
+        are to be connected: the blocks to be connected and the connection distances, area etc. between them.  The first
         block should be the host block, the second the connecting block in the subgrid."""
         result=None
         subvol=sum([blk.volume for blk in subgrid.blocklist])
@@ -219,7 +219,7 @@ class t2grid(object):
         self.rocktype={}
         self.block={}
         self.connection={}
-        
+
     def add_rocktype(self,newrocktype=rocktype()):
         """Adds a rock type to the grid.  Any existing rocktype of the same name is replaced."""
         if newrocktype.name in self.rocktype:
@@ -249,7 +249,7 @@ class t2grid(object):
             self.blocklist[i]=newblock
         else: self.blocklist.append(newblock)
         self.block[newblock.name]=newblock
-    
+
     def delete_block(self,blockname):
         """Deletes a block from the grid"""
         if blockname in self.block:
@@ -271,7 +271,7 @@ class t2grid(object):
     def add_connection(self,newconnection=t2connection()):
         """Adds a connection to the grid"""
         conname=tuple([blk.name for blk in newconnection.block])
-        if conname in self.connection: 
+        if conname in self.connection:
             i=self.connectionlist.index(self.connection[conname])
             self.connectionlist[i]=newconnection
         else: self.connectionlist.append(newconnection)
@@ -400,7 +400,7 @@ class t2grid(object):
         """Returns a set of blocks in the grid that are not connected to any other blocks."""
         return set([blk.name for blk in self.blocklist if len(blk.connection_name)==0])
     unconnected_blocks=property(get_unconnected_blocks)
-    
+
     def get_isolated_rocktype_blocks(self):
         """Returns a list of blocks with isolated rocktypes- that is, blocks with a rocktype different from that of
         all other blocks they are connected to."""
@@ -462,14 +462,14 @@ class t2grid(object):
                 elif name in string_properties:
                     array.SetNumberOfComponents(string_length)
                     array.SetNumberOfTuples(array_length[array_type])
-                else: 
+                else:
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
         natm = geo.num_atmosphere_blocks
         rindex = self.rocktype_indices
         rockdict = dict(zip([blk.name for blk in self.blocklist], rindex))
         for i, blkname in enumerate(geo.block_name_list[natm:]):
-            mapped_name = blockmap[blkname] if blkname in blockmap else blkname           
+            mapped_name = blockmap[blkname] if blkname in blockmap else blkname
             arrays['Block']['Name'].SetTupleValue(i, mapped_name)
             ri = rockdict[mapped_name]
             arrays['Block']['Rock type index'].SetValue(i, ri)
@@ -529,7 +529,7 @@ class t2grid(object):
                case=None, dimension=2, blockmap = {}, chars = ascii_lowercase):
         """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
         The arguments are arrays of the block sizes in each dimension (r,z).
-        Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
+        Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in
         (r,z) coordinates, so origin[0] is the starting radius of the grid.  (The origin can also be specified
         with three components, in which case the second one is ignored.)
         The optional justify and case parameters specify the format of the character part of the block names
@@ -665,7 +665,7 @@ class t2grid(object):
         atmos_volume parameter specifies the maximum block volume considered to be part of the geometrical
         grid. The layer_snap parameter can be used to eliminate blocks with very small volumes at the
         ground surface.
-        The method also returns a block mapping dictionary, mapping geometry block names into 
+        The method also returns a block mapping dictionary, mapping geometry block names into
         grid block names."""
 
         def blockelevs(grid, max_volume = None):
@@ -818,7 +818,7 @@ class t2grid(object):
 
         def block_mapping(geo, grid, ob, nblks, max_volume):
             """Generates a mapping from geometry block names to grid block names."""
-            mapping = {} 
+            mapping = {}
             icol = 0
             start2, last2 = ob, None
             for i2 in xrange(nblks[2]):
@@ -834,7 +834,7 @@ class t2grid(object):
                             atm_blk,con = next_block_in_direction(blk, last3, 3, grid)
                             if atm_blk:
                                 if geo.atmosphere_type == 0:
-                                    atmblockname = geo.block_name(geo.layerlist[0].name, 
+                                    atmblockname = geo.block_name(geo.layerlist[0].name,
                                                                   geo.atmosphere_column_name)
                                     mapping[atmblockname] = atm_blk.name
                                 elif geo.atmosphere_type == 1:
