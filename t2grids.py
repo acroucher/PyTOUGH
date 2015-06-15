@@ -866,3 +866,138 @@ class t2grid(object):
                 geo = find_surface(geo, self, blockmap, remove_inactive, atmos_volume)
                 geo.snap_columns_to_layers(layer_snap)
                 return geo, blockmap
+
+    def minc(self, volume_fractions = [0.05, 0.1, 0.3, 0.55], spacing = 50.,
+             num_fracture_planes = 1, blocks = None, minc_blockname = None,
+             minc_rockname = None):
+        """Adds MINC blocks to the grid, and returns a list of block
+        name lists for the different MINC levels."""
+
+        if len(volume_fractions) < 2:
+            raise Exception("Need at least two volume fractions specified " +
+                            "for MINC.")
+        else:
+
+            from scipy.optimize import bisect
+            from scipy.misc import derivative
+            from numbers import Number
+
+            volume_fractions = np.array(volume_fractions)
+
+            if isinstance(spacing, Number): spacing = [spacing]
+            missing = num_fracture_planes - len(spacing)
+            if missing > 0: spacing = spacing + [spacing[0]]*missing
+            spacing = np.array(spacing)
+            if blocks is None or blocks == []:
+                blocks = [blk.name for blk in self.blocklist]
+            if isinstance(blocks[0], t2block):
+                blocks = [blk.name for blk in blocks]
+
+            def prox(x):
+                """Proximity function."""
+                if num_fracture_planes == 1:
+                    if x >= 0.5 * spacing[0]: return 1.
+                    else: return 2. * x / spacing[0]
+                elif num_fracture_planes == 2:
+                    if any([0.5 * fs <= x for fs in spacing[:2]]):
+                        return 1.
+                    else:
+                        f01 = spacing[0] * spacing[1]
+                        return 2. * x *(spacing[0] + spacing[1] - 2. * x) / f01
+                elif num_fracture_planes == 3:
+                    u = 2. * x / spacing[0:3]
+                    if any([ui >= 1. for ui in u]): return 1.
+                    else: return u[0]*u[1]*u[2] \
+                            - (u[0]*u[1] + u[1]*u[2] + u[0]*u[2]) \
+                            + u[0] + u[1] + u[2]
+                else:
+                    raise Exception("Invalid number of MINC fracture planes" +
+                                    "(" + str(num_fracture_planes) + ").")
+
+            def invert_prox(vf, xl, xr):
+                def proxv(x): return prox(x) - vf
+                while proxv(xr) < 0.: xr *= 2.
+                x,r = bisect(proxv, xl, xr, full_output = True)
+                if r.converged: return x
+                else: return None
+
+            def inner_dist(x):
+                """Returns innermost connection distance, at distance x."""
+                if num_fracture_planes == 1:
+                    return (spacing[0] - 2. * x) / 6.
+                elif num_fracture_planes == 2:
+                    u = spacing[0:2] - 2. * x
+                    return 0.25 * u[0] * u[1] / (u[0] + u[1])
+                elif num_fracture_planes == 3:
+                    u = spacing[0:3] - 2. * x
+                    return 0.3 * u[0]*u[1]*u[2] / (u[0]*u[1] + u[1]*u[2] + u[0]*u[2])
+                else:
+                    raise Exception("Invalid number of MINC fracture planes" +
+                                    "(" + str(num_fracture_planes) + ").")
+
+            # Calculate MINC geometry parameters:
+            volume_fractions /= sum(volume_fractions)
+            vf0 = 1. - volume_fractions[0]
+            x,d = [0.], [0.]
+            z, delta = 1.e-10, 1.e-8
+            a = [vf0 * prox(z) / z]
+            volsum = np.cumsum(volume_fractions[1:]) / vf0
+            volsum[-1] = 1. - delta
+            xl, xr = 0., volume_fractions[1] / a[0]
+
+            for vs in volsum:
+                xm = invert_prox(vs, xl, xr)
+                if xm is None:
+                    raise Exception("Could not invert MINC proximity function.")
+                else:
+                    x.append(xm)
+                    a.append(vf0 * derivative(prox, xm, xm * delta))
+                    d.append(0.5 * (xm - xl))
+                    xl = xm
+            d[-1] = inner_dist(x[-2])
+
+            def default_minc_blockname(blkname, level):
+                """Returns default MINC block name, given the original
+                block name and the MINC level (>= 1)."""
+                levelstr = str(level)
+                return levelstr + blkname[len(levelstr):]
+
+            def default_minc_rockname(rockname):
+                """Returns default MINC matrix rocktype name, given the
+                parent (fracture) rocktype name."""
+                return 'X' + rockname[1:]
+
+            # Add MINC blocks and connections:
+            if minc_blockname is None: minc_blockname = default_minc_blockname
+            if minc_rockname is None: minc_rockname = default_minc_rockname
+            blocklists = [[] for vf in volume_fractions]
+
+            for blkname in blocks:
+
+                blk = self.block[blkname]
+                original_vol = blk.volume
+                blk.volume *= volume_fractions[0]
+                blocklists[0].append(blkname)
+                r = blk.rocktype
+                mrockname = minc_rockname(r.name)
+                if mrockname not in self.rocktype:
+                    mrock = rocktype(mrockname, 0, r.density, r.porosity,
+                                     r.permeability, r.conductivity, r.specific_heat)
+                    self.add_rocktype(mrock)
+                m, lastblk = 0, blk
+
+                for vf in volume_fractions[1:]:
+                    m += 1
+                    mincname = minc_blockname(blkname, m)
+                    if mincname in self.block:
+                        raise Exception("Duplicate MINC block name: " + mincname)
+                    else:
+                        mincblk = t2block(mincname, blk.volume * vf,
+                                          self.rocktype[mrockname])
+                        self.add_block(mincblk)
+                        blocklists[m].append(mincname)
+                        con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
+                                           original_vol * a[m-1], None)
+                        self.add_connection(con)
+                        lastblk = mincblk
+            return blocklists
