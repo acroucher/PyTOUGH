@@ -867,11 +867,17 @@ class t2grid(object):
                 geo.snap_columns_to_layers(layer_snap)
                 return geo, blockmap
 
-    def minc(self, volume_fractions = [0.05, 0.1, 0.3, 0.55], spacing = 50.,
-             num_fracture_planes = 1, blocks = None, minc_blockname = None,
-             minc_rockname = None):
+    def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
+             blocks = None, minc_blockname = None, minc_rockname = None,
+             proximity = None):
         """Adds MINC blocks to the grid, and returns a list of block
-        name lists for the different MINC levels."""
+        name lists for the different MINC levels. The first three parameters define
+        the fracture geometry. The blocks parameter is a list of blocks or block
+        names specifying where MINC is to be applied. The minc_blockname, 
+        minc_rockname and proximity parameters are optional functions for 
+        determining the names of MINC blocks for a given level and rocktype names
+        for MINC blocks, and the proximity function. If these are not specified,
+        defaults will be used."""
 
         if len(volume_fractions) < 2:
             raise Exception("Need at least two volume fractions specified " +
@@ -886,15 +892,15 @@ class t2grid(object):
 
             if isinstance(spacing, Number): spacing = [spacing]
             missing = num_fracture_planes - len(spacing)
-            if missing > 0: spacing = spacing + [spacing[0]]*missing
+            if missing > 0: spacing = list(spacing) + [spacing[0]]*missing
             spacing = np.array(spacing)
             if blocks is None or blocks == []:
                 blocks = [blk.name for blk in self.blocklist]
             if isinstance(blocks[0], t2block):
                 blocks = [blk.name for blk in blocks]
 
-            def prox(x):
-                """Proximity function."""
+            def default_proximity(x):
+                """Default proximity functions."""
                 if num_fracture_planes == 1:
                     if x >= 0.5 * spacing[0]: return 1.
                     else: return 2. * x / spacing[0]
@@ -914,12 +920,14 @@ class t2grid(object):
                     raise Exception("Invalid number of MINC fracture planes" +
                                     "(" + str(num_fracture_planes) + ").")
 
-            def invert_prox(vf, xl, xr):
-                def proxv(x): return prox(x) - vf
+            if proximity is None: proximity = default_proximity
+
+            def invert_proximity(vf, xl, xr):
+                def proxv(x): return proximity(x) - vf
                 while proxv(xr) < 0.: xr *= 2.
                 x,r = bisect(proxv, xl, xr, full_output = True)
-                if r.converged: return x
-                else: return None
+                if r.converged: return x, xr
+                else: return None, None
 
             def inner_dist(x):
                 """Returns innermost connection distance, at distance x."""
@@ -940,25 +948,25 @@ class t2grid(object):
             vf0 = 1. - volume_fractions[0]
             x,d = [0.], [0.]
             z, delta = 1.e-10, 1.e-8
-            a = [vf0 * prox(z) / z]
+            a = [vf0 * proximity(z) / z]
             volsum = np.cumsum(volume_fractions[1:]) / vf0
             volsum[-1] = 1. - delta
             xl, xr = 0., volume_fractions[1] / a[0]
 
             for vs in volsum:
-                xm = invert_prox(vs, xl, xr)
+                xm, xr = invert_proximity(vs, xl, xr)
                 if xm is None:
                     raise Exception("Could not invert MINC proximity function.")
                 else:
                     x.append(xm)
-                    a.append(vf0 * derivative(prox, xm, xm * delta))
+                    a.append(vf0 * derivative(proximity, xm, xm * delta))
                     d.append(0.5 * (xm - xl))
                     xl = xm
             d[-1] = inner_dist(x[-2])
 
             def default_minc_blockname(blkname, level):
                 """Returns default MINC block name, given the original
-                block name and the MINC level (>= 1)."""
+                block name and the MINC level (> 0)."""
                 levelstr = str(level)
                 return levelstr + blkname[len(levelstr):]
 
@@ -976,28 +984,30 @@ class t2grid(object):
 
                 blk = self.block[blkname]
                 original_vol = blk.volume
-                blk.volume *= volume_fractions[0]
-                blocklists[0].append(blkname)
-                r = blk.rocktype
-                mrockname = minc_rockname(r.name)
-                if mrockname not in self.rocktype:
-                    mrock = rocktype(mrockname, 0, r.density, r.porosity,
-                                     r.permeability, r.conductivity, r.specific_heat)
-                    self.add_rocktype(mrock)
-                m, lastblk = 0, blk
+                if original_vol > 0:
+                    blk.volume *= volume_fractions[0]
+                    blocklists[0].append(blkname)
+                    r = blk.rocktype
+                    mrockname = minc_rockname(r.name)
+                    if mrockname not in self.rocktype:
+                        mrock = rocktype(mrockname, 0, r.density, r.porosity,
+                                         r.permeability, r.conductivity, r.specific_heat)
+                        self.add_rocktype(mrock)
 
-                for vf in volume_fractions[1:]:
-                    m += 1
-                    mincname = minc_blockname(blkname, m)
-                    if mincname in self.block:
-                        raise Exception("Duplicate MINC block name: " + mincname)
-                    else:
-                        mincblk = t2block(mincname, blk.volume * vf,
-                                          self.rocktype[mrockname])
-                        self.add_block(mincblk)
-                        blocklists[m].append(mincname)
-                        con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
-                                           original_vol * a[m-1], None)
-                        self.add_connection(con)
-                        lastblk = mincblk
+                    m, lastblk = 0, blk
+                    for vf in volume_fractions[1:]:
+                        m += 1
+                        mincname = minc_blockname(blkname, m)
+                        if mincname in self.block:
+                            raise Exception("Duplicate MINC block name: " + mincname)
+                        else:
+                            mincblk = t2block(mincname, original_vol * vf,
+                                              self.rocktype[mrockname], centre = blk.centre)
+                            self.add_block(mincblk)
+                            blocklists[m].append(mincname)
+                            con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
+                                               original_vol * a[m-1], None)
+                            self.add_connection(con)
+                            lastblk = mincblk
+
             return blocklists

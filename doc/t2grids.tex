@@ -89,6 +89,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hyperref[sec:t2grid:flux_matrix]{\texttt{flux\_matrix}} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
       \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
       \hyperref[sec:t2grid:incons]{\texttt{incons}} & \hyperref[incons]{\texttt{t2incon}} & constructs initial conditions for the grid\\
+      \hyperref[sec:t2grid:MINC]{\texttt{minc}} & list & creates MINC blocks and connections\\
       \hyperref[sec:t2grid:radial]{\texttt{radial}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a radial TOUGH2 grid\\
       \hyperref[sec:t2grid:rectgeo]{\texttt{rectgeo}} & (\hyperref[mulgrids]{\texttt{mulgrid}}, \texttt{dict}) & constructs a \texttt{mulgrid} object from a rectangular TOUGH2 grid\\
       \hyperref[sec:t2grid:rocktype_frequency]{\texttt{rocktype\_frequency}} & integer & frequency of use of a particular rock type\\
@@ -378,6 +379,35 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 \item \textbf{values}: \texttt{tuple} or \texttt{np.array}\\
   Initial conditions values, either a \texttt{tuple} of values for one block, or an \texttt{np.array} with each row containing a set of values for one block. 
 \end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{minc(\emph{volume\_fractions}, \emph{spacing}=50., \emph{num\_fracture\_planes}=1,\\
+    \emph{blocks}=None, \emph{minc\_blockname}=None, \emph{minc\_rockname}=None,\\
+    \emph{proximity}=None)}}
+\end{snugshade}
+\label{sec:t2grid:MINC}
+\index{TOUGH2 grids!creating!MINC}
+
+Creates ``Multiple Interacting Continua'' (MINC) blocks and connections in the grid, for simulating fracture flow with matrix blocks attached to each fracture block. This has capability similar to that of the GMINC program \citep{GMINC}, or of the MINC part of TOUGH2's \hyperref[sec:t2data:meshmaker]{MESHMAKER} section (except that matrix-matrix flow is not supported).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{volume\_fractions}: list (or \texttt{np.array})\\
+  List or array of volume fractions. The first entry corresponds to the fractures, with subsequent entries specifying the volume fractions for each MINC level. The length of this list or array is therefore equal to one plus the number of matrix blocks to be used. Entries for all MINC levels must be present, but they need not sum to 1- if they do not, they will be scaled so that the sum is 1. (This means, for example, that entries may be specified as percentage values.)
+\item \textbf{spacing}: float or list (or \texttt{np.array})\\
+  Fracture spacing parameters. If a float value is specified, this is applied to all sets of fracture planes (see below). If a list or array is specified, each entry is applied to its corresponding set of fracture planes.
+\item \textbf{num\_fracture\_planes}: integer\\
+  Number of sets of fracture planes (1, 2 or 3).
+\item \textbf{blocks}: list (or \texttt{None})\\
+  List of blocks or block names, specifying which blocks are to have MINC applied. If this parameter is \texttt{None}, all blocks are processed (except inactive blocks).
+\item \textbf{minc\_blockname}: function (or \texttt{None})\\
+  Function returning the name of a MINC block (string), given the original block name (string) and MINC level (integer > 0). If \texttt{None}, a default function will be used, which simply replaces the first character of the original block name with the MINC level.
+\item \textbf{minc\_rockname}: function (or \texttt{None})\\
+  Function returning the MINC rocktype name, given the parent fracture rocktype name. If \texttt{None}, a default function will be used, which simply replaces the first character of the original rocktype name with `X'.
+\item \textbf{proximity}: function (or \texttt{None})\\
+  Proximity function, returning the total matrix volume within a given distance (float) from the fracture faces. If \texttt{None}, a default function will be used, corresponding to the \texttt{num\_fracture\_planes} parameter.
+\end{itemize}
+
 
 \begin{snugshade}
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
