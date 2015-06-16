@@ -390,6 +390,8 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 
 Creates ``Multiple Interacting Continua'' (MINC) blocks and connections in the grid, for simulating fracture flow with matrix blocks attached to each fracture block. This has capability similar to that of the GMINC program \citep{GMINC}, or of the MINC part of TOUGH2's \hyperref[sec:t2data:meshmaker]{MESHMAKER} section (except that matrix-matrix flow is not supported).
 
+This function returns a list with one entry for each MINC level, which is itself a list of the names of the blocks for that level. For example, the first entry is a list of all fracture block names, the second is a list of all MINC level 1 blocks, etc. This can be useful for identifying all blocks in a particular MINC level, for plotting or other post-processing.
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{volume\_fractions}: list (or \texttt{np.array})\\
