@@ -888,7 +888,7 @@ class t2grid(object):
             from scipy.misc import derivative
             from numbers import Number
 
-            volume_fractions = np.array(volume_fractions)
+            volume_fractions = np.array(volume_fractions, dtype = np.float)
 
             if isinstance(spacing, Number): spacing = [spacing]
             missing = num_fracture_planes - len(spacing)
