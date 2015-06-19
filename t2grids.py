@@ -471,7 +471,7 @@ class t2grid(object):
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
         natm = geo.num_atmosphere_blocks
-        rindex = self.rocktype_indices
+        rindex = self.get_rocktype_indices(geo, blockmap)
         rockdict = dict(zip([blk.name for blk in self.blocklist], rindex))
         for i, blkname in enumerate(geo.block_name_list[natm:]):
             mapped_name = blockmap[blkname] if blkname in blockmap else blkname
