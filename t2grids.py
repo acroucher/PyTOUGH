@@ -876,7 +876,7 @@ class t2grid(object):
              blocks = None, minc_blockname = None, minc_rockname = None,
              proximity = None):
         """Adds MINC blocks to the grid, and returns a list of block
-        name lists for the different MINC levels. The first three parameters define
+        index lists for the different MINC levels. The first three parameters define
         the fracture geometry. The blocks parameter is a list of blocks or block
         names specifying where MINC is to be applied. The minc_blockname, 
         minc_rockname and proximity parameters are optional functions for 
@@ -983,7 +983,9 @@ class t2grid(object):
             # Add MINC blocks and connections:
             if minc_blockname is None: minc_blockname = default_minc_blockname
             if minc_rockname is None: minc_rockname = default_minc_rockname
-            blocklists = [[] for vf in volume_fractions]
+            blkidict = dict([(blk.name, i) for i, blk in enumerate(self.blocklist)])
+            iblk = self.num_blocks - 1
+            blockindex = [[] for vf in volume_fractions]
 
             for blkname in blocks:
 
@@ -991,7 +993,7 @@ class t2grid(object):
                 original_vol = blk.volume
                 if original_vol > 0:
                     blk.volume *= volume_fractions[0]
-                    blocklists[0].append(blkname)
+                    blockindex[0].append(blkidict[blkname])
                     r = blk.rocktype
                     mrockname = minc_rockname(r.name)
                     if mrockname not in self.rocktype:
@@ -1009,10 +1011,23 @@ class t2grid(object):
                             mincblk = t2block(mincname, original_vol * vf,
                                               self.rocktype[mrockname], centre = blk.centre)
                             self.add_block(mincblk)
-                            blocklists[m].append(mincname)
+                            iblk += 1
+                            blockindex[m].append(iblk)
                             con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
                                                original_vol * a[m-1], None)
                             self.add_connection(con)
                             lastblk = mincblk
 
-            return blocklists
+            return blockindex
+
+    def blockmap(self, geo, index = None):
+        """Returns a block mapping from the block name list of the specified
+        geometry to the block names in the grid. If the index parameter is
+        present (a list of integer indices), the mapping will be to the blocks
+        with the specified indices in the grid."""
+
+        if index is None:
+            gridblknames = [blk.name for blk in self.blocklist]
+        else:
+            gridblknames = [self.blocklist[i].name for i in index]
+        return dict(zip(geo.block_name_list, gridblknames))
