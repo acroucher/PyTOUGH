@@ -74,6 +74,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hyperref[sec:t2grid:add_block]{\texttt{add\_block}} & -- & adds a block to the grid\\
       \hyperref[sec:t2grid:add_connection]{\texttt{add\_connection}} & -- & adds a connection to the grid\\
       \hyperref[sec:t2grid:add_rocktype]{\texttt{add\_rocktype}} & -- & adds a rock type to the grid\\
+      \hyperref[sec:t2grid:blockmap]{\texttt{blockmap}} & dictionary & returns block name mapping from a geometry\\
       \hyperref[sec:t2grid:block_index]{\texttt{block\_index}} & integer & returns index of a block with a specified name\\
       \hyperref[sec:t2grid:calculate_block_centres]{\texttt{calculate\_block\_centres}} & -- & calculates geometrical centre of all blocks in the grid\\
       \hyperref[sec:t2grid:check]{\texttt{check}} & Boolean & checks grid for errors and optionally fixes them\\
@@ -174,6 +175,22 @@ Returns the block index (in the \texttt{blocklist} list) of a specified block na
 \begin{itemize}
 \item \textbf{blockname}: string\\
   Name of the block.
+\end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{blockmap(\emph{geo}, \emph{index} = None)}}
+\end{snugshade}
+\label{sec:t2grid:blockmap}
+\index{TOUGH2 grids!blocks!mappings}
+
+Returns a mapping from the block name list of the specified geometry object to the block names in the grid.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
+  Geometry object.
+\item \textbf{index}: list (or \texttt{None})\\
+  Specifies a list of integer indices defining which blocks in the grid to map to. If \texttt{None}, all blocks are mapped to.
 \end{itemize}
 
 \begin{snugshade}
