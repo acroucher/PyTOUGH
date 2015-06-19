@@ -2085,7 +2085,7 @@ class mulgrid(object):
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
             else: varname='Value'
-            if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
+            if rocktypes: variable, varname = rocktypes.get_rocktype_indices(self, blockmap), 'Rock type'
             if block_names:
                 if block_names == True: block_names = [blockmap[blk] if blk in blockmap
                                                        else blk for blk in self.block_name_list]
