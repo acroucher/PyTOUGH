@@ -874,7 +874,7 @@ class t2grid(object):
 
     def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
              blocks = None, minc_blockname = None, minc_rockname = None,
-             proximity = None):
+             proximity = None, atmos_volume = 1.e25):
         """Adds MINC blocks to the grid, and returns a list of block
         index lists for the different MINC levels. The first three parameters define
         the fracture geometry. The blocks parameter is a list of blocks or block
@@ -991,7 +991,7 @@ class t2grid(object):
 
                 blk = self.block[blkname]
                 original_vol = blk.volume
-                if original_vol > 0:
+                if 0. < original_vol < atmos_volume:
                     blk.volume *= volume_fractions[0]
                     blockindex[0].append(blkidict[blkname])
                     r = blk.rocktype
