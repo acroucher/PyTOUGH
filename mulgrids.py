@@ -1821,7 +1821,7 @@ class mulgrid(object):
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
                    rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
                    flow_variable_name = None, flow_unit = None, flow_scale = None, flow_scale_pos = (0.5, 0.02),
-                   flow_arrow_width = None, connection_flows = False):
+                   flow_arrow_width = None, connection_flows = False, blockmap = {}, block_names = None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
         A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
         superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1853,6 +1853,10 @@ class mulgrid(object):
         if column_names:
             if not isinstance(column_names,list): column_names = self.column.keys()
         else: column_names = []
+        if block_names:
+            if block_names == True: block_names = [blockmap[blk] if blk in blockmap
+                                                   else blk for blk in self.block_name_list]
+        else: block_names = []
         if node_names:
             if not isinstance(node_names,list): node_names = self.node.keys()
         else: node_names = []
@@ -1872,7 +1876,7 @@ class mulgrid(object):
             for i in ithreshold:
                 colc = [col.centre for col in self.connectionlist[i].column]
                 plt.plot([p[0] for p in colc],[p[1] for p in colc],color = colorConverter.to_rgb(str(1.-c[i])))
-        if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
+        if rocktypes: variable, varname = rocktypes.get_rocktype_indices(self, blockmap), 'Rock type'
         if flow is not None:
             if flow_variable_name is None: flow_variable_name = 'Flow'
             if flow_unit is None: flow_unit = 'units'
@@ -1905,6 +1909,10 @@ class mulgrid(object):
                 if col.name in column_centres:
                     ax.text(col.centre[0],col.centre[1],'+',color = 'red',clip_on = True,
                             horizontalalignment = 'center',verticalalignment = 'center')
+                mapped_blkname = blockmap[blkname] if blkname in blockmap else blkname
+                if mapped_blkname in block_names:
+                    ax.text(col.centre[0], col.centre[1], mapped_blkname, color = 'red', clip_on = True,
+                            horizontalalignment = 'center', verticalalignment = 'center')
                 if flow is not None and not connection_flows:
                     blkindex = self.block_name_index[blkname] - natm
                     q = blkflow[blkindex]
@@ -1922,6 +1930,10 @@ class mulgrid(object):
         if rocktypes: vals, rocknames, colourmap, colourbar_limits = \
                 self.setup_rocktype_plot(rocktypes, vals, colourmap, allrocks, rockgroup)
         else: rocknames, rocktypes = None, None
+        if block_names:
+            if block_names == True: block_names = [blockmap[blk] if blk in blockmap
+                                                   else blk for blk in self.block_name_list]
+        else: block_names = []
         col = collections.PolyCollection(verts,cmap = colourmap,linewidth = linewidth,facecolors = facecolors,edgecolors = linecolour)
         if variable is not None: col.set_array(np.array(vals))
         if colourbar_limits is not None: col.norm.vmin,col.norm.vmax = tuple(colourbar_limits)
