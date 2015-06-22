@@ -882,7 +882,9 @@ class t2grid(object):
         minc_rockname and proximity parameters are optional functions for 
         determining the names of MINC blocks for a given level and rocktype names
         for MINC blocks, and the proximity function. If these are not specified,
-        defaults will be used."""
+        defaults will be used. The atmos_volume parameter specifies the minimum
+        volume of large blocks used for boundary conditions, which will be excluded
+        from MINC processing."""
 
         if len(volume_fractions) < 2:
             raise Exception("Need at least two volume fractions specified " +
