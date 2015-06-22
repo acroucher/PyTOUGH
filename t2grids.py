@@ -874,7 +874,7 @@ class t2grid(object):
 
     def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
              blocks = None, minc_blockname = None, minc_rockname = None,
-             proximity = None, atmos_volume = 1.e25):
+             proximity = None, atmos_volume = 1.e25, incon = None):
         """Adds MINC blocks to the grid, and returns a list of block
         index lists for the different MINC levels. The first three parameters define
         the fracture geometry. The blocks parameter is a list of blocks or block
@@ -884,7 +884,8 @@ class t2grid(object):
         for MINC blocks, and the proximity function. If these are not specified,
         defaults will be used. The atmos_volume parameter specifies the minimum
         volume of large blocks used for boundary conditions, which will be excluded
-        from MINC processing."""
+        from MINC processing. If incon is specifed, a new t2incon is also returned
+        with initial conditions in the MINC blocks copied from the original."""
 
         if len(volume_fractions) < 2:
             raise Exception("Need at least two volume fractions specified " +
@@ -988,11 +989,17 @@ class t2grid(object):
             blkidict = dict([(blk.name, i) for i, blk in enumerate(self.blocklist)])
             iblk = self.num_blocks - 1
             blockindex = [[] for vf in volume_fractions]
+            if incon is not None:
+                template_vars = incon[0].variable
+                newincon = self.incons(template_vars)
+                from copy import copy
 
             for blkname in blocks:
 
                 blk = self.block[blkname]
                 original_vol = blk.volume
+                if incon is not None: newincon[blkname] = copy(incon[blkname])
+
                 if 0. < original_vol < atmos_volume:
                     blk.volume *= volume_fractions[0]
                     blockindex[0].append(blkidict[blkname])
@@ -1013,6 +1020,10 @@ class t2grid(object):
                             mincblk = t2block(mincname, original_vol * vf,
                                               self.rocktype[mrockname], centre = blk.centre)
                             self.add_block(mincblk)
+                            if incon is not None:
+                                inc = copy(incon[blkname])
+                                inc.block = mincname
+                                newincon[mincname] = inc
                             iblk += 1
                             blockindex[m].append(iblk)
                             con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
@@ -1020,7 +1031,8 @@ class t2grid(object):
                             self.add_connection(con)
                             lastblk = mincblk
 
-            return blockindex
+            if incon is None: return blockindex
+            else: return blockindex, newincon
 
     def blockmap(self, geo, index = None):
         """Returns a block mapping from the block name list of the specified

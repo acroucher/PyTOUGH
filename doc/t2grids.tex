@@ -400,7 +400,7 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 \begin{snugshade}
 \subsubsection{\texttt{minc(\emph{volume\_fractions}, \emph{spacing}=50., \emph{num\_fracture\_planes}=1,\\
     \emph{blocks}=None, \emph{minc\_blockname}=None, \emph{minc\_rockname}=None,\\
-    \emph{proximity}=None, \emph{atmos\_volume}=1.e25)}}
+    \emph{proximity}=None, \emph{atmos\_volume}=1.e25, \emph{incon}=None)}}
 \end{snugshade}
 \label{sec:t2grid:MINC}
 \index{TOUGH2 grids!creating!MINC}
@@ -414,6 +414,8 @@ For example, if the output index list from this method is \texttt{minc\_level}, 
 \begin{lstlisting}
 T[minc_level[m]]
 \end{lstlisting}
+
+If the \texttt{incon} parameter is specified as a \hyperref[incons]{\texttt{t2incon}} object (from the original grid), then this method will also return a new \texttt{t2incon} object for the MINC grid, with values copied from the original.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -433,6 +435,8 @@ T[minc_level[m]]
   Proximity function, returning the total matrix volume within a given distance (float) from the fracture faces. If \texttt{None}, a default function will be used, corresponding to the \texttt{num\_fracture\_planes} parameter.
 \item \textbf{atmos\_volume}: float\\
   Maximum block volume for blocks to be considered part of the geometrical grid. Blocks with volume greater than this will be assumed to be boundary condition blocks and no MINC processing will be applied to them.
+\item \textbf{incon}: \hyperref[incons]{\texttt{t2incon}} (or \texttt{None})\\
+  Initial conditions object for the original grid, before MINC processing. If not \texttt{None}, then the method returns (as well as the block index list) a new \texttt{t2incon} object for the MINC grid, with values for each block copied from the original (for all MINC levels).
 \end{itemize}
 
 
