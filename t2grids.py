@@ -949,7 +949,7 @@ class t2grid(object):
                                     "(" + str(num_fracture_planes) + ").")
 
             # Calculate MINC geometry parameters:
-            volume_fractions /= sum(volume_fractions)
+            volume_fractions /= np.sum(volume_fractions)
             vf0 = 1. - volume_fractions[0]
             x,d = [0.], [0.]
             z, delta = 1.e-10, 1.e-8
