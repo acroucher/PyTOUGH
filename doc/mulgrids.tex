@@ -197,6 +197,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:layer_plot]{\texttt{layer\_plot}} & -- & plots a variable over a layer of the grid\\
   \hyperref[sec:mulgrid:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
   \hyperref[sec:mulgrid:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
+  \hyperref[sec:mulgrid:minc_array]{\texttt{minc\_array}} & array & values for a particular level in a MINC grid\\ 
   \hyperref[sec:mulgrid:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
   \hyperref[sec:mulgrid:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
   \hyperref[sec:mulgrid:node_nearest_to]{\texttt{node\_nearest\_to}} & \hyperref[nodeobjects]{\texttt{node}} & node nearest to a specified point\\ 
@@ -996,6 +997,25 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
   If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0,1 or 2) values.
 \item \textbf{qtree}: \texttt{quadtree}\\
   Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{minc\_array(\emph{vals}, \emph{minc\_indices}, \emph{level}=0, \emph{include\_porous}=False)}}\end{snugshade}
+\label{sec:mulgrid:minc_array}
+\index{MULgraph geometry!MINC arrays}
+\index{MINC!arrays}
+
+Returns an array for all blocks in the geometry, with values taken from the input \texttt{vals} array, for the specified MINC level. Indexing of MINC blocks is specified by the \texttt{minc\_indices} list (returned by the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{vals}: \texttt{np.array}\\
+  Array of values over the entire MINC grid, with values for all MINC levels, obtained e.g. from a column of the element table of a \hyperref[sec:t2listing]{\texttt{t2listing}} object.
+\item \textbf{minc\_indices}: list\\
+  List of integer index lists for each MINC level, obtained from the output of the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method.
+\item \textbf{level}: integer\\
+  MINC level, 0 being the fracture level and higher levels being the matrix levels.
+\item \textbf{include\_porous}: Boolean\\
+  If \texttt{True}, include porous medium values outside the MINC part of the grid, otherwise zero values will be assigned.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}\end{snugshade}
