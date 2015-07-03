@@ -400,7 +400,7 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 
 \begin{snugshade}
 \subsubsection{\texttt{minc(\emph{volume\_fractions}, \emph{spacing}=50., \emph{num\_fracture\_planes}=1,\\
-    \emph{blocks}=None, \emph{minc\_blockname}=None, \emph{minc\_rockname}=None,\\
+    \emph{blocks}=None, \emph{matrix\_blockname}=None, \emph{minc\_rockname}=None,\\
     \emph{proximity}=None, \emph{atmos\_volume}=1.e25, \emph{incon}=None)}}
 \end{snugshade}
 \label{sec:t2grid:MINC}
@@ -418,6 +418,8 @@ T[minc_level[m]]
 
 If the \texttt{incon} parameter is specified as a \hyperref[incons]{\texttt{t2incon}} object (from the original grid), then this method will also return a new \texttt{t2incon} object for the MINC grid, with values copied from the original.
 
+Fracture blocks retain the same block name as their original porous medium blocks. The naming of matrix blocks can be controlled using the \texttt{matrix\_blockname} parameter.
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{volume\_fractions}: list (or \texttt{np.array})\\
@@ -428,10 +430,10 @@ If the \texttt{incon} parameter is specified as a \hyperref[incons]{\texttt{t2in
   Number of sets of fracture planes (1, 2 or 3).
 \item \textbf{blocks}: list (or \texttt{None})\\
   List of blocks or block names, specifying which blocks are to have MINC applied. If this parameter is \texttt{None}, all blocks are processed (except inactive blocks).
-\item \textbf{minc\_blockname}: function (or \texttt{None})\\
-  Function returning the name of a MINC block (string), given the original block name (string) and MINC level (integer > 0). If \texttt{None}, a default function will be used, which simply replaces the first character of the original block name with the MINC level.
+\item \textbf{matrix\_blockname}: function (or \texttt{None})\\
+  Function returning the name of a MINC matrix block (string), given the original block name (string) and MINC level (integer > 0). If \texttt{None}, a default function will be used, which simply replaces the first character of the original block name with the MINC level.
 \item \textbf{minc\_rockname}: function (or \texttt{None})\\
-  Function returning the MINC rocktype name, given the parent fracture rocktype name. If \texttt{None}, a default function will be used, which simply replaces the first character of the original rocktype name with `X'.
+  Function returning the MINC rocktype name, given the original rocktype name and MINC level ($\geq 0$). If \texttt{None}, a default function will be used, which leaves fracture blocks with their original rocktype (the properties of which can subsequently be edited), and for matrix blocks, simply replaces the first character of the original rocktype name with `X'.
 \item \textbf{proximity}: function (or \texttt{None})\\
   Proximity function, returning the total matrix volume within a given distance (float) from the fracture faces. If \texttt{None}, a default function will be used, corresponding to the \texttt{num\_fracture\_planes} parameter.
 \item \textbf{atmos\_volume}: float\\

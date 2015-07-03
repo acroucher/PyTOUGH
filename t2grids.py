@@ -886,14 +886,14 @@ class t2grid(object):
                 return geo, blockmap
 
     def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
-             blocks = None, minc_blockname = None, minc_rockname = None,
+             blocks = None, matrix_blockname = None, minc_rockname = None,
              proximity = None, atmos_volume = 1.e25, incon = None):
         """Adds MINC blocks to the grid, and returns a list of block
         index lists for the different MINC levels. The first three parameters define
         the fracture geometry. The blocks parameter is a list of blocks or block
-        names specifying where MINC is to be applied. The minc_blockname, 
+        names specifying where MINC is to be applied. The matrix_blockname, 
         minc_rockname and proximity parameters are optional functions for 
-        determining the names of MINC blocks for a given level and rocktype names
+        determining the names of matrix blocks for a given level and rocktype names
         for MINC blocks, and the proximity function. If these are not specified,
         defaults will be used. The atmos_volume parameter specifies the minimum
         volume of large blocks used for boundary conditions, which will be excluded
@@ -985,19 +985,27 @@ class t2grid(object):
                     xl = xm
             d[-1] = inner_dist(x[-2])
 
-            def default_minc_blockname(blkname, level):
-                """Returns default MINC block name, given the original
+            def default_matrix_blockname(blkname, level):
+                """Returns default matrix block name, given the original
                 block name and the MINC level (> 0)."""
                 levelstr = str(level)
                 return levelstr + blkname[len(levelstr):]
 
-            def default_minc_rockname(rockname):
-                """Returns default MINC matrix rocktype name, given the
-                parent (fracture) rocktype name."""
-                return 'X' + rockname[1:]
+            def default_minc_rockname(rockname, level):
+                """Returns default MINC rocktype name, given the
+                original rocktype name and MINC level (>= 0)."""
+                if level == 0: return rockname
+                else: return 'X' + rockname[1:]
+
+            def duplicate_rock(newrockname, r):
+                """Adds new rocktype (if necessary) based on the given one r."""
+                if newrockname not in self.rocktype:
+                    newrock = rocktype(newrockname, 0, r.density, r.porosity,
+                                     r.permeability, r.conductivity, r.specific_heat)
+                    self.add_rocktype(newrock)
 
             # Add MINC blocks and connections:
-            if minc_blockname is None: minc_blockname = default_minc_blockname
+            if matrix_blockname is None: matrix_blockname = default_matrix_blockname
             if minc_rockname is None: minc_rockname = default_minc_rockname
             blkidict = dict([(blk.name, i) for i, blk in enumerate(self.blocklist)])
             iblk = self.num_blocks - 1
@@ -1014,35 +1022,37 @@ class t2grid(object):
                 if incon is not None: newincon[blkname] = copy(incon[blkname])
 
                 if 0. < original_vol < atmos_volume:
+
                     blk.volume *= volume_fractions[0]
                     blockindex[0].append(blkidict[blkname])
-                    r = blk.rocktype
-                    mrockname = minc_rockname(r.name)
-                    if mrockname not in self.rocktype:
-                        mrock = rocktype(mrockname, 0, r.density, r.porosity,
-                                         r.permeability, r.conductivity, r.specific_heat)
-                        self.add_rocktype(mrock)
+                    original_rock = blk.rocktype
 
                     m, lastblk = 0, blk
                     for vf in volume_fractions[1:]:
                         m += 1
-                        mincname = minc_blockname(blkname, m)
-                        if mincname in self.block:
-                            raise Exception("Duplicate MINC block name: " + mincname)
+                        mrockname = minc_rockname(original_rock.name, m)
+                        duplicate_rock(mrockname, original_rock)
+                        mblockname = matrix_blockname(blkname, m)
+                        if mblockname in self.block:
+                            raise Exception("Duplicate MINC matrix block name: " + mblockname)
                         else:
-                            mincblk = t2block(mincname, original_vol * vf,
+                            mincblk = t2block(mblockname, original_vol * vf,
                                               self.rocktype[mrockname], centre = blk.centre)
                             self.add_block(mincblk)
                             if incon is not None:
                                 inc = copy(incon[blkname])
-                                inc.block = mincname
-                                newincon[mincname] = inc
+                                inc.block = mblockname
+                                newincon[mblockname] = inc
                             iblk += 1
                             blockindex[m].append(iblk)
                             con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
                                                original_vol * a[m-1], None)
                             self.add_connection(con)
                             lastblk = mincblk
+
+                    fract_rockname = minc_rockname(original_rock.name, 0)
+                    duplicate_rock(fract_rockname, original_rock)
+                    blk.rocktype = self.rocktype[fract_rockname]
 
             if incon is None: return blockindex
             else: return blockindex, newincon
