@@ -181,6 +181,19 @@ class t2grid(object):
         rocknames.sort()
         self.rocktypelist=[self.rocktype[name] for name in rocknames]
 
+    def rename_rocktype(self, rockname, newrockname):
+        """Renames rocktype with specified name. If that rocktype does not exist,
+        or the target rocktype name has already been used, an exception is raised."""
+        if rockname in self.rocktype:
+            if newrockname in self.rocktype:
+                raise Exception("Target rocktype name " + newrockname + " already exists.")
+            else:
+                rock = self.rocktype[rockname]
+                del self.rocktype[rockname]
+                rock.name = newrockname
+                self.rocktype[newrockname] = rock
+        else: raise Exception("Rocktype " + rockname + " not found.")
+
     def __repr__(self):
         return str(self.num_rocktypes)+' rock types; '+str(self.num_blocks)+' blocks; '+str(self.num_connections)+' connections'
 
