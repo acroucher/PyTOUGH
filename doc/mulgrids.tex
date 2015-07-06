@@ -999,7 +999,7 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
   Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{minc\_array(\emph{vals}, \emph{minc\_indices}, \emph{level}=0, \emph{include\_porous}=False)}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{minc\_array(\emph{vals}, \emph{minc\_indices}, \emph{level}=0, \emph{outside}=0.0)}}\end{snugshade}
 \label{sec:mulgrid:minc_array}
 \index{MULgraph geometry!MINC arrays}
 \index{MINC!arrays}
@@ -1014,8 +1014,8 @@ Returns an array for all blocks in the geometry, with values taken from the inpu
   Rank-2 array containing integer indices for each MINC level, obtained from the output of the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method.
 \item \textbf{level}: integer\\
   MINC level, 0 being the fracture level and higher levels being the matrix levels.
-\item \textbf{include\_porous}: Boolean\\
-  If \texttt{True}, include porous medium values outside the MINC part of the grid, otherwise zero values will be assigned.
+\item \textbf{outside}: Boolean or float\\
+  Determines how blocks outside the MINC part of the grid are handled. If \texttt{True}, include porous medium values outside the MINC part of the grid. If a float value is given, assign that value instead. If \texttt{False}, the value zero will be assigned.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}\end{snugshade}

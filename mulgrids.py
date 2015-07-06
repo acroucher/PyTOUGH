@@ -3225,14 +3225,17 @@ class mulgrid(object):
         self.setup_block_name_index()
         self.setup_block_connection_name_index()
         
-    def minc_array(self, vals, minc_indices, level = 0, include_porous = False):
+    def minc_array(self, vals, minc_indices, level = 0, outside = 0.0):
         """Returns an array for all blocks, with values taken from the vals array
         for the given MINC level, based on the index array minc_indices (which 
         can be obtained from the output of the t2grid minc() method). For partial MINC
-        grids, blocks outside the MINC area are assigned the value zero, unless
-        include_porous is True, in which case the porous medium values are assigned."""
+        grids, blocks outside the MINC area are assigned the value given by the 
+        parameter outside, unless outside is True, in which case the porous medium
+        values are assigned."""
 
-        if include_porous: vals_level = vals[: self.num_blocks]
-        else: vals_level = np.zeros(self.num_blocks)
+        if outside is True: vals_level = vals[: self.num_blocks]
+        else:
+            if outside is False: outside = 0.0
+            vals_level = np.ones(self.num_blocks) * outside
         vals_level[minc_indices[0]] = vals[minc_indices[level]]
         return vals_level
