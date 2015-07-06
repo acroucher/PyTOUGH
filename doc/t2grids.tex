@@ -417,6 +417,8 @@ For example, if the output index array from this method is \texttt{minc\_level},
 T[minc_level[m]]
 \end{lstlisting}
 
+Note that plotting MINC results over a \hyperref[mulgrids]{\texttt{mulgrid}} geometry can be made easier (particularly for grids that have MINC applied over only part of the domain) by using the \hyperref[sec:mulgrid:minc_array]{\texttt{minc\_array()}} method to create the solution vector to plot.
+
 If the \texttt{incon} parameter is specified as a \hyperref[incons]{\texttt{t2incon}} object (from the original grid), then this method will also return a new \texttt{t2incon} object for the MINC grid, with values copied from the original.
 
 Fracture blocks retain the same block name as their original porous medium blocks. The naming of matrix blocks can be controlled using the \texttt{matrix\_blockname} parameter.
