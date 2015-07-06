@@ -197,6 +197,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:layer_plot]{\texttt{layer\_plot}} & -- & plots a variable over a layer of the grid\\
   \hyperref[sec:mulgrid:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
   \hyperref[sec:mulgrid:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
+  \hyperref[sec:mulgrid:minc_array]{\texttt{minc\_array}} & array & values for a particular level in a MINC grid\\ 
   \hyperref[sec:mulgrid:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
   \hyperref[sec:mulgrid:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
   \hyperref[sec:mulgrid:node_nearest_to]{\texttt{node\_nearest\_to}} & \hyperref[nodeobjects]{\texttt{node}} & node nearest to a specified point\\ 
@@ -815,7 +816,8 @@ Gives the name of the layer corresponding to the specified block name, according
     \emph{welllinewidth}=1.0, \emph{wellname\_bottom}=True, \emph{rocktypes}=None, \emph{allrocks}=False,\\
     \emph{rockgroup}=None, \emph{flow}=None, \emph{grid}=None, \emph{flux\_matrix}=None,\\
     \emph{flow\_variable\_name}=None, \emph{flow\_unit}=None, \emph{flow\_scale}=None,\\
-    \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None, \emph{connection\_flows}=False})}\end{snugshade}
+    \emph{flow\_scale\_pos}=(0.5, 0.02), \emph{flow\_arrow\_width}=None, \emph{connection\_flows}=False,\\
+    \emph{blockmap} = \{\}, \emph{block\_names}=None})}\end{snugshade}
 \label{sec:mulgrid:layer_plot}
 \index{MULgraph geometry!layers!plotting}
 \index{MULgraph geometry!plotting!layers}
@@ -918,6 +920,10 @@ Flows can be shown on the layer by specifying an array of connection flow values
   Width of the flow arrows, in units of dimensionless plot width.  If not specified, this will be calculated internally.
 \item \textbf{connection\_flows}: Boolean\\
   Set to \texttt{True} to plot flows through connection faces, rather than block-averaged fluxes.  In this case, usually the \texttt{grid} parameter should also be specified (but not \texttt{flux\_matrix}), otherwise a grid will be calculated internally.
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to another block naming system. This has an effect only on the block names displayed on the plot via the \texttt{block\_names} parameter, and on the rock types displayed. Note that if a mapping is used, then the \texttt{block\_names} list should contain mapped block names.
+\item \textbf{block\_names}: Boolean or list\\
+  Set to \texttt{True} if block names are to be indicated on the plot, or to a list of names of blocks to be named.
 \end{itemize}
 
 \textbf{Example:}
@@ -991,6 +997,25 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
   If \texttt{False}, return distance along the line in first array, otherwise return specified coordinate (0,1 or 2) values.
 \item \textbf{qtree}: \texttt{quadtree}\\
   Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{minc\_array(\emph{vals}, \emph{minc\_indices}, \emph{level}=0, \emph{outside}=0.0)}}\end{snugshade}
+\label{sec:mulgrid:minc_array}
+\index{MULgraph geometry!MINC arrays}
+\index{MINC!arrays}
+
+Returns an array for all blocks in the geometry, with values taken from the input \texttt{vals} array, for the specified MINC level. Indexing of MINC blocks is specified by the \texttt{minc\_indices} array (returned by the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{vals}: \texttt{np.array}\\
+  Array of values over the entire MINC grid, with values for all MINC levels, obtained e.g. from a column of the element table of a \hyperref[listingfiles]{\texttt{t2listing}} object.
+\item \textbf{minc\_indices}: \texttt{np.array} (of integer)\\
+  Rank-2 array containing integer indices for each MINC level, obtained from the output of the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method.
+\item \textbf{level}: integer\\
+  MINC level, 0 being the fracture level and higher levels being the matrix levels.
+\item \textbf{outside}: Boolean or float\\
+  Determines how blocks outside the MINC part of the grid are handled. If \texttt{True}, include porous medium values outside the MINC part of the grid. If a float value is given, assign that value instead. If \texttt{False}, the value zero will be assigned.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{nodes\_in\_columns(\emph{columns})}}\end{snugshade}
@@ -1367,7 +1392,7 @@ Flows can be shown on the slice by specifying an array of connection flow values
 \item \textbf{connection\_flows}: Boolean\\
   Set to \texttt{True} to plot flows through connection faces, rather than block-averaged fluxes.  In this case, usually the \texttt{grid} parameter should also be specified (but not \texttt{flux\_matrix}), otherwise a grid will be calculated internally.
 \item \textbf{blockmap}: dictionary\\
-  Dictionary mapping the block names in the geometry to another block naming system. This has an effect only on the block names displayed on the plot via the \texttt{block\_names} parameter. Note that if a mapping is used, then the \texttt{block\_names} list should contain mapped block names.
+  Dictionary mapping the block names in the geometry to another block naming system. This has an effect only on the block names displayed on the plot via the \texttt{block\_names} parameter, and on the rock types displayed. Note that if a mapping is used, then the \texttt{block\_names} list should contain mapped block names.
 \end{itemize}
 
 \textbf{Example:}
