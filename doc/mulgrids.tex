@@ -1004,14 +1004,14 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
 \index{MULgraph geometry!MINC arrays}
 \index{MINC!arrays}
 
-Returns an array for all blocks in the geometry, with values taken from the input \texttt{vals} array, for the specified MINC level. Indexing of MINC blocks is specified by the \texttt{minc\_indices} list (returned by the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method).
+Returns an array for all blocks in the geometry, with values taken from the input \texttt{vals} array, for the specified MINC level. Indexing of MINC blocks is specified by the \texttt{minc\_indices} array (returned by the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method).
 
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{vals}: \texttt{np.array}\\
-  Array of values over the entire MINC grid, with values for all MINC levels, obtained e.g. from a column of the element table of a \hyperref[sec:t2listing]{\texttt{t2listing}} object.
-\item \textbf{minc\_indices}: list\\
-  List of integer index lists for each MINC level, obtained from the output of the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method.
+  Array of values over the entire MINC grid, with values for all MINC levels, obtained e.g. from a column of the element table of a \hyperref[listingfiles]{\texttt{t2listing}} object.
+\item \textbf{minc\_indices}: \texttt{np.array} (of integer)\\
+  Rank-2 array containing integer indices for each MINC level, obtained from the output of the \texttt{t2grid} \hyperref[sec:t2grid:MINC]{\texttt{minc()}} method.
 \item \textbf{level}: integer\\
   MINC level, 0 being the fracture level and higher levels being the matrix levels.
 \item \textbf{include\_porous}: Boolean\\

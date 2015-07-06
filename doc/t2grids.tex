@@ -409,9 +409,9 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 
 Creates ``Multiple Interacting Continua'' (MINC) blocks and connections in the grid, for simulating fracture flow with matrix blocks attached to each fracture block. This has capability similar to that of the GMINC program \citep{GMINC}, or of the MINC part of TOUGH2's \hyperref[sec:t2data:meshmaker]{MESHMAKER} section (except that matrix-matrix flow is not supported).
 
-This function returns a list with one entry for each MINC level, which is itself a list of the integer indices of the blocks for that level. For example, the first entry is a list of all fracture block indices, the second is a list of all MINC level 1 block indices, etc. This can be useful for identifying all blocks in a given MINC level, for plotting or other post-processing.
+This function returns a rank-2 integer \texttt{np.array} with one row for each MINC level, containing the indices of the blocks for that level. For example, the first row is a list of all fracture block indices, the second is a list of all MINC level 1 block indices, etc. This can be useful for identifying all blocks in a given MINC level, for plotting or other post-processing.
 
-For example, if the output index list from this method is \texttt{minc\_level}, and \texttt{T} is an array of temperatures computed over the entire MINC grid (e.g. extracted from the element table of a listing file), then the temperatures in MINC level \texttt{m} are given by:
+For example, if the output index array from this method is \texttt{minc\_level}, and \texttt{T} is an array of temperatures computed over the entire MINC grid (e.g. extracted from the element table of a listing file), then the temperatures in MINC level \texttt{m} are given by:
 
 \begin{lstlisting}
 T[minc_level[m]]
@@ -440,7 +440,7 @@ Fracture blocks retain the same block name as their original porous medium block
 \item \textbf{atmos\_volume}: float\\
   Maximum block volume for blocks to be considered part of the geometrical grid. Blocks with volume greater than this will be assumed to be boundary condition blocks and no MINC processing will be applied to them.
 \item \textbf{incon}: \hyperref[incons]{\texttt{t2incon}} (or \texttt{None})\\
-  Initial conditions object for the original grid, before MINC processing. If not \texttt{None}, then the method returns (as well as the block index list) a new \texttt{t2incon} object for the MINC grid, with values for each block copied from the original (for all MINC levels).
+  Initial conditions object for the original grid, before MINC processing. If not \texttt{None}, then the method returns (as well as the block index array) a new \texttt{t2incon} object for the MINC grid, with values for each block copied from the original (for all MINC levels).
 \end{itemize}
 
 

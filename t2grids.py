@@ -888,8 +888,8 @@ class t2grid(object):
     def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
              blocks = None, matrix_blockname = None, minc_rockname = None,
              proximity = None, atmos_volume = 1.e25, incon = None):
-        """Adds MINC blocks to the grid, and returns a list of block
-        index lists for the different MINC levels. The first three parameters define
+        """Adds MINC blocks to the grid, and returns an array of block
+        indices for the different MINC levels. The first three parameters define
         the fracture geometry. The blocks parameter is a list of blocks or block
         names specifying where MINC is to be applied. The matrix_blockname, 
         minc_rockname and proximity parameters are optional functions for 
@@ -900,7 +900,8 @@ class t2grid(object):
         from MINC processing. If incon is specifed, a new t2incon is also returned
         with initial conditions in the MINC blocks copied from the original."""
 
-        if len(volume_fractions) < 2:
+        num_levels = len(volume_fractions)
+        if num_levels < 2:
             raise Exception("Need at least two volume fractions specified " +
                             "for MINC.")
         else:
@@ -1009,13 +1010,13 @@ class t2grid(object):
             if minc_rockname is None: minc_rockname = default_minc_rockname
             blkidict = dict([(blk.name, i) for i, blk in enumerate(self.blocklist)])
             iblk = self.num_blocks - 1
-            blockindex = [[] for vf in volume_fractions]
+            blockindex = np.zeros((num_levels, len(blocks)), np.int)
             if incon is not None:
                 template_vars = incon[0].variable
                 newincon = self.incons(template_vars)
                 from copy import copy
 
-            for blkname in blocks:
+            for blk_index, blkname in enumerate(blocks):
 
                 blk = self.block[blkname]
                 original_vol = blk.volume
@@ -1024,7 +1025,7 @@ class t2grid(object):
                 if 0. < original_vol < atmos_volume:
 
                     blk.volume *= volume_fractions[0]
-                    blockindex[0].append(blkidict[blkname])
+                    blockindex[0, blk_index] = blkidict[blkname]
                     original_rock = blk.rocktype
 
                     m, lastblk = 0, blk
@@ -1044,7 +1045,7 @@ class t2grid(object):
                                 inc.block = mblockname
                                 newincon[mblockname] = inc
                             iblk += 1
-                            blockindex[m].append(iblk)
+                            blockindex[m, blk_index] = iblk
                             con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
                                                original_vol * a[m-1], None)
                             self.add_connection(con)
