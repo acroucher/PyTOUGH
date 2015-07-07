@@ -1015,12 +1015,13 @@ class t2grid(object):
                 template_vars = incon[0].variable
                 newincon = self.incons(template_vars)
                 from copy import copy
+                for blkinc in incon:
+                    newincon[blkinc.block] = copy(incon[blkinc.block])
 
             for blk_index, blkname in enumerate(blocks):
 
                 blk = self.block[blkname]
                 original_vol = blk.volume
-                if incon is not None: newincon[blkname] = copy(incon[blkname])
 
                 if 0. < original_vol < atmos_volume:
 
