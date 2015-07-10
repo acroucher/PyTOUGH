@@ -745,7 +745,7 @@ Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data m
 \item \textbf{filename}: string\\
   Name of the TOUGH2 data file to be read.
 \item \textbf{meshfilename}: string or tuple\\
-  Name of separate mesh file(s) to read, containing element and connection data.  If empty, then mesh data will be read from the main data file.  If a non-empty string is given, this is interpreted as the name of a formatted text file containing `ELEME' and `CONNE' data sections (as in the `MESH' files created by TOUGH2 and TOUGH2\_MP).
+  Name of separate mesh file(s) to read, containing element and connection data.  If empty, then mesh data will be read from the main data file.  If a non-empty string is given, this is interpreted as the name of a formatted text file containing `ELEME' and `CONNE' data sections (as in the `MESH' files created by TOUGH2 and TOUGH2\_MP). If a tuple of two filenames is given, these are interpreted as the names of the two binary MESHA and MESHB files used by TOUGH2\_MP.
 \end{itemize}
 
 Note that it is possible to create a \texttt{t2data} object and read its contents in from disk files in one step, e.g.: \texttt{dat = t2data(filename,meshfilename)}.
