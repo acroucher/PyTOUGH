@@ -14,31 +14,17 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.4.0, which has:
+The latest stable version is 1.4.1, which has:
 
-* support for EOS modules with more than four primary variables in t2data and t2incons
+* MINC processing ability via the new t2grid minc() method, including partial MINC (applied to only part of grid), flexible block and rocktype naming options, and initial conditions handling
 
-* support for TOUGH2 NSEQ, NADD parameters in initial conditions in t2data and t2incons
+* ability to extract results over a mulgrid geometry for a particular MINC level via new minc_array() method
 
-* new mulgrid decompose_columns() method, for subdividing columns with more than four sides into triangles and quadrilaterals
+* ability to plot block names in mulgrid layer_plot(), and support for blockmaps
 
-* new mulgrid fit_columns() method for fitting arbitrary (x,y,z) datasets to columns (not just surface elevations)
+* better support for mulgrid ExodusII export
 
-* fitting (x,y,z) datasets to mulgrids containing columns with more than four sides
-
-* new t2grids rectgeo() method, for reverse-engineering rectangular mulgrid geometry from a TOUGH2 data file (e.g. for working with models created by PetraSim)
-
-* block mappings, for using TOUGH2 meshes with naming conventions not supported by mulgrids
-
-* new region() method in t2thermo and IAPWS97 modules- to determine thermodynamic region for temperature and pressure
-
-* checking thermodynamic function input variables to see if they are within operating range
-
-* extracting t2listing histories with datetimes
-
-* exporting t2listing tables to Pandas DataFrames
-
-* exporting mulgrid geometries to ExodusII mesh file format
+* remaining print statements in t2listing.py turned into Python exceptions
 
 as well as various bug fixes and other minor enhancements.
 
