@@ -78,11 +78,11 @@ class t2grid(object):
     def get_num_rocktypes(self):
         return len(self.rocktypelist)
     num_rocktypes=property(get_num_rocktypes)
-        
+
     def get_num_blocks(self):
         return len(self.blocklist)
     num_blocks=property(get_num_blocks)
-        
+
     def get_num_connections(self):
         return len(self.connectionlist)
     num_connections=property(get_num_connections)
@@ -94,7 +94,7 @@ class t2grid(object):
     def get_num_underground_blocks(self):
         return self.num_blocks-self.num_atmosphere_blocks
     num_underground_blocks=property(get_num_underground_blocks)
-    
+
     def get_atmosphere_blocks(self):
         return [blk for blk in self.blocklist if blk.atmosphere]
     atmosphere_blocks=property(get_atmosphere_blocks)
@@ -165,7 +165,7 @@ class t2grid(object):
         """Returns how many times the rocktype with given name is used in the grid."""
         return [blk.rocktype.name for blk in self.blocklist].count(rockname)
     def get_rocktype_frequencies(self):
-        """Returns a list of tuples of occurring frequencies of rock types in the grid and the names of rocktypes with that frequency, 
+        """Returns a list of tuples of occurring frequencies of rock types in the grid and the names of rocktypes with that frequency,
         ordered by increasing frequency."""
         freq=[(rt.name,self.rocktype_frequency(rt.name)) for rt in self.rocktypelist]
         occurring_freqs=list(set([item[1] for item in freq]))
@@ -181,6 +181,19 @@ class t2grid(object):
         rocknames.sort()
         self.rocktypelist=[self.rocktype[name] for name in rocknames]
 
+    def rename_rocktype(self, rockname, newrockname):
+        """Renames rocktype with specified name. If that rocktype does not exist,
+        or the target rocktype name has already been used, an exception is raised."""
+        if rockname in self.rocktype:
+            if newrockname in self.rocktype:
+                raise Exception("Target rocktype name " + newrockname + " already exists.")
+            else:
+                rock = self.rocktype[rockname]
+                del self.rocktype[rockname]
+                rock.name = newrockname
+                self.rocktype[newrockname] = rock
+        else: raise Exception("Rocktype " + rockname + " not found.")
+
     def __repr__(self):
         return str(self.num_rocktypes)+' rock types; '+str(self.num_blocks)+' blocks; '+str(self.num_connections)+' connections'
 
@@ -195,7 +208,7 @@ class t2grid(object):
 
     def embed(self,subgrid,connection):
         """Returns a grid with a subgrid embedded inside one of its blocks.  The connection specifies how the two grids
-        are to be connected: the blocks to be connected and the connection distances, area etc. between them.  The first 
+        are to be connected: the blocks to be connected and the connection distances, area etc. between them.  The first
         block should be the host block, the second the connecting block in the subgrid."""
         result=None
         subvol=sum([blk.volume for blk in subgrid.blocklist])
@@ -219,7 +232,7 @@ class t2grid(object):
         self.rocktype={}
         self.block={}
         self.connection={}
-        
+
     def add_rocktype(self,newrocktype=rocktype()):
         """Adds a rock type to the grid.  Any existing rocktype of the same name is replaced."""
         if newrocktype.name in self.rocktype:
@@ -249,7 +262,7 @@ class t2grid(object):
             self.blocklist[i]=newblock
         else: self.blocklist.append(newblock)
         self.block[newblock.name]=newblock
-    
+
     def delete_block(self,blockname):
         """Deletes a block from the grid"""
         if blockname in self.block:
@@ -271,7 +284,7 @@ class t2grid(object):
     def add_connection(self,newconnection=t2connection()):
         """Adds a connection to the grid"""
         conname=tuple([blk.name for blk in newconnection.block])
-        if conname in self.connection: 
+        if conname in self.connection:
             i=self.connectionlist.index(self.connection[conname])
             self.connectionlist[i]=newconnection
         else: self.connectionlist.append(newconnection)
@@ -400,7 +413,7 @@ class t2grid(object):
         """Returns a set of blocks in the grid that are not connected to any other blocks."""
         return set([blk.name for blk in self.blocklist if len(blk.connection_name)==0])
     unconnected_blocks=property(get_unconnected_blocks)
-    
+
     def get_isolated_rocktype_blocks(self):
         """Returns a list of blocks with isolated rocktypes- that is, blocks with a rocktype different from that of
         all other blocks they are connected to."""
@@ -436,11 +449,16 @@ class t2grid(object):
         if ok and not silent: print 'No problems found.'
         return ok
 
-    def get_rocktype_indices(self):
+    def get_rocktype_indices(self, geo = None, blockmap = {}):
         """Returns an integer array containing the rocktype index for each block in the grid."""
-        rocknames=[rt.name for rt in self.rocktypelist]
-        rockdict=dict([(name,i) for i,name in enumerate(rocknames)])
-        return np.array([rockdict[blk.rocktype.name] for blk in self.blocklist])
+        rocknames = [rt.name for rt in self.rocktypelist]
+        rockdict = dict([(name, i) for i, name in enumerate(rocknames)])
+        if geo is None:
+            return np.array([rockdict[blk.rocktype.name] for blk in self.blocklist])
+        else:
+            return np.array([rockdict[self.block[
+                            blockmap[blkname] if blkname in blockmap else blkname].rocktype.name]
+                             for blkname in geo.block_name_list])
     rocktype_indices=property(get_rocktype_indices)
 
     def get_vtk_data(self, geo, blockmap = {}):
@@ -462,14 +480,14 @@ class t2grid(object):
                 elif name in string_properties:
                     array.SetNumberOfComponents(string_length)
                     array.SetNumberOfTuples(array_length[array_type])
-                else: 
+                else:
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
         natm = geo.num_atmosphere_blocks
-        rindex = self.rocktype_indices
+        rindex = self.get_rocktype_indices(geo, blockmap)
         rockdict = dict(zip([blk.name for blk in self.blocklist], rindex))
         for i, blkname in enumerate(geo.block_name_list[natm:]):
-            mapped_name = blockmap[blkname] if blkname in blockmap else blkname           
+            mapped_name = blockmap[blkname] if blkname in blockmap else blkname
             arrays['Block']['Name'].SetTupleValue(i, mapped_name)
             ri = rockdict[mapped_name]
             arrays['Block']['Rock type index'].SetValue(i, ri)
@@ -491,7 +509,8 @@ class t2grid(object):
         vtu = geo.get_vtk_grid(arrays)
         writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
     def flux_matrix(self, geo, blockmap = {}):
@@ -525,14 +544,15 @@ class t2grid(object):
         return A
 
     def radial(self, rblocks, zblocks, convention=0, atmos_type=2, origin = np.array([0.,0.]), justify='r',
-               case='l', dimension=2, blockmap = {}):
+               case=None, dimension=2, blockmap = {}, chars = ascii_lowercase):
         """Returns a radial TOUGH2 grid with the specified radial and vertical block sizes.
         The arguments are arrays of the block sizes in each dimension (r,z).
-        Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in 
+        Naming convention, atmosphere type and grid origin can optionally be specified.  The origin is in
         (r,z) coordinates, so origin[0] is the starting radius of the grid.  (The origin can also be specified
         with three components, in which case the second one is ignored.)
         The optional justify and case parameters specify the format of the character part of the block names
-        (whether they are right or left justified, and lower or upper case).
+        (whether they are right or left justified, and lower or upper case). The case parameter is now
+        deprecated- the more flexible chars parameter should be used instead.
         Specifying dimension<>2 (between 1 and 3) simulates flow in fractured rock using the
         "generalized radial flow" concept of Barker, J.A. (1988), "A generalized radial flow model for hydraulic
         tests in fractured rock", Water Resources Research 24(10), 1796-1804.  In this case it probably doesn't
@@ -543,9 +563,13 @@ class t2grid(object):
         if isinstance(origin,list): origin = np.array(origin)
         if len(origin) > 2: origin = origin[[0,2]]
 
-        from string import ljust,rjust,lowercase,uppercase
+        from string import ljust,rjust
         justfn = [rjust,ljust][justify=='l']
-        casefn = [uppercase,lowercase][case=='l']
+        if case is not None:
+            from string import upper, lower
+            casefn = [upper,lower][case=='l']
+            chars = casefn(chars)
+        chars = uniqstring(chars)
 
         n2 = 0.5 * dimension
         if dimension<>2: # need gamma function
@@ -572,9 +596,9 @@ class t2grid(object):
         # dummy geometry for creating block names etc:
         geo = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
         for ir,dr in enumerate(rblocks):
-            colname = geo.column_name_from_number(ir+1,justfn,casefn)
+            colname = geo.column_name_from_number(ir+1, justfn, chars)
             geo.add_column(column(colname, [], centre = np.array([rc[ir],0.])))
-        geo.add_layers(zblocks, origin[1], justify, case)
+        geo.add_layers(zblocks, origin[1], justify, chars)
         grid.add_atmosphereblocks(geo)
 
         for lay in geo.layerlist[1:]: # add blocks
@@ -659,7 +683,7 @@ class t2grid(object):
         atmos_volume parameter specifies the maximum block volume considered to be part of the geometrical
         grid. The layer_snap parameter can be used to eliminate blocks with very small volumes at the
         ground surface.
-        The method also returns a block mapping dictionary, mapping geometry block names into 
+        The method also returns a block mapping dictionary, mapping geometry block names into
         grid block names."""
 
         def blockelevs(grid, max_volume = None):
@@ -812,7 +836,7 @@ class t2grid(object):
 
         def block_mapping(geo, grid, ob, nblks, max_volume):
             """Generates a mapping from geometry block names to grid block names."""
-            mapping = {} 
+            mapping = {}
             icol = 0
             start2, last2 = ob, None
             for i2 in xrange(nblks[2]):
@@ -828,7 +852,7 @@ class t2grid(object):
                             atm_blk,con = next_block_in_direction(blk, last3, 3, grid)
                             if atm_blk:
                                 if geo.atmosphere_type == 0:
-                                    atmblockname = geo.block_name(geo.layerlist[0].name, 
+                                    atmblockname = geo.block_name(geo.layerlist[0].name,
                                                                   geo.atmosphere_column_name)
                                     mapping[atmblockname] = atm_blk.name
                                 elif geo.atmosphere_type == 1:
@@ -860,3 +884,189 @@ class t2grid(object):
                 geo = find_surface(geo, self, blockmap, remove_inactive, atmos_volume)
                 geo.snap_columns_to_layers(layer_snap)
                 return geo, blockmap
+
+    def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
+             blocks = None, matrix_blockname = None, minc_rockname = None,
+             proximity = None, atmos_volume = 1.e25, incon = None):
+        """Adds MINC blocks to the grid, and returns an array of block
+        indices for the different MINC levels. The first three parameters define
+        the fracture geometry. The blocks parameter is a list of blocks or block
+        names specifying where MINC is to be applied. The matrix_blockname, 
+        minc_rockname and proximity parameters are optional functions for 
+        determining the names of matrix blocks for a given level and rocktype names
+        for MINC blocks, and the proximity function. If these are not specified,
+        defaults will be used. The atmos_volume parameter specifies the minimum
+        volume of large blocks used for boundary conditions, which will be excluded
+        from MINC processing. If incon is specifed, a new t2incon is also returned
+        with initial conditions in the MINC blocks copied from the original."""
+
+        num_levels = len(volume_fractions)
+        if num_levels < 2:
+            raise Exception("Need at least two volume fractions specified " +
+                            "for MINC.")
+        else:
+
+            from scipy.optimize import bisect
+            from scipy.misc import derivative
+            from numbers import Number
+
+            volume_fractions = np.array(volume_fractions, dtype = float64)
+
+            if isinstance(spacing, Number): spacing = [spacing]
+            missing = num_fracture_planes - len(spacing)
+            if missing > 0: spacing = list(spacing) + [spacing[0]]*missing
+            spacing = np.array(spacing)
+            if blocks is None or blocks == []:
+                blocks = [blk.name for blk in self.blocklist]
+            if isinstance(blocks[0], t2block):
+                blocks = [blk.name for blk in blocks]
+
+            def default_proximity(x):
+                """Default proximity functions."""
+                if num_fracture_planes == 1:
+                    if x >= 0.5 * spacing[0]: return 1.
+                    else: return 2. * x / spacing[0]
+                elif num_fracture_planes == 2:
+                    if any([0.5 * fs <= x for fs in spacing[:2]]):
+                        return 1.
+                    else:
+                        f01 = spacing[0] * spacing[1]
+                        return 2. * x *(spacing[0] + spacing[1] - 2. * x) / f01
+                elif num_fracture_planes == 3:
+                    u = 2. * x / spacing[0:3]
+                    if any([ui >= 1. for ui in u]): return 1.
+                    else: return u[0]*u[1]*u[2] \
+                            - (u[0]*u[1] + u[1]*u[2] + u[0]*u[2]) \
+                            + u[0] + u[1] + u[2]
+                else:
+                    raise Exception("Invalid number of MINC fracture planes" +
+                                    "(" + str(num_fracture_planes) + ").")
+
+            if proximity is None: proximity = default_proximity
+
+            def invert_proximity(vf, xl, xr):
+                def proxv(x): return proximity(x) - vf
+                while proxv(xr) < 0.: xr *= 2.
+                x,r = bisect(proxv, xl, xr, full_output = True)
+                if r.converged: return x, xr
+                else: return None, None
+
+            def inner_dist(x):
+                """Returns innermost connection distance, at distance x."""
+                if num_fracture_planes == 1:
+                    return (spacing[0] - 2. * x) / 6.
+                elif num_fracture_planes == 2:
+                    u = spacing[0:2] - 2. * x
+                    return 0.25 * u[0] * u[1] / (u[0] + u[1])
+                elif num_fracture_planes == 3:
+                    u = spacing[0:3] - 2. * x
+                    return 0.3 * u[0]*u[1]*u[2] / (u[0]*u[1] + u[1]*u[2] + u[0]*u[2])
+                else:
+                    raise Exception("Invalid number of MINC fracture planes" +
+                                    "(" + str(num_fracture_planes) + ").")
+
+            # Calculate MINC geometry parameters:
+            volume_fractions /= np.sum(volume_fractions)
+            vf0 = 1. - volume_fractions[0]
+            x,d = [0.], [0.]
+            z, delta = 1.e-10, 1.e-8
+            a = [vf0 * proximity(z) / z]
+            volsum = np.cumsum(volume_fractions[1:]) / vf0
+            volsum[-1] = 1. - delta
+            xl, xr = 0., volume_fractions[1] / a[0]
+
+            for vs in volsum:
+                xm, xr = invert_proximity(vs, xl, xr)
+                if xm is None:
+                    raise Exception("Could not invert MINC proximity function.")
+                else:
+                    x.append(xm)
+                    a.append(vf0 * derivative(proximity, xm, xm * delta))
+                    d.append(0.5 * (xm - xl))
+                    xl = xm
+            d[-1] = inner_dist(x[-2])
+
+            def default_matrix_blockname(blkname, level):
+                """Returns default matrix block name, given the original
+                block name and the MINC level (> 0)."""
+                levelstr = str(level)
+                return levelstr + blkname[len(levelstr):]
+
+            def default_minc_rockname(rockname, level):
+                """Returns default MINC rocktype name, given the
+                original rocktype name and MINC level (>= 0)."""
+                if level == 0: return rockname
+                else: return 'X' + rockname[1:]
+
+            def duplicate_rock(newrockname, r):
+                """Adds new rocktype (if necessary) based on the given one r."""
+                if newrockname not in self.rocktype:
+                    newrock = rocktype(newrockname, 0, r.density, r.porosity,
+                                     r.permeability, r.conductivity, r.specific_heat)
+                    self.add_rocktype(newrock)
+
+            # Add MINC blocks and connections:
+            if matrix_blockname is None: matrix_blockname = default_matrix_blockname
+            if minc_rockname is None: minc_rockname = default_minc_rockname
+            blkidict = dict([(blk.name, i) for i, blk in enumerate(self.blocklist)])
+            iblk = self.num_blocks - 1
+            blockindex = np.zeros((num_levels, len(blocks)), np.int)
+            if incon is not None:
+                template_vars = incon[0].variable
+                newincon = self.incons(template_vars)
+                from copy import copy
+                for blkinc in incon:
+                    newincon[blkinc.block] = copy(incon[blkinc.block])
+
+            for blk_index, blkname in enumerate(blocks):
+
+                blk = self.block[blkname]
+                original_vol = blk.volume
+
+                if 0. < original_vol < atmos_volume:
+
+                    blk.volume *= volume_fractions[0]
+                    blockindex[0, blk_index] = blkidict[blkname]
+                    original_rock = blk.rocktype
+
+                    m, lastblk = 0, blk
+                    for vf in volume_fractions[1:]:
+                        m += 1
+                        mrockname = minc_rockname(original_rock.name, m)
+                        duplicate_rock(mrockname, original_rock)
+                        mblockname = matrix_blockname(blkname, m)
+                        if mblockname in self.block:
+                            raise Exception("Duplicate MINC matrix block name: " + mblockname)
+                        else:
+                            mincblk = t2block(mblockname, original_vol * vf,
+                                              self.rocktype[mrockname], centre = blk.centre)
+                            self.add_block(mincblk)
+                            if incon is not None:
+                                inc = copy(incon[blkname])
+                                inc.block = mblockname
+                                newincon[mblockname] = inc
+                            iblk += 1
+                            blockindex[m, blk_index] = iblk
+                            con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
+                                               original_vol * a[m-1], None)
+                            self.add_connection(con)
+                            lastblk = mincblk
+
+                    fract_rockname = minc_rockname(original_rock.name, 0)
+                    duplicate_rock(fract_rockname, original_rock)
+                    blk.rocktype = self.rocktype[fract_rockname]
+
+            if incon is None: return blockindex
+            else: return blockindex, newincon
+
+    def blockmap(self, geo, index = None):
+        """Returns a block mapping from the block name list of the specified
+        geometry to the block names in the grid. If the index parameter is
+        present (a list of integer indices), the mapping will be to the blocks
+        with the specified indices in the grid."""
+
+        if index is None:
+            gridblknames = [blk.name for blk in self.blocklist]
+        else:
+            gridblknames = [self.blocklist[i].name for i in index]
+        return dict(zip(geo.block_name_list, gridblknames))

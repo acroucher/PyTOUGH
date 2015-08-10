@@ -1821,7 +1821,7 @@ class mulgrid(object):
                    hide_wells_outside = False, wellcolour = 'blue', welllinewidth = 1.0, wellname_bottom = True,
                    rocktypes = None, allrocks = False, rockgroup = None, flow = None, grid = None, flux_matrix = None,
                    flow_variable_name = None, flow_unit = None, flow_scale = None, flow_scale_pos = (0.5, 0.02),
-                   flow_arrow_width = None, connection_flows = False):
+                   flow_arrow_width = None, connection_flows = False, blockmap = {}, block_names = None):
         """Produces a layer plot of a Mulgraph grid, shaded by the specified variable (an array of values for each block).
         A unit string can be specified for annotation.  Column names, node names, column centres and nodes can be optionally
         superimposed, and the colour map, linewidth, aspect ratio, colour-bar limits and plot limits specified.
@@ -1853,6 +1853,10 @@ class mulgrid(object):
         if column_names:
             if not isinstance(column_names,list): column_names = self.column.keys()
         else: column_names = []
+        if block_names:
+            if block_names == True: block_names = [blockmap[blk] if blk in blockmap
+                                                   else blk for blk in self.block_name_list]
+        else: block_names = []
         if node_names:
             if not isinstance(node_names,list): node_names = self.node.keys()
         else: node_names = []
@@ -1872,7 +1876,7 @@ class mulgrid(object):
             for i in ithreshold:
                 colc = [col.centre for col in self.connectionlist[i].column]
                 plt.plot([p[0] for p in colc],[p[1] for p in colc],color = colorConverter.to_rgb(str(1.-c[i])))
-        if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
+        if rocktypes: variable, varname = rocktypes.get_rocktype_indices(self, blockmap), 'Rock type'
         if flow is not None:
             if flow_variable_name is None: flow_variable_name = 'Flow'
             if flow_unit is None: flow_unit = 'units'
@@ -1905,6 +1909,10 @@ class mulgrid(object):
                 if col.name in column_centres:
                     ax.text(col.centre[0],col.centre[1],'+',color = 'red',clip_on = True,
                             horizontalalignment = 'center',verticalalignment = 'center')
+                mapped_blkname = blockmap[blkname] if blkname in blockmap else blkname
+                if mapped_blkname in block_names:
+                    ax.text(col.centre[0], col.centre[1], mapped_blkname, color = 'red', clip_on = True,
+                            horizontalalignment = 'center', verticalalignment = 'center')
                 if flow is not None and not connection_flows:
                     blkindex = self.block_name_index[blkname] - natm
                     q = blkflow[blkindex]
@@ -1922,6 +1930,10 @@ class mulgrid(object):
         if rocktypes: vals, rocknames, colourmap, colourbar_limits = \
                 self.setup_rocktype_plot(rocktypes, vals, colourmap, allrocks, rockgroup)
         else: rocknames, rocktypes = None, None
+        if block_names:
+            if block_names == True: block_names = [blockmap[blk] if blk in blockmap
+                                                   else blk for blk in self.block_name_list]
+        else: block_names = []
         col = collections.PolyCollection(verts,cmap = colourmap,linewidth = linewidth,facecolors = facecolors,edgecolors = linecolour)
         if variable is not None: col.set_array(np.array(vals))
         if colourbar_limits is not None: col.norm.vmin,col.norm.vmax = tuple(colourbar_limits)
@@ -2085,7 +2097,7 @@ class mulgrid(object):
                 if len(variable)==self.num_columns: variable=self.column_values_to_block(variable)
             if variable_name: varname=variable_name
             else: varname='Value'
-            if rocktypes: variable, varname = rocktypes.rocktype_indices, 'Rock type'
+            if rocktypes: variable, varname = rocktypes.get_rocktype_indices(self, blockmap), 'Rock type'
             if block_names:
                 if block_names == True: block_names = [blockmap[blk] if blk in blockmap
                                                        else blk for blk in self.block_name_list]
@@ -2757,7 +2769,8 @@ class mulgrid(object):
         vtu = self.get_vtk_grid(arrays)
         writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
         
     def get_well_vtk_grid(self):
@@ -2797,20 +2810,26 @@ class mulgrid(object):
         vtu=self.get_well_vtk_grid()
         writer=vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
     def write_exodusii(self, filename = '', arrays = None, blockmap = {}):
         """Writes ExodusII file for a vtkUnstructuredGrid object corresponding to the grid in 3D,
         with the specified filename."""
-        from vtk import vtkExodusIIWriter
+        try:
+            from vtk import vtkExodusIIWriter
+        except ImportError:
+            raise Exception("Either you don't have the Python VTK library installed, or it is too old.\n"+
+                            "On Windows you will need to have version 6.1 or later.")
         base = self.filename_base(filename)
         filename = base + '.exo'
         if arrays is None: arrays = self.get_vtk_data(blockmap)
         vtu = self.get_vtk_grid(arrays)
         writer = vtkExodusIIWriter()
         writer.SetFileName(filename)
-        writer.SetInput(vtu)
+        if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+        elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
     def snap_columns_to_layers(self,min_thickness=1.0,columns=[]):
@@ -3206,3 +3225,17 @@ class mulgrid(object):
         self.setup_block_name_index()
         self.setup_block_connection_name_index()
         
+    def minc_array(self, vals, minc_indices, level = 0, outside = 0.0):
+        """Returns an array for all blocks, with values taken from the vals array
+        for the given MINC level, based on the index array minc_indices (which 
+        can be obtained from the output of the t2grid minc() method). For partial MINC
+        grids, blocks outside the MINC area are assigned the value given by the 
+        parameter outside, unless outside is True, in which case the porous medium
+        values are assigned."""
+
+        if outside is True: vals_level = vals[: self.num_blocks]
+        else:
+            if outside is False: outside = 0.0
+            vals_level = np.ones(self.num_blocks) * outside
+        vals_level[minc_indices[0]] = vals[minc_indices[level]]
+        return vals_level

@@ -142,12 +142,14 @@ class t2listing(file):
        given by element['aa100']['Pressure'].)  It is possible to navigate through time in the listing by 
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
-    def __init__(self,filename=None,skip_tables=[]):
+    def __init__(self, filename=None, skip_tables = []):
+        self._table={}
+        self._tablenames = []
         self.filename=filename
         self.skip_tables=skip_tables
         super(t2listing,self).__init__(filename,'rU')
         self.detect_simulator()
-        if self.simulator is None: print 'Could not detect simulator type.'
+        if self.simulator is None: raise Exception('Could not detect simulator type.')
         else:
             self.setup_short_types()
             self.setup_pos()
@@ -158,8 +160,7 @@ class t2listing(file):
                 self.setup_short_indices()
                 self.first()
             else:
-                self.setup_short_indices()
-                print 'No full results found in listing file.'
+                raise Exception('No full results found in listing file.')
 
     def __repr__(self): return self.title
 
@@ -424,8 +425,6 @@ class t2listing(file):
         
     def setup_tables_AUTOUGH2(self):
         """Sets up configuration of element, connection and generation tables."""
-        self._table={}
-        self._tablenames = []
         tablename='element'
         self.seek(self._fullpos[0])
         while tablename:
@@ -436,8 +435,6 @@ class t2listing(file):
 
     def setup_tables_TOUGH2(self):
         self.read_title()
-        self._table={}
-        self._tablenames = []
         tablename='element'
         self.seek(self._fullpos[0])
         self.read_header() # only one header at each time
@@ -448,8 +445,6 @@ class t2listing(file):
 
     def setup_tables_TOUGHplus(self):
         self.read_title()
-        self._table={}
-        self._tablenames = []
         tablename='element'
         self.seek(self._fullpos[0])
         self.read_header() # only one header at each time
@@ -617,9 +612,9 @@ class t2listing(file):
                                                       allow_reverse_keys = allow_rev)
                 self._tablenames.append(tablename)
                 self.readline()
-            else: print 'Error parsing '+tablename+' table keys: table not created.'
+            else: raise Exception('Error parsing '+tablename+' table keys: table not created.')
         else:
-            print 'Error parsing '+tablename+' table columns: table not created.'
+            raise Exception('Error parsing '+tablename+' table columns: table not created.')
 
     def parse_table_line(self, line, start):
         """Parses line of a table and returns starting indices of each column"""
@@ -746,7 +741,7 @@ class t2listing(file):
             self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys, allow_reverse_keys=allow_rev,
                                                 header_skiplines = header_skiplines, skiplines = skiplines)
             self._tablenames.append(tablename)
-        else: print 'Error parsing '+tablename+' table keys: table not created.'
+        else: raise Exception('Error parsing '+tablename+' table keys: table not created.')
 
     def read_header_AUTOUGH2(self):
         """Reads header info (title and time data) for one set of AUTOUGH2 listing results."""
@@ -877,8 +872,13 @@ class t2listing(file):
             self.skiplines(skip)
 
     def skip_table_TOUGH2(self,tablename):
-        table = self._table[tablename]
-        self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
+        if tablename in self._table:
+            table = self._table[tablename]
+            self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
+        else:
+            if self.simulator == 'TOUGH+' and tablename == 'primary': chars = '_____'
+            else: chars = '@@@@@'
+            self.skipto(chars)
 
     def history(self, selection, short = True, start_datetime = None):
         """Returns time histories for specified selection of table type, names (or indices) and column names.
@@ -941,7 +941,7 @@ class t2listing(file):
                 tableselection.append((table, tselect, tselect_short))
             return tableselection
 
-        old_index=self.index
+        old_index = self.index
         if isinstance(selection,tuple): selection=[selection] # if input just one tuple rather than a list of them
         tableselection=ordered_selection(selection,self._table,self.short_types,self.short_indices)
         if len(tableselection)==0: return None # no valid specifications
@@ -1140,7 +1140,8 @@ class t2listing(file):
                 array_dict.update(results_arrays[array_type])
             vtu = geo.get_vtk_grid(arrays)
             writer.SetFileName(filename_time)
-            writer.SetInput(vtu)
+            if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+            elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
             writer.Write()
             dataset = pvd.createElement('DataSet')
             dataset.setAttribute('timestep',str(t))
@@ -1677,7 +1678,8 @@ class toughreact_tecplot(file):
                 array_dict.update(results_arrays[array_type])
             vtu = geo.get_vtk_grid(arrays)
             writer.SetFileName(filename_time)
-            writer.SetInput(vtu)
+            if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
+            elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
             writer.Write()
             dataset = pvd.createElement('DataSet')
             dataset.setAttribute('timestep', str(t))

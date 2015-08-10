@@ -74,6 +74,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hyperref[sec:t2grid:add_block]{\texttt{add\_block}} & -- & adds a block to the grid\\
       \hyperref[sec:t2grid:add_connection]{\texttt{add\_connection}} & -- & adds a connection to the grid\\
       \hyperref[sec:t2grid:add_rocktype]{\texttt{add\_rocktype}} & -- & adds a rock type to the grid\\
+      \hyperref[sec:t2grid:blockmap]{\texttt{blockmap}} & dictionary & returns block name mapping from a geometry\\
       \hyperref[sec:t2grid:block_index]{\texttt{block\_index}} & integer & returns index of a block with a specified name\\
       \hyperref[sec:t2grid:calculate_block_centres]{\texttt{calculate\_block\_centres}} & -- & calculates geometrical centre of all blocks in the grid\\
       \hyperref[sec:t2grid:check]{\texttt{check}} & Boolean & checks grid for errors and optionally fixes them\\
@@ -89,8 +90,10 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hyperref[sec:t2grid:flux_matrix]{\texttt{flux\_matrix}} & \texttt{scipy.sparse.lil\_matrix} & constructs a sparse matrix for calculating block-average flows \\
       \hyperref[sec:t2grid:fromgeo]{\texttt{fromgeo}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a TOUGH2 grid from a \texttt{mulgrid} object\\
       \hyperref[sec:t2grid:incons]{\texttt{incons}} & \hyperref[incons]{\texttt{t2incon}} & constructs initial conditions for the grid\\
+      \hyperref[sec:t2grid:MINC]{\texttt{minc}} & list & creates MINC blocks and connections\\
       \hyperref[sec:t2grid:radial]{\texttt{radial}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a radial TOUGH2 grid\\
       \hyperref[sec:t2grid:rectgeo]{\texttt{rectgeo}} & (\hyperref[mulgrids]{\texttt{mulgrid}}, \texttt{dict}) & constructs a \texttt{mulgrid} object from a rectangular TOUGH2 grid\\
+      \hyperref[sec:t2grid:rename_rocktype]{\texttt{rename\_rocktype}} & -- & renames a rock type in the grid\\
       \hyperref[sec:t2grid:rocktype_frequency]{\texttt{rocktype\_frequency}} & integer & frequency of use of a particular rock type\\
       \hyperref[sec:t2grid:sort_rocktypes]{\texttt{sort\_rocktypes}} & -- & sorts rock type list into alphabetical order by name\\
       \hyperref[sec:t2grid:write_vtk]{\texttt{write\_vtk}} & -- & writes grid to VTK file\\
@@ -173,6 +176,22 @@ Returns the block index (in the \texttt{blocklist} list) of a specified block na
 \begin{itemize}
 \item \textbf{blockname}: string\\
   Name of the block.
+\end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{blockmap(\emph{geo}, \emph{index} = None)}}
+\end{snugshade}
+\label{sec:t2grid:blockmap}
+\index{TOUGH2 grids!blocks!mappings}
+
+Returns a mapping from the block name list of the specified geometry object to the block names in the grid.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
+  Geometry object.
+\item \textbf{index}: list (or \texttt{None})\\
+  Specifies a list of integer indices defining which blocks in the grid to map to. If \texttt{None}, all blocks are mapped to.
 \end{itemize}
 
 \begin{snugshade}
@@ -380,8 +399,56 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 \end{itemize}
 
 \begin{snugshade}
+\subsubsection{\texttt{minc(\emph{volume\_fractions}, \emph{spacing}=50., \emph{num\_fracture\_planes}=1,\\
+    \emph{blocks}=None, \emph{matrix\_blockname}=None, \emph{minc\_rockname}=None,\\
+    \emph{proximity}=None, \emph{atmos\_volume}=1.e25, \emph{incon}=None)}}
+\end{snugshade}
+\label{sec:t2grid:MINC}
+\index{TOUGH2 grids!creating!MINC}
+\index{MINC!generating}
+
+Creates ``Multiple Interacting Continua'' (MINC) blocks and connections in the grid, for simulating fracture flow with matrix blocks attached to each fracture block. This has capability similar to that of the GMINC program \citep{GMINC}, or of the MINC part of TOUGH2's \hyperref[sec:t2data:meshmaker]{MESHMAKER} section (except that matrix-matrix flow is not supported).
+
+This function returns a rank-2 integer \texttt{np.array} with one row for each MINC level, containing the indices of the blocks for that level. For example, the first row is a list of all fracture block indices, the second is a list of all MINC level 1 block indices, etc. This can be useful for identifying all blocks in a given MINC level, for plotting or other post-processing.
+
+For example, if the output index array from this method is \texttt{minc\_level}, and \texttt{T} is an array of temperatures computed over the entire MINC grid (e.g. extracted from the element table of a listing file), then the temperatures in MINC level \texttt{m} are given by:
+
+\begin{lstlisting}
+T[minc_level[m]]
+\end{lstlisting}
+
+Note that plotting MINC results over a \hyperref[mulgrids]{\texttt{mulgrid}} geometry can be made easier (particularly for grids that have MINC applied over only part of the domain) by using the \hyperref[sec:mulgrid:minc_array]{\texttt{minc\_array()}} method to create the solution vector to plot.
+
+If the \texttt{incon} parameter is specified as a \hyperref[incons]{\texttt{t2incon}} object (from the original grid), then this method will also return a new \texttt{t2incon} object for the MINC grid, with values copied from the original.
+
+Fracture blocks retain the same block name as their original porous medium blocks. The naming of matrix blocks can be controlled using the \texttt{matrix\_blockname} parameter.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{volume\_fractions}: list (or \texttt{np.array})\\
+  List or array of volume fractions. The first entry corresponds to the fractures, with subsequent entries specifying the volume fractions for each MINC level. The length of this list or array is therefore equal to one plus the number of matrix blocks to be used. Entries for all MINC levels must be present, but they need not sum to 1- if they do not, they will be scaled so that the sum is 1. (This means, for example, that entries may be specified as percentage values.)
+\item \textbf{spacing}: float or list (or \texttt{np.array})\\
+  Fracture spacing parameters. If a float value is specified, this is applied to all sets of fracture planes (see below). If a list or array is specified, each entry is applied to its corresponding set of fracture planes.
+\item \textbf{num\_fracture\_planes}: integer\\
+  Number of sets of fracture planes (1, 2 or 3).
+\item \textbf{blocks}: list (or \texttt{None})\\
+  List of blocks or block names, specifying which blocks are to have MINC applied. If this parameter is \texttt{None}, all blocks are processed (except inactive blocks).
+\item \textbf{matrix\_blockname}: function (or \texttt{None})\\
+  Function returning the name of a MINC matrix block (string), given the original block name (string) and MINC level (integer > 0). If \texttt{None}, a default function will be used, which simply replaces the first character of the original block name with the MINC level.
+\item \textbf{minc\_rockname}: function (or \texttt{None})\\
+  Function returning the MINC rocktype name, given the original rocktype name and MINC level ($\geq 0$). If \texttt{None}, a default function will be used, which leaves fracture blocks with their original rocktype (the properties of which can subsequently be edited), and for matrix blocks, simply replaces the first character of the original rocktype name with `X'.
+\item \textbf{proximity}: function (or \texttt{None})\\
+  Proximity function, returning the total matrix volume within a given distance (float) from the fracture faces. If \texttt{None}, a default function will be used, corresponding to the \texttt{num\_fracture\_planes} parameter.
+\item \textbf{atmos\_volume}: float\\
+  Maximum block volume for blocks to be considered part of the geometrical grid. Blocks with volume greater than this will be assumed to be boundary condition blocks and no MINC processing will be applied to them.
+\item \textbf{incon}: \hyperref[incons]{\texttt{t2incon}} (or \texttt{None})\\
+  Initial conditions object for the original grid, before MINC processing. If not \texttt{None}, then the method returns (as well as the block index array) a new \texttt{t2incon} object for the MINC grid, with values for each block copied from the original (for all MINC levels).
+\end{itemize}
+
+
+\begin{snugshade}
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
-    \emph{justify}='r', \emph{case}='l', \emph{dimension}=2)}}
+    \emph{justify}='r', \emph{case}=None, \emph{dimension}=2, \emph{blockmap}=\{\}, \emph{chars}=ascii\_lowercase)}}
 \end{snugshade}
 \label{sec:t2grid:radial}
 \index{TOUGH2 grids!creating!radial}
@@ -403,9 +470,13 @@ The \texttt{dimension} parameter sets the flow dimension for `generalized radial
 \item \textbf{justify}: string\\
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{case}: string\\
-  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.
+  Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case. Alternatively, use the more flexible \texttt{chars} parameter (see below).
 \item \textbf{dimension}: float\\
   Dimension for `generalized radial flow', which can take any (possibly non-integer) value between 1 and 3.  Dimension 1 corresponds to flow in a linear `pipe', dimension 2 corresponds to standard radial flow in a disc-shaped reservoir and dimension 3 corresponds to flow in a spherically symmetric reservoir.
+\item \textbf{blockmap}: dictionary\\
+  Dictionary mapping the block names in the geometry to the block naming system used in the grid.
+\item \textbf{chars}: string\\
+  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \end{itemize}
 
 Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by creating a `dummy' vertical slice rectangular geometry, using the \texttt{mulgrid} \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular()}} method, using its $x$ direction for radius (and having only one block in the $y$ direction - which is not used).  The \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot()}} method can then be used to plot results.
@@ -447,6 +518,22 @@ The method should work on rectangular TOUGH2 grids that have been translated and
 \item \textbf{chars}: string\\
   Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 
+\end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{rename\_rocktype(\emph{rockname}, \emph{newrockname})}}
+\end{snugshade}
+\label{sec:t2grid:rename_rocktype}
+\index{TOUGH2 grids!rocktypes!renaming}
+
+Renames a rock type in the grid. An exception is raised if the specified rocktype name does not exist, or if the new target rocktype name has already been used.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{rockname}: string\\
+  Name of the rock type to be renamed.
+\item \textbf{newrockname}: string\\
+  New name for the rock type.
 \end{itemize}
 
 \begin{snugshade}
