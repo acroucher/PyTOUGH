@@ -1057,7 +1057,9 @@ class t2grid(object):
                     blk.rocktype = self.rocktype[fract_rockname]
 
             if incon is None: return blockindex
-            else: return blockindex, newincon
+            else:
+                newincon.porosity = None
+                return blockindex, newincon
 
     def blockmap(self, geo, index = None):
         """Returns a block mapping from the block name list of the specified
