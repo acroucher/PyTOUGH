@@ -887,7 +887,8 @@ class t2grid(object):
 
     def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
              blocks = None, matrix_blockname = None, minc_rockname = None,
-             proximity = None, atmos_volume = 1.e25, incon = None):
+             proximity = None, atmos_volume = 1.e25, incon = None,
+             fracture_connection_distance = 0.0):
         """Adds MINC blocks to the grid, and returns an array of block
         indices for the different MINC levels. The first three parameters define
         the fracture geometry. The blocks parameter is a list of blocks or block
@@ -968,7 +969,7 @@ class t2grid(object):
             # Calculate MINC geometry parameters:
             volume_fractions /= np.sum(volume_fractions)
             vf0 = 1. - volume_fractions[0]
-            x,d = [0.], [0.]
+            x,d = [0.], [fracture_connection_distance]
             z, delta = 1.e-10, 1.e-8
             a = [vf0 * proximity(z) / z]
             volsum = np.cumsum(volume_fractions[1:]) / vf0

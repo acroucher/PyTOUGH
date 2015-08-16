@@ -401,7 +401,8 @@ Returns a \hyperref[incons]{\texttt{t2incon}} set of initial conditions for the 
 \begin{snugshade}
 \subsubsection{\texttt{minc(\emph{volume\_fractions}, \emph{spacing}=50., \emph{num\_fracture\_planes}=1,\\
     \emph{blocks}=None, \emph{matrix\_blockname}=None, \emph{minc\_rockname}=None,\\
-    \emph{proximity}=None, \emph{atmos\_volume}=1.e25, \emph{incon}=None)}}
+    \emph{proximity}=None, \emph{atmos\_volume}=1.e25, \emph{incon}=None,\\
+    \emph{fracture\_connection\_distance}=0.)}}
 \end{snugshade}
 \label{sec:t2grid:MINC}
 \index{TOUGH2 grids!creating!MINC}
@@ -443,6 +444,8 @@ Fracture blocks retain the same block name as their original porous medium block
   Maximum block volume for blocks to be considered part of the geometrical grid. Blocks with volume greater than this will be assumed to be boundary condition blocks and no MINC processing will be applied to them.
 \item \textbf{incon}: \hyperref[incons]{\texttt{t2incon}} (or \texttt{None})\\
   Initial conditions object for the original grid, before MINC processing. If not \texttt{None}, then the method returns (as well as the block index array) a new \texttt{t2incon} object for the MINC grid, with values for each block copied from the original (for all MINC levels).
+\item \textbf{fracture\_connection\_distance}: float\\
+  Connection distance between fracture and matrix blocks. Default is zero, as in MESHMAKER, but in some situations a finite value (e.g. $10^{-10}$ m) can work better.
 \end{itemize}
 
 
