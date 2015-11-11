@@ -14,7 +14,9 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.4.1, which has:
+The latest stable version is 1.4.2, which has:
+
+* A fix for a bug in the t2grid minc() method, caused by basing the code on a version of GMINC which had the same bug- block order was reversed in MINC connections
 
 * MINC processing ability via the new t2grid minc() method, including partial MINC (applied to only part of grid), flexible block and rocktype naming options, and initial conditions handling
 
