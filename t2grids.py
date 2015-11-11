@@ -1048,7 +1048,7 @@ class t2grid(object):
                                 newincon[mblockname] = inc
                             iblk += 1
                             blockindex[m, blk_index] = iblk
-                            con = t2connection([mincblk,lastblk], 1, [d[m-1], d[m]],
+                            con = t2connection([lastblk, mincblk], 1, [d[m-1], d[m]],
                                                original_vol * a[m-1], None)
                             self.add_connection(con)
                             lastblk = mincblk
