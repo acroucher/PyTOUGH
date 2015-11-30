@@ -144,8 +144,8 @@ default_parameters = {'max_iterations':None, 'print_level':None, 'max_timesteps'
                       'timestep_reduction':None, 'scale':None, 'relative_error':None, 'absolute_error':None, 'pivot':None,
                       'upstream_weight':None, 'newton_weight':None, 'derivative_increment':None, 'default_incons':[]}
 
-t2data_sections = ['SIMUL','ROCKS','MESHM','PARAM','START','NOVER','RPCAP','LINEQ','SOLVR','MULTI','TIMES',
-                   'SELEC','DIFFU','ELEME','CONNE','GENER','SHORT','FOFT','COFT','GOFT','INCON','INDOM']
+t2data_sections = ['SIMUL','ROCKS','PARAM','START','NOVER','RPCAP','LINEQ','SOLVR','MULTI','TIMES',
+                   'SELEC','DIFFU','ELEME','CONNE','MESHM','GENER','SHORT','FOFT','COFT','GOFT','INCON','INDOM']
 
 t2_extra_precision_sections = ['ROCKS', 'ELEME', 'CONNE', 'RPCAP', 'GENER']
 
@@ -211,17 +211,17 @@ class t2data(object):
         """Updates functions for reading and writing sections of data file."""
         self.read_fn = dict(zip(
                 t2data_sections,
-                [self.read_simulator, self.read_rocktypes, self.read_meshmaker, self.read_parameters, self.read_start, 
+                [self.read_simulator, self.read_rocktypes, self.read_parameters, self.read_start, 
                  self.read_noversion, self.read_rpcap, self.read_lineq, self.read_solver, self.read_multi, self.read_times,
-                 self.read_selection, self.read_diffusion, self.read_blocks, self.read_connections,
+                 self.read_selection, self.read_diffusion, self.read_blocks, self.read_connections, self.read_meshmaker,
                  self.read_generators, self.read_short_output, self.read_history_blocks, 
                  self.read_history_connections, self.read_history_generators, self.read_incons, self.read_indom]))
         self.write_fn = dict(zip(
                 t2data_sections,
-                [self.write_simulator, self.write_rocktypes, self.write_meshmaker, self.write_parameters,
+                [self.write_simulator, self.write_rocktypes, self.write_parameters,
                  self.write_start, self.write_noversion, self.write_rpcap, self.write_lineq, self.write_solver,
                  self.write_multi, self.write_times, self.write_selection, self.write_diffusion, self.write_blocks,
-                 self.write_connections, self.write_generators, self.write_short_output, self.write_history_blocks,
+                 self.write_connections, self.write_meshmaker, self.write_generators, self.write_short_output, self.write_history_blocks,
                  self.write_history_connections, self.write_history_generators, self.write_incons, self.write_indom]))
         skip_fn = dict(zip(t2_extra_precision_sections,
                            [self.skip_rocktypes, self.skip_blocks, self.skip_connections, 
@@ -232,10 +232,10 @@ class t2data(object):
     def get_present_sections(self):
         """Returns a list of TOUGH2 section keywords for which there are corresponding data in the t2data object."""
         data_present = dict(zip(t2data_sections,
-            [self.simulator, self.grid and self.grid.rocktypelist, self.meshmaker, self.parameter, self.start,
+            [self.simulator, self.grid and self.grid.rocktypelist, self.parameter, self.start,
              self.noversion, self.relative_permeability or self.capillarity, self.lineq, self.solver, self.multi,
              self.output_times, self.selection, self.diffusion, self.grid and self.grid.blocklist,
-             self.grid and self.grid.connectionlist, self.generatorlist, self.short_output, self.history_block,
+             self.grid and self.grid.connectionlist, self.meshmaker, self.generatorlist, self.short_output, self.history_block,
              self.history_connection, self.history_generator, self.incon, self.indom]))
         return [keyword for keyword in t2data_sections if data_present[keyword]]
     present_sections = property(get_present_sections)
