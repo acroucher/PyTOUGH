@@ -70,7 +70,7 @@ t2data_format_specification = {
     'xyz2'  : [['ntype','','no','del'],['2s','3x','5d','10.4e']],
     'xyz3'  : [['deli']*8,['10.4e']*8],
     'minc'  : [['part','type','','dual'],['5s']*2+['5x','5s']],
-    'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['4s']+['10.4e']*7],
+    'part1' : [['num_continua','nvol','where']+['spacing']*7,['3d']*2+['-4s']+['10.4e']*7],
     'part2' : [['vol']*8,['10.4e']*8]
     }
 
