@@ -867,7 +867,13 @@ class t2grid(object):
                 last2 = start2; start2 = next2
             return mapping
 
-        if not self.block_centres_defined: raise Exception("Grid block centres not defined.")
+        def required_centres_present(grid, max_volume):
+            """Returns True if all required block centres are specified."""
+            return all([blk.centre is not None
+                        for blk in grid.blocklist if 0. < blk.volume < max_volume])
+
+        if not required_centres_present(self, atmos_volume):
+            raise Exception("Not all required grid block centres are defined.")
         else:
             if isinstance(origin_block, str): ob = self.block[origin_block]
             elif isinstance(origin_block, t2block): ob = origin_block
