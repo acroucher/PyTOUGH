@@ -738,25 +738,31 @@ class mulgrid(object):
         return bounds_of_points([node.pos for node in self.nodelist])
     bounds=property(get_bounds)
 
-    def add_node(self,nod=node()):
-        """Adds node to the grid"""
-        self.nodelist.append(nod)
-        self.node[nod.name]=self.nodelist[-1]
+    def add_node(self, nod = node()):
+        """Adds node to the geometry. If a node with the specified name
+        already exists in the geometry, no new node is added."""
+        if nod.name not in self.node:
+            self.nodelist.append(nod)
+            self.node[nod.name] = self.nodelist[-1]
 
-    def delete_node(self,nodename):
-        node=self.node[nodename]
+    def delete_node(self, nodename):
+        """Deletes node from the geometry."""
+        node = self.node[nodename]
         del self.node[nodename]
         self.nodelist.remove(node)
 
     def add_column(self,col=column()):
-        """Adds column to the grid"""
-        self.columnlist.append(col)
-        self.column[col.name]=self.columnlist[-1]
-        for node in col.node: node.column.add(col)
+        """Adds column to the geometry. If a column with the specified
+        name already exists in the geometry, no new column is added."""
+        if col.name not in self.column:
+            self.columnlist.append(col)
+            self.column[col.name]=self.columnlist[-1]
+            for node in col.node: node.column.add(col)
 
-    def delete_column(self,colname):
-        col=self.column[colname]
-        cons=[con for con in self.connectionlist if col in con.column]
+    def delete_column(self, colname):
+        """Deletes a column from the geometry."""
+        col = self.column[colname]
+        cons = [con for con in self.connectionlist if col in con.column]
         for con in cons:
             self.delete_connection(tuple([c.name for c in con.column]))
         for nbr in col.neighbour: nbr.neighbour.remove(col)
@@ -825,12 +831,15 @@ class mulgrid(object):
         self.layer = {}
         self.layerlist = []
 
-    def add_layer(self,lay=layer()):
-        """Adds layer to the grid"""
-        self.layerlist.append(lay)
-        self.layer[lay.name]=self.layerlist[-1]
+    def add_layer(self, lay = layer()):
+        """Adds layer to the grid. If a layer with the same name
+        already exists in the geometry, no new layer is added."""
+        if lay.name not in self.layer:
+            self.layerlist.append(lay)
+            self.layer[lay.name]=self.layerlist[-1]
 
     def delete_layer(self,layername):
+        """Deletes a layer from the geometry."""
         layer=self.layer[layername]
         del self.layer[layername]
         self.layerlist.remove(layer)
@@ -849,12 +858,16 @@ class mulgrid(object):
             return True
         except ValueError: return False
             
-    def add_connection(self,con=connection()):
-        """Adds connection to the grid"""
-        self.connectionlist.append(con)
-        self.connection[(con.column[0].name,con.column[1].name)] = self.connectionlist[-1]
-        self.connectionlist[-1].node = self.connection_nodes(con.column)
-        for col in self.connectionlist[-1].column: col.connection.add(self.connectionlist[-1])
+    def add_connection(self, con = connection()):
+        """Adds connection to the grid. If a connection with the same
+        names already exists in the geometry, no new connection is added."""
+        names = (con.column[0].name, con.column[1].name)
+        if names not in self.connection:
+            self.connectionlist.append(con)
+            self.connection[names] = self.connectionlist[-1]
+            self.connectionlist[-1].node = self.connection_nodes(con.column)
+            for col in self.connectionlist[-1].column:
+                col.connection.add(self.connectionlist[-1])
 
     def connection_nodes(self, cols):
         """Identifies nodes on the connection between a pair of two columns.  The node ordering
@@ -871,21 +884,23 @@ class mulgrid(object):
         if a == 0: return connodes
         else: return connodes[::-1] if connodes else connodes
 
-    def delete_connection(self,colnames):
-        """Deletes a connection from the grid."""
-        con=self.connection[colnames]
+    def delete_connection(self, colnames):
+        """Deletes a connection from the geometry."""
+        con = self.connection[colnames]
         for col in con.column: col.connection.remove(con)
         del self.connection[colnames]
         self.connectionlist.remove(con)
             
     def add_well(self,wl=well()):
-        """Adds well to the grid"""
-        self.welllist.append(wl)
-        self.well[wl.name]=self.welllist[-1]
+        """Adds well to the geometry. If a well with the specified name
+        already exists in the geometry, no new well is added."""
+        if wl.name not in self.well:
+            self.welllist.append(wl)
+            self.well[wl.name]=self.welllist[-1]
 
-    def delete_well(self,wellname):
-        """Deletes a well from the grid."""
-        well=self.well[wellname]
+    def delete_well(self, wellname):
+        """Deletes a well from the geometry."""
+        well = self.well[wellname]
         del self.well[wellname]
         self.welllist.remove(well)
             

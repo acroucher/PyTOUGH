@@ -231,35 +231,45 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
 \index{MULgraph geometry!adding!columns}
 \index{MULgraph geometry!columns!adding}
 
-Adds a \hyperref[columnobjects]{\texttt{column}} object \texttt{col} to the grid.
+Adds a \hyperref[columnobjects]{\texttt{column}} object \texttt{col}
+to the grid. If a column with the same name already exists, no new
+column is added.
 
 \begin{snugshade}\subsubsection{\texttt{add\_connection(\emph{con})}}\end{snugshade}
 \label{sec:mulgrid:add_connection}
 \index{MULgraph geometry!adding!connections}
 \index{MULgraph geometry!connections!adding}
 
-Adds a \hyperref[connectionobjects]{\texttt{connection}} object \texttt{con} to the grid.
+Adds a \hyperref[connectionobjects]{\texttt{connection}} object
+\texttt{con} to the grid. If a connection with the same name already
+exists, no new connection is added.
 
 \begin{snugshade}\subsubsection{\texttt{add\_layer(\emph{lay})}}\end{snugshade}
 \label{sec:mulgrid:add_layer}
 \index{MULgraph geometry!adding!layers}
 \index{MULgraph geometry!layers!adding}
 
-Adds a \hyperref[layerobjects]{\texttt{layer}} object \texttt{lay} to the grid.
+Adds a \hyperref[layerobjects]{\texttt{layer}} object \texttt{lay} to
+the grid. If a layer with the same name already exists, no new layer
+is added.
 
 \begin{snugshade}\subsubsection{\texttt{add\_node(\emph{n})}}\end{snugshade}
 \label{sec:mulgrid:add_node}
 \index{MULgraph geometry!adding!nodes}
 \index{MULgraph geometry!nodes!adding}
 
-Adds a \hyperref[nodeobjects]{\texttt{node}} object \texttt{n} to the grid.
+Adds a \hyperref[nodeobjects]{\texttt{node}} object \texttt{n} to the
+grid. If a node with the same name already exists, no new node is
+added.
 
 \begin{snugshade}\subsubsection{\texttt{add\_well(\emph{w})}}\end{snugshade}
 \label{sec:mulgrid:add_well}
 \index{MULgraph geometry!adding!wells}
 \index{MULgraph geometry!wells!adding}
 
-Adds a \hyperref[wellobjects]{\texttt{well}} object \texttt{w} to the grid.
+Adds a \hyperref[wellobjects]{\texttt{well}} object \texttt{w} to the
+grid. If a well with the same name already exists, no new well is
+added.
 
 \begin{snugshade}\subsubsection{\texttt{block\_contains\_point(\emph{blockname}, \emph{pos})}}\end{snugshade}
 \label{sec:mulgrid:block_contains_point}
