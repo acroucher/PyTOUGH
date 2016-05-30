@@ -228,7 +228,7 @@ class t2incon(object):
         optionally specified block and column mappings between them (these are created if not specified).  If there are 
         no atmosphere blocks in the source initial conditions, default atmosphere conditions are assigned if necessary."""
         self.empty()
-        if (colmapping=={}) or (mapping=={}): mapping,colmapping=geo.block_mapping(sourcegeo,True)
+        if (colmapping=={}) or (mapping=={}): mapping,colmapping = sourcegeo.block_mapping(geo,True)
         from copy import copy
         # atmosphere blocks:
         default_atm_incons=t2blockincon([1.013e5,20.])
