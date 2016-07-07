@@ -889,6 +889,8 @@ class t2grid(object):
                 geo = match_position(geo, self, ob)
                 geo = find_surface(geo, self, blockmap, remove_inactive, atmos_volume)
                 geo.snap_columns_to_layers(layer_snap)
+                prune = list(set(blockmap.keys()) - set(geo.block_name_list))
+                for blk in prune: del blockmap[blk]
                 return geo, blockmap
 
     def minc(self, volume_fractions, spacing = 50., num_fracture_planes = 1,
