@@ -840,7 +840,7 @@ class t2grid(object):
             icol = 0
             start2, last2 = ob, None
             for i2 in xrange(nblks[2]):
-                last1, start1 = None, start2
+                start1, last1 = start2, None
                 for i1 in xrange(nblks[1]):
                     col = geo.columnlist[icol]
                     blk, last3 = start1, None
