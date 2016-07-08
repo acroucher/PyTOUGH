@@ -2584,73 +2584,89 @@ class mulgrid(object):
         return set([col for col in self.columnlist if len(set(col.node) & bdynodes)>=2])
     boundary_columns=property(get_boundary_columns)
 
-    def get_grid3d(self):
-        """Returns 3D nodes and elements for the grid, and a dictionary of 'extra nodes' needed
-        at the top surface from varying surface elevation.  """
-        node3d = {}
-        index = 0
+    def get_grid3d(self, surface_snap):
+        """Returns 3D nodes and elements for the grid. The surface_snap parameter is a tolerance determining
+        how close column elevations have to be to be considered 'equal'."""
         def surf(col): return col.surface if col.surface is not None else self.layerlist[0].bottom
-        # create subsurface nodes
+        # Create subsurface nodes:
+        node3d = []
+        node_index = {}
+        index = 0
         for lay in self.layerlist[1:]:
             for node in self.nodelist:
                 if any([surf(col) > lay.bottom for col in node.column]):
                     pos3d = np.array(list(node.pos) + [lay.bottom])
-                    node3d[lay.name, node.name] = (index, pos3d)
+                    node3d.append(pos3d)
+                    node_index[lay.name, node.name] = index
                     index += 1
-        # identify where 'extra' nodes are needed
-        extra_node, node_elev = {}, {}
+        def unique_values(a, tol):
+            # Returns unique values in array of floats, within given
+            # tolerance, and a list of groups of the original values
+            # corresponding to each unique value.
+            asort = a.copy()
+            asort.sort()
+            asort = np.array(list(asort) + [asort[-1] + 2.*tol])
+            d = np.diff(asort)
+            uniques = asort[d > tol]
+            nearest = np.array([np.argmin(np.abs(uniques - x)) for x in a])
+            groups = [list(np.where(nearest == i)[0]) for i in range(len(uniques))]
+            return uniques, groups
+        # Create surface nodes:
+        surface_node_index = {}
         for node in self.nodelist:
             if node.column:
-                colsurf = [surf(col) for col in node.column]
-                if len(set(colsurf)) <= 1: node_elev[node.name] = colsurf[0]
-                else:
-                    for col in node.column:
-                        if node.name in extra_node: extra_node[node.name].append(col.name)
-                        else: extra_node[node.name] = [col.name]
-        # create surface nodes
-        for node in self.nodelist:
-            if node.name in extra_node:
-                for colname in extra_node[node.name]:
-                    pos3d = np.array(list(node.pos) + [surf(self.column[colname])])
-                    node3d[self.layerlist[0].name, node.name, colname] = (index, pos3d)
-                    index += 1
-            else:
-                pos3d = np.array(list(node.pos)+[node_elev[node.name]])
-                node3d[self.layerlist[0].name, node.name] = (index, pos3d)
-                index += 1
-
-        # create elements
+                col_names = [col.name for col in node.column]
+                col_surf = np.array([surf(self.column[col]) for col in col_names])
+                unique_elevations, columns = unique_values(col_surf, surface_snap)
+                for z, col_group in zip(unique_elevations, columns):
+                    create_new = True
+                    layerdiff = np.array([abs(z - lay.bottom) for lay in self.layerlist])
+                    imin = np.argmin(layerdiff)
+                    if layerdiff[imin] <= surface_snap:
+                        lay = self.layerlist[imin]
+                        if (lay.name, node.name) in node_index:
+                            create_new = False
+                        else: node_index[lay.name, node.name] = index
+                        sindex = node_index[lay.name, node.name]
+                    if create_new:
+                        pos3d = np.array(list(node.pos) + [z])
+                        node3d.append(pos3d)
+                        sindex = index
+                        index += 1
+                    for i in col_group:
+                        surface_node_index[col_names[i], node.name] = sindex
+        # Create elements:
         elt3d = []
         atmlayer = self.layerlist[0]
         for ilayer, lay in enumerate(self.layerlist[1:]):
             for col in [c for c in self.columnlist if surf(c) > lay.bottom]:
                 elt = []
-                for node in col.node: elt.append(node3d[lay.name,node.name][0])
+                for node in col.node: elt.append(node_index[lay.name, node.name])
                 if ilayer == self.column_surface_layer_index(col) - 1: # top block
                     for node in col.node:
-                        if node.name in extra_node: elt.append(node3d[atmlayer.name, node.name, col.name][0])
-                        else: elt.append(node3d[atmlayer.name, node.name][0])
+                        elt.append(surface_node_index[col.name, node.name])
                 else:
-                    for node in col.node: elt.append(node3d[self.layerlist[ilayer].name, node.name][0])
-                elt3d.append((lay, col, elt))
-        return node3d,extra_node,elt3d
-    grid3d = property(get_grid3d)
+                    above_layer = self.layerlist[ilayer]
+                    for node in col.node:
+                        elt.append(node_index[above_layer.name, node.name])
+                elt3d.append(elt)
+        return node3d, elt3d
 
-    def get_vtk_grid(self,arrays={}):
+    def get_vtk_grid(self, arrays = {}, surface_snap = 0.1):
         """Returns a vtkUnstructuredGrid object (for visualisation with VTK) corresponding to the grid in 3D. 
         VTK data arrays may optionally be added."""
         from vtk import vtkUnstructuredGrid, vtkPoints, vtkIdList, \
             vtkWedge, vtkHexahedron, vtkPentagonalPrism, vtkHexagonalPrism, vtkConvexPointSet
-        node3d,extra_node,elt3d=self.grid3d
-        # construct the vtk grid
-        grid=vtkUnstructuredGrid()
-        pts=vtkPoints()
+        node3d, elt3d = self.get_grid3d(surface_snap)
+        # Construct the VTK grid:
+        grid = vtkUnstructuredGrid()
+        pts = vtkPoints()
         pts.SetNumberOfPoints(len(node3d))
-        for (key,(i,node)) in node3d.items(): pts.SetPoint(i,node)
+        for i, node in enumerate(node3d): pts.SetPoint(i, node)
         grid.SetPoints(pts)
-        # create and add cells
+        # Create and add cells:
         celltype = {6: vtkWedge, 8: vtkHexahedron, 10: vtkPentagonalPrism, 12: vtkHexagonalPrism}
-        for ielt,(lay,col,elt) in enumerate(elt3d):
+        for elt in elt3d:
             n = len(elt)
             if n in celltype:
                 cell = celltype[n]()
