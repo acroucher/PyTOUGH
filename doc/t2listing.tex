@@ -267,7 +267,8 @@ Navigates to the previous set of full results in the listing file.  Returns \tex
 \begin{snugshade}
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{flows}=False,
 \emph{wells}=False,\\
-\emph{start\_time}=0, \emph{time\_unit}='s', \emph{flux\_matrix}=None, \emph{blockmap} = \{\})}}
+\emph{start\_time}=0, \emph{time\_unit}='s', \emph{flux\_matrix}=None, \emph{blockmap} = \{\},\\
+ \emph{surface\_snap}=0.1)}}
 \end{snugshade}
 \label{sec:t2listing:write_vtk}
 \index{TOUGH2 listing files!writing!VTK files}
@@ -303,6 +304,8 @@ Optionally, only a subset of the time indices present in the \texttt{t2listing} 
   Sparse matrix that multiplies a vector of connection values to produce a partition vector of 3-D block average flows at the (underground) block centres.  One of these can be produced using the \texttt{t2grid.flux\_matrix()} method, and a corresponding \texttt{mulgrid} object.  A flux matrix will be calculated internally if not supplied.
 \item \textbf{blockmap}: dictionary\\
   Dictionary mapping the block names in the geometry to the block naming system used in the listing.
+\item \textbf{surface\_snap}: float\\
+  Tolerance for specifying how close column surface elevations need to be before being considered ``equal'' when constructing surface nodes.
 \end{itemize}
 
 \section{\texttt{listingtable} objects}
@@ -606,7 +609,7 @@ Navigates to the previous set of results in the Tecplot file.  Returns \texttt{F
 
 \begin{snugshade}
 \subsubsection{\texttt{write\_vtk(\emph{geo}, \emph{filename}, \emph{grid}=None, \emph{indices}=None, \emph{start\_time}=0,\\
-    \emph{time\_unit}='s', \emph{blockmap} = \{\})}}
+    \emph{time\_unit}='s', \emph{blockmap} = \{\}, \emph{surface\_snap}=0.1)}}
 \end{snugshade}
 \label{sec:toughreact_tecplot:write_vtk}
 \index{TOUGHREACT Tecplot files!writing!VTK files}
@@ -634,6 +637,8 @@ Optionally, only a subset of the time indices present in the \texttt{toughreact\
   Optional time unit for the output.  TOUGHREACT Tecplot results are given at times in years, but this option allows them to be converted to other units.  Options are: `s', `h', `d' and `y', for seconds, hours, days and years respectively.  Default is `s'.
 \item \textbf{blockmap}: dictionary\\
   Dictionary mapping the block names in the geometry to the block naming system used in the Tecplot output.
+\item \textbf{surface\_snap}: float\\
+  Tolerance for specifying how close column surface elevations need to be before being considered ``equal'' when constructing surface nodes.
 \end{itemize}
 
 \section{Examples}

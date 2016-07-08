@@ -497,7 +497,7 @@ class t2grid(object):
             arrays['Block']['Permeability'].SetTuple3(i, k[0], k[1], k[2])
         return arrays
 
-    def write_vtk(self, geo, filename, wells = False, blockmap = {}):
+    def write_vtk(self, geo, filename, wells = False, blockmap = {}, surface_snap = 0.1):
         """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D, with the specified filename,
         for visualisation with VTK."""
         from vtk import vtkXMLUnstructuredGridWriter
@@ -506,7 +506,7 @@ class t2grid(object):
         grid_arrays = self.get_vtk_data(geo, blockmap)
         for array_type,array_dict in arrays.items():
             array_dict.update(grid_arrays[array_type])
-        vtu = geo.get_vtk_grid(arrays)
+        vtu = geo.get_vtk_grid(arrays, surface_snap)
         writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
         if hasattr(writer, 'SetInput'): writer.SetInput(vtu)

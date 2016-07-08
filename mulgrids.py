@@ -2789,15 +2789,16 @@ class mulgrid(object):
         self.write_layer_bln(filename,aspect,left)
         self.write_layer_bln_labels(filename,aspect,left)
 
-    def write_vtk(self, filename = '', arrays = None, wells = False, blockmap = {}):
-        """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D, with the specified filename,
-        for visualisation with VTK."""
+    def write_vtk(self, filename = '', arrays = None, wells = False, blockmap = {},
+                  surface_snap = 0.1):
+        """Writes *.vtu file for a vtkUnstructuredGrid object corresponding to the grid in 3D,
+        with the specified filename, for visualisation with VTK."""
         from vtk import vtkXMLUnstructuredGridWriter
         base = self.filename_base(filename)
         filename = base + '.vtu'
         if wells: self.write_well_vtk(filename)
         if arrays is None: arrays = self.get_vtk_data(blockmap)
-        vtu = self.get_vtk_grid(arrays)
+        vtu = self.get_vtk_grid(arrays, surface_snap)
         writer = vtkXMLUnstructuredGridWriter()
         writer.SetFileName(filename)
         if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
@@ -2845,7 +2846,7 @@ class mulgrid(object):
         elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
-    def write_exodusii(self, filename = '', arrays = None, blockmap = {}):
+    def write_exodusii(self, filename = '', arrays = None, blockmap = {}, surface_snap = 0.1):
         """Writes ExodusII file for a vtkUnstructuredGrid object corresponding to the grid in 3D,
         with the specified filename."""
         try:
@@ -2856,7 +2857,7 @@ class mulgrid(object):
         base = self.filename_base(filename)
         filename = base + '.exo'
         if arrays is None: arrays = self.get_vtk_data(blockmap)
-        vtu = self.get_vtk_grid(arrays)
+        vtu = self.get_vtk_grid(arrays, surface_snap)
         writer = vtkExodusIIWriter()
         writer.SetFileName(filename)
         if hasattr(writer, 'SetInput'): writer.SetInput(vtu)

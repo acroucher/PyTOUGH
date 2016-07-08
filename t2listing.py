@@ -1091,7 +1091,7 @@ class t2listing(file):
         return arrays
 
     def write_vtk(self, geo, filename, grid = None, indices = None, flows = False, wells = False, start_time = 0.0,
-                  time_unit = 's', flux_matrix = None, blockmap = {}):
+                  time_unit = 's', flux_matrix = None, blockmap = {}, surface_snap = 0.1):
         """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the listing data,
         with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
         data as well.  A list of the required time indices can optionally be specified.  If a grid is specified, flows is True,
@@ -1138,7 +1138,7 @@ class t2listing(file):
                                                geo_matches = geo_matches, blockmap = blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(results_arrays[array_type])
-            vtu = geo.get_vtk_grid(arrays)
+            vtu = geo.get_vtk_grid(arrays, surface_snap)
             writer.SetFileName(filename_time)
             if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
             elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
@@ -1643,7 +1643,7 @@ class toughreact_tecplot(file):
                 for iblk in xrange(nele): arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
-    def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0, time_unit = 's', blockmap = {}):
+    def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0, time_unit = 's', blockmap = {}, surface_snap = 0.1):
         """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the Tecplot data,
         with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
         data as well.  A list of the required time indices can optionally be specified."""
@@ -1676,7 +1676,7 @@ class toughreact_tecplot(file):
             results_arrays = self.get_vtk_data(geo, grid, geo_matches=geo_matches, blockmap = blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(results_arrays[array_type])
-            vtu = geo.get_vtk_grid(arrays)
+            vtu = geo.get_vtk_grid(arrays, surface_snap)
             writer.SetFileName(filename_time)
             if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
             elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)

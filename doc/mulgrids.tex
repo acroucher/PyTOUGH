@@ -1549,7 +1549,8 @@ Writes a \texttt{mulgrid} object to an ExodusII file on disk, for visualisation 
   Dictionary mapping the block names in the geometry to another block naming system.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False, \emph{blockmap}=\{\})}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False, \emph{blockmap}=\{\}, \\
+      \emph{surface\_snap}=0.1)}}\end{snugshade}
 \label{sec:mulgrid:write_vtk}
 \index{MULgraph geometry!writing!VTK files}
 \index{Visualization Tool Kit (VTK)}
@@ -1566,6 +1567,8 @@ Writes a \texttt{mulgrid} object to a VTK file on disk, for visualisation with V
   If set to \texttt{True}, a separate VTK file is written representing the wells in the grid.
 \item \textbf{blockmap}: dictionary\\
   Dictionary mapping the block names in the geometry to another block naming system.
+\item \textbf{surface\_snap}: float\\
+  Tolerance for specifying how close column surface elevations need to be before being considered ``equal'' when constructing surface nodes.
 \end{itemize}
 
 \section{Other objects (\texttt{node}, \texttt{column}, \texttt{layer}, \texttt{connection} and \texttt{well})}
