@@ -1598,7 +1598,9 @@ class mulgrid(object):
         if col:
             if self.layerlist[0].bottom < pos[2] <= col.surface: layer = self.layerlist[1] 
             else: layer = self.layer_containing_elevation(pos[2])
-            if (col.surface > layer.bottom): blkname = self.block_name(layer.name, col.name, blockmap)
+            if layer:
+                if (col.surface > layer.bottom):
+                    blkname = self.block_name(layer.name, col.name, blockmap)
         return blkname
 
     def block_contains_point(self,blockname,pos):
