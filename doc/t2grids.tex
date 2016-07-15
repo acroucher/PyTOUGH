@@ -94,6 +94,7 @@ The main methods of a \texttt{t2grid} object are listed in Table \ref{tb:t2grid_
       \hyperref[sec:t2grid:radial]{\texttt{radial}} & \hyperref[t2grids]{\texttt{t2grid}} & constructs a radial TOUGH2 grid\\
       \hyperref[sec:t2grid:rectgeo]{\texttt{rectgeo}} & (\hyperref[mulgrids]{\texttt{mulgrid}}, \texttt{dict}) & constructs a \texttt{mulgrid} object from a rectangular TOUGH2 grid\\
       \hyperref[sec:t2grid:rename_rocktype]{\texttt{rename\_rocktype}} & -- & renames a rock type in the grid\\
+      \hyperref[sec:t2grid:reorder]{\texttt{reorder}} & -- & reorders blocks and connections in the grid\\
       \hyperref[sec:t2grid:rocktype_frequency]{\texttt{rocktype\_frequency}} & integer & frequency of use of a particular rock type\\
       \hyperref[sec:t2grid:sort_rocktypes]{\texttt{sort\_rocktypes}} & -- & sorts rock type list into alphabetical order by name\\
       \hyperref[sec:t2grid:write_vtk]{\texttt{write\_vtk}} & -- & writes grid to VTK file\\
@@ -539,6 +540,30 @@ Renames a rock type in the grid. An exception is raised if the specified rocktyp
   Name of the rock type to be renamed.
 \item \textbf{newrockname}: string\\
   New name for the rock type.
+\end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{reorder(\emph{block\_names}, \emph{connection\_names}=\texttt{None})}}
+\end{snugshade}
+\label{sec:t2grid:reorder}
+\index{TOUGH2 grids!reordering}
+
+Reorders the blocks (and optionally connections) in the grid.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{block\_names}: list of string\\
+  List specifying the names of the blocks, in their desired
+  order. Each block name must exist in the grid, otherwise an error
+  will be raised.
+\item \textbf{connection\_names}: list of string (or \texttt{None})\\
+  List specifying the names of the connections, in their desired
+  order. Each item in the list should be a tuple of block names. The
+  ordering of the block names in any tuple may be reversed with
+  respect to the original connection naming. However an error will be
+  raised if any tuple of block names in the list does not exist in the
+  grid (in either its forward or reverse form). If this parameter is
+  \texttt{None} (the default), connections are not reordered.
 \end{itemize}
 
 \begin{snugshade}

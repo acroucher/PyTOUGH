@@ -1081,3 +1081,31 @@ class t2grid(object):
         else:
             gridblknames = [self.blocklist[i].name for i in index]
         return dict(zip(geo.block_name_list, gridblknames))
+
+    def reorder(self, block_names, connection_names = None):
+        """Reorders the block (and optionally connection) list to have the
+        specified ordering. The block_names parameter should be a list
+        of block name strings, while the connection_names parameter
+        should be a list of two-element tuples of block name strings."""
+
+        self.blocklist = [self.block[name] for name in block_names]
+
+        if connection_names:
+            connectionlist = []
+            for names in connection_names:
+                if names in self.connection:
+                    connectionlist.append(self.connection[names])
+                else:
+                    orignames = names[::-1]
+                    if orignames in self.connection:
+                        con = self.connection[orignames]
+                        con.block = con.block[::-1]
+                        for blk in con.block:
+                            blk.connection_name.remove(orignames)
+                            blk.connection_name.add(names)
+                        del self.connection[orignames]
+                        self.connection[names] = con
+                        connectionlist.append(con)
+                    else:
+                        raise Exception("Unknown connection name: " + names)
+            self.connectionlist = connectionlist
