@@ -1082,13 +1082,22 @@ class t2grid(object):
             gridblknames = [self.blocklist[i].name for i in index]
         return dict(zip(geo.block_name_list, gridblknames))
 
-    def reorder(self, block_names, connection_names = None):
+    def reorder(self, block_names = None, connection_names = None, geo = None):
         """Reorders the block (and optionally connection) list to have the
         specified ordering. The block_names parameter should be a list
         of block name strings, while the connection_names parameter
-        should be a list of two-element tuples of block name strings."""
+        should be a list of two-element tuples of block name
+        strings. If a mulgrid geometry object is passed in using the
+        geo parameter, the block and connection name lists from that
+        are used (and the block_names and connection_names parameters
+        are ignored.)"""
 
-        self.blocklist = [self.block[name] for name in block_names]
+        if geo is not None:
+            block_names = geo.block_name_list
+            connection_names = geo.block_connection_name_list
+
+        if block_names:
+            self.blocklist = [self.block[name] for name in block_names]
 
         if connection_names:
             connectionlist = []
