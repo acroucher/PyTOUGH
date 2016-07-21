@@ -1009,7 +1009,8 @@ class mulgrid(object):
         self.convention = self._convention
         self.atmosphere_type = self._atmosphere_type
         self.unit_type = self._unit_type
-        if self.cntype is not None: print 'CNTYPE option not supported.'
+        if self.cntype is not None and self.cntype != 0:
+            print 'CNTYPE option = %d not supported.' % (self.cntype)
 
     def read_nodes(self,geo):
         """Reads grid nodes from file geo"""
