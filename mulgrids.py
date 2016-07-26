@@ -1966,7 +1966,7 @@ class mulgrid(object):
             bds = self.bounds
             xgrid = np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
             ygrid = np.linspace(bds[0][1],bds[1][1],contour_grid_divisions[1])
-            valgrid = griddata(xc,yc,valc,xgrid,ygrid)
+            valgrid = griddata(xc,yc,valc,xgrid,ygrid, interp = 'linear')
             if isinstance(contours,list): cvals = contours
             else: cvals = False
             CS = plt.contour(xgrid,ygrid,valgrid,cvals,colors = 'k')
@@ -2199,7 +2199,7 @@ class mulgrid(object):
                     bds=((np.min(xc),np.min(yc)),(np.max(xc),np.max(yc)))
                     xgrid=np.linspace(bds[0][0],bds[1][0],contour_grid_divisions[0])
                     ygrid=np.linspace(bds[0][1],bds[1][1],contour_grid_divisions[1])
-                    valgrid=griddata(xc,yc,valc,xgrid,ygrid)
+                    valgrid=griddata(xc,yc,valc,xgrid,ygrid, interp = 'linear')
                     if isinstance(contours,list): cvals=contours
                     else: cvals=False
                     CS=plt.contour(xgrid,ygrid,valgrid,cvals,colors='k')
