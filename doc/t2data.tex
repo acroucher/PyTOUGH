@@ -752,7 +752,7 @@ Note that it is possible to create a \texttt{t2data} object and read its content
 
 \begin{snugshade}
 \subsubsection{\texttt{run(\emph{save\_filename}='', \emph{incon\_filename}='', \emph{simulator}='AUTOUGH2\_2',\\
-    \emph{silent}=False)}}
+    \emph{silent}=False, \emph{output\_filename}='')}}
 \end{snugshade}
 \label{sec:t2data:run}
 \index{TOUGH2 data files!running}
@@ -760,7 +760,7 @@ Note that it is possible to create a \texttt{t2data} object and read its content
 Runs an AUTOUGH2 or TOUGH2 (but not TOUGH2\_MP) simulation using the data file corresponding to a \texttt{t2data} object.  The contents of the \texttt{t2data} object must first have been written to disk using the \texttt{write} function.  If the file names for the save file or initial conditions file are not specified, they are constructed by changing the file extension of the data file name.  The name of the TOUGH2 executable can be specified.
 
 \index{TOUGH2}
-For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable must be specified via the \texttt{simulator} parameter.  However, the \texttt{save\_filename} and \texttt{incon\_filename} parameters do not need to be specified.  Initial conditions will be read from the file INCON and final results written to SAVE.  The listing file name will be the same as the data file name, but with the extension changed to *.listing.
+For running TOUGH2 (rather than AUTOUGH2), the name of the TOUGH2 executable must be specified via the \texttt{simulator} parameter.  However, the \texttt{save\_filename} and \texttt{incon\_filename} parameters do not need to be specified.  Initial conditions will be read from the file INCON and final results written to SAVE.  The listing file name will be the same as the data file name, but with the extension changed to *.listing, unless the \texttt{output\_filename} is specified.
 
 \index{TOUGH2!TOUGH2-MP}
 Running TOUGH2\_MP is generally done via MPI rather than directly, and the exact syntax for doing so may vary with different implementations of MPI (OpenMPI, MPICH2 etc.)  It is also necessary to specify the number of processors to use.  However it is still possible to run TOUGH2\_MP from a Python script using a system call, e.g.:
@@ -780,6 +780,8 @@ system("mpirun -np 16 t2eos1_mp")
   Name of the AUTOUGH2 or TOUGH2 executable.  Default is `AUTOUGH2\_2'.
 \item \textbf{silent}: Boolean\\
   Set to \texttt{True} to suppress output to the display while running (default is \texttt{False}).
+\item \textbf{output\_filename}: string\\
+  Name of the output listing file for the simulation (TOUGH2 only).  Default is `base.listing' where the base name of the TOUGH2 data file (without file extension) is `base'.
 \end{itemize}
 
 \begin{snugshade}
