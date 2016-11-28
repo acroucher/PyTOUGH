@@ -223,9 +223,9 @@ class column(object):
 
     def get_exterior_angles(self):
         """Returns list of exterior angle for each node in the column."""
-        side=[self.node[i].pos-self.node[i-1].pos for i in xrange(self.num_nodes)]
+        side=[self.node[i].pos-self.node[i-1].pos for i in range(self.num_nodes)]
         h=[vector_heading(s) for s in side]
-        angles=[np.pi-(h[(i+1)%self.num_nodes]-h[i]) for i in xrange(self.num_nodes)]
+        angles=[np.pi-(h[(i+1)%self.num_nodes]-h[i]) for i in range(self.num_nodes)]
         angles=[a%(2*np.pi) for a in angles]
         return angles
     exterior_angles=property(get_exterior_angles)
@@ -242,7 +242,7 @@ class column(object):
 
     def get_side_lengths(self):
         "Returns list of side lengths for the column"
-        return np.array([norm(self.node[(i+1)%self.num_nodes].pos-self.node[i].pos) for i in xrange(self.num_nodes)])
+        return np.array([norm(self.node[(i+1)%self.num_nodes].pos-self.node[i].pos) for i in range(self.num_nodes)])
     side_lengths=property(get_side_lengths)
 
     def get_side_ratio(self):
@@ -271,7 +271,7 @@ class column(object):
             d,iside=[],[]
             nn=self.num_nodes
             if nn in [3,4]:
-                for i in xrange(nn):
+                for i in range(nn):
                     x1=0.5*(self.node[i].pos+self.node[(i+1)%nn].pos)
                     if self.num_nodes==3: i2=(i+1)%nn
                     else: i2=(i+2)%nn
@@ -302,8 +302,8 @@ class column(object):
         """Returns bilinear 2D finite element Jacobian matrix for the column at the specified local coordinate."""
         dpsi=self.basis_derivatives(xi)
         J=np.zeros((2,2))
-        for i in xrange(2):
-            for j in xrange(2):
+        for i in range(2):
+            for j in range(2):
                 for k,nodek in enumerate(self.node): J[i,j]+=dpsi[k,j]*nodek.pos[i]
         return J
 
@@ -325,7 +325,7 @@ class column(object):
             if self.num_nodes==3: xi=np.array([1/3.,1/3.])
             else: xi=np.zeros(2)
             found=False
-            for n in xrange(max_iterations): # Newton iteration
+            for n in range(max_iterations): # Newton iteration
                 dx=self.global_pos(xi)-x
                 if np.linalg.norm(dx)<=tolerance:
                     found=True
@@ -433,10 +433,10 @@ class well(object):
     def elevation_pos(self,elevation,extend=False):
         """Returns 3D position in well, given an elevation.  If extend is True, return extrapolated
         positions for elevations below the bottom of the well."""
-        poscoord=[self.pos_coordinate(i) for i in xrange(3)]
+        poscoord=[self.pos_coordinate(i) for i in range(3)]
         epos=poscoord[2]
         if epos[-1]<=elevation<=epos[0]:
-            return np.array([np.interp(elevation,epos[::-1],poscoord[i][::-1]) for i in xrange(3)])
+            return np.array([np.interp(elevation,epos[::-1],poscoord[i][::-1]) for i in range(3)])
         elif elevation<epos[-1] and extend: # extrapolate last deviation:
             pbot=self.pos[-1]
             if self.num_pos>1: ptop=self.pos[-2]
@@ -783,7 +783,7 @@ class mulgrid(object):
                 nodenames=[node.name for node in col.node]
                 try:
                     i0=nodenames.index(nodename)
-                    i=[(i0+j)%nn for j in xrange(nn)]
+                    i=[(i0+j)%nn for j in range(nn)]
                     colname2, iname = self.new_column_name(justfn = justfn, chars = chars)
                     col2=column(colname2,node=[col.node[i[2]],col.node[i[3]],col.node[i[0]]],surface=col.surface)
                     # switch connections and neighbours from col to col2 as needed:
@@ -916,7 +916,7 @@ class mulgrid(object):
     def identify_neighbours(self):
         """Identify neighbour columns"""
         for con in self.connectionlist:
-            for i in xrange(2): con.column[i].neighbour.add(con.column[not i])
+            for i in range(2): con.column[i].neighbour.add(con.column[not i])
 
     def identify_layer_tops(self):
         """Identifies top elevations of grid layers"""
@@ -1033,7 +1033,7 @@ class mulgrid(object):
             if centre_specified: centre = np.array([centrex, centrey])*self.unit_scale
             else: centre = None
             nodes = []
-            for each in xrange(nnodes):
+            for each in range(nnodes):
                 [nodename] = geo.read_values('column_node')
                 nodename = nodename.strip().rjust(self.colname_length)
                 colnode = self.node[nodename]
@@ -1285,8 +1285,8 @@ class mulgrid(object):
                 num+=1
         # create columns:
         num=1
-        for j in xrange(nyb):
-            for i in xrange(nxb):
+        for j in range(nyb):
+            for i in range(nxb):
                 colname=grid.column_name_from_number(num,justfn,chars)
                 colverts=[j*nxv+i+1,(j+1)*nxv+i+1,(j+1)*nxv+i+2,j*nxv+i+2]
                 nodenames=[grid.node_name_from_number(v,justfn,chars) for v in colverts]
@@ -1294,14 +1294,14 @@ class mulgrid(object):
                 grid.add_column(column(colname,colnodes))
                 num+=1
         # x-connections:
-        for j in xrange(nyb):
-            for i in xrange(nxb-1):
+        for j in range(nyb):
+            for i in range(nxb-1):
                 num1,num2=j*nxb+i+1,j*nxb+i+2
                 name1,name2=grid.column_name_from_number(num1,justfn,chars),grid.column_name_from_number(num2,justfn,chars)
                 grid.add_connection(connection([grid.column[name1],grid.column[name2]]))
         # y-connections:
-        for i in xrange(nxb):
-            for j in xrange(nyb-1):
+        for i in range(nxb):
+            for j in range(nyb-1):
                 num1,num2=j*nxb+i+1,(j+1)*nxb+i+1
                 name1,name2=grid.column_name_from_number(num1,justfn,chars),grid.column_name_from_number(num2,justfn,chars)
                 grid.add_connection(connection([grid.column[name1],grid.column[name2]]))
@@ -1341,14 +1341,14 @@ class mulgrid(object):
         chars = uniqstring(chars)
         while not '$Nodes' in line: line=gmsh.readline()
         num_nodes=int(gmsh.readline().strip())
-        for i in xrange(num_nodes):
+        for i in range(num_nodes):
             items=gmsh.readline().strip().split(' ')
             name,x,y=items[0],float(items[1]),float(items[2])
             name=self.node_name_from_number(int(name), chars = chars)
             grid.add_node(node(name,np.array([x,y])))
         while not '$Elements' in line: line=gmsh.readline()
         num_elements=int(gmsh.readline().strip())
-        for i in xrange(num_elements):
+        for i in range(num_elements):
             items=gmsh.readline().strip().split(' ')
             element_type=int(items[1])
             if element_type in [2,3]: # triangle or quadrilateral
@@ -1751,18 +1751,18 @@ class mulgrid(object):
                 show_well = hitlayer or not hide_wells_outside
             if show_well:
                 plt.plot(well.head[0], well.head[1], 'o', color = wellcolour)
-                wpos = [well.pos_coordinate(i) for i in xrange(3)]
+                wpos = [well.pos_coordinate(i) for i in range(3)]
                 if hitlayer:
                     above = np.where(wpos[2] > toppos[2])
-                    abovepos = [list(wpos[i][above])+[toppos[i]] for i in xrange(2)]
+                    abovepos = [list(wpos[i][above])+[toppos[i]] for i in range(2)]
                     if bottompos is not None: # well passes through layer
                         inside = np.where((toppos[2] >= wpos[2]) & (wpos[2] >= bottompos[2]))
-                        insidepos = [[toppos[i]] + list(wpos[i][inside]) + [bottompos[i]] for i in xrange(2)]
+                        insidepos = [[toppos[i]] + list(wpos[i][inside]) + [bottompos[i]] for i in range(2)]
                         below = np.where(wpos[2] < bottompos[2])
-                        belowpos = [[bottompos[i]] + list(wpos[i][below]) for i in xrange(2)]
+                        belowpos = [[bottompos[i]] + list(wpos[i][below]) for i in range(2)]
                     else: # well stops in layer
                         inside = np.where(toppos[2] >= wpos[2])
-                        insidepos = [[toppos[i]] + list(wpos[i][inside]) for i in xrange(2)]
+                        insidepos = [[toppos[i]] + list(wpos[i][inside]) for i in range(2)]
                         belowpos =  np.array([])
                     if abovepos: plt.plot(abovepos[0], abovepos[1], ':', color = wellcolour, linewidth = welllinewidth)
                     if insidepos: plt.plot(insidepos[0], insidepos[1], '-', color = wellcolour, linewidth = welllinewidth)
@@ -2266,7 +2266,7 @@ class mulgrid(object):
         x,y=[],[]
         line_length=norm(end-start)
         if line_length>0.0:
-            for i in xrange(divisions+1):
+            for i in range(divisions+1):
                 xi=float(i)/divisions
                 pos=(1.-xi)*start+xi*end
                 dist=xi*line_length
@@ -2280,7 +2280,7 @@ class mulgrid(object):
     def polyline_values(self,polyline,variable,divisions=100,coordinate=False,qtree=None):
         """Gets values of a variable along a specified polyline, returning two arrays for distance along the polyline and value."""
         x,y=[],[]
-        for i in xrange(len(polyline)-1):
+        for i in range(len(polyline)-1):
             start,end=polyline[i],polyline[i+1]
             xi,yi=self.line_values(start,end,variable,divisions,coordinate,qtree=qtree)
             if i>0:
@@ -2411,7 +2411,7 @@ class mulgrid(object):
                             '* parameter data\n']))
                 for name in nodenames:
                     parname='node_'+name.strip()+'_'
-                    for i in xrange(2):
+                    for i in range(2):
                         pst.write(parname+str(i)+' none relative '+'%12.3f'%self.node[name].pos[i]+' '+'%12.3f'%self.bounds[0][i]+
                                   ' '+'%12.3f'%self.bounds[1][i]+' pos 1.0 0.0 1\n')
                 pst.write('* observation groups\n')
@@ -2425,7 +2425,7 @@ class mulgrid(object):
                         else:
                             n=len(colnames)
                             target=1.0
-                        for i in xrange(n): pst.write(group+str(i)+' %5.2f'%target+' %5.2f'%obsweight[group]+' '+group+'\n')
+                        for i in range(n): pst.write(group+str(i)+' %5.2f'%target+' %5.2f'%obsweight[group]+' '+group+'\n')
                 pst.write('\n'.join([
                             '* model command line','python pestmesh_model.py',
                             '* model input/output','pestmesh.tpl  pestmesh.in',
@@ -2462,7 +2462,7 @@ class mulgrid(object):
                 tpl.write("ptf $\n")
                 for name in nodenames:
                     parname='node_'+name.strip()+'_'
-                    for i in xrange(2): tpl.write("$"+'%18s'%(parname+str(i))+"$\n")
+                    for i in range(2): tpl.write("$"+'%18s'%(parname+str(i))+"$\n")
                 tpl.close()
                 ins=open('pestmesh.ins','w')
                 ins.write("pif #\n")
@@ -2470,7 +2470,7 @@ class mulgrid(object):
                     if group in obsweight:
                         if group=='angle': n=len(cons)
                         else: n=len(colnames)
-                        for i in xrange(n): ins.write("l1 ["+group+str(i)+"]1:20\n")
+                        for i in range(n): ins.write("l1 ["+group+str(i)+"]1:20\n")
                 ins.close()
             np.save('pestmesh_nodes.npy', np.array(nodenames))
             np.save('pestmesh_columns.npy', np.array(colnames))
@@ -2564,7 +2564,7 @@ class mulgrid(object):
                         nodei = bdynodes.index(node)
                         nnodes = len(bdynodes)
                         loopcount = nnodes-nodei - 1
-                        for i in xrange(loopcount):
+                        for i in range(loopcount):
                             n1,n2 = bdynodes[-2], bdynodes[-1]
                             lastnode = bdynodes.pop()
                             con = self.connection_with_nodes([n1,n2])

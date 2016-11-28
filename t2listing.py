@@ -222,7 +222,7 @@ class t2listing(object):
 
     def skiplines(self, number = 1):
         """Skips specified number of lines in listing file"""
-        for i in xrange(number):  self._file.readline()
+        for i in range(number):  self._file.readline()
 
     def skipto(self,keyword='',start=1):
         """Skips to line starting  with keyword.  keyword can be either a string or a list of strings, in which case
@@ -573,7 +573,7 @@ class t2listing(object):
         pos=len(line)-1
         while line[pos]==' ': pos-=1
         while line[pos] != ' ': pos-=1
-        for k in xrange(nkeys):
+        for k in range(nkeys):
             while not line[pos].isdigit() and pos>=keylength: pos-=1
             pos-=(keylength-1)
             if valid_blockname(line[pos:pos+keylength]):
@@ -741,7 +741,7 @@ class t2listing(object):
                         count += internal_header_skiplines
                         line = self._file.readline()
                     else:
-                        for i in xrange(internal_header_skiplines): line,count = count_read(count)
+                        for i in range(internal_header_skiplines): line,count = count_read(count)
                 skiplines.append(count - last_count - 1)
             indices=rowdict.keys(); indices.sort()
             row_line=[rowdict[index][0] for index in indices]
@@ -870,7 +870,7 @@ class t2listing(object):
     def read_table_line_TOUGH2(self,line,num_columns,fmt):
         """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
         nvals=len(fmt['values'])-1
-        return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(nvals)]+[0.0]*(num_columns-nvals)
+        return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in range(nvals)]+[0.0]*(num_columns-nvals)
 
     def read_table_TOUGH2(self,tablename):
         table = self._table[tablename]
@@ -982,7 +982,7 @@ class t2listing(object):
                         ts = tselect_short if is_short else tselect
                         for (lineindex,colname,reverse,sel_index) in ts:
                             if lineindex is not None:
-                                for k in xrange(lineindex-index): line=self._file.readline()
+                                for k in range(lineindex-index): line=self._file.readline()
                                 index=lineindex
                                 vals=self.read_table_line(line,ncols,fmt)
                                 valindex=self._table[tname]._col[colname]
@@ -1095,10 +1095,10 @@ class t2listing(object):
         for array_type, data_dict in array_data.items():
             for name, data in data_dict.items():
                 if name in flownames:
-                    for iblk in xrange(nele):
+                    for iblk in range(nele):
                         arrays[array_type][name].SetTuple3(iblk, data[3*iblk], data[3*iblk+1], data[3*iblk+2])
                 else:
-                    for iblk in xrange(nele):
+                    for iblk in range(nele):
                         arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
@@ -1191,7 +1191,7 @@ class t2listing(object):
                     h=u+p0/rho
                     xnu=visc(rho,t0)/rho
                     coef=0.
-                    for iface in xrange(col.num_nodes):
+                    for iface in range(col.num_nodes):
                         facenode=[col.node[i] for i in [iface,(iface+1)%col.num_nodes]]
                         if all([node in bdy_nodes for node in facenode]):
                             side_length=np.linalg.norm(facenode[1].pos-facenode[0].pos)
@@ -1383,7 +1383,7 @@ class t2historyfile(object):
             self.times.append(time)
             nc1=self.num_columns+1
             nsets=len(items)/nc1
-            for i in xrange(nsets):
+            for i in range(nsets):
                 setvals=items[i*nc1:(i+1)*nc1]
                 key = (fortran_int(setvals[0]),)
                 vals=[fortran_float(val) for val in setvals[1:]]
@@ -1398,11 +1398,11 @@ class t2historyfile(object):
     def read_data_TOUGH2_MP(self,configured):
         """Reads in the data, for TOUGH2_MP output."""
         def get_key(line):
-            return tuple([fix_blockname(line[self.key_start[i]:self.key_start[i+1]].rstrip()) for i in xrange(self._nkeys)])
+            return tuple([fix_blockname(line[self.key_start[i]:self.key_start[i+1]].rstrip()) for i in range(self._nkeys)])
         def get_time(line): return fortran_float(line[self.time_pos[0]:self.time_pos[1]])
         def get_vals(line):
             start=self.col_start+[len(line)] # allow for lines of different lengths
-            return [fortran_float(line[start[i]:start[i+1]]) for i in xrange(self.num_columns)]
+            return [fortran_float(line[start[i]:start[i+1]]) for i in range(self.num_columns)]
         lines=self._file.readlines()
         first_key=None
         from copy import copy
@@ -1442,7 +1442,7 @@ class t2historyfile(object):
                 self.times.append(time)
                 nc1=self.num_columns+1
                 nsets=(len(items)-2)/nc1
-                for i in xrange(nsets):
+                for i in range(nsets):
                     setvals=items[2+i*nc1:2+(i+1)*nc1]
                     key = (fortran_int(setvals[0]),)
                     if key[0]>0:
@@ -1620,7 +1620,7 @@ class toughreact_tecplot(object):
             line = self._file.readline()
             for (lineindex, colname, sel_index) in osel:
                 if lineindex is not None:
-                    for k in xrange(lineindex-index): line = self._file.readline()
+                    for k in range(lineindex-index): line = self._file.readline()
                     index = lineindex
                     vals = self.read_table_line(line)
                     valindex = self.element._col[colname]
@@ -1652,7 +1652,7 @@ class toughreact_tecplot(object):
 
         for array_type,data_dict in array_data.items():
             for name,data in data_dict.items():
-                for iblk in xrange(nele): arrays[array_type][name].SetValue(iblk, data[iblk])
+                for iblk in range(nele): arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
     def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0, time_unit = 's', blockmap = {}, surface_snap = 0.1):

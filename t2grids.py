@@ -540,8 +540,8 @@ class t2grid(object):
                     icons.append(conindex[conname])
                 Ablk = -np.linalg.pinv(np.array(M))
                 ib3 = iblk*3
-                for ic in xrange(ncons):
-                    for ip in xrange(3): A[ib3+ip,icons[ic]] = Ablk[ip,ic]
+                for ic in range(ncons):
+                    for ip in range(3): A[ib3+ip,icons[ic]] = Ablk[ip,ic]
         return A
 
     def radial(self, rblocks, zblocks, convention=0, atmos_type=2, origin = np.array([0.,0.]), justify='r',
@@ -763,13 +763,13 @@ class t2grid(object):
         def block_spacings(grid, ob, max_volume):
             """Calculate block spacings in each direction"""
             spacings = {}
-            for dirn in xrange(1, 4):
+            for dirn in range(1, 4):
                 if dirn < 3: blk = ob
                 else: blk = topmost_block(grid, max_volume)
                 blks, spacings[dirn] = block_direction_track(grid, blk, dirn, max_volume)
                 if dirn == 3 and blks[0].centre[2] < blks[-1].centre[2]: spacings[dirn].reverse()
             # calculate missing spacing for 2D meshes:
-            missing_dirns = [i for i in xrange(1,4) if len(spacings[i]) == 0]
+            missing_dirns = [i for i in range(1,4) if len(spacings[i]) == 0]
             num_missing = len(missing_dirns)
             if num_missing == 1:
                 dirn = missing_dirns[0]
@@ -840,9 +840,9 @@ class t2grid(object):
             mapping = {}
             icol = 0
             start2, last2 = ob, None
-            for i2 in xrange(nblks[2]):
+            for i2 in range(nblks[2]):
                 start1, last1 = start2, None
-                for i1 in xrange(nblks[1]):
+                for i1 in range(nblks[1]):
                     col = geo.columnlist[icol]
                     blk, last3 = start1, None
                     for lay in geo.layerlist[::-1]:
@@ -882,7 +882,7 @@ class t2grid(object):
             if ob is None: raise Exception("Can't find origin block for grid.")
             else:
                 spacings = block_spacings(self, ob, atmos_volume)
-                nblks = dict([(i, len(spacings[i])) for i in xrange(1,4)])
+                nblks = dict([(i, len(spacings[i])) for i in range(1,4)])
                 geo = mulgrid().rectangular(spacings[1], spacings[2], spacings[3],
                                             convention = convention, atmos_type = atmos_type,
                                             justify = justify, chars = chars)

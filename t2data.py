@@ -272,7 +272,7 @@ class t2data(object):
                     except ValueError: pass
                 # look for sections below the one specified,
                 # and put new one just before the first found:
-                for i in xrange(listindex, len(t2data_sections)):
+                for i in range(listindex, len(t2data_sections)):
                     try:
                         section_index = self._sections.index(t2data_sections[i])
                         return section_index
@@ -476,7 +476,7 @@ class t2data(object):
         outfile.write_value_line(self.parameter,'param3')
         num_vars = len(self.parameter['default_incons'])
         nlines = int(ceil(num_vars / 4.))
-        for i in xrange(nlines):
+        for i in range(nlines):
             i1, i2 = i * 4, min((i + 1) * 4, num_vars)
             vals = list(self.parameter['default_incons'][i1:i2])
             if len(vals) < 4: vals += [None] * (4 - len(vals))
@@ -489,14 +489,14 @@ class t2data(object):
         else:
             nlines=-int(self.parameter['const_timestep'])
             self.parameter['timestep']=[]
-            for i in xrange(nlines):
+            for i in range(nlines):
                 for val in infile.read_values('timestep'):
                     if val is not None: self.parameter['timestep'].append(val)
 
     def write_timesteps(self,outfile):
         if self.parameter['const_timestep']<0.0:
             nlines=-int(self.parameter['const_timestep'])
-            for i in xrange(nlines):
+            for i in range(nlines):
                 i1,i2=i*8,min((i+1)*8,len(self.parameter['timestep']))
                 vals=self.parameter['timestep'][i1:i2]
                 if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -530,7 +530,7 @@ class t2data(object):
 
     def skip_rpcap(self,infile):
         """Skips relative permeability and capillarity parameter section."""
-        for i in xrange(2): infile.readline()
+        for i in range(2): infile.readline()
 
     def write_rpcap(self,outfile):
         if self.relative_permeability:
@@ -659,14 +659,14 @@ class t2data(object):
             ntimes=abs(ltab)
             if ntimes>1:
                 nlines=int(ceil(ntimes/4.))
-                for i in xrange(nlines):
+                for i in range(nlines):
                     for val in infile.read_values('generation_times'):
                         if val is not None: time.append(val)
-                for i in xrange(nlines):
+                for i in range(nlines):
                     for val in infile.read_values('generation_rates'):
                         if val is not None: rate.append(val)
                 if itab.strip():
-                    for i in xrange(nlines):
+                    for i in range(nlines):
                         for val in infile.read_values('generation_enthalpy'):
                             if val is not None: enthalpy.append(val)
         return t2generator(name=name,block=block,nseq=nseq,nadd=nadd,nads=nads,type=gentype,ltab=ltab,itab=itab,
@@ -681,18 +681,18 @@ class t2data(object):
         else: ntimes=1
         if ntimes>1:
             nlines=int(ceil(ntimes/4.))
-            for i in xrange(nlines):
+            for i in range(nlines):
                 i1,i2=i*4,min((i+1)*4,ntimes)
                 vals = list(gen.time[i1:i2])
                 if len(vals)<4: vals+=[None]*(4-len(vals))
                 outfile.write_values(vals,'generation_times')
-            for i in xrange(nlines):
+            for i in range(nlines):
                 i1,i2=i*4,min((i+1)*4,ntimes)
                 vals = list(gen.rate[i1:i2])
                 if len(vals)<4: vals+=[None]*(4-len(vals))
                 outfile.write_values(vals,'generation_rates')
             if gen.enthalpy:
-                for i in xrange(nlines):
+                for i in range(nlines):
                     i1,i2=i*4,min((i+1)*4,ntimes)
                     vals = list(gen.enthalpy[i1:i2])
                     if len(vals)<4: vals+=[None]*(4-len(vals))
@@ -722,7 +722,7 @@ class t2data(object):
         infile.read_value_line(self.output_times,'output_times1')
         self.output_times['time']=[]
         nlines=int(ceil(self.output_times['num_times_specified']/8.))
-        for i in xrange(nlines):
+        for i in range(nlines):
             for val in infile.read_values('output_times2'):
                 if val is not None: self.output_times['time'].append(val)
 
@@ -731,7 +731,7 @@ class t2data(object):
             outfile.write('TIMES\n')
             outfile.write_value_line(self.output_times,'output_times1')
             nlines=int(ceil(self.output_times['num_times_specified']/8.))
-            for i in xrange(nlines):
+            for i in range(nlines):
                 i1,i2=i*8,min((i+1)*8,len(self.output_times['time']))
                 vals=self.output_times['time'][i1:i2]
                 if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -953,7 +953,7 @@ class t2data(object):
     def read_diffusion(self,infile):
         """Reads diffusion coefficients from file"""
         if ('num_components' in self.multi) and ('num_phases' in self.multi):
-            for comp in xrange(self.multi['num_components']):
+            for comp in range(self.multi['num_components']):
                 diffs=infile.read_values('diffusion')[0:self.multi['num_phases']]
                 self.diffusion.append(diffs)
         else: print('Unable to read DIFFU block: no MULTI block specified.')
@@ -969,7 +969,7 @@ class t2data(object):
         self.selection['integer']=int_selec
         nlines=int_selec[0]
         float_selec=[]
-        for i in xrange(nlines): float_selec+=infile.read_values('selec2')
+        for i in range(nlines): float_selec+=infile.read_values('selec2')
         self.selection['float']=float_selec
 
     def write_selection(self,outfile):
@@ -977,7 +977,7 @@ class t2data(object):
             outfile.write('SELEC\n')
             outfile.write_values(self.selection['integer'],'selec1')
             nlines=self.selection['integer'][0]
-            for i in xrange(nlines):
+            for i in range(nlines):
                 i1,i2=i*8,min((i+1)*8,len(self.selection['float']))
                 vals=self.selection['float'][i1:i2]
                 if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -1015,7 +1015,7 @@ class t2data(object):
                 nrad=infile.read_values('radii1')[0]
                 subsection['radii']=[]
                 nlines=int(ceil(nrad/8.))
-                for i in xrange(nlines):
+                for i in range(nlines):
                     for val in infile.read_values('radii2'):
                         if val is not None: subsection['radii'].append(val)
             elif keyword=='EQUID': infile.read_value_line(subsection,'equid')
@@ -1024,7 +1024,7 @@ class t2data(object):
                 nlayers=infile.read_values('layer1')[0]
                 nlines=int(ceil(nlayers/8.))
                 layer=[]
-                for i in xrange(nlines): layer+=infile.read_values('layer2')
+                for i in range(nlines): layer+=infile.read_values('layer2')
                 subsection['layer']=layer[0:nlayers]
                 more=False # LAYER indicates end of RZ2D
             if subsection: section[1].append((keyword.lower(),subsection))
@@ -1038,7 +1038,7 @@ class t2data(object):
                 nrad=len(subsection['radii'])
                 outfile.write_values([nrad],'radii1')
                 nlines=int(ceil(nrad/8.))
-                for i in xrange(nlines):
+                for i in range(nlines):
                     i1,i2=i*8,min((i+1)*8,nrad)
                     vals=subsection['radii'][i1:i2]
                     if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -1049,7 +1049,7 @@ class t2data(object):
                 nlayers=len(subsection['layer'])
                 outfile.write_values([nlayers],'layer1')
                 nlines=int(ceil(nlayers/8.))
-                for i in xrange(nlines):
+                for i in range(nlines):
                     i1,i2=i*8,min((i+1)*8,nrad)
                     vals=subsection['layer'][i1:i2]
                     if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -1068,7 +1068,7 @@ class t2data(object):
                 if subsection['del']==0:
                     nlines=int(ceil(subsection['no']/8.))
                     deli=[]
-                    for i in xrange(nlines): deli+=infile.read_values('xyz3')
+                    for i in range(nlines): deli+=infile.read_values('xyz3')
                     subsection['deli']=deli[0:subsection['no']]
                 section[1].append(subsection)
             else: more=False
@@ -1082,7 +1082,7 @@ class t2data(object):
             outfile.write_value_line(subsection,'xyz2')
             if subsection['del']==0:
                 nlines=int(ceil(subsection['no']/8.))
-                for i in xrange(nlines):
+                for i in range(nlines):
                     i1,i2=i*8,min((i+1)*8,subsection['no'])
                     vals=subsection['deli'][i1:i2]
                     if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -1100,7 +1100,7 @@ class t2data(object):
             subsection['num_continua'],nvol,subsection['where'],subsection['spacing']=vals[0],vals[1],vals[2],vals[3:]
             nlines=int(ceil(nvol/8.))
             vol=[]
-            for i in xrange(nlines): vol+=infile.read_values('part2')
+            for i in range(nlines): vol+=infile.read_values('part2')
             subsection['vol']=vol[0:nvol]
             self.meshmaker.append(('minc',subsection))
 
@@ -1110,7 +1110,7 @@ class t2data(object):
         nvol=len(section['vol'])
         outfile.write_values([section['num_continua'],nvol,section['where']]+section['spacing'],'part1')
         nlines=int(ceil(nvol/8.))
-        for i in xrange(nlines):
+        for i in range(nlines):
             i1,i2=i*8,min((i+1)*8,section['vol'])
             vals=section['vol'][i1:i2]
             if len(vals)<8: vals+=[None]*(8-len(vals))
@@ -1141,24 +1141,24 @@ class t2data(object):
         else: rocktype_indices=False
         if nel==nelb:
             # read MESHA file:
-            evol,aht,pmx=(np.array(fa.readrec('%dd'%nel)) for i in xrange(3))
-            gcoord=[np.array(fa.readrec('%dd'%nel)) for i in xrange(3)]
+            evol,aht,pmx=(np.array(fa.readrec('%dd'%nel)) for i in range(3))
+            gcoord=[np.array(fa.readrec('%dd'%nel)) for i in range(3)]
             gcoord=np.transpose(np.vstack([gc for gc in gcoord]))
-            del1,del2,area,beta,sig=(np.array(fa.readrec('%dd'%ncon)) for i in xrange(5))
+            del1,del2,area,beta,sig=(np.array(fa.readrec('%dd'%ncon)) for i in range(5))
             isox=np.array(fa.readrec('%di'%ncon))
             # read MESHB file:
             elem=list(fb.readrec('8s'*nel))
             if rocktype_indices: rtype=[self.grid.rocktypelist[i] for i in np.array(fb.readrec('%di'%nel))-1]
             else: rtype=[self.grid.rocktype[name] for name in list(fb.readrec('5s'*nel))]
-            nex1,nex2=(np.array(fb.readrec('%di'%ncon))-1 for i in xrange(2))
+            nex1,nex2=(np.array(fb.readrec('%di'%ncon))-1 for i in range(2))
             # construct grid:
             self.grid.block,self.grid.blocklist={},[]
-            for i in xrange(nel):
+            for i in range(nel):
                 name=fix_blockname(elem[i][0:5])
                 self.grid.add_block(t2block(name,evol[i],rtype[i],centre=gcoord[i,:],ahtx=aht[i],pmx=pmx[i]))
             del evol,aht,pmx,gcoord,elem
             self.grid.connectionlist,self.grid.connection=[],{}
-            for i in xrange(ncon):
+            for i in range(ncon):
                 blk1,blk2=self.grid.blocklist[nex1[i]],self.grid.blocklist[nex2[i]]
                 self.grid.add_connection(t2connection([blk1,blk2],isox[i],[del1[i],del2[i]],area[i],beta[i],sig[i]))
         else: print('Files',self.meshfilename[0],'and',self.meshfilename[1],'do not contain the same number of blocks (',nel,'vs.',nelb,').')

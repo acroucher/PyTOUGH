@@ -60,11 +60,11 @@ def in_polygon(pos,polygon):
 def in_rectangle(pos,rect):
     """Tests if the 2-D point lies in an axis-aligned rectangle, defined as a two-element list of arrays
     [bottom left, top right]."""
-    return all([rect[0][i]<=pos[i]<=rect[1][i] for i in xrange(2)])
+    return all([rect[0][i]<=pos[i]<=rect[1][i] for i in range(2)])
 
 def rectangles_intersect(rect1,rect2):
     """Returns True if two rectangles intersect."""
-    return all([(rect1[1][i]>=rect2[0][i]) and (rect2[1][i]>=rect1[0][i]) for i in xrange(2)])
+    return all([(rect1[1][i]>=rect2[0][i]) and (rect2[1][i]>=rect1[0][i]) for i in range(2)])
 
 def sub_rectangles(rect):
     """Returns the sub-rectangles formed by subdividing the given rectangle evenly in four."""
@@ -77,8 +77,8 @@ def sub_rectangles(rect):
 
 def bounds_of_points(points):
     """Returns bounding box around the specified 2D points."""
-    bottomleft=np.array([min([pos[i] for pos in points]) for i in xrange(2)])
-    topright=np.array([max([pos[i] for pos in points]) for i in xrange(2)])
+    bottomleft=np.array([min([pos[i] for pos in points]) for i in range(2)])
+    topright=np.array([max([pos[i] for pos in points]) for i in range(2)])
     return [bottomleft,topright]
 
 def rect_to_poly(rect):
