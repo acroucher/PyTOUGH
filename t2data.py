@@ -211,10 +211,10 @@ class t2data(object):
         """Updates functions for reading and writing sections of data file."""
         self.read_fn = dict(zip(
                 t2data_sections,
-                [self.read_simulator, self.read_rocktypes, self.read_parameters, self.read_start, 
+                [self.read_simulator, self.read_rocktypes, self.read_parameters, self.read_start,
                  self.read_noversion, self.read_rpcap, self.read_lineq, self.read_solver, self.read_multi, self.read_times,
                  self.read_selection, self.read_diffusion, self.read_blocks, self.read_connections, self.read_meshmaker,
-                 self.read_generators, self.read_short_output, self.read_history_blocks, 
+                 self.read_generators, self.read_short_output, self.read_history_blocks,
                  self.read_history_connections, self.read_history_generators, self.read_incons, self.read_indom]))
         self.write_fn = dict(zip(
                 t2data_sections,
@@ -224,9 +224,9 @@ class t2data(object):
                  self.write_connections, self.write_meshmaker, self.write_generators, self.write_short_output, self.write_history_blocks,
                  self.write_history_connections, self.write_history_generators, self.write_incons, self.write_indom]))
         skip_fn = dict(zip(t2_extra_precision_sections,
-                           [self.skip_rocktypes, self.skip_blocks, self.skip_connections, 
+                           [self.skip_rocktypes, self.skip_blocks, self.skip_connections,
                             self.skip_rpcap, self.skip_generators]))
-        if not self.echo_extra_precision: 
+        if not self.echo_extra_precision:
             for section in self.extra_precision: self.read_fn[section] = skip_fn[section]
 
     def get_present_sections(self):
@@ -252,7 +252,7 @@ class t2data(object):
         except ValueError: pass
 
     def section_insertion_index(self, section):
-        """Determines an appropriate position to insert the specified section in the internal list of 
+        """Determines an appropriate position to insert the specified section in the internal list of
         data file sections."""
         try:
             listindex = t2data_sections.index(section)
@@ -655,7 +655,7 @@ class t2data(object):
             if ntimes>1:
                 nlines=int(ceil(ntimes/4.))
                 for i in xrange(nlines):
-                    for val in infile.read_values('generation_times'): 
+                    for val in infile.read_values('generation_times'):
                         if val is not None: time.append(val)
                 for i in xrange(nlines):
                     for val in infile.read_values('generation_rates'):
@@ -711,14 +711,14 @@ class t2data(object):
             for generator in self.generatorlist:
                 self.write_generator(generator,outfile)
             outfile.write('\n')
-        
+
     def read_times(self,infile):
         """Reads output times from file"""
         infile.read_value_line(self.output_times,'output_times1')
         self.output_times['time']=[]
         nlines=int(ceil(self.output_times['num_times_specified']/8.))
         for i in xrange(nlines):
-            for val in infile.read_values('output_times2'): 
+            for val in infile.read_values('output_times2'):
                 if val is not None: self.output_times['time'].append(val)
 
     def write_times(self,outfile):
@@ -731,7 +731,7 @@ class t2data(object):
                 vals=self.output_times['time'][i1:i2]
                 if len(vals)<8: vals+=[None]*(8-len(vals))
                 outfile.write_values(vals,'output_times2')
-        
+
     def read_incons(self,infile):
         """Reads initial conditions from file"""
         line=infile.readline()
@@ -756,7 +756,7 @@ class t2data(object):
                 outfile.write_values(vals,'incon1')
                 outfile.write_values(inc[1],'incon2')
             outfile.write('\n')
-        
+
     def read_short_blocks(self,infile):
         """Reads short output blocks"""
         self.short_output['block']=[]
@@ -902,7 +902,7 @@ class t2data(object):
                 else: blkname=blk.name
                 outfile.write(unfix_blockname(blkname)+'\n')
             outfile.write('\n')
-        
+
     def write_history_connections(self,outfile):
         if self.history_connection:
             outfile.write('COFT\n')
@@ -911,7 +911,7 @@ class t2data(object):
                 else: cname=tuple([blk.name for blk in con.block])
                 outfile.write(unfix_blockname(cname[0])+unfix_blockname(cname[1])+'\n')
             outfile.write('\n')
-        
+
     def write_history_generators(self,outfile):
         if self.history_generator:
             outfile.write('GOFT\n')
@@ -966,7 +966,7 @@ class t2data(object):
         float_selec=[]
         for i in xrange(nlines): float_selec+=infile.read_values('selec2')
         self.selection['float']=float_selec
-        
+
     def write_selection(self,outfile):
         if self.selection:
             outfile.write('SELEC\n')
@@ -1011,11 +1011,11 @@ class t2data(object):
                 subsection['radii']=[]
                 nlines=int(ceil(nrad/8.))
                 for i in xrange(nlines):
-                    for val in infile.read_values('radii2'): 
+                    for val in infile.read_values('radii2'):
                         if val is not None: subsection['radii'].append(val)
             elif keyword=='EQUID': infile.read_value_line(subsection,'equid')
             elif keyword=='LOGAR': infile.read_value_line(subsection,'logar')
-            elif keyword=='LAYER': 
+            elif keyword=='LAYER':
                 nlayers=infile.read_values('layer1')[0]
                 nlines=int(ceil(nlayers/8.))
                 layer=[]
@@ -1300,7 +1300,7 @@ class t2data(object):
                     self.write_fn[keyword](outfile)
         outfile.write(self.end_keyword+'\n')
         outfile.close()
-    
+
     def transfer_rocktypes_from(self,source,mapping):
         """Transfers rock types (definitions and assignments) from another t2data object, using the specified block mapping."""
         from copy import deepcopy
@@ -1364,7 +1364,7 @@ class t2data(object):
                         gen.name=geo.block_name(category,colname)
                     gen.block=blk.name
                     self.add_generator(gen)
-                    
+
     def transfer_from(self,source,sourcegeo,geo,top_generator=[],bottom_generator=[],sourceinconfilename='',inconfilename='',rename_generators=False,preserve_generation_totals=False):
         """Copies parameters, rock types and assignments, generators and initial conditions
         from another t2data object (without altering the grid structure).
@@ -1574,7 +1574,7 @@ class t2data(object):
         self.convert_AUTOUGH2_parameters_to_TOUGH2(warn, MP)
         self.convert_AUTOUGH2_generators_to_TOUGH2(warn)
         self.convert_short_to_history()
-        
+
     def convert_to_AUTOUGH2(self, warn = True, MP = False, simulator = 'AUTOUGH2.2', eos = 'EW'):
         """Converts a TOUGH2 data file to an AUTOUGH2 data file."""
         if not self.filename.lower().endswith('.dat'):

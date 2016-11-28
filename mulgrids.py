@@ -233,7 +233,7 @@ class column(object):
     interior_angles=property(get_interior_angles)
 
     def get_angle_ratio(self):
-        """Returns the angle ratio for the column, defined as the ratio of the largest interior angle to 
+        """Returns the angle ratio for the column, defined as the ratio of the largest interior angle to
         the smallest interior angle."""
         angles=self.interior_angles
         return max(angles)/min(angles)
@@ -243,9 +243,9 @@ class column(object):
         "Returns list of side lengths for the column"
         return np.array([norm(self.node[(i+1)%self.num_nodes].pos-self.node[i].pos) for i in xrange(self.num_nodes)])
     side_lengths=property(get_side_lengths)
-        
+
     def get_side_ratio(self):
-        """Returns the side ratio for the column, defined as the ratio of the largest side length to 
+        """Returns the side ratio for the column, defined as the ratio of the largest side length to
         the smallest side length (a generalisation of the aspect ratio for quadrilateral columns)."""
         l=self.side_lengths
         return np.max(l)/np.min(l)
@@ -571,7 +571,7 @@ class mulgrid(object):
             return np.array([costheta*sinphi, -sintheta, -costheta*cosphi])
         except ZeroDivisionError: return np.array([0., -sintheta, 0.]) # theta = pi/2
     tilt_vector = property(get_tilt_vector)
-        
+
     def empty(self):
         """Empties grid contents"""
         self.nodelist=[]
@@ -857,7 +857,7 @@ class mulgrid(object):
             self.setup_block_connection_name_index()
             return True
         except ValueError: return False
-            
+
     def add_connection(self, con = connection()):
         """Adds connection to the grid. If a connection with the same
         names already exists in the geometry, no new connection is added."""
@@ -890,7 +890,7 @@ class mulgrid(object):
         for col in con.column: col.connection.remove(con)
         del self.connection[colnames]
         self.connectionlist.remove(con)
-            
+
     def add_well(self,wl=well()):
         """Adds well to the geometry. If a well with the specified name
         already exists in the geometry, no new well is added."""
@@ -903,7 +903,7 @@ class mulgrid(object):
         well = self.well[wellname]
         del self.well[wellname]
         self.welllist.remove(well)
-            
+
     def delete_orphan_wells(self):
         """Deletes any wells with wellheads not inside the grid."""
         delwells=[]
@@ -984,13 +984,13 @@ class mulgrid(object):
             columns=self.columnlist
         else: bounds=self.column_bounds(columns)
         return quadtree(bounds,columns)
-            
+
     def get_node_kdtree(self):
         """Returns a kd-tree structure for searching the grid for particular nodes."""
         from scipy.spatial import cKDTree
         return cKDTree([node.pos for node in self.nodelist])
     node_kdtree=property(get_node_kdtree)
-        
+
     def node_nearest_to(self,point,kdtree=None):
         """Returns the node nearest to the specified point.  A kd-tree can be specified to speed
         searching- useful if searching for a lot of points."""
@@ -1205,7 +1205,7 @@ class mulgrid(object):
             name, pos = node.name.ljust(3), node.pos / self.unit_scale
             geo.write_values([name, pos[0], pos[1]], 'node')
         geo.write('\n')
-        
+
     def write_columns(self,geo):
         """Writes MULgraph grid columns to file"""
         geo.write('GRID\n')
@@ -1218,7 +1218,7 @@ class mulgrid(object):
             geo.write_values(vals, 'column')
             for node in col.node: geo.write_values([node.name.ljust(3)], 'column_node')
         geo.write('\n')
-            
+
     def write_connections(self,geo):
         """Writes MULgraph grid connections to file"""
         geo.write('CONNECTIONS\n')
@@ -1234,7 +1234,7 @@ class mulgrid(object):
             vals = [lay.name.ljust(3), lay.bottom/self.unit_scale, lay.centre/self.unit_scale]
             geo.write_values(vals, 'layer')
         geo.write('\n')
-        
+
     def write_surface(self,geo):
         """Writes MULgraph grid surface to file"""
         geo.write('SURFA\n')
@@ -1250,7 +1250,7 @@ class mulgrid(object):
                 vals = [wl.name] + list(pos/self.unit_scale)
                 geo.write_values(vals, 'well')
         geo.write('\n')
-        
+
     def rectangular(self,xblocks,yblocks,zblocks,convention=0,atmos_type=2,origin=[0.,0.,0.],justify='r',case = None, 
                     chars = ascii_lowercase):
         """Returns a rectangular MULgraph grid with specified block sizes.
@@ -1512,7 +1512,7 @@ class mulgrid(object):
             if columns is None: searchcols=self.columnlist
             else: searchcols=columns
             donecols=set([])
-            if guess is not None: 
+            if guess is not None:
                 if guess.contains_point(pos): return guess
                 else: # search neighbours of guess, sorted by distance from pos:
                     donecols.add(guess)
@@ -1570,7 +1570,7 @@ class mulgrid(object):
             closest=self.layerlist[1+np.argmin(laydist)]  # (1 added for surface layer, omitted from search)
             mapping[layer.name]=closest.name
         return mapping
-    
+
     def block_mapping(self,geo,column_mapping=False):
         """Returns a dictionary mapping each block name in a geometry object geo to the name of the nearest block in self.
         Columns are given priority over layers, i.e. first the nearest column is found, then the nearest layer for blocks
@@ -1766,7 +1766,7 @@ class mulgrid(object):
                     if abovepos: plt.plot(abovepos[0], abovepos[1], ':', color = wellcolour, linewidth = welllinewidth)
                     if insidepos: plt.plot(insidepos[0], insidepos[1], '-', color = wellcolour, linewidth = welllinewidth)
                     if belowpos: plt.plot(belowpos[0], belowpos[1], ':', color = wellcolour, linewidth = welllinewidth)
-                else: 
+                else:
                     if layer is None: welllinestyle = '-'
                     else: welllinestyle =':'
                     plt.plot(wpos[0], wpos[1], welllinestyle, color = wellcolour, linewidth = welllinewidth)
@@ -1847,7 +1847,7 @@ class mulgrid(object):
         of a layer name, the layer containing that elevation is plotted.  If layer is set to None, then the ground surface
         is plotted (i.e. the surface layer for each column)."""
         import matplotlib
-        if plt is None: 
+        if plt is None:
             import matplotlib.pyplot as plt
             loneplot = True
         else: loneplot = False
@@ -2291,13 +2291,13 @@ class mulgrid(object):
         return np.array(x),np.array(y)
 
     def well_values(self,well_name,variable,divisions=1,elevation=False,deviations=False,qtree=None,extend=False):
-        """Gets values of a variable down a specified well, returning distance down the well 
+        """Gets values of a variable down a specified well, returning distance down the well
         (or elevation) and value.  Vertical coordinates can be taken from the nodes of the
         well deviations, or from the grid geometry layer centres (if deviations is False).
         If extend is True, the well trace is extended to the bottom of the model."""
         if elevation: coordinate=2  # return coordinate 2 (i.e. z)
         else: coordinate=False
-        if well_name in self.well: 
+        if well_name in self.well:
             well=self.well[well_name]
             if deviations:
                 from copy import copy
@@ -2331,7 +2331,7 @@ class mulgrid(object):
         z = np.array([self.layer[self.layer_name(blk)].centre for blk in blks])
         if depth: return self.layer[self.layer_name(blks[0])].top - z, val
         else: return z,val
-                    
+
     def line_plot(self,start=None,end=None,variable=None,variable_name=None,unit=None,divisions=100,plt=None,subplot=111,title='',xlabel='distance (m)'):
         """Produces a line plot of the specified variable through a Mulgraph grid."""
         if (start is None) or (end is None):
@@ -2501,7 +2501,7 @@ class mulgrid(object):
                 if connection_angle_weight: result += [connection_angle_weight*con.angle_cosine for con in cons]
                 if column_aspect_weight:
                     result += [column_aspect_weight*(self.column[colname].side_ratio-1.) for colname in colnames]
-                if column_skewness_weight: 
+                if column_skewness_weight:
                     result += [column_skewness_weight*(self.column[colname].angle_ratio-1.) for colname in colnames]
                 return np.array(result)
             x0 = np.array([self.node[nodename].pos for nodename in nodenames]).reshape(2*num_nodes)
@@ -2522,7 +2522,7 @@ class mulgrid(object):
         nodes=set([])
         for col in columns: nodes=nodes | set(col.node)
         return list(nodes)
-        
+
     def column_boundary_nodes(self,columns):
         """Returns an ordered list of the nodes on the outer boundary of the group of specified columns."""
         nodes = self.nodes_in_columns(columns)
@@ -2807,7 +2807,7 @@ class mulgrid(object):
         if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
         elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
-        
+
     def get_well_vtk_grid(self):
         """Returns a VTK grid corresponding to the wells in the geometry."""
         from vtk import vtkUnstructuredGrid,vtkPoints,vtkIdList,vtkCharArray
@@ -2873,7 +2873,7 @@ class mulgrid(object):
         all columns."""
         if min_thickness>0.0:
             if columns==[]: columns=self.columnlist
-            else: 
+            else:
                 if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
             for col in columns:
                 toplayer=self.column_surface_layer(col)
@@ -2956,7 +2956,7 @@ class mulgrid(object):
         """Decomposes columns with more than four sides to triangles and quadrilaterals. Optionally returns a dictionary
         mapping column names in the original geometry to lists of corresponding column names in the reduced geometry."""
         if columns == []: columns = self.columnlist
-        else: 
+        else:
             if isinstance(columns[0], str): columns = [self.column[col] for col in columns]
         colmap = dict([(col.name, self.decompose_column(col.name, chars)) for col in columns])
         for c in self.missing_connections: self.add_connection(c)
@@ -2992,7 +2992,7 @@ class mulgrid(object):
         colmap = geo.decompose_columns(columns, mapping = True, chars = ascii_lowercase + ascii_uppercase)
         geo_columns = []
         for col in columns: geo_columns += [geo.column[geocol] for geocol in colmap[col.name]]
-            
+
         nodes = geo.nodes_in_columns(geo_columns)
         node_index = dict([(n.name,i) for i,n in enumerate(nodes)])
         num_nodes = len(nodes)
@@ -3082,11 +3082,11 @@ class mulgrid(object):
         In this case the value of layer_snap is a tolerance representing the smallest permissible layer thickness."""
 
         if columns == []: columns = self.columnlist
-        else: 
+        else:
             if isinstance(columns[0],str): columns = [self.column[col] for col in columns]
 
         col_elevations = self.fit_columns(data, alpha, beta, columns, min_columns, grid_boundary, silent)
-        
+
         for col, elev in zip(columns, col_elevations):
             col.surface = elev
             self.set_column_num_layers(col)
@@ -3105,7 +3105,7 @@ class mulgrid(object):
         to the refinement.  This is useful for columns with larger aspect ratios just outside the refinement area, whose aspect
         ratios would become even greater from simple refinement."""
         if columns==[]: columns=self.columnlist
-        else: 
+        else:
             if isinstance(columns[0],str): columns=[self.column[col] for col in columns]
         connections=set([])
         sidenodes={}
@@ -3128,7 +3128,7 @@ class mulgrid(object):
                     con=self.connection_with_nodes([n1,n2])
                     if con: connections.add(con)
                     else: sidenodes,nodenumber = create_mid_node(n1,n2,sidenodes,nodenumber)
-        else: 
+        else:
             for col in columns: connections=connections | col.connection
         if bisect_edge_columns<>[]:
             if isinstance(bisect_edge_columns[0],str): bisect_edge_columns=[self.column[col] for col in bisect_edge_columns]
@@ -3209,7 +3209,7 @@ class mulgrid(object):
         are regenerated in sequence."""
         chars = uniqstring(chars)
         if layers==[]: layers = self.layerlist
-        else: 
+        else:
             if isinstance(layers[0],str): layers=[self.layer[lay] for lay in layers]
         factor = int(factor)
         top_elevation = self.layerlist[0].top
@@ -3259,12 +3259,12 @@ class mulgrid(object):
         self.check(fix=True, silent=True)
         self.setup_block_name_index()
         self.setup_block_connection_name_index()
-        
+
     def minc_array(self, vals, minc_indices, level = 0, outside = 0.0):
         """Returns an array for all blocks, with values taken from the vals array
-        for the given MINC level, based on the index array minc_indices (which 
+        for the given MINC level, based on the index array minc_indices (which
         can be obtained from the output of the t2grid minc() method). For partial MINC
-        grids, blocks outside the MINC area are assigned the value given by the 
+        grids, blocks outside the MINC area are assigned the value given by the
         parameter outside, unless outside is True, in which case the porous medium
         values are assigned."""
 

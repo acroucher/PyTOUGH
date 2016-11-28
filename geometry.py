@@ -102,7 +102,7 @@ def polygon_centroid(polygon):
     shift = polygon[0]
     polygon -= shift # shift to reduce roundoff for large coordinates
     if n < 3: return sum(polygon) / n + shift
-    else: 
+    else:
         for j,p1 in enumerate(polygon):
             p2 = polygon[(j+1)%n]
             t = p1[0]*p2[1] - p2[0]*p1[1]
@@ -156,7 +156,7 @@ def simplify_polygon(polygon,tolerance=1.e-6):
         dl,dn=p-l,n-p
         if np.dot(dl,dn)<(1.-tolerance)*norm(dl)*norm(dn): s.append(p)
     return s
-    
+
 def polygon_boundary(this,other,polygon):
     """Returns point on a line between vector this and other and also on the boundary of the polygon"""
     big=1.e10
@@ -205,7 +205,7 @@ def polyline_line_distance(polyline, line):
         if line_polygon_intersections(line, pline): return 0.0
         else: dists.append(min([point_line_distance(p,line) for p in pline]))
     return min(dists)
-        
+
 def vector_heading(p):
     """Returns heading angle of a 2-D vector p, in radians clockwise from the y-axis ('north')."""
     from math import asin

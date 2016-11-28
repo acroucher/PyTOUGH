@@ -59,7 +59,7 @@ class listingtable(object):
                 if revkey in self.row_name:
                     rowindex=self._row[revkey]
                     return dict(zip(['key']+self.column_name,[self.row_name[rowindex][::-1]]+list(-self._data[rowindex,:])))
-            else: return None 
+            else: return None
 
     def __setitem__(self,key,value):
         if isinstance(key,int): self._data[key,:]=value
@@ -89,7 +89,7 @@ class listingtable(object):
         string pattern, the specified pattern is applied to all keys."""
         from re import search
         if self.num_keys==1: return [self[key] for key in self.row_name if search(pattern,key)]
-        else: 
+        else:
             if isinstance(pattern,str): pattern=[pattern]
             else: pattern=list(pattern)
             if len(pattern)<self.num_keys:
@@ -139,7 +139,7 @@ class listingtable(object):
 class t2listing(file):
     """Class for TOUGH2 listing file.  The element, connection and generation tables can be accessed
        via the element, connection and generation fields.  (For example, the pressure in block 'aa100' is
-       given by element['aa100']['Pressure'].)  It is possible to navigate through time in the listing by 
+       given by element['aa100']['Pressure'].)  It is possible to navigate through time in the listing by
        using the next() and prev() functions to step through, or using the first() and last() functions to go to 
        the start or end, or to set the index, step (model time step number) or time properties directly."""
     def __init__(self, filename=None, skip_tables = []):
@@ -205,7 +205,7 @@ class t2listing(file):
         """Rewinds to start of listing (without reading any results)"""
         self.seek(0)
         self._index=-1
-        
+
     def first(self): self.index=0
     def last(self): self.index=-1
     def next(self):
@@ -247,7 +247,7 @@ class t2listing(file):
         pos=self.tell()
         while self.readline().strip(): pos=self.tell()
         self.seek(pos)
-        
+
     def skip_over_next_blank(self):
         """Skips past next blank line."""
         while self.readline().strip(): pass
@@ -307,7 +307,7 @@ class t2listing(file):
             keytable={('ELEM1','ELEM2','INDEX'):'connection',('ELEMENT','SOURCE','INDEX'):'generation'}
             if headers in keytable: return keytable[headers]
         return None
-        
+
     def setup_short_types(self):
         """Sets up short_types, for handling short output."""
         self.short_types = []
@@ -420,9 +420,9 @@ class t2listing(file):
         self._short=[False for p in self._pos]
 
     def set_table_attributes(self):
-        """Makes tables in self._table accessible as attributes."""        
+        """Makes tables in self._table accessible as attributes."""
         for key,table in self._table.iteritems(): setattr(self,key,table)
-        
+
     def setup_tables_AUTOUGH2(self):
         """Sets up configuration of element, connection and generation tables."""
         tablename='element'
@@ -478,7 +478,7 @@ class t2listing(file):
                 if line == 'MASS FLOW RATES (KG/S) FROM DIFFUSION':
                     # skip over extra mass flow rate table in EOS7c listings:
                     self.skipto('@@@@@')
-                else: 
+                else:
                     headers = tuple(line.strip().split()[0:3])
                     self.seek(headpos)
                     found = True
@@ -547,12 +547,12 @@ class t2listing(file):
                 if c in ['-',' ']: return pt - 2
                 elif c.isdigit(): return pt - 1
             else:
-                pos = pt - 1 
+                pos = pt - 1
                 while line[pos] != ' ' and pos > 0 : pos -= 1
                 while line[pos] == ' ' and pos > 0 : pos -= 1
                 if pos > 0 : return pos + 1
         return None
-        
+
     def key_positions(self,line,nkeys):
         """Returns detected positions of keys in the start of a table line.  This works on the assumption
         that key values must have a digit present in their last character.  It searches backwards from the 
@@ -636,7 +636,7 @@ class t2listing(file):
             numpos.append(next_start)
         numpos.append(len(line))
         return numpos
-            
+
     def parse_table_header_TOUGH2(self):
         """Parses table header line for TOUGH2, returning the number of keys and the column names."""
         cols = []
@@ -764,13 +764,13 @@ class t2listing(file):
         self.skip_to_nonblank()
         pos=self.tell()
         strs=self.readline().split()
-        if len(strs)<4: self.skip_to_nonblank() # to skip over extra lines in EOS7c listings 
+        if len(strs)<4: self.skip_to_nonblank() # to skip over extra lines in EOS7c listings
         else: self.seek(pos)
 
     def read_title_AUTOUGH2(self):
         """Read simulation title for AUTOUGH2 listings, from current position- in all headers."""
         self.title=self.readline().strip()
-        
+
     def read_title_TOUGH2(self):
         """Reads simulation title for TOUGH2 listings, at top of file."""
         self.seek(0)
@@ -859,7 +859,7 @@ class t2listing(file):
         """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
         nvals=len(fmt['values'])-1
         return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in xrange(nvals)]+[0.0]*(num_columns-nvals)
-        
+
     def read_table_TOUGH2(self,tablename):
         table = self._table[tablename]
         ncols = table.num_columns
@@ -907,7 +907,7 @@ class t2listing(file):
             are in the same order as they appear in the listing file.  Each table selection is a list of tuples of 
             (table row index, column name, reversed, selection index) for each table, ordered by table row index.  This ordering
             means all data can be read sequentially to make it more efficient.  There is a table selection each for full and
-            short output, to account for possible differences in ordering between them.""" 
+            short output, to account for possible differences in ordering between them."""
             converted_selection=[]
             for sel_index,(tspec,key,h) in enumerate(selection):  # convert keys to indices as necessary, and expand table names
                 tablename=tablename_from_specification(tspec)
@@ -1085,7 +1085,7 @@ class t2listing(file):
                 if name in flownames:
                     for iblk in xrange(nele):
                         arrays[array_type][name].SetTuple3(iblk, data[3*iblk], data[3*iblk+1], data[3*iblk+2])
-                else:    
+                else:
                     for iblk in xrange(nele):
                         arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
@@ -1109,9 +1109,9 @@ class t2listing(file):
             else:
                 if geo_matches or len(blockmap) > 0: doflows = True
                 else:
-                    raise Exception("t2listing.write_vtk(): if flows == True, " + 
+                    raise Exception("t2listing.write_vtk(): if flows == True, " +
                                     "block names in the listing file and geometry must match, or " +
-                                    "a block mapping must be specified.")                    
+                                    "a block mapping must be specified.")            
         arrays = geo.get_vtk_data(blockmap)
         if grid is not None:
             grid_arrays = grid.get_vtk_data(geo, blockmap)
@@ -1134,7 +1134,7 @@ class t2listing(file):
             self.index = i
             t = start_time + self.time / timescale
             filename_time = base + '_' + str(i) + '.vtu'
-            results_arrays = self.get_vtk_data(geo, grid, flows = doflows, flux_matrix = flux_matrix, 
+            results_arrays = self.get_vtk_data(geo, grid, flows = doflows, flux_matrix = flux_matrix,
                                                geo_matches = geo_matches, blockmap = blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(results_arrays[array_type])
@@ -1279,7 +1279,7 @@ class t2historyfile(object):
         for fname in internal_fns:
             fname_sim=fname+'_'+simname
             setattr(self,fname,getattr(self,fname_sim))
-        
+
     def setup_headers_TOUGH2(self,filename,header):
         """Sets up keys and column headings from given filename and header line, for TOUGH2 output."""
         if filename.endswith('OFT') and len(filename)>=4: self.type=filename[-4:].strip()
@@ -1382,7 +1382,7 @@ class t2historyfile(object):
                 self._keyrows[key].append(self._rowindex)
                 self._data.append([time]+vals)
                 self._rowindex+=1
-        
+
     def read_data_TOUGH2_MP(self,configured):
         """Reads in the data, for TOUGH2_MP output."""
         def get_key(line):
@@ -1423,7 +1423,7 @@ class t2historyfile(object):
     def read_data_TOUGHplus(self,configured):
         """Reads in the data, for TOUGH+ output."""
         lines=self._file.readlines()
-        if self.type=='FOFT': 
+        if self.type=='FOFT':
             for line in lines:
                 items=line.strip().split(',')
                 time=fortran_float(items[1])
@@ -1457,7 +1457,7 @@ class t2historyfile(object):
 
 class toughreact_tecplot(file):
     """Class for TOUGHREACT Tecplot output files. These work similarly to t2listing objects, but
-    have just a single element table at each time. It is possible to navigate through time by 
+    have just a single element table at each time. It is possible to navigate through time by
     using the next() and prev() functions to step through, or using the first() and last() functions to go to 
     the start or end, or to set the index, step (model time step number) or time properties directly.
     When reading a toughreact_tecplot object from file it is necessary also to specify the block names
@@ -1498,7 +1498,7 @@ class toughreact_tecplot(file):
         """Rewinds to start (without reading any results)"""
         self.seek(0)
         self._index = -1
-        
+
     def first(self): self.index = 0
     def last(self): self.index = -1
     def next(self):
@@ -1522,7 +1522,7 @@ class toughreact_tecplot(file):
             if line == '': return None, num_lines
         if count: return line, num_lines
         else: return line
-        
+
     def find_next_time(self):
         """Advances to set of results at next time, and returns the time value."""
         line, num_lines = self.skipto('ZONE', count = True)
