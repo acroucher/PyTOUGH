@@ -2054,7 +2054,7 @@ class mulgrid(object):
                                 wellsections[botinside].append([cross])
                             top,dtop,topinside = bot,dbot,botinside
                         linetype = {True:'-', False:':'}
-                        for inside,sections in wellsections.iteritems():
+                        for inside,sections in wellsections.items():
                             for section in sections:
                                 wpos = slice_translate(np.array([slice_project(pos) for pos in section]))
                                 plt.plot(wpos[:,0], wpos[:,1], linetype[inside], color = wellcolour,
@@ -2680,8 +2680,7 @@ class mulgrid(object):
                 for i,j in enumerate(elt): cell.GetPointIds().InsertId(i,j)
             grid.InsertNextCell(cell.GetCellType(), cell.GetPointIds())
         for array_type,array_dict in arrays.items():
-            sortedkeys=array_dict.keys()
-            sortedkeys.sort()
+            sortedkeys = sorted(array_dict.keys())
             if array_type=='Block':
                 for key in sortedkeys: grid.GetCellData().AddArray(array_dict[key])
             elif array_type=='Node':

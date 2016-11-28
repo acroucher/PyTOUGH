@@ -754,7 +754,7 @@ class t2data(object):
     def write_incons(self,outfile):
         if self.incon:
             outfile.write('INCON\n')
-            for blkname,inc in self.incon.iteritems():
+            for blkname,inc in self.incon.items():
                 if len(inc) >= 4: nseq, nadd = inc[2], inc[3]
                 else: nseq, nadd = None, None
                 vals = [unfix_blockname(blkname), nseq, nadd, inc[0]]
@@ -938,7 +938,7 @@ class t2data(object):
     def write_indom(self,outfile):
         if self.indom:
             outfile.write('INDOM\n')
-            for rockname,inc in self.indom.iteritems():
+            for rockname,inc in self.indom.items():
                 outfile.write(rockname+'\n')
                 outfile.write_values(inc,'incon2')
             outfile.write('\n')

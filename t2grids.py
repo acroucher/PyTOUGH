@@ -129,7 +129,7 @@ class t2grid(object):
         face is not orthogonal to the line between the block centres.  Hence there are two 'centres'.
         The mipoint is just midway between the connection face nodes."""
         layindex = dict([(lay.name,i) for i,lay in enumerate(geo.layerlist)])
-        iblockmap = dict([(v,k) for k,v in blockmap.iteritems()])
+        iblockmap = dict([(v,k) for k,v in blockmap.items()])
         def imapblock(blk): return iblockmap[blk] if blk in iblockmap else blk
         for con in self.connectionlist:
             con.centre = {}
@@ -148,7 +148,7 @@ class t2grid(object):
                     hcentre = line_projection(col.centre, nodepos)
                     con.centre[blk.name] = np.hstack((hcentre, np.array([vcentre])))
                 con.normal = np.array([dpos[1], -dpos[0], 0.]) / np.linalg.norm(dpos)
-                con.midpoint = np.hstack((0.5 * sum(nodepos), min([pos[2] for name,pos in con.centre.iteritems()])))
+                con.midpoint = np.hstack((0.5 * sum(nodepos), min([pos[2] for name,pos in con.centre.items()])))
             else: # vertical connection
                 layindices = np.array([layindex[layname] for layname in layernames])
                 ilower = np.argmax(layindices)

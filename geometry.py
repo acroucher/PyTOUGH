@@ -136,7 +136,7 @@ def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False
                 c=tuple(ref+p1+xi[0]*dp)
                 ind[c]=i
         except LinAlgError: continue
-    crossings=[np.array(c) for c,i in ind.iteritems()]
+    crossings=[np.array(c) for c,i in ind.items()]
     sortindex=np.argsort([norm(c-line[0]) for c in crossings]) # sort by distance from start of line
     if indices: return [crossings[i] for i in sortindex], [ind[tuple(crossings[i])] for i in sortindex]
     else: return [crossings[i] for i in sortindex]

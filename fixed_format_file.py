@@ -112,7 +112,7 @@ class fixed_format_file(object):
     def preprocess_specification(self):
         """Pre-process specifications to speed up parsing."""
         self.line_spec, self.spec_width={}, {}
-        for section, [names,specs] in self.specification.iteritems():
+        for section, [names,specs] in self.specification.items():
             self.line_spec[section] = []
             pos = 0
             for spec in specs:

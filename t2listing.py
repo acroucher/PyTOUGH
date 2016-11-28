@@ -197,9 +197,7 @@ class t2listing(object):
     step=property(get_step,set_step)
 
     def get_table_names(self):
-        names=self._table.keys()
-        names.sort()
-        return names
+        return sorted(self._table.keys())
     table_names=property(get_table_names)
 
     def rewind(self):
@@ -431,7 +429,7 @@ class t2listing(object):
 
     def set_table_attributes(self):
         """Makes tables in self._table accessible as attributes."""
-        for key,table in self._table.iteritems(): setattr(self,key,table)
+        for key,table in self._table.items(): setattr(self,key,table)
 
     def setup_tables_AUTOUGH2(self):
         """Sets up configuration of element, connection and generation tables."""
@@ -743,13 +741,14 @@ class t2listing(object):
                     else:
                         for i in range(internal_header_skiplines): line,count = count_read(count)
                 skiplines.append(count - last_count - 1)
-            indices=rowdict.keys(); indices.sort()
+            indices = sorted(rowdict.keys())
             row_line=[rowdict[index][0] for index in indices]
             rows=[rowdict[index][1] for index in indices]
             numpos=self.parse_table_line(longest_line,start)
             row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
             allow_rev=tablename=='connection'
-            self._table[tablename]=listingtable(cols,rows,row_format,row_line,num_keys=nkeys, allow_reverse_keys=allow_rev,
+            self._table[tablename] = listingtable(cols, rows, row_format, row_line, num_keys = nkeys,
+                                                allow_reverse_keys = allow_rev,
                                                 header_skiplines = header_skiplines, skiplines = skiplines)
             self._tablenames.append(tablename)
         else: raise Exception('Error parsing '+tablename+' table keys: table not created.')
@@ -762,7 +761,7 @@ class t2listing(object):
         try: self._step = fortran_int(line[istart:iend])
         except ValueError: self._step = -1 # to handle overflow
         istart=iend+10
-        iend=string.find(line,'SECONDS')
+        iend = line.find('SECONDS')
         self._time=fortran_float(line[istart:iend])
         self._file.readline()
 
