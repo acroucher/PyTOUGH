@@ -23,7 +23,7 @@ def int_to_chars(i, st = '', chars = ascii_lowercase):
     if i==0: return st
     else:
         n = len(chars)
-        return int_to_chars((i-1)/n, ''.join([chars[(i-1)%n],st]), chars)
+        return int_to_chars((i-1)//n, ''.join([chars[(i-1)%n],st]), chars)
 
 def new_dict_key(d, istart = 0, justfn = str.rjust, length = 5, chars = ascii_lowercase):
     """Returns an unused key for dictionary d, using the specified characters, plus the corresponding next starting index."""
