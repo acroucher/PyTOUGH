@@ -1,6 +1,5 @@
-"""For reading TOUGH2 listing files."""
+"""For reading TOUGH2 listing files.
 
-"""
 Copyright 2012 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -403,7 +402,7 @@ class t2listing(file):
         while not endfile:
             line=' '
             while not (line.lstrip().lower().startswith('output data after') or line==''): line=self.readline()
-            if line<>'':
+            if line != '':
                 while not ('total time' in self.readline().lower()): pass
                 pos=self.tell()
                 self._pos.append(pos)
@@ -501,7 +500,7 @@ class t2listing(file):
         tablechar = tablename[0].upper()
         if self._short[self._index]: keyword, first_tablechar = tablechar+'SHORT', self.short_types[0][0]
         else: keyword, first_tablechar = tablechar*5, 'E'
-        if tablechar <> first_tablechar: self.skipto(keyword)
+        if tablechar != first_tablechar: self.skipto(keyword)
         self.skipto('OUTPUT')
         self.skipto(keyword)
         self.skip_to_blank()
@@ -513,7 +512,7 @@ class t2listing(file):
             self.skip_to_nonblank()
             tname='element'
         else: tname=last_tablename
-        while tname<>tablename:
+        while tname != tablename:
             self.skipto('@@@@@')
             tname=self.next_table_TOUGH2()
 
@@ -524,7 +523,7 @@ class t2listing(file):
             tname='element'
             nelt_tables=0
         else: tname=last_tablename
-        while tname<>tablename:
+        while tname != tablename:
             if tname=='primary': keyword='_____'
             else: keyword='@@@@@'
             self.skipto(keyword,0)
@@ -561,7 +560,7 @@ class t2listing(file):
         keypos=[]
         pos=len(line)-1
         while line[pos]==' ': pos-=1
-        while line[pos]<>' ': pos-=1
+        while line[pos] != ' ': pos-=1
         for k in xrange(nkeys):
             while not line[pos].isdigit() and pos>=keylength: pos-=1
             pos-=(keylength-1)
@@ -570,7 +569,7 @@ class t2listing(file):
                 pos-=1
             else: return None
         keypos.reverse()
-        if len(keypos)<>nkeys: return None
+        if len(keypos) != nkeys: return None
         else: return keypos
 
     def parse_table_header_AUTOUGH2(self):
@@ -837,7 +836,7 @@ class t2listing(file):
         self.skip_to_nonblank()
         line=self.readline()
         row=0
-        while line[1:6]<>keyword:
+        while line[1:6] != keyword:
             self._table[tablename][row]=self.read_table_line_AUTOUGH2(line,fmt=fmt)
             row+=1
             line=self.readline()
@@ -847,7 +846,7 @@ class t2listing(file):
         keyword=tablename[0].upper()*5
         self.skip_to_blank()
         line=self.readline()
-        while line[1:6]<>keyword: line=self.readline()
+        while line[1:6] != keyword: line = self.readline()
         self.readline()
 
     def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
@@ -998,7 +997,7 @@ class t2listing(file):
         rl=[]
         finished=False
         while not finished:
-            while line[1:keyend]<>keyword:
+            while line[1:keyend] != keyword:
                 lastline=line
                 line=self.readline()
                 if not line:

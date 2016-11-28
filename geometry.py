@@ -1,6 +1,5 @@
-"""Geometry calculations."""
+"""Geometry calculations.
 
-"""
 Copyright 2011 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -10,6 +9,8 @@ PyTOUGH is free software: you can redistribute it and/or modify it under the ter
 PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
+
+from __future__ import print_function
 
 try:
     import numpy as np
@@ -285,13 +286,13 @@ class linear_trans2(object):
                     L=linear_trans2(np.array([[a[0],a[1]],[a[2],a[3]]]),np.array([a[4],a[5]]))
                     return N2.inverse(L(N1))
                 except np.linalg.LinAlgError:
-                    print 'Could not solve least squares fitting system.'
+                    print('Could not solve least squares fitting system.')
                     return None
             else:
-                print 'At least three points are needed to find the best fit linear transformation.'
+                print('At least three points are needed to find the best fit linear transformation.')
                 return None
         else:
-            print 'The two points lists must contain the same number of points.'
+            print('The two points lists must contain the same number of points.')
             return None
     def rotation(self,angle,centre=np.zeros(2)):
         """Returns a linear transformation representing a rotation by the specified angle (degrees clockwise),

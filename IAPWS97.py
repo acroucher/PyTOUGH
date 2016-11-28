@@ -6,9 +6,8 @@ Willkommen, Th. (2000).  The IAPWS Industrial Formulation 1997 for the Thermodyn
 Water and Steam.  Trans. ASME 122, 150-182.
 
 Viscosity function visc() is described by:
-IAPWS, 2008.  Release on the IAPWS Formulation 2008 for the Viscosity of Ordinary Water Substance."""
+IAPWS, 2008.  Release on the IAPWS Formulation 2008 for the Viscosity of Ordinary Water Substance.
 
-"""
 Copyright 2011 University of Auckland.
 
 This file is part of PyTOUGH.

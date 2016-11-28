@@ -1,6 +1,5 @@
-"""For reading, parsing and writing fixed format text files."""
+"""For reading, parsing and writing fixed format text files.
 
-"""
 Copyright 2013 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -122,7 +121,7 @@ class fixed_format_file(file):
         fmt = self.specification[linetype][1]
         strs = []
         for val,f in zip(vals,fmt):
-            if (val is not None) and (f[-1]<>'x'): valstr = ('%%%s'%f) % val
+            if (val is not None) and (f[-1] != 'x'): valstr = ('%%%s'%f) % val
             else: valstr = ' '*self.spec_width[f[0:-1]] # blank
             strs.append(valstr)
         return ''.join(strs)

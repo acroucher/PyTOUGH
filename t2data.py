@@ -1,6 +1,5 @@
-"""Class for TOUGH2 data"""
+"""Class for TOUGH2 data.
 
-"""
 Copyright 2011 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -10,6 +9,8 @@ PyTOUGH is free software: you can redistribute it and/or modify it under the ter
 PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
+
+from __future__ import print_function
 
 from fixed_format_file import *
 from t2grids import *
@@ -198,7 +199,7 @@ class t2data(object):
 
     def get_echo_extra_precision(self): return self._echo_extra_precision
     def set_echo_extra_precision(self, value):
-        if value <> self._echo_extra_precision:
+        if value != self._echo_extra_precision:
             if value is False: # remove previously echoed sections from section list
                 for section in self._extra_precision: self.delete_section(section)
             else: # add sections previously not echoed to section list
@@ -331,7 +332,7 @@ class t2data(object):
         """Sets type (TOUGH2 or AUTOUGH2), and runs conversion if needed (with default options)."""
         if value in ['AUTOUGH2','TOUGH2']:
             oldtype = self.type
-            if oldtype <> value:
+            if oldtype != value:
                 if oldtype == 'AUTOUGH2': self.convert_to_TOUGH2()
                 elif oldtype == 'TOUGH2': self.convert_to_AUTOUGH2()
         else: raise Exception('Data file type '+value+' is not supported.')
@@ -504,7 +505,7 @@ class t2data(object):
         if 'eos' in self.multi: self.multi['eos']=self.multi['eos'].strip()
 
     def write_multi(self,outfile):
-        if self.multi<>{}:
+        if self.multi != {}:
             outfile.write('MULTI\n')
             spec=['multi','multi_autough2'][self.type=='AUTOUGH2']
             outfile.write_value_line(self.multi,spec)
@@ -650,7 +651,7 @@ class t2data(object):
         [block,name,nseq,nadd,nads,ltab,empty,gentype,itab,gx,ex,hg,fg]=infile.parse_string(line,'generator')
         block,name=fix_blockname(block),fix_blockname(name)
         time,rate,enthalpy=[],[],[]
-        if ltab and gentype<>'DELV':
+        if ltab and gentype != 'DELV':
             ntimes=abs(ltab)
             if ntimes>1:
                 nlines=int(ceil(ntimes/4.))
@@ -672,7 +673,7 @@ class t2data(object):
         genw=copy(gen.__dict__)
         genw['name'],genw['block']=unfix_blockname(genw['name']),unfix_blockname(genw['block'])
         outfile.write_value_line(genw,'generator')
-        if gen.ltab and gen.type<>'DELV': ntimes=abs(gen.ltab)
+        if gen.ltab and gen.type != 'DELV': ntimes = abs(gen.ltab)
         else: ntimes=1
         if ntimes>1:
             nlines=int(ceil(ntimes/4.))
@@ -771,7 +772,7 @@ class t2data(object):
                     if blockname in self.grid.block: self.short_output['block'].append(self.grid.block[blockname])
                     else: badblocks.append(blockname)
             else: more=False
-        if len(badblocks)>0: print 'Short output blocks',badblocks,'do not exist and will be ignored.'
+        if len(badblocks) > 0: print('Short output blocks',badblocks,'do not exist and will be ignored.')
         return line
 
     def read_short_connections(self,infile):
@@ -788,7 +789,7 @@ class t2data(object):
                     if blknames in self.grid.connection: self.short_output['connection'].append(self.grid.connection[blknames])
                     else: badcons.append(blknames)
             else: more=False
-        if len(badcons)>0: print 'Short output connections',badcons,'do not exist and will be ignored.'
+        if len(badcons) > 0: print('Short output connections',badcons,'do not exist and will be ignored.')
         return line
 
     def read_short_generators(self,infile):
@@ -805,7 +806,7 @@ class t2data(object):
                     if blksourcenames in self.generator: self.short_output['generator'].append(self.generator[blksourcenames])
                     else: badgens.append(blksourcenames)
             else: more=False
-        if len(badgens)>0: print 'Short output generators',badgens,'do not exist and will be ignored.'
+        if len(badgens) > 0: print('Short output generators',badgens,'do not exist and will be ignored.')
         return line
 
     def read_short_output(self,infile,headerline):
@@ -851,7 +852,7 @@ class t2data(object):
                 if blockname in self.grid.block: self.history_block.append(self.grid.block[blockname])
                 else: badblocks.append(blockname)
                 line=infile.readline()
-            if len(badblocks)>0: print 'History blocks',badblocks,'do not exist and will be ignored.'
+            if len(badblocks) > 0: print('History blocks',badblocks,'do not exist and will be ignored.')
         else: # no grid- don't check blocks; and store names rather than t2blocks
             while line.strip():
                 blockname=fix_blockname(line[0:5])
@@ -869,7 +870,7 @@ class t2data(object):
                 if blknames in self.grid.connection: self.history_connection.append(self.grid.connection[blknames])
                 else: badcons.append(blknames)
                 line=infile.readline()
-            if len(badcons)>0: print 'History connections',badcons,'do not exist and will be ignored.'
+            if len(badcons) > 0: print('History connections',badcons,'do not exist and will be ignored.')
         else: # no grid
             while line.strip():
                 blknames=(fix_blockname(line[0:5]),fix_blockname(line[5:10]))
@@ -887,7 +888,7 @@ class t2data(object):
                 if blockname in self.grid.block: self.history_generator.append(self.grid.block[blockname])
                 else: badgens.append(blockname)
                 line=infile.readline()
-            if len(badgens)>0: print 'History generator blocks',badgens,'do not exist and will be ignored.'
+            if len(badgens) > 0: print('History generator blocks',badgens,'do not exist and will be ignored.')
         else: # no grid
             while line.strip():
                 blockname=fix_blockname(line[0:5])
@@ -951,7 +952,7 @@ class t2data(object):
             for comp in xrange(self.multi['num_components']):
                 diffs=infile.read_values('diffusion')[0:self.multi['num_phases']]
                 self.diffusion.append(diffs)
-        else: print 'Unable to read DIFFU block: no MULTI block specified.'
+        else: print('Unable to read DIFFU block: no MULTI block specified.')
 
     def write_diffusion(self,outfile):
         if self.diffusion:
@@ -1156,7 +1157,7 @@ class t2data(object):
             for i in xrange(ncon):
                 blk1,blk2=self.grid.blocklist[nex1[i]],self.grid.blocklist[nex2[i]]
                 self.grid.add_connection(t2connection([blk1,blk2],isox[i],[del1[i],del2[i]],area[i],beta[i],sig[i]))
-        else: print 'Files',self.meshfilename[0],'and',self.meshfilename[1],'do not contain the same number of blocks (',nel,'vs.',nelb,').'
+        else: print('Files',self.meshfilename[0],'and',self.meshfilename[1],'do not contain the same number of blocks (',nel,'vs.',nelb,').')
         fa.close(); fb.close()
 
     def write_binary_meshfiles(self):
@@ -1265,7 +1266,7 @@ class t2data(object):
                 meshfile.close()
             elif isinstance(meshfilename,(list,tuple)):
                 if len(meshfilename) == 2: self.read_binary_meshfiles()
-            else: print 'Mesh filename must be either a string or a two-element tuple or list.'
+            else: print('Mesh filename must be either a string or a two-element tuple or list.')
         return self
 
     def write(self, filename = '', meshfilename = '', extra_precision = None, echo_extra_precision = None):
@@ -1411,7 +1412,7 @@ class t2data(object):
             for blk in mappedblocks: self.incon[blk.name]=inc
         self.indom=copy(source.indom)
         # incon file:
-        if (sourceinconfilename<>'') and (inconfilename<>''):
+        if (sourceinconfilename != '') and (inconfilename != ''):
             sourceinc=t2incon(sourceinconfilename)
             inc=t2incon()
             inc.transfer_from(sourceinc,sourcegeo,geo,mapping,colmapping)
@@ -1475,8 +1476,8 @@ class t2data(object):
                 warnings.append('MOP(20)>0: Disabling vapour pressure lowering')
             self.parameter['option'][21] = 0
         if warn and len(warnings) > 0:
-            print 'The following options are not supported in TOUGH2:'
-            for warning in warnings: print warning
+            print('The following options are not supported in TOUGH2:')
+            for warning in warnings: print(warning)
 
     def convert_TOUGH2_parameters_to_AUTOUGH2(self, warn = True, MP = False):
         """Converts TOUGH2 parameters to AUTOUGH2 parameters, with optional warnings about options that
@@ -1520,8 +1521,8 @@ class t2data(object):
                 warnings.append('MOP(21)>0: perform extra Newton iteration after convergence')
         self.parameter['option'][21] = 0 # not used in AUTOUGH2
         if warn and len(warnings) > 0:
-            print 'The following options are not supported in AUTOUGH2:'
-            for warning in warnings: print warning
+            print('The following options are not supported in AUTOUGH2:')
+            for warning in warnings: print(warning)
 
     def convert_AUTOUGH2_generators_to_TOUGH2(self, warn = True):
         """Convert AUTOUGH2 generators to TOUGH2 generators, with optional warnings about
@@ -1533,8 +1534,8 @@ class t2data(object):
             if gen.type in convert: gen.type = convert[gen.type]
             elif not ((gen.type in allowed) or gen.type.startswith('COM')): delgens.append((gen.block,gen.name))
         if warn and len(delgens) > 0:
-            print 'The following generators have types not supported by TOUGH2 and have been deleted:'
-            print delgens
+            print('The following generators have types not supported by TOUGH2 and have been deleted:')
+            print(delgens)
 
     def convert_short_to_history(self):
         """Converts AUTOUGH2 SHORT output to TOUGH2 history (FOFT, COFT, GOFT)."""

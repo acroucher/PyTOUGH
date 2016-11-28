@@ -1,6 +1,5 @@
-"""For reading and writing TOUGH2 initial conditions files."""
+"""For reading and writing TOUGH2 initial conditions files.
 
-"""
 Copyright 2012 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -66,7 +65,7 @@ class t2incon(object):
         else: return None
     def __setitem__(self,key,value):
         if isinstance(value,(list,tuple)): value=t2blockincon(value,key)
-        if value.block<>key: value.block=key
+        if value.block != key: value.block = key
         self.add_incon(value)
 
     def __repr__(self): return self.simulator + ' initial conditions for '+str(self.num_blocks)+' blocks'

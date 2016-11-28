@@ -1,6 +1,5 @@
-"""For manipulating TOUGH2 grids."""
+"""For manipulating TOUGH2 grids.
 
-"""
 Copyright 2011 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -10,6 +9,8 @@ PyTOUGH is free software: you can redistribute it and/or modify it under the ter
 PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
+
+from __future__ import print_function
 
 from mulgrids import *
 from t2incons import *
@@ -52,7 +53,7 @@ class t2block(object):
     num_connections=property(get_num_connections)
     def get_neighbour_names(self):
         """Returns a set of neighbouring block names- those connected to this one."""
-        return set([[blkname for blkname in cn if blkname<>self.name][0] for cn in self.connection_name])
+        return set([[blkname for blkname in cn if blkname != self.name][0] for cn in self.connection_name])
     neighbour_name=property(get_neighbour_names)
 
 class t2connection(object):
@@ -220,8 +221,8 @@ class t2grid(object):
                 connection.block=[result.block[blk.name] for blk in connection.block]
                 result.add_connection(connection)
                 result.block[hostblock.name].volume-=subvol # remove subgrid volume from host block
-            else: print 'Grid embedding error: the following blocks are in both grids:',dupblks
-        else: print 'Grid embedding error: the host block is not big enough to contain the subgrid.'
+            else: print('Grid embedding error: the following blocks are in both grids:',dupblks)
+        else: print('Grid embedding error: the host block is not big enough to contain the subgrid.')
         return result
 
     def empty(self):
@@ -432,21 +433,21 @@ class t2grid(object):
         ub=self.unconnected_blocks
         if len(ub)>0:
             ok=False
-            if not silent: print 'Unconnected blocks:',list(ub)
+            if not silent: print('Unconnected blocks:',list(ub))
             if fix:
                 for blk in ub: self.delete_block(blk)
-                if not silent: print 'Unconnected blocks fixed.'
+                if not silent: print('Unconnected blocks fixed.')
         ib=self.isolated_rocktype_blocks
         if len(ib)>0:
             ok=False
-            if not silent: print 'Isolated rocktype blocks:',list(ib)
+            if not silent: print('Isolated rocktype blocks:',list(ib))
             if fix:
                 for blk in ib:
                     nbr_rocktype=[self.block[nbr].rocktype.name for nbr in self.block[blk].neighbour_name]
                     pop_rocktype=max(set(nbr_rocktype), key=nbr_rocktype.count)
                     self.block[blk].rocktype=self.rocktype[pop_rocktype]
-                if not silent: print 'Isolated rocktype blocks fixed.'
-        if ok and not silent: print 'No problems found.'
+                if not silent: print('Isolated rocktype blocks fixed.')
+        if ok and not silent: print('No problems found.')
         return ok
 
     def get_rocktype_indices(self, geo = None, blockmap = {}):
@@ -572,7 +573,7 @@ class t2grid(object):
         chars = uniqstring(chars)
 
         n2 = 0.5 * dimension
-        if dimension<>2: # need gamma function
+        if dimension != 2: # need gamma function
             try:
                 from math import gamma # included for Python 2.7 or later
             except ImportError:

@@ -1,7 +1,6 @@
-"""IFC-67 thermodynamic formulation, as used in AUTOUGH2.  There are the 'fast' versions of the thermodynamic routines
-originally developed by Mike O'Sullivan."""
+"""IFC-67 thermodynamic formulation, as used in AUTOUGH2.  There are the 'fast' versions
+of the thermodynamic routines originally developed by Mike O'Sullivan.
 
-"""
 Copyright 2011 University of Auckland.
 
 This file is part of PyTOUGH.
