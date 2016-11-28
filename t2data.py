@@ -104,13 +104,17 @@ class t2_extra_precision_data_parser(fixed_format_file):
         super(t2_extra_precision_data_parser,self).__init__(filename, mode, t2data_extra_precision_format_specification, read_function)
 
 import struct
-class fortran_unformatted_file(file):
+class fortran_unformatted_file(object):
     """Class for 'unformatted' binary file written by Fortran.  These are different from plain binary files
     in that the byte length of each 'record' is written at its start and end."""
+    def __init__(self, filename, mode):
+        self.file = open(filename, mode)
+    def close(self):
+        self.file.close()
     def readrec(self,fmt):
-        nb,=struct.unpack('i',self.read(4))
-        packed=self.read(nb)
-        self.read(4)
+        nb,=struct.unpack('i',self.file.read(4))
+        packed=self.file.read(nb)
+        self.file.read(4)
         return struct.unpack(fmt,packed)
     def writerec(self,fmt,val):
         nb=struct.calcsize(fmt)
@@ -118,7 +122,7 @@ class fortran_unformatted_file(file):
             packed=struct.pack(fmt,*val)
         else: packed=struct.pack(fmt,val)
         head=struct.pack('i',nb)
-        self.write(''.join((head,packed,head)))
+        self.file.write(''.join((head,packed,head)))
 
 class t2generator(object):
     """TOUGH2 generator (source or sink)"""
@@ -436,7 +440,7 @@ class t2data(object):
         """Reads simulation parameters"""
         spec=['param1','param1_autough2'][self.type=='AUTOUGH2']
         infile.read_value_line(self.parameter,spec)
-        mops=ljust(self.parameter['_option_str'].rstrip(),24).replace(' ','0')
+        mops = self.parameter['_option_str'].rstrip().ljust(24).replace(' ','0')
         self.parameter['option']=np.array([0]+[int(mop) for mop in mops],int8)
         infile.read_value_line(self.parameter,'param2')
         if (self.parameter['print_block'] is not None) and (self.parameter['print_block'].strip()==''):

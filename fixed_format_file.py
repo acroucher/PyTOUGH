@@ -79,7 +79,7 @@ def read_function_dict(floatfn = default_read_float, intfn = default_read_int,
 default_read_function = read_function_dict()
 fortran_read_function = read_function_dict(fortran_read_float, fortran_read_int)
 
-class fixed_format_file(file):
+class fixed_format_file(object):
 
     """Class for fixed format text file.  Values from the file may be parsed into variables, 
     according to a specification dictionary.  The keys of the specification dictionary are
@@ -95,7 +95,19 @@ class fixed_format_file(file):
         self.specification = specification
         self.read_function = read_function
         self.preprocess_specification()
-        super(fixed_format_file, self).__init__(filename, mode)
+        self.file = open(filename, mode)
+
+    def readline(self):
+        """Returns next line from file."""
+        return self.file.readline()
+
+    def write(self, s):
+        """Writes string s to file."""
+        self.file.write(s)
+
+    def close(self):
+        """Closes file."""
+        self.file.close()
 
     def preprocess_specification(self):
         """Pre-process specifications to speed up parsing."""
@@ -128,7 +140,7 @@ class fixed_format_file(file):
 
     def read_values(self, linetype):
         """Reads a line from the file, parses it and returns the values."""
-        line = self.readline()
+        line = self.file.readline()
         return self.parse_string(line,linetype)
 
     def write_values(self, vals, linetype):
