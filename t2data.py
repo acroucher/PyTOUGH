@@ -407,6 +407,7 @@ class t2data(object):
         while line.strip():
             [name,nad,density,porosity,k1,k2,k3,conductivity,specific_heat]=infile.parse_string(line,'rocks1')
             self.grid.add_rocktype(rocktype(name,nad,density,porosity,[k1,k2,k3],conductivity,specific_heat))
+            if nad is None: nad = 0
             if nad>=1: # additional lines:
                 infile.read_value_line(self.grid.rocktype[name].__dict__,'rocks1.1')
                 if nad>=2:
