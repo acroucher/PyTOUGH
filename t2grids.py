@@ -689,7 +689,7 @@ class t2grid(object):
 
         def blockelevs(grid, max_volume = None):
             """Returns array of block elevations."""
-            def elev(block, max_volume = None):
+            def elev(blk, max_volume = None):
                 if blk.centre is None: return np.nan
                 elif max_volume is None: return blk.centre[2]
                 elif 0. < blk.volume <= max_volume: return blk.centre[2]
