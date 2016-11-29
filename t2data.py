@@ -1136,36 +1136,42 @@ class t2data(object):
 
     def read_binary_meshfiles(self):
         """Reads grid from auxiliary binary mesh files (e.g. TOUGH2_MP 'MESHA','MESHB' files)."""
-        fa,fb=(fortran_unformatted_file(filename,'rb') for filename in self.meshfilename)
-        nel,=fa.readrec('i')
-        ncon,nelb=fb.readrec('2i')
-        if nelb<0: # used as a flag to indicate that rocktype names have been replaced by indices
-            nelb=-nelb
-            rocktype_indices=True
-        else: rocktype_indices=False
-        if nel==nelb:
+        fa, fb = (fortran_unformatted_file(filename,'rb') for filename in self.meshfilename)
+        nel, = fa.readrec('i')
+        ncon, nelb = fb.readrec('2i')
+        if nelb < 0: # used as a flag to indicate that rocktype names have been replaced by indices
+            nelb = -nelb
+            rocktype_indices = True
+        else: rocktype_indices = False
+        if nel == nelb:
             # read MESHA file:
-            evol,aht,pmx=(np.array(fa.readrec('%dd'%nel)) for i in range(3))
-            gcoord=[np.array(fa.readrec('%dd'%nel)) for i in range(3)]
-            gcoord=np.transpose(np.vstack([gc for gc in gcoord]))
-            del1,del2,area,beta,sig=(np.array(fa.readrec('%dd'%ncon)) for i in range(5))
-            isox=np.array(fa.readrec('%di'%ncon))
+            evol, aht, pmx=(np.array(fa.readrec('%dd'%nel)) for i in range(3))
+            gcoord = [np.array(fa.readrec('%dd'%nel)) for i in range(3)]
+            gcoord = np.transpose(np.vstack([gc for gc in gcoord]))
+            del1, del2, area, beta, sig = (np.array(fa.readrec('%dd'%ncon)) for i in range(5))
+            isox = np.array(fa.readrec('%di'%ncon))
             # read MESHB file:
             elem = [s.decode() for s in fb.readrec('8s'*nel)]
-            if rocktype_indices: rtype=[self.grid.rocktypelist[i] for i in np.array(fb.readrec('%di'%nel))-1]
-            else: rtype=[self.grid.rocktype[name] for name in list(fb.readrec('5s'*nel))]
-            nex1,nex2=(np.array(fb.readrec('%di'%ncon))-1 for i in range(2))
+            if rocktype_indices:
+                rtype = [self.grid.rocktypelist[i] for i in np.array(fb.readrec('%di'%nel))-1]
+            else:
+                rtype = [self.grid.rocktype[name] for name in list(fb.readrec('5s'*nel))]
+            nex1, nex2 = (np.array(fb.readrec('%di'%ncon))-1 for i in range(2))
             # construct grid:
-            self.grid.block,self.grid.blocklist={},[]
+            self.grid.block, self.grid.blocklist = {}, []
             for i in range(nel):
-                name=fix_blockname(elem[i][0:5])
-                self.grid.add_block(t2block(name,evol[i],rtype[i],centre=gcoord[i,:],ahtx=aht[i],pmx=pmx[i]))
+                name = fix_blockname(elem[i][0:5])
+                self.grid.add_block(t2block(name,evol[i],rtype[i],centre=gcoord[i,:],
+                                            ahtx=aht[i],pmx=pmx[i]))
             del evol,aht,pmx,gcoord,elem
-            self.grid.connectionlist,self.grid.connection=[],{}
+            self.grid.connectionlist, self.grid.connection = [], {}
             for i in range(ncon):
-                blk1,blk2=self.grid.blocklist[nex1[i]],self.grid.blocklist[nex2[i]]
-                self.grid.add_connection(t2connection([blk1,blk2],isox[i],[del1[i],del2[i]],area[i],beta[i],sig[i]))
-        else: print('Files',self.meshfilename[0],'and',self.meshfilename[1],'do not contain the same number of blocks (',nel,'vs.',nelb,').')
+                blk1, blk2 = self.grid.blocklist[nex1[i]], self.grid.blocklist[nex2[i]]
+                self.grid.add_connection(t2connection([blk1, blk2], isox[i], [del1[i],del2[i]],
+                                                      area[i],beta[i],sig[i]))
+        else:
+            print('Files', self.meshfilename[0], 'and', self.meshfilename[1],
+                  'do not contain the same number of blocks (', nel, 'vs.', nelb, ').')
         fa.close(); fb.close()
 
     def write_binary_meshfiles(self):
