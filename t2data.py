@@ -1149,7 +1149,7 @@ class t2data(object):
             del1,del2,area,beta,sig=(np.array(fa.readrec('%dd'%ncon)) for i in range(5))
             isox=np.array(fa.readrec('%di'%ncon))
             # read MESHB file:
-            elem=list(fb.readrec('8s'*nel))
+            elem = [s.decode() for s in fb.readrec('8s'*nel)]
             if rocktype_indices: rtype=[self.grid.rocktypelist[i] for i in np.array(fb.readrec('%di'%nel))-1]
             else: rtype=[self.grid.rocktype[name] for name in list(fb.readrec('5s'*nel))]
             nex1,nex2=(np.array(fb.readrec('%di'%ncon))-1 for i in range(2))
