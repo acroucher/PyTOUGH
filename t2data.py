@@ -122,7 +122,9 @@ class fortran_unformatted_file(object):
             packed=struct.pack(fmt,*val)
         else: packed=struct.pack(fmt,val)
         head=struct.pack('i',nb)
-        self.file.write(''.join((head,packed,head)))
+        self.file.write(head)
+        self.file.write(packed)
+        self.file.write(head)
 
 class t2generator(object):
     """TOUGH2 generator (source or sink)"""
