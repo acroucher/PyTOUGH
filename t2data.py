@@ -428,13 +428,14 @@ class t2data(object):
         for rt in self.grid.rocktypelist:
             vals=[rt.name,rt.nad,rt.density,rt.porosity]+list(rt.permeability)+[rt.conductivity,rt.specific_heat]
             outfile.write_values(vals,'rocks1')
-            if rt.nad>=1:
-                outfile.write_value_line(rt.__dict__,'rocks1.1')
-                if rt.nad>=2:
-                    vals=[rt.relative_permeability['type'],None]+rt.relative_permeability['parameters']
-                    outfile.write_values(vals,'rocks1.2')
-                    vals=[rt.capillarity['type'],None]+rt.capillarity['parameters']
-                    outfile.write_values(vals,'rocks1.2')
+            if rt.nad is not None:
+                if rt.nad>=1:
+                    outfile.write_value_line(rt.__dict__,'rocks1.1')
+                    if rt.nad>=2:
+                        vals=[rt.relative_permeability['type'],None]+rt.relative_permeability['parameters']
+                        outfile.write_values(vals,'rocks1.2')
+                        vals=[rt.capillarity['type'],None]+rt.capillarity['parameters']
+                        outfile.write_values(vals,'rocks1.2')
         outfile.write('\n')
 
     def read_parameters(self,infile):
