@@ -1198,7 +1198,7 @@ class t2data(object):
                            ('d1','f8'),('d2','f8'),('dirn','i4'),('area','f8'),
                            ('dircos','f8'),('sigma','f8')])
         condata = np.array([(con.block[0].name.ljust(8).encode(), con.block[1].name.ljust(8).encode(),
-                             blkdict[con.block[0].name],blkdict[con.block[1].name],
+                             blkdict[con.block[0].name.encode()],blkdict[con.block[1].name.encode()],
                              con.distance[0],con.distance[1],
                              con.direction,con.area,con.dircos,con.sigma)
                             for con in self.grid.connectionlist], dtype = con_dt)
