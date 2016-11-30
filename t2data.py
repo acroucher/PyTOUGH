@@ -1155,7 +1155,8 @@ class t2data(object):
             if rocktype_indices:
                 rtype = [self.grid.rocktypelist[i] for i in np.array(fb.readrec('%di'%nel))-1]
             else:
-                rtype = [self.grid.rocktype[name] for name in list(fb.readrec('5s'*nel))]
+                rnames = [s.decode() for s in fb.readrec('5s'*nel)]
+                rtype = [self.grid.rocktype[name] for name in rnames]
             nex1, nex2 = (np.array(fb.readrec('%di'%ncon))-1 for i in range(2))
             # construct grid:
             self.grid.block, self.grid.blocklist = {}, []
@@ -1186,7 +1187,7 @@ class t2data(object):
         block_dt = np.dtype([('index','i4'),('name','|S8'),('name8','|S8'),('rockindex','i4'),
                              ('volume','f8'),('ahtx','f8'),('pmx','f8'),('cx','f8'),
                              ('cy','f8'),('cz','f8')])
-        blkdata = np.array([(i,blk.name,blk.name.ljust(8),rockdict[blk.rocktype.name],
+        blkdata = np.array([(i, blk.name, blk.name.ljust(8).encode(), rockdict[blk.rocktype.name],
                              blk.volume,blk.ahtx,blk.pmx,blk.centre[0],
                              blk.centre[1],blk.centre[2])
                             for i,blk in enumerate(self.grid.blocklist)], dtype = block_dt)
@@ -1196,7 +1197,7 @@ class t2data(object):
         con_dt = np.dtype([('blk1','|S8'),('blk2','|S8'),('blk1index','i4'),('blk2index','i4'),
                            ('d1','f8'),('d2','f8'),('dirn','i4'),('area','f8'),
                            ('dircos','f8'),('sigma','f8')])
-        condata = np.array([(con.block[0].name.ljust(8), con.block[1].name.ljust(8),
+        condata = np.array([(con.block[0].name.ljust(8).encode(), con.block[1].name.ljust(8).encode(),
                              blkdict[con.block[0].name],blkdict[con.block[1].name],
                              con.distance[0],con.distance[1],
                              con.direction,con.area,con.dircos,con.sigma)
