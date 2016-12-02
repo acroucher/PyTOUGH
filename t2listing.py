@@ -10,7 +10,6 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
-import string
 try:
     import numpy as np
     from numpy import float64
@@ -52,7 +51,8 @@ class listingtable(object):
         self._row = dict([(r,i) for i,r in enumerate(rows)])
         self._data = np.zeros((len(rows), len(cols)), float64)
 
-    def __repr__(self): return repr(self.column_name)+'\n'+repr(self._data)
+    def __repr__(self):
+        return repr(self.column_name) + '\n' + repr(self._data)
 
     def __getitem__(self,key):
         if isinstance(key,int):
@@ -92,7 +92,7 @@ class listingtable(object):
         if len(key) == 1: return key[0]
         else: return tuple(key)
 
-    def rows_matching(self,pattern,index=0,match_any=False):
+    def rows_matching(self, pattern, index = 0, match_any = False):
         """Returns rows in the table with keys matching the specified regular expression pattern
         string.
         For tables with multiple keys, pattern can be a list or tuple of regular expressions.  If
@@ -102,18 +102,20 @@ class listingtable(object):
         patterns (instead of all of them).  If this option is used in conjunction with a single
         string pattern, the specified pattern is applied to all keys."""
         from re import search
-        if self.num_keys==1: return [self[key] for key in self.row_name if search(pattern,key)]
+        if self.num_keys == 1:
+            return [self[key] for key in self.row_name if search(pattern,key)]
         else:
-            if isinstance(pattern,str): pattern=[pattern]
-            else: pattern=list(pattern)
-            if len(pattern)<self.num_keys:
-                if match_any: default=[pattern[0]]
-                else: default=['.*']
-                if 0<=index<=self.num_keys:
-                    pattern=default*index+pattern+default*(self.num_keys-1-index)
+            if isinstance(pattern, str): pattern = [pattern]
+            else: pattern = list(pattern)
+            if len(pattern) < self.num_keys:
+                if match_any: default = [pattern[0]]
+                else: default = ['.*']
+                if 0 <= index <= self.num_keys:
+                    pattern = default * index + pattern + default * (self.num_keys - 1 - index)
                 else: return []
-            combine=[all,any][match_any]
-            return [self[key] for key in self.row_name if combine([search(p,n) for p,n in zip(pattern,key)])]
+            combine = [all, any][match_any]
+            return [self[key] for key in self.row_name if
+                    combine([search(p, n) for p, n in zip(pattern,key)])]
 
     def __add__(self, other):
         """Adds two listing tables together."""
@@ -204,7 +206,7 @@ class t2listing(object):
         else:
             dt = np.abs(self.fulltimes - t)
             self.index = np.argmin(dt)
-    time=property(get_time,set_time)
+    time = property(get_time, set_time)
 
     def get_num_times(self): return len(self.times)
     num_times = property(get_num_times)
@@ -247,10 +249,12 @@ class t2listing(object):
         for i in range(number):  self._file.readline()
 
     def skipto(self, keyword = '', start = 1):
-        """Skips to line starting  with keyword.  keyword can be either a string or a list of strings, in which case
-        it skips to a line starting with any of the specified strings.
-        Returns the keyword found, or false if it can't find any of them.  The start parameter specifies which
-        character in the line is to be considered the first to search."""
+        """Skips to line starting with keyword.  keyword can be either a
+        string or a list of strings, in which case it skips to a line
+        starting with any of the specified strings.  Returns the
+        keyword found, or false if it can't find any of them.  The
+        start parameter specifies which character in the line is to be
+        considered the first to search."""
         line = ''
         if isinstance(keyword, list): keywords = keyword
         else: keywords = [keyword]
@@ -276,7 +280,8 @@ class t2listing(object):
         while self.readline().strip(): pass
 
     def detect_simulator(self):
-        """Detects whether the listing has been produced by AUTOUGH2, TOUGH2/TOUGH2_MP or TOUGH+, and sets some internal methods
+        """Detects whether the listing has been produced by AUTOUGH2,
+        TOUGH2/TOUGH2_MP or TOUGH+, and sets some internal methods
         according to the simulator type."""
         self._file.seek(0)
         simulator = {'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2',
@@ -284,7 +289,7 @@ class t2listing(object):
         MP = self.filename.endswith('OUTPUT_DATA') and self.readline().startswith('\f') \
              and not ('@@@@@' in self.readline())
         line = ' '
-        while not ('output data after' in line or 'output after' in line or line==''):
+        while not ('output data after' in line or 'output after' in line or line == ''):
             line = self.readline().lower()
         if line == '': self.simulator = None
         else:
@@ -307,35 +312,37 @@ class t2listing(object):
                     fname_sim = fname + '_' + simname
                     # use TOUGH2 methods for TOUGH2_MP/TOUGH+ unless there are customized methods
                     # for these simulators:
-                    if simname=='TOUGH2_MP' and not hasattr(self,fname_sim):
-                        fname_sim=fname_sim.replace('_MP','')
-                    if simname=='TOUGHplus' and not hasattr(self,fname_sim):
-                        fname_sim=fname_sim.replace('plus','2')
-                    setattr(self,fname,getattr(self,fname_sim))
+                    if simname == 'TOUGH2_MP' and not hasattr(self, fname_sim):
+                        fname_sim = fname_sim.replace('_MP','')
+                    if simname == 'TOUGHplus' and not hasattr(self, fname_sim):
+                        fname_sim = fname_sim.replace('plus','2')
+                    setattr(self, fname, getattr(self, fname_sim))
 
     def table_type_AUTOUGH2(self,keyword):
         """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
-        keytable={'EEEEE':'element','CCCCC':'connection','GGGGG':'generation'}
+        keytable = {'EEEEE': 'element', 'CCCCC': 'connection', 'GGGGG': 'generation'}
         if keyword in keytable: return keytable[keyword]
         else: return None
 
     def table_type_TOUGH2(self,headers):
         """Returns TOUGH2 table name based on a tuple of the first three column headings."""
         if headers[0:2] in [('ELEM.','INDEX'),('ELEM.','IND.')]:
-            if headers[2]=='P': return 'element'
-            elif headers[2]=='X1': return 'primary'
+            if headers[2] == 'P': return 'element'
+            elif headers[2] == 'X1': return 'primary'
         else:
-            keytable={('ELEM1','ELEM2','INDEX'):'connection',('ELEMENT','SOURCE','INDEX'):'generation'}
+            keytable = {('ELEM1','ELEM2','INDEX'): 'connection',
+                        ('ELEMENT','SOURCE','INDEX'): 'generation'}
             if headers in keytable: return keytable[headers]
         return None
 
     def table_type_TOUGHplus(self,headers):
         """Returns TOUGH+ table name based on a tuple of the first three column headings."""
-        if headers[0:2]==('ELEM','INDEX'):
-            if headers[2]=='X1': return 'primary'
+        if headers[0:2] == ('ELEM','INDEX'):
+            if headers[2] == 'X1': return 'primary'
             else: return 'element'
         else:
-            keytable={('ELEM1','ELEM2','INDEX'):'connection',('ELEMENT','SOURCE','INDEX'):'generation'}
+            keytable = {('ELEM1','ELEM2','INDEX'): 'connection',
+                        ('ELEMENT','SOURCE','INDEX'): 'generation'}
             if headers in keytable: return keytable[headers]
         return None
 
@@ -377,9 +384,10 @@ class t2listing(object):
                             key = self._table[fulltable].key_from_line(line)
                             return self._table[fulltable]._row[key]
                         self.skip_to_blank()
-                    else: # have to get row index from index in table (possibly not necessarily reliable)
+                    else:
+                        # have to get row index from index in table (possibly not necessarily reliable)
                         indexpos = self.readline().index('INDEX')
-                        def rowindex(line): return fortran_int(line[indexpos:indexpos+5])-1
+                        def rowindex(line): return fortran_int(line[indexpos: indexpos + 5]) - 1
                     self.skip_to_nonblank()
                     endtable = False
                     lineindex = 0
@@ -393,21 +401,23 @@ class t2listing(object):
             self._file.seek(startpos)
 
     def setup_pos_AUTOUGH2(self):
-        """Sets up _pos list for AUTOUGH2 listings, containing file position at the start of each set of results.
-        Also sets up the times and steps arrays."""
+        """Sets up _pos list for AUTOUGH2 listings, containing file position
+        at the start of each set of results.  Also sets up the times
+        and steps arrays.
+        """
         self._file.seek(0)
         # set up pos,times, steps and short arrays:
-        self._fullpos,self._pos,self._short=[],[],[]
-        fullt,fulls,t,s=[],[],[],[]
-        keywords=['EEEEE']
-        if len(self.short_types)>0: keywords.append(self.short_types[0])
-        endfile=False
+        self._fullpos, self._pos, self._short = [], [], []
+        fullt, fulls, t, s = [], [], [], []
+        keywords = ['EEEEE']
+        if len(self.short_types) > 0: keywords.append(self.short_types[0])
+        endfile = False
         while not endfile:
-            kwfound=self.skipto(keywords)
+            kwfound = self.skipto(keywords)
             if kwfound:
                 self._pos.append(self._file.tell())
                 self.read_header_AUTOUGH2()
-                if kwfound=='EEEEE': # full results
+                if kwfound == 'EEEEE': # full results
                     self._fullpos.append(self._pos[-1])
                     fullt.append(self.time)
                     fulls.append(self.step)
@@ -417,11 +427,11 @@ class t2listing(object):
                 s.append(self.step)
                 self._file.readline()
                 self.skipto(kwfound) # to end of table
-            else: endfile=True
-        self.times=np.array(t)
-        self.steps=np.array(s)
-        self.fulltimes=np.array(fullt)
-        self.fullsteps=np.array(fulls)
+            else: endfile = True
+        self.times = np.array(t)
+        self.steps = np.array(s)
+        self.fulltimes = np.array(fullt)
+        self.fullsteps = np.array(fulls)
 
     def setup_pos_TOUGH2(self):
         """Sets up _pos list for TOUGH2 listings, containing file position at
@@ -453,44 +463,45 @@ class t2listing(object):
 
     def set_table_attributes(self):
         """Makes tables in self._table accessible as attributes."""
-        for key,table in self._table.items(): setattr(self,key,table)
+        for key,table in self._table.items(): setattr(self, key, table)
 
     def setup_tables_AUTOUGH2(self):
         """Sets up configuration of element, connection and generation tables."""
-        tablename='element'
+        tablename = 'element'
         self._file.seek(self._fullpos[0])
         while tablename:
             self.read_header()
             if tablename in self.skip_tables: self.skip_table(tablename)
             else: self.setup_table(tablename)
-            tablename=self.next_table()
+            tablename = self.next_table()
 
     def setup_tables_TOUGH2(self):
         self.read_title()
-        tablename='element'
+        tablename = 'element'
         self._file.seek(self._fullpos[0])
         self.read_header() # only one header at each time
         while tablename:
             if tablename in self.skip_tables: self.skip_table(tablename)
             else: self.setup_table(tablename)
-            tablename=self.next_table()
+            tablename = self.next_table()
 
     def setup_tables_TOUGHplus(self):
         self.read_title()
-        tablename='element'
+        tablename = 'element'
         self._file.seek(self._fullpos[0])
         self.read_header() # only one header at each time
-        nelt_tables=0 # can have multiple element tables
+        nelt_tables = 0 # can have multiple element tables
         while tablename:
             if tablename in self.skip_tables: self.skip_table(tablename)
             else: self.setup_table(tablename)
-            tablename=self.next_table()
-            if tablename=='element':
-                nelt_tables+=1
-                tablename+=str(nelt_tables)
+            tablename = self.next_table()
+            if tablename == 'element':
+                nelt_tables += 1
+                tablename += str(nelt_tables)
 
     def next_table_AUTOUGH2(self):
-        """Goes to start of next table at current time and returns its type- or None if there are no more."""
+        """Goes to start of next table at current time and returns its type,
+        or None if there are no more."""
         keyword = self.readline()[1:6]
         return self.table_type(keyword)
 
@@ -532,7 +543,8 @@ class t2listing(object):
     def skip_to_table_AUTOUGH2(self,tablename,last_tablename,nelt_tables):
         """Skips forwards to headers of table with specified name at the current time."""
         tablechar = tablename[0].upper()
-        if self._short[self._index]: keyword, first_tablechar = tablechar+'SHORT', self.short_types[0][0]
+        if self._short[self._index]:
+            keyword, first_tablechar = tablechar + 'SHORT', self.short_types[0][0]
         else: keyword, first_tablechar = tablechar*5, 'E'
         if tablechar != first_tablechar: self.skipto(keyword)
         self.skipto('OUTPUT')
@@ -544,31 +556,31 @@ class t2listing(object):
         if last_tablename is None:
             self.skipto('@@@@@')
             self.skip_to_nonblank()
-            tname='element'
-        else: tname=last_tablename
+            tname = 'element'
+        else: tname = last_tablename
         while tname != tablename:
             self.skipto('@@@@@')
-            tname=self.next_table_TOUGH2()
+            tname = self.next_table_TOUGH2()
 
     def skip_to_table_TOUGHplus(self,tablename,last_tablename,nelt_tables):
         if last_tablename is None:
             self.skipto('=====',0)
             self.skip_to_nonblank()
-            tname='element'
-            nelt_tables=0
-        else: tname=last_tablename
+            tname = 'element'
+            nelt_tables = 0
+        else: tname = last_tablename
         while tname != tablename:
-            if tname=='primary': keyword='_____'
-            else: keyword='@@@@@'
+            if tname == 'primary': keyword='_____'
+            else: keyword = '@@@@@'
             self.skipto(keyword,0)
-            tname=self.next_table_TOUGHplus()
-            if tname=='element':
-                nelt_tables+=1
-                tname+=str(nelt_tables)
+            tname = self.next_table_TOUGHplus()
+            if tname == 'element':
+                nelt_tables += 1
+                tname += str(nelt_tables)
 
     def start_of_values(self,line):
-        """Returns start index of values in a table line.  Characters before this start index are taken to contain
-        the key(s) and row index."""
+        """Returns start index of values in a table line.  Characters before
+        this start index are taken to contain the key(s) and row index."""
         pt = line.find('.')
         if pt >= 2:
             nextpt = line.find('.', pt + 1)
@@ -586,28 +598,32 @@ class t2listing(object):
                 if pos > 0 : return pos + 1
         return None
 
-    def key_positions(self,line,nkeys):
-        """Returns detected positions of keys in the start of a table line.  This works on the assumption
-        that key values must have a digit present in their last character.  It searches backwards from the 
-        end of the position of INDEX (or IND.) in the header line- sometimes keys can overlap into this area."""
-        keylength=5
-        keypos=[]
-        pos=len(line)-1
-        while line[pos]==' ': pos-=1
-        while line[pos] != ' ': pos-=1
+    def key_positions(self, line, nkeys):
+        """Returns detected positions of keys in the start of a table line.
+        This works on the assumption that key values must have a digit
+        present in their last character.  It searches backwards from
+        the end of the position of INDEX (or IND.) in the header line-
+        sometimes keys can overlap into this area. """
+        keylength = 5
+        keypos = []
+        pos = len(line)-1
+        while line[pos] == ' ': pos -= 1
+        while line[pos] != ' ': pos -= 1
         for k in range(nkeys):
-            while not line[pos].isdigit() and pos>=keylength: pos-=1
-            pos-=(keylength-1)
-            if valid_blockname(line[pos:pos+keylength]):
+            while not line[pos].isdigit() and pos >= keylength:
+                pos -= 1
+            pos -= (keylength - 1)
+            if valid_blockname(line[pos: pos + keylength]):
                 keypos.append(pos)
-                pos-=1
+                pos -= 1
             else: return None
         keypos.reverse()
         if len(keypos) != nkeys: return None
         else: return keypos
 
     def parse_table_header_AUTOUGH2(self):
-        """Parses table header line for AUTOUGH2, returning the number of keys and the column names."""
+        """Parses table header line for AUTOUGH2, returning the number of keys
+        and the column names."""
         cols = []
         headline = self.readline()
         headstrs = headline.strip().split()
@@ -630,16 +646,16 @@ class t2listing(object):
         # Double-check number of columns:
         nvalues = len([s for s in line[start:].strip().split()])
         if (len(cols) == nvalues):
-            keypos = self.key_positions(line[:start],nkeys)
+            keypos = self.key_positions(line[:start], nkeys)
             if keypos:
                 # determine row names:
                 while line[1:6] != keyword:
-                    keyval = [fix_blockname(line[kp:kp+5]) for kp in keypos]
-                    if len(keyval)>1: keyval = tuple(keyval)
+                    keyval = [fix_blockname(line[kp: kp + 5]) for kp in keypos]
+                    if len(keyval) > 1: keyval = tuple(keyval)
                     else: keyval = keyval[0]
                     rows.append(keyval)
                     line = self.readline()
-                row_format = {'key':keypos, 'values':[start]}
+                row_format = {'key': keypos, 'values': [start]}
                 allow_rev = tablename == 'connection'
                 self._table[tablename] = listingtable(cols, rows, row_format, num_keys = nkeys,
                                                       allow_reverse_keys = allow_rev)
@@ -738,8 +754,10 @@ class t2listing(object):
                 else: keyval = keyval[0]
                 indexstr = line[index_pos[0]:index_pos[1]]
                 try: index = int(indexstr) - 1
-                except ValueError: index += 1    # to handle overflow (****) in index field: assume indices continue
-                rowdict[index] = (count,keyval)  # use a dictionary to deal with duplicate row indices (TOUGH2_MP)
+                # To handle overflow (****) in index field: assume indices continue:
+                except ValueError: index += 1
+                # Use a dictionary to deal with duplicate row indices (TOUGH2_MP):
+                rowdict[index] = (count,keyval)
                 if len(line.strip()) > len(longest_line): longest_line = line
                 pos = self._file.tell()
                 last_count = count
@@ -766,14 +784,15 @@ class t2listing(object):
                         for i in range(internal_header_skiplines): line,count = count_read(count)
                 skiplines.append(count - last_count - 1)
             indices = sorted(rowdict.keys())
-            row_line=[rowdict[index][0] for index in indices]
-            rows=[rowdict[index][1] for index in indices]
-            numpos=self.parse_table_line(longest_line,start)
-            row_format={'key':keypos,'index':keypos[-1]+5,'values':numpos}
-            allow_rev=tablename=='connection'
+            row_line = [rowdict[index][0] for index in indices]
+            rows = [rowdict[index][1] for index in indices]
+            numpos = self.parse_table_line(longest_line,start)
+            row_format = {'key': keypos, 'index': keypos[-1] + 5, 'values': numpos}
+            allow_rev = tablename == 'connection'
             self._table[tablename] = listingtable(cols, rows, row_format, row_line, num_keys = nkeys,
-                                                allow_reverse_keys = allow_rev,
-                                                header_skiplines = header_skiplines, skiplines = skiplines)
+                                                  allow_reverse_keys = allow_rev,
+                                                  header_skiplines = header_skiplines,
+                                                  skiplines = skiplines)
             self._tablenames.append(tablename)
         else: raise Exception('Error parsing '+tablename+' table keys: table not created.')
 
@@ -831,12 +850,12 @@ class t2listing(object):
         else: return None
 
     def read_tables_AUTOUGH2(self):
-        tablename='element'
+        tablename = 'element'
         while tablename:
             self.read_header()
             if tablename in self.skip_tables: self.skip_table(tablename)
             else: self.read_table(tablename)
-            tablename=self.next_table()
+            tablename = self.next_table()
 
     def read_tables_TOUGH2(self):
         tablename = 'element'
@@ -847,21 +866,22 @@ class t2listing(object):
             elif tablename in self._table: self.read_table(tablename)
             else: # tables not present at first time step
                 next_tablename = self.next_tablename(last_tablename)
-                if next_tablename: self.skip_to_table(next_tablename, last_tablename, 1)
+                if next_tablename:
+                    self.skip_to_table(next_tablename, last_tablename, 1)
             last_tablename = tablename
             tablename = self.next_table()
 
     def read_tables_TOUGHplus(self):
         tablename='element'
         self.read_header() # only one header at each time
-        nelt_tables=0
+        nelt_tables = 0
         while tablename:
             if tablename in self.skip_tables: self.skip_table(tablename)
             else: self.read_table(tablename)
-            tablename=self.next_table()
-            if tablename=='element':
-                nelt_tables+=1
-                tablename+=str(nelt_tables)
+            tablename = self.next_table()
+            if tablename == 'element':
+                nelt_tables += 1
+                tablename += str(nelt_tables)
 
     def read_table_AUTOUGH2(self,tablename):
         fmt = self._table[tablename].row_format
@@ -886,14 +906,15 @@ class t2listing(object):
         self._file.readline()
 
     def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
-        start=fmt['values'][0]
-        vals=[fortran_float(s) for s in line[start:].strip().split()]
+        start = fmt['values'][0]
+        vals = [fortran_float(s) for s in line[start:].strip().split()]
         return vals
 
     def read_table_line_TOUGH2(self,line,num_columns,fmt):
         """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
-        nvals=len(fmt['values'])-1
-        return [fortran_float(line[fmt['values'][i]:fmt['values'][i+1]]) for i in range(nvals)]+[0.0]*(num_columns-nvals)
+        nvals = len(fmt['values']) - 1
+        return [fortran_float(line[fmt['values'][i]: fmt['values'][i+1]])
+                for i in range(nvals)] + [0.0] * (num_columns - nvals)
 
     def read_table_TOUGH2(self,tablename):
         table = self._table[tablename]
@@ -1050,8 +1071,9 @@ class t2listing(object):
         return result
 
     def get_reductions(self):
-        """Returns a list of time step indices at which the time step is reduced, and the blocks at which the maximum
-        residual occurred prior to the reduction."""
+        """Returns a list of time step indices at which the time step is
+        reduced, and the blocks at which the maximum residual occurred
+        prior to the reduction."""
         self.rewind()
         line, lastline = '', ''
         keyword = "+++++++++ REDUCE TIME STEP"
@@ -1080,31 +1102,39 @@ class t2listing(object):
         return rl
     reductions=property(get_reductions)
 
-    def get_difference(self,indexa=None,indexb=None):
-        """Returns dictionary of maximum differences, and locations of difference, of all element table properties between
-        two sets of results.  If both indexa and indexb are provided, the result is the difference between these two result indices.
-        If only one index is given, the result is the difference between the given index and the one before that.
-        If neither are given, the result is the difference between the last and penultimate sets of results."""
+    def get_difference(self, indexa = None, indexb = None):
+        """Returns dictionary of maximum differences, and locations of
+        difference, of all element table properties between two sets
+        of results.  If both indexa and indexb are provided, the
+        result is the difference between these two result indices.  If
+        only one index is given, the result is the difference between
+        the given index and the one before that.  If neither are
+        given, the result is the difference between the last and
+        penultimate sets of results.
+        """
         from copy import deepcopy
-        tablename='element'
+        tablename = 'element'
         if indexa is None: self.last()
         else: self.set_index(indexa)
-        results2=deepcopy(self._table[tablename])
+        results2 = deepcopy(self._table[tablename])
         if indexb is None: self.prev()
         else: self.set_index(indexb)
-        results1=self._table[tablename]
-        cvg={}
+        results1 = self._table[tablename]
+        cvg = {}
         for name in results1.column_name:
-            iblk=np.argmax(abs(results2[name]-results1[name]))
-            blkname=results1.row_name[iblk]
-            diff=results2[name][iblk]-results1[name][iblk]
-            cvg[name]=(diff,blkname)
+            iblk = np.argmax(abs(results2[name] - results1[name]))
+            blkname = results1.row_name[iblk]
+            diff = results2[name][iblk] - results1[name][iblk]
+            cvg[name] = (diff,blkname)
         return cvg
-    convergence=property(get_difference)
+    convergence = property(get_difference)
 
-    def get_vtk_data(self, geo, grid = None, flows = False, flux_matrix = None, geo_matches = True, blockmap = {}):
-        """Returns dictionary of VTK data arrays from listing file at current time.  If flows is True, average flux vectors
-        are also calculated from connection data at the block centres."""
+    def get_vtk_data(self, geo, grid = None, flows = False, flux_matrix = None,
+                     geo_matches = True, blockmap = {}):
+        """Returns dictionary of VTK data arrays from listing file at current
+        time.  If flows is True, average flux vectors are also
+        calculated from connection data at the block centres.
+        """
         from vtk import vtkFloatArray
         natm = geo.num_atmosphere_blocks
         nele = geo.num_underground_blocks
@@ -1115,7 +1145,8 @@ class t2listing(object):
         flownames = []
         def is_flowname(name):
             name = name.lower()
-            return name.startswith('flo') or name.endswith('flo') or name.endswith('flow') or name.endswith('veloc')
+            return name.startswith('flo') or name.endswith('flo') or \
+                name.endswith('flow') or name.endswith('veloc')
         if flows:
             if flux_matrix is None: flux_matrix = grid.flux_matrix(geo, blockmap)
             flownames = [name for name in self.connection.column_name if is_flowname(name)]
@@ -1135,7 +1166,8 @@ class t2listing(object):
                     array.SetNumberOfComponents(1)
                     array.SetNumberOfValues(array_length[array_type])
                     for tablename in elt_tablenames:
-                        if geo_matches: array_data[array_type][name] = self._table[tablename][name][natm:] # faster
+                        if geo_matches:
+                            array_data[array_type][name] = self._table[tablename][name][natm:] # faster
                         else:  # more flexible
                             array_data[array_type][name] = \
                                 np.array([self._table[tablename][mname(blk)][name]
@@ -1150,13 +1182,19 @@ class t2listing(object):
                         arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
-    def write_vtk(self, geo, filename, grid = None, indices = None, flows = False, wells = False, start_time = 0.0,
-                  time_unit = 's', flux_matrix = None, blockmap = {}, surface_snap = 0.1):
-        """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the listing data,
-        with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
-        data as well.  A list of the required time indices can optionally be specified.  If a grid is specified, flows is True,
-        and connection data are present in the listing file, approximate average flux vectors are also calculated at the 
-        block centres from the connection data."""
+    def write_vtk(self, geo, filename, grid = None, indices = None, flows = False,
+                  wells = False, start_time = 0.0, time_unit = 's',
+                  flux_matrix = None, blockmap = {}, surface_snap = 0.1):
+        """Writes VTK files for a vtkUnstructuredGrid object corresponding to
+        the grid in 3D with the listing data, with the specified
+        filename, for visualisation with VTK.  A t2grid can optionally
+        be specified, to include rock type data as well.  A list of
+        the required time indices can optionally be specified.  If a
+        grid is specified, flows is True, and connection data are
+        present in the listing file, approximate average flux vectors
+        are also calculated at the block centres from the connection
+        data.
+        """
         from vtk import vtkXMLUnstructuredGridWriter
         from os.path import splitext
         base, ext = splitext(filename)
@@ -1165,7 +1203,8 @@ class t2listing(object):
         doflows = False
         if flows and (self.connection is not None):
             if grid is None:
-                raise Exception("t2listing.write_vtk(): if flows == True, a t2grid object must be specified.")
+                raise Exception("t2listing.write_vtk(): if flows == True, " +
+                                " a t2grid object must be specified.")
             else:
                 if geo_matches or len(blockmap) > 0: doflows = True
                 else:
@@ -1186,7 +1225,7 @@ class t2listing(object):
         collection = pvd.createElement('Collection')
         initial_index = self.index
         if indices is None: indices = range(self.num_fulltimes)
-        timescales = {'s':1.0,'h':3600.,'d':3600.*24,'y':3600.*24*365.25}
+        timescales = {'s': 1.0, 'h': 3600., 'd': 3600.*24, 'y': 3600. * 24 * 365.25}
         if time_unit in timescales: timescale = timescales[time_unit]
         else: timescale = 1.0
         writer = vtkXMLUnstructuredGridWriter()
@@ -1213,7 +1252,7 @@ class t2listing(object):
         pvdfile.close()
         self.index = initial_index
 
-    def add_side_recharge(self,geo,dat):
+    def add_side_recharge(self, geo, dat):
         """Adds side recharge generators to a TOUGH2 data object for a production run,
         calculated according to the final results in the listing.  These generators represent side
         inflows due to pressure changes in the blocks on the model's horizontal boundaries.
@@ -1222,104 +1261,116 @@ class t2listing(object):
         from IAPWS97 import cowat,visc
         from geometry import line_projection
         from t2data import t2generator
-        initial_index=self.index
-        keyword={'AUTOUGH2':{'P':'Pressure','T':'Temperature'},'TOUGH2':{'P':'P','T':'T'},
-                 'TOUGH2_MP':{'P':'P','T':'T'},'TOUGH+':{'P':'Pressure','T':'Temperature'}}
+        initial_index = self.index
+        keyword = {'AUTOUGH2':{'P': 'Pressure', 'T': 'Temperature'},
+                   'TOUGH2': {'P': 'P', 'T': 'T'},
+                   'TOUGH2_MP': {'P': 'P', 'T': 'T'},
+                   'TOUGH+' : {'P': 'Pressure', 'T': 'Temperature'}}
         self.last()
-        bdy_nodes=geo.boundary_nodes
+        bdy_nodes = geo.boundary_nodes
         for blk in dat.grid.blocklist[geo.num_atmosphere_blocks:]:
-            colname=geo.column_name(blk.name)
+            colname = geo.column_name(blk.name)
             if colname in geo.column:
-                col=geo.column[colname]
-                if col.num_neighbours<col.num_nodes:
-                    k=0.5*np.sum(blk.rocktype.permeability[0:2])
-                    p0=self.element[blk.name][keyword[self.simulator]['P']]
-                    t0=self.element[blk.name][keyword[self.simulator]['T']]
-                    rho,u=cowat(t0,p0)
-                    h=u+p0/rho
-                    xnu=visc(rho,t0)/rho
-                    coef=0.
+                col = geo.column[colname]
+                if col.num_neighbours < col.num_nodes:
+                    k = 0.5 * np.sum(blk.rocktype.permeability[0:2])
+                    p0 = self.element[blk.name][keyword[self.simulator]['P']]
+                    t0 = self.element[blk.name][keyword[self.simulator]['T']]
+                    rho, u = cowat(t0, p0)
+                    h = u + p0 / rho
+                    xnu = visc(rho,t0) / rho
+                    coef = 0.
                     for iface in range(col.num_nodes):
-                        facenode=[col.node[i] for i in [iface,(iface+1)%col.num_nodes]]
+                        facenode = [col.node[i] for i in [iface,(iface + 1)%col.num_nodes]]
                         if all([node in bdy_nodes for node in facenode]):
-                            side_length=np.linalg.norm(facenode[1].pos-facenode[0].pos)
-                            height=blk.volume/col.area
-                            area=side_length*height
-                            facepos=line_projection(col.centre,[node.pos for node in facenode])
-                            dist=np.linalg.norm(col.centre-facepos)
-                            coef+=0.5*area*k/(xnu*dist) # recharge coefficient
-                    gen_name=blk.name
-                    dat.add_generator(t2generator(gen_name,blk.name,type='RECH',gx=coef,ex=h,hg=p0))
-        self.index=initial_index
+                            side_length = np.linalg.norm(facenode[1].pos - facenode[0].pos)
+                            height = blk.volume / col.area
+                            area = side_length * height
+                            facepos = line_projection(col.centre, [node.pos for node in facenode])
+                            dist = np.linalg.norm(col.centre - facepos)
+                            coef += 0.5 * area * k / (xnu * dist) # recharge coefficient
+                    gen_name = blk.name
+                    dat.add_generator(t2generator(gen_name, blk.name, type = 'RECH',
+                                                  gx = coef, ex = h, hg = p0))
+        self.index = initial_index
 
 class t2historyfile(object):
-    """Class for TOUGH2 FOFT, COFT and GOFT files (history of element, connection and generator variables)."""
+    """Class for TOUGH2 FOFT, COFT and GOFT files (history of element,
+    connection and generator variables)."""
 
-    def __init__(self,filename=None):
-        self.filename=filename
+    def __init__(self, filename = None):
+        self.filename = filename
         self.empty()
         if self.filename: self.read(filename)
 
     def empty(self):
-        self.simulator=None
-        self.type=None
-        self._data=[]
-        self._row=None
-        self.times=[]
-        self.keys=[]
-        self.key_name=[]
-        self.times=[]
-        self._keyrows={}
-        self.column_name=[]
-        self.row_name=[]
+        self.simulator = None
+        self.type = None
+        self._data = []
+        self._row = None
+        self.times = []
+        self.keys = []
+        self.key_name = []
+        self.times = []
+        self._keyrows = {}
+        self.column_name = []
+        self.row_name = []
 
     def get_num_keys(self): return len(self.keys)
-    num_keys=property(get_num_keys)
+    num_keys = property(get_num_keys)
     def get_num_times(self): return len(self.times)
-    num_times=property(get_num_times)
+    num_times = property(get_num_times)
     def get_num_rows(self): return len(self._data)
-    num_rows=property(get_num_rows)
+    num_rows = property(get_num_rows)
     def get_num_columns(self): return len(self.column_name)
-    num_columns=property(get_num_columns)
-    def get_keytype(self): return {'FOFT':'block','COFT':'connection','GOFT':'generator',None:'key'}[self.type]
-    keytype=property(get_keytype)
+    num_columns = property(get_num_columns)
+    def get_keytype(self):
+        return {'FOFT': 'block', 'COFT': 'connection',
+                'GOFT': 'generator', None: 'key'}[self.type]
+    keytype = property(get_keytype)
 
     def __repr__(self):
-        if self._nkeys>0: nkeystr=str(self.num_keys)
-        else: nkeystr='summed'
-        return 'History results for '+nkeystr+' '+self.keytype+'s at '+str(self.num_times)+' times'
+        if self._nkeys > 0: nkeystr = str(self.num_keys)
+        else: nkeystr = 'summed'
+        return 'History results for ' + nkeystr + ' ' + self.keytype + \
+            's at ' + str(self.num_times) + ' times'
 
-    def __getitem__(self,key):
-        """Returns results for a given key value, in the form of a dictionary with keys corresponding to the
-        column names.  Each value is an array of history results for that key and column name- unless the key also
-        has the time appended as its third element, in which case the dictionary values are just single floating
-        point values for each column."""
-        if self.num_rows>0:
-            if self._nkeys>0:
-                if not isinstance(key,tuple): key=(key,)
+    def __getitem__(self, key):
+        """Returns results for a given key value, in the form of a dictionary
+        with keys corresponding to the column names.  Each value is an
+        array of history results for that key and column name- unless
+        the key also has the time appended as its third element, in
+        which case the dictionary values are just single floating
+        point values for each column.
+        """
+        if self.num_rows > 0:
+            if self._nkeys > 0:
+                if not isinstance(key, tuple): key = (key,)
                 if key in self.keys:
-                    keydata=self._data[self._keyrows[key]]
-                    return dict([(colname,keydata[:,icol+1]) for icol,colname in enumerate(self.column_name)])
+                    keydata = self._data[self._keyrows[key]]
+                    return dict([(colname, keydata[:,icol+1]) for
+                                 icol, colname in enumerate(self.column_name)])
                 elif key in self._row:
-                    row=self._data[self._row[key]]
-                    return dict([(colname,row[icol+1]) for icol,colname in enumerate(self.column_name)])
+                    row = self._data[self._row[key]]
+                    return dict([(colname,row[icol+1]) for
+                                 icol, colname in enumerate(self.column_name)])
                 else: return None
             else: # no keys (e.g. TOUGH+ COFT/GOFT)
                 try:
-                    icol=self.column_name.index(key)
-                    return self._data[:,icol+1]
+                    icol = self.column_name.index(key)
+                    return self._data[:, icol + 1]
                 except ValueError: return None
         else: return None
 
-    def read(self,filename):
+    def read(self, filename):
         """Reads contents of file(s) and stores in appropriate data structures."""
-        self._rowindex=0
+        self._rowindex = 0
         from glob import glob
-        files=glob(filename)
-        configured=False
-        for i,fname in enumerate(files):
-            self._file=open(fname,'rU')
-            header=self._file.readline()
+        files = glob(filename)
+        configured = False
+        for i, fname in enumerate(files):
+            self._file = open(fname,'rU')
+            header = self._file.readline()
             if header:
                 if not configured:
                     self.detect_simulator(header)
@@ -1329,199 +1380,214 @@ class t2historyfile(object):
             self._file.close()
         self.finalize_data()
 
-    def detect_simulator(self,header):
+    def detect_simulator(self, header):
         """Detects simulator (TOUGH2 or TOUGH2_MP) from header line."""
         if 'OFT' in header: self.simulator='TOUGH2_MP'
         elif header.startswith('Time ['): self.simulator='TOUGH+'
         else: self.simulator='TOUGH2'
-        internal_fns=['setup_headers','read_data']
-        simname=self.simulator.replace('+','plus')
+        internal_fns = ['setup_headers','read_data']
+        simname = self.simulator.replace('+', 'plus')
         for fname in internal_fns:
-            fname_sim=fname+'_'+simname
-            setattr(self,fname,getattr(self,fname_sim))
+            fname_sim = fname + '_' + simname
+            setattr(self, fname, getattr(self, fname_sim))
 
-    def setup_headers_TOUGH2(self,filename,header):
-        """Sets up keys and column headings from given filename and header line, for TOUGH2 output."""
-        if filename.endswith('OFT') and len(filename)>=4: self.type=filename[-4:].strip()
-        else: self.type=None
-        self.time_index=1
-        self._nkeys=1
-        items=header.strip().split(',')
-        if items[-1]=='': del items[-1] # often an extra comma on the end of the lines
-        items=items[3:]
-        int_index=0
-        for i,item in enumerate(items):
+    def setup_headers_TOUGH2(self, filename, header):
+        """Sets up keys and column headings from given filename and header
+        line, for TOUGH2 output."""
+        if filename.endswith('OFT') and len(filename) >= 4:
+            self.type = filename[-4:].strip()
+        else: self.type = None
+        self.time_index = 1
+        self._nkeys = 1
+        items = header.strip().split(',')
+        if items[-1] == '': del items[-1] # often an extra comma on the end of the lines
+        items = items[3:]
+        int_index = 0
+        for i, item in enumerate(items):
             try:
-                int_item=int(item)
-                int_index=i
+                int_item = int(item)
+                int_index = i
                 break
             except: pass
-        if int_index==0: ncols=len(items)
-        else: ncols=int_index
+        if int_index == 0: ncols = len(items)
+        else: ncols = int_index
         self.column_name=range(ncols)
 
-    def setup_headers_TOUGH2_MP(self,filename,header):
-        """Sets up keys and column headings from given filename and header line, for TOUGH2_MP output."""
-        headers=header.strip().split()
-        self.type=headers[0] # FOFT, COFT or GOFT
-        time_header=[h for h in headers if h.lower().startswith('time')][0]
-        self.time_index=headers.index(time_header)
-        if self.type=='FOFT':
-            self.key_index=self.time_index-1
-            self._nkeys=1
+    def setup_headers_TOUGH2_MP(self, filename, header):
+        """Sets up keys and column headings from given filename and header
+        line, for TOUGH2_MP output."""
+        headers = header.strip().split()
+        self.type = headers[0] # FOFT, COFT or GOFT
+        time_header = [h for h in headers if h.lower().startswith('time')][0]
+        self.time_index = headers.index(time_header)
+        if self.type == 'FOFT':
+            self.key_index = self.time_index - 1
+            self._nkeys = 1
         else: # COFT or GOFT
-            self.key_index=self.time_index+1
-            self._nkeys=2
-        self.key_name=headers[self.key_index:self.key_index+self._nkeys]
-        prepend_titles, append_titles=['GAS','GENERATION'],['flow']
-        startcol=self._nkeys+2
-        cols=[]
-        i=startcol
-        while i<=len(headers)-1:
-            title=headers[i]
+            self.key_index = self.time_index + 1
+            self._nkeys = 2
+        self.key_name = headers[self.key_index: self.key_index+self._nkeys]
+        prepend_titles, append_titles = ['GAS','GENERATION'], ['flow']
+        startcol = self._nkeys + 2
+        cols = []
+        i = startcol
+        while i <= len(headers) - 1:
+            title = headers[i]
             if title in prepend_titles:
-                cols.append(title+' '+headers[i+1])
-                i+=1
+                cols.append(title + ' ' + headers[i+1])
+                i += 1
             elif title in append_titles:
-                cols[-1]+=' '+title
+                cols[-1] += ' ' + title
             else: cols.append(title)
-            i+=1
-        self.column_name=cols
-        self.col_start=[header.index(colname) for colname in self.column_name]
-        self.key_start=[header.index(key) for key in self.key_name]
-        self.time_pos=[header.index(time_header)]
-        if self.type=='FOFT':
+            i += 1
+        self.column_name = cols
+        self.col_start = [header.index(colname) for colname in self.column_name]
+        self.key_start = [header.index(key) for key in self.key_name]
+        self.time_pos = [header.index(time_header)]
+        if self.type == 'FOFT':
             self.key_start.append(self.time_pos[0])
             self.time_pos.append(self.col_start[0])
         else:
             self.key_start.append(self.col_start[0])
             self.time_pos.append(self.key_start[0])
 
-    def setup_headers_TOUGHplus(self,filename,header):
-        """Sets up keys and column headings from given filename and header line, for TOUGH+ output."""
-        headers=header.strip().split('-')
-        if filename.endswith('OFT') and len(filename)>=4: self.type=filename[-4:].strip()
+    def setup_headers_TOUGHplus(self, filename, header):
+        """Sets up keys and column headings from given filename and header
+        line, for TOUGH+ output."""
+        headers = header.strip().split('-')
+        if filename.endswith('OFT') and len(filename) >= 4:
+            self.type = filename[-4:].strip()
         elif '_Time_Series' in filename:
-            filetype={'Elem_Time_Series':'FOFT','Conx_Time_Series':'COFT','SS_Time_Series':'GOFT'}
+            filetype = {'Elem_Time_Series': 'FOFT', 'Conx_Time_Series': 'COFT',
+                        'SS_Time_Series': 'GOFT'}
             for key in filetype.keys():
                 if key in filename:
-                    self.type=filetype[key]
+                    self.type = filetype[key]
                     break
-        else: self.type=None
-        if self.type=='FOFT':
-            self.time_index=1
-            self._nkeys=1
+        else: self.type = None
+        if self.type == 'FOFT':
+            self.time_index = 1
+            self._nkeys = 1
         else:
-            self.time_index=0
-            self._nkeys=0
-        cols=headers[self._nkeys+1:]
+            self.time_index = 0
+            self._nkeys = 0
+        cols = headers[self._nkeys + 1:]
         from re import sub
-        cols=[sub('\[.*\]','',col).strip() for col in cols] # remove units
-        self.column_name=cols
+        cols = [sub('\[.*\]','',col).strip() for col in cols] # remove units
+        self.column_name = cols
 
-    def read_data_TOUGH2(self,configured):
+    def read_data_TOUGH2(self, configured):
         """Reads in the data, for TOUGH2 output."""
         self._file.seek(0)
-        lines=self._file.readlines()
+        lines = self._file.readlines()
         for line in lines:
-            items=line.strip().split(',')
-            if items[-1]=='': del items[-1]
+            items = line.strip().split(',')
+            if items[-1] == '': del items[-1]
             time_index = fortran_int(items.pop(0))
-            time=float(items.pop(0))
+            time = float(items.pop(0))
             self.times.append(time)
-            nc1=self.num_columns+1
-            nsets=len(items)/nc1
+            nc1 = self.num_columns + 1
+            nsets = len(items) / nc1
             for i in range(nsets):
-                setvals=items[i*nc1:(i+1)*nc1]
+                setvals = items[i*nc1: (i+1)*nc1]
                 key = (fortran_int(setvals[0]),)
-                vals=[fortran_float(val) for val in setvals[1:]]
+                vals = [fortran_float(val) for val in setvals[1:]]
                 self.row_name.append(key+(time,))
                 if not key in self.keys:
-                    self._keyrows[key]=[]
+                    self._keyrows[key] = []
                     self.keys.append(key)
                 self._keyrows[key].append(self._rowindex)
                 self._data.append([time]+vals)
-                self._rowindex+=1
+                self._rowindex += 1
 
-    def read_data_TOUGH2_MP(self,configured):
+    def read_data_TOUGH2_MP(self, configured):
         """Reads in the data, for TOUGH2_MP output."""
         def get_key(line):
-            return tuple([fix_blockname(line[self.key_start[i]:self.key_start[i+1]].rstrip()) for i in range(self._nkeys)])
-        def get_time(line): return fortran_float(line[self.time_pos[0]:self.time_pos[1]])
+            return tuple([fix_blockname(line[self.key_start[i]:
+                                             self.key_start[i+1]].rstrip()) for
+                          i in range(self._nkeys)])
+        def get_time(line):
+            return fortran_float(line[self.time_pos[0]:self.time_pos[1]])
         def get_vals(line):
-            start=self.col_start+[len(line)] # allow for lines of different lengths
-            return [fortran_float(line[start[i]:start[i+1]]) for i in range(self.num_columns)]
-        lines=self._file.readlines()
-        first_key=None
+            start = self.col_start + [len(line)] # allow for lines of different lengths
+            return [fortran_float(line[start[i]: start[i+1]]) for
+                    i in range(self.num_columns)]
+        lines = self._file.readlines()
+        first_key = None
         from copy import copy
-        otherfile_keys=copy(self.keys)
+        otherfile_keys = copy(self.keys)
         for line in lines:
             if line.strip():
-                time=get_time(line)
-                key=get_key(line)
-                if not first_key: first_key=key
-                vals=get_vals(line)
-                rowname=key+(time,)
+                time = get_time(line)
+                key = get_key(line)
+                if not first_key: first_key = key
+                vals = get_vals(line)
+                rowname = key + (time,)
                 if not (key in otherfile_keys):
                     if key in self._keyrows:
-                        keyrows=self._keyrows[key]
-                        keytimes=[self._data[irow][0] for irow in self._keyrows[key]]
-                        keyrownames=[self.row_name[irow] for irow in self._keyrows[key]]
-                        newtime=not (time in keytimes)
-                        newrowname=not (rowname in keyrownames)
-                    else: newtime,newrowname=True,True
-                    if (not configured) and (key==first_key) and newtime: self.times.append(time)
+                        keyrows = self._keyrows[key]
+                        keytimes = [self._data[irow][0] for irow in self._keyrows[key]]
+                        keyrownames = [self.row_name[irow] for irow in self._keyrows[key]]
+                        newtime = not (time in keytimes)
+                        newrowname = not (rowname in keyrownames)
+                    else: newtime, newrowname = True, True
+                    if (not configured) and (key == first_key) and newtime:
+                        self.times.append(time)
                     if newrowname:
                         self.row_name.append(rowname)
                         if not key in self.keys:
-                            self._keyrows[key]=[]
+                            self._keyrows[key] = []
                             self.keys.append(key)
                         self._keyrows[key].append(self._rowindex)
-                        self._data.append([time]+vals)
-                        self._rowindex+=1
+                        self._data.append([time] + vals)
+                        self._rowindex += 1
 
-    def read_data_TOUGHplus(self,configured):
+    def read_data_TOUGHplus(self, configured):
         """Reads in the data, for TOUGH+ output."""
-        lines=self._file.readlines()
-        if self.type=='FOFT':
+        lines = self._file.readlines()
+        if self.type == 'FOFT':
             for line in lines:
-                items=line.strip().split(',')
-                time=fortran_float(items[1])
+                items = line.strip().split(',')
+                time = fortran_float(items[1])
                 self.times.append(time)
-                nc1=self.num_columns+1
-                nsets=(len(items)-2)/nc1
+                nc1 = self.num_columns + 1
+                nsets = (len(items)-2) / nc1
                 for i in range(nsets):
-                    setvals=items[2+i*nc1:2+(i+1)*nc1]
+                    setvals = items[2+i*nc1: 2+(i+1)*nc1]
                     key = (fortran_int(setvals[0]),)
-                    if key[0]>0:
-                        vals=[fortran_float(val) for val in setvals[1:]]
-                        self.row_name.append(key+(time,))
+                    if key[0] > 0:
+                        vals = [fortran_float(val) for val in setvals[1:]]
+                        self.row_name.append(key + (time,))
                         if not key in self.keys:
-                            self._keyrows[key]=[]
+                            self._keyrows[key] = []
                             self.keys.append(key)
                         self._keyrows[key].append(self._rowindex)
-                        self._data.append([time]+vals)
-                        self._rowindex+=1
+                        self._data.append([time] + vals)
+                        self._rowindex += 1
         else:
             for line in lines:
-                vals=[fortran_float(val) for val in line.strip().split()]
-                time=vals.pop(0)
+                vals = [fortran_float(val) for val in line.strip().split()]
+                time = vals.pop(0)
                 self.times.append(time)
-                self._data.append([time]+vals)
+                self._data.append([time] + vals)
 
     def finalize_data(self):
-        self._data=np.array(self._data,float64)
-        self.times=np.array(self.times,float64)
-        self._row=dict([(r,i) for i,r in enumerate(self.row_name)])
+        self._data = np.array(self._data, float64)
+        self.times = np.array(self.times, float64)
+        self._row = dict([(r,i) for i,r in enumerate(self.row_name)])
 
 
 class toughreact_tecplot(object):
-    """Class for TOUGHREACT Tecplot output files. These work similarly to t2listing objects, but
-    have just a single element table at each time. It is possible to navigate through time by
-    using the next() and prev() functions to step through, or using the first() and last() functions to go to 
-    the start or end, or to set the index, step (model time step number) or time properties directly.
-    When reading a toughreact_tecplot object from file it is necessary also to specify the block names
-    (as these are not stored in the Tecplot file)."""
+    """Class for TOUGHREACT Tecplot output files. These work similarly to
+    t2listing objects, but have just a single element table at each
+    time. It is possible to navigate through time by using the next()
+    and prev() functions to step through, or using the first() and
+    last() functions to go to the start or end, or to set the index,
+    step (model time step number) or time properties directly.  When
+    reading a toughreact_tecplot object from file it is necessary also
+    to specify the block names (as these are not stored in the Tecplot
+    file).
+    """
     def __init__(self, filename, blocks):
         self.filename = filename
         self._file = open(filename, 'rU')
@@ -1621,14 +1687,17 @@ class toughreact_tecplot(object):
         if isinstance(blocks, mg.mulgrid): blocks = blocks.block_name_list
         elif isinstance(blocks, t2g.t2grid): blocks = [blk.name for blk in  blocks.blocklist]
         if len(blocks) != self._num_blocks:
-            raise Exception("Specified block name list is the wrong length for TOUGHREACT Tecplot file "+ self.filename)
+            raise Exception("Specified block name list is the wrong length for " +
+                            "TOUGHREACT Tecplot file "+ self.filename)
         self._file.seek(0)
         line = self.skipto('VARIABLES')
         if line is not None:
             eqpos = line.find('=')
             cols = [col.strip() for col in line[eqpos+1:].strip().split(',')[:-1]]
             self.element = listingtable(cols, blocks, num_keys = 1)
-        else: raise Exception("Could not find variable definitions for TOUGHREACT Tecplot file " + self.filename)
+        else:
+            raise Exception("Could not find variable definitions " +
+                            "for TOUGHREACT Tecplot file " + self.filename)
 
     def read_table_line(self, line):
         """Parses given string and returns an array of float values."""
@@ -1641,7 +1710,8 @@ class toughreact_tecplot(object):
             self.element[i] = self.read_table_line(line)
 
     def history(self, selection):
-        """Returns time histories for specified selection of block names (or index) and column names."""
+        """Returns time histories for specified selection of block names (or
+        index) and column names."""
 
         def ordered_selection(selection):
             osel = []
@@ -1675,7 +1745,7 @@ class toughreact_tecplot(object):
                     hist[sel_index].append(vals[valindex])
         self._index = old_index
         result = [(self.times,np.array(h)) for sel_index,h in enumerate(hist)]
-        if len(result)==1: result = result[0]
+        if len(result) == 1: result = result[0]
         return result
 
     def get_vtk_data(self, geo, grid = None, geo_matches = True, blockmap = {}):
@@ -1700,13 +1770,18 @@ class toughreact_tecplot(object):
 
         for array_type,data_dict in array_data.items():
             for name,data in data_dict.items():
-                for iblk in range(nele): arrays[array_type][name].SetValue(iblk, data[iblk])
+                for iblk in range(nele):
+                    arrays[array_type][name].SetValue(iblk, data[iblk])
         return arrays
 
-    def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0, time_unit = 's', blockmap = {}, surface_snap = 0.1):
-        """Writes VTK files for a vtkUnstructuredGrid object corresponding to the grid in 3D with the Tecplot data,
-        with the specified filename, for visualisation with VTK.  A t2grid can optionally be specified, to include rock type
-        data as well.  A list of the required time indices can optionally be specified."""
+    def write_vtk(self, geo, filename, grid = None, indices = None, start_time = 0.0,
+                  time_unit = 's', blockmap = {}, surface_snap = 0.1):
+        """Writes VTK files for a vtkUnstructuredGrid object corresponding to
+        the grid in 3D with the Tecplot data, with the specified
+        filename, for visualisation with VTK.  A t2grid can optionally
+        be specified, to include rock type data as well.  A list of
+        the required time indices can optionally be specified.
+        """
         from vtk import vtkXMLUnstructuredGridWriter
         from os.path import splitext
         base, ext = splitext(filename)
@@ -1725,15 +1800,17 @@ class toughreact_tecplot(object):
         initial_index = self.index
         if indices is None: indices = range(self.num_times)
         yr = 3600.*24*365.25
-        timescales = {'s':1.0,'h':3600.,'d':3600.*24,'y':yr}
-        if time_unit in timescales: timescale = timescales[time_unit]/yr # assumes Tecplot times are in years
+        timescales = {'s': 1.0, 'h': 3600., 'd': 3600. * 24, 'y': yr}
+        if time_unit in timescales:
+            timescale = timescales[time_unit] / yr # assumes Tecplot times are in years
         else: timescale = 1.0
         writer = vtkXMLUnstructuredGridWriter()
         for i in indices:
             self.index = i
             t = start_time + self.time/timescale
-            filename_time = base+'_'+str(i)+'.vtu'
-            results_arrays = self.get_vtk_data(geo, grid, geo_matches=geo_matches, blockmap = blockmap)
+            filename_time = base + '_' + str(i) + '.vtu'
+            results_arrays = self.get_vtk_data(geo, grid, geo_matches = geo_matches,
+                                               blockmap = blockmap)
             for array_type,array_dict in arrays.items():
                 array_dict.update(results_arrays[array_type])
             vtu = geo.get_vtk_grid(arrays, surface_snap)
