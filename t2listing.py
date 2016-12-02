@@ -19,6 +19,7 @@ except ImportError: # try importing Numeric on old installs
 from mulgrids import fix_blockname, valid_blockname
 from fixed_format_file import fortran_float, fortran_int
 import io
+from sys import version_info
 
 class listingtable(object):
 
@@ -162,6 +163,7 @@ class t2listing(object):
        first() and last() functions to go to the start or end, or to
        set the index, step (model time step number) or time properties
        directly."""
+
     def __init__(self, filename = None, skip_tables = [], encoding = 'latin-1'):
         self._table = {}
         self._tablenames = []
@@ -187,9 +189,17 @@ class t2listing(object):
     def __repr__(self): return self.title
     def close(self):
         self._file.close()
-    def readline(self):
-        """Reads next line, decodes it and returns it as a string."""
-        return self._file.readline().decode(self.encoding)
+
+    if version_info[0] < 3:
+        def readline(self):
+            """Reads next line and returns it as a string. In Python 2.x,
+            readline() already returns a string and doesn't need decoding.
+            Skipping the decoding step speeds it up."""
+            return self._file.readline()
+    else:
+        def readline(self):
+            """Reads next line, decodes it and returns it as a string."""
+            return self._file.readline().decode(self.encoding)
 
     def get_index(self): return self._index
     def set_index(self,i):
@@ -197,7 +207,7 @@ class t2listing(object):
         self._index = i
         if self._index < 0: self._index += self.num_fulltimes
         self.read_tables()
-    index=property(get_index,set_index)
+    index = property(get_index,set_index)
 
     def get_time(self): return self._time
     def set_time(self,t):
