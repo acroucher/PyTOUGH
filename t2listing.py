@@ -1487,7 +1487,7 @@ class t2historyfile(object):
             time = float(items.pop(0))
             self.times.append(time)
             nc1 = self.num_columns + 1
-            nsets = len(items) / nc1
+            nsets = len(items) // nc1
             for i in range(nsets):
                 setvals = items[i*nc1: (i+1)*nc1]
                 key = (fortran_int(setvals[0]),)
@@ -1551,7 +1551,7 @@ class t2historyfile(object):
                 time = fortran_float(items[1])
                 self.times.append(time)
                 nc1 = self.num_columns + 1
-                nsets = (len(items)-2) / nc1
+                nsets = (len(items)-2) // nc1
                 for i in range(nsets):
                     setvals = items[2+i*nc1: 2+(i+1)*nc1]
                     key = (fortran_int(setvals[0]),)
@@ -1799,7 +1799,7 @@ class toughreact_tecplot(object):
         collection = pvd.createElement('Collection')
         initial_index = self.index
         if indices is None: indices = range(self.num_times)
-        yr = 3600.*24*365.25
+        yr = 3600. * 24 * 365.25
         timescales = {'s': 1.0, 'h': 3600., 'd': 3600. * 24, 'y': yr}
         if time_unit in timescales:
             timescale = timescales[time_unit] / yr # assumes Tecplot times are in years
@@ -1807,7 +1807,7 @@ class toughreact_tecplot(object):
         writer = vtkXMLUnstructuredGridWriter()
         for i in indices:
             self.index = i
-            t = start_time + self.time/timescale
+            t = start_time + self.time / timescale
             filename_time = base + '_' + str(i) + '.vtu'
             results_arrays = self.get_vtk_data(geo, grid, geo_matches = geo_matches,
                                                blockmap = blockmap)
