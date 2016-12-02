@@ -126,7 +126,7 @@ def line_polygon_intersections(polygon,line,bound_line=(True,True),indices=False
         p1=p-ref
         p2=polygon[(i+1)%len(polygon)]-ref
         dp=p2-p1
-        A,b=np.array(zip(dp,l1-l2)),l1-p1
+        A,b=np.array(list(zip(dp,l1-l2))),l1-p1
         try:
             xi=solve(A,b)
             inline=True
