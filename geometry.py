@@ -129,10 +129,10 @@ def line_polygon_intersections(polygon, line, bound_line = (True,True),
     ind = {}
     def in_unit(x): return -tol <= x <= 1.0 + tol
     for i, p in enumerate(polygon):
-        p1 = p-ref
+        p1 = p - ref
         p2 = polygon[(i+1)%len(polygon)] - ref
         dp = p2 - p1
-        A, b = np.array(list(zip(dp, l1 - l2))), l1 - p1
+        A, b = np.vstack((dp, l1 - l2)).T, l1 - p1
         try:
             xi = solve(A,b)
             inline = True
