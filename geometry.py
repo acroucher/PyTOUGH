@@ -65,7 +65,8 @@ def in_rectangle(pos, rect):
 
 def rectangles_intersect(rect1, rect2):
     """Returns True if two rectangles intersect."""
-    return all([(rect1[1][i]>=rect2[0][i]) and (rect2[1][i]>=rect1[0][i]) for i in range(2)])
+    return all([(rect1[1][i] >= rect2[0][i]) and
+                (rect2[1][i] >= rect1[0][i]) for i in range(2)])
 
 def sub_rectangles(rect):
     """Returns the sub-rectangles formed by subdividing the given rectangle evenly in four."""
@@ -152,8 +153,10 @@ def line_polygon_intersections(polygon, line, bound_line = (True,True),
 def polyline_polygon_intersections(polygon, polyline):
     """Returns a list of intersection points at which a polyline (list of
     2-D points) crosses a polygon."""
-    intersections = [line_polygon_intersections(polygon, [pt, polyline[(i+1) % len(polyline)]])
-                     for i, pt in enumerate(polyline)]
+    N = len(polyline)
+    intersections = [
+        line_polygon_intersections(polygon, [pt, polyline[(i+1) % N]])
+        for i, pt in enumerate(polyline)]
     from itertools import chain # flatten list of lists
     return list(chain.from_iterable(intersections))
 
@@ -199,7 +202,7 @@ def polygon_boundary(this, other, polygon):
 def line_projection(a, line, return_xi = False):
     """Finds projection of point a onto a line (defined by two vectors).  Optionally
     return the non-dimensional distance xi between the line start and end."""
-    d = line[1]-line[0]
+    d = line[1] - line[0]
     try:
         xi = np.dot(a - line[0], d) / np.dot(d, d)
         p = line[0] + d * xi
