@@ -163,8 +163,9 @@ def simplify_polygon(polygon, tolerance = 1.e-6):
     specified.
     """
     s = []
-    for i, p in enumerate(polygon[:-1]):
-        l, n = polygon[i-1], polygon[i+1]
+    N = len(polygon)
+    for i, p in enumerate(polygon[:]):
+        l, n = polygon[i-1], polygon[(i+1)%N]
         dl, dn = p - l, n - p
         if np.dot(dl, dn) < (1. - tolerance) * norm(dl) * norm(dn):
             s.append(p)
