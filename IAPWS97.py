@@ -27,19 +27,20 @@ except ImportError: # try importing Numeric on old installs
 from math import sqrt,exp
 
 # General constants:
-rconst = 0.461526e3         # Gas constant
-tc_k = 273.15               # Conversion from Celsius to Kelvin
+rconst = 0.461526e3       # Gas constant
+tc_k = 273.15             # Conversion from Celsius to Kelvin
 tcriticalk = 647.096      # Critical temperature (Kelvin)
-tcritical = tcriticalk-tc_k
+tcritical = tcriticalk - tc_k
 dcritical = 322.0         # Critical density (kg/m3)
-pcritical = 22.064e6        # Critical pressure (Pa)
+pcritical = 22.064e6      # Critical pressure (Pa)
 
 # -- Region 1 constants: --------------------------------------------------
 
 # scaling values for pressure and temperature:
 pstar1, tstar1 = 16.53e6, 1386.0
 
-nr1 = np.array([                         # coefficients n
+# coefficients n:
+nr1 = np.array([
         0.14632971213167, -0.84548187169114, -0.37563603672040e1,
         0.33855169168385e1, -0.95791963387872, 0.15772038513228,
         -0.16616417199501e-1,0.81214629983568e-3, 0.28319080123804e-3,
