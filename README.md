@@ -14,19 +14,15 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.4.2, which has:
+The latest stable version is 1.4.3, which has:
 
-* A fix for a bug in the t2grid minc() method, caused by basing the code on a version of GMINC which had the same bug- block order was reversed in MINC connections
+* New t2grid reorder() method, for reordering blocks and connections in a grid
 
-* MINC processing ability via the new t2grid minc() method, including partial MINC (applied to only part of grid), flexible block and rocktype naming options, and initial conditions handling
+* improved generation of 3D grids from mulgrid geometry, e.g. for VTK output
 
-* ability to extract results over a mulgrid geometry for a particular MINC level via new minc_array() method
+* new optional output_filename parameter to t2data run() method
 
-* ability to plot block names in mulgrid layer_plot(), and support for blockmaps
-
-* better support for mulgrid ExodusII export
-
-* remaining print statements in t2listing.py turned into Python exceptions
+* updated user guide instructions on installing Python libraries on Windows (using pip)
 
 as well as various bug fixes and other minor enhancements.
 
