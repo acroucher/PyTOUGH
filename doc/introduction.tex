@@ -130,20 +130,12 @@ It is also possible to run a Python script from within the interactive Python en
 \label{pylibraries}
 \index{Python!libraries}
 
-Python comes with a large number of features already built in, but for specialised tasks, additional \textbf{libraries} of Python software can be imported into Python as you need them.  PyTOUGH itself is a set of such libraries, and it in turn makes use of some other Python libraries.
+Python comes with a large number of features already built in, but for specialised tasks, additional \textbf{libraries} of Python software can be imported into Python as you need them.  PyTOUGH itself is a set of such libraries, and it in turn makes use of some other third-party Python libraries.
 
 \subsubsection{Numerical Python}
 \index{Python!Numerical Python (numpy)}
 
 The most important of these is Numerical Python (`numpy'), which you will need to have installed on your computer before you can use PyTOUGH at all \footnote{PyTOUGH will run using Numeric, a now-obsolete predecessor of Numerical Python, though the PyTOUGH plotting functions will not work.  In general it is recommended to use Numerical Python if possible.}.  Numerical Python adds a special \texttt{numpy.array} class for fast multi-dimensional arrays, which PyTOUGH makes heavy use of, and a whole range of other features, e.g. linear algebra routines, Fourier transforms and statistics.
-
-Numerical Python can be freely downloaded from \url{http://numpy.scipy.org/}.  On Linux, you can simply install it via your package manager, e.g. on Debian or Debian-based distributions like Ubuntu:
-
-\texttt{aptitude install python-numpy}
-
-For Windows, the latest 64-bit versions may not yet be available from this site.  However, you can find unofficial builds at \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
-
-\textbf{Note}: on Windows, you need to be careful to install the version of Numerical Python (and other Python libraries) corresponding to your computer architecture (32-bit or 64-bit, also known as AMD64), and to the version of Python you have installed (e.g. 2.6 or 2.7).
 
 \subsubsection{Other libraries}
 
@@ -154,29 +146,32 @@ For Windows, the latest 64-bit versions may not yet be available from this site.
 Some parts of PyTOUGH use other Python libraries.  You do not need these libraries unless you are using the parts of PyTOUGH that depend on them.
 
 \begin{itemize}
-\item \textbf{matplotlib} (\url{http://matplotlib.sourceforge.net/}), a library of graphical plotting routines
 \item \textbf{Scientific Python} (\url{http://www.scipy.org/}), a library of advanced mathematical functions (e.g. interpolation, calculus, optimisation)
-\item \textbf{VTK} (\url{http://www.vtk.org/}), the Visualization Tool Kit (a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.) and \textbf{VTK Python}, the Python interface for VTK.
+\item \textbf{matplotlib} (\url{http://matplotlib.sourceforge.net/}), a library of graphical plotting routines
+\item \textbf{VTK}, a Python interface to the Visualization Tool Kit (\url{http://www.vtk.org/}), a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.
 \end{itemize}
 
-On Linux systems you can download and install these libraries via your package manager - e.g. on Debian or Debian-based distributions like Ubuntu:
+\subsection{Installing third-party Python libraries}
 
-\texttt{aptitude install python-matplotlib python-scipy libvtk5.8 python-vtk}
+\subsubsection{Linux}
 
-On Windows you will need to download and install them yourself from the internet (see links above) or elsewhere.  At the time of writing there is not yet an official 64-bit build of Scientific Python for Windows.  However an unofficial build can be found at Christoph Gohlke's Python package site: \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.  Use of this version of Scientific Python requires that his version of Numerical Python is also used.  As for Numerical Python, make sure you install the versions of these libraries corresponding to your computer architecture (32- or 64-bit) and Python version (e.g. 2.6 or 2.7).
+On Linux you can install third-party Python libraries via your package manager, e.g. on Debian or Debian-based distributions like Ubuntu:
 
-If you are installing a recent version of \texttt{matplotlib} (around 1.3.0 or later) on Windows, you will probably also need to install some other Python packages (\texttt{dateutil}, \texttt{pytz}, \texttt{pyparsing}, \texttt{six} and \texttt{setuptools}). If installing from Christoph Gohlke's site (see above), the entry for \texttt{matplotlib} lists these dependencies and gives links for downloading them. If you don't install them, you will encounter an error \texttt{``Import error: matpotlib requires dateutil"} when you try to run your script.
+\texttt{apt-get install python-numpy python-scipy python-matplotlib python-vtk}
 
-\subsubsection{Installing VTK-Python on Windows}
-\index{Visualization Tool Kit (VTK)}
+\subsubsection{MS Windows}
 
-There does not appear to be an official Windows build of VTK Python, but you can instead download an unofficial Python-enabled Windows version of VTK (i.e. VTK with VTK Python included) from \url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}.
+On MS Windows systems, the easiest way to install these libraries is by using the \textbf{pip} tool. This is a Python package management tool which allows the user to install Python packages and also manages dependencies (when one package depends on other packages).
 
-Make sure you download and install the right version, corresponding to the version of Python you are using.  You will need to add a few things to the environment variables on your system to get it to work.  (If you aren't sure how to edit your environment variables, see section \ref{installing} below.) 
+If you have Python version 2.7.9 or a more recent one then you should have pip already available on your system. If not, the best thing is probably to upgrade to a newer version of Python. If that is not possible for some reason, you can install pip separately by following the instructions at \url{https://pip.pypa.io/en/stable/installing/}.
 
-In the directory where VTK is installed to, there should be sub-directories called something like \texttt{VTK\textbackslash bin} and \texttt{VTK\textbackslash lib\textbackslash site-packages}.  You need to add the full path to the \texttt{bin} directory to the PATH environment variable on your system, and the paths to both the \texttt{bin} and \texttt{lib\textbackslash site-packages} directories to your PYTHONPATH environment variable.
+It is recommended to download libraries to use with PyTOUGH (as *.whl files) from Christoph Gohlke's Python package site:
 
-Alternatively, there are third-party repackaged distributions of Python which come bundled with some or all of these additional libraries (see \url{http://www.python.org/download/}).
+\url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}
+
+Here you can find Windows Python packages for numpy, scipy, matplotlib and VTK (and lots of others as well). Be sure to choose the version of each package appropriate for your version of Python. For example, if you are using 64-bit Python 2.7, then choose *.whl files with names including ``cp27'', and ``amd64''.
+
+Once you have downloaded them, you can install them by opening a command prompt in the download directory and typing \texttt{pip install} followed by the exact name of the *.whl file.
 
 \subsubsection{Importing libraries}
 \index{Python!libraries!importing}
@@ -194,7 +189,7 @@ The latest version of PyTOUGH can always be downloaded from the PyTOUGH website:
 
 \url{https://github.com/acroucher/PyTOUGH/}
 
-First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.  On Windows, you may have to add the directory where Python has installed (e.g. \texttt{C:\textbackslash Python26} or similar, depending on which version you have) to your PATH environment variable, before you can access Python from the command line.
+First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.  On Windows, you may have to add the directory where Python has installed (e.g. \texttt{C:\textbackslash Python27} or similar, depending on which version you have) to your PATH environment variable, before you can access Python from the command line.
 
 On the PyTOUGH website, click the `Download ZIP' button at the right of the page:
 
