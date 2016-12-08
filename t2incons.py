@@ -1,6 +1,5 @@
-"""For reading and writing TOUGH2 initial conditions files."""
+"""For reading and writing TOUGH2 initial conditions files.
 
-"""
 Copyright 2012 University of Auckland.
 
 This file is part of PyTOUGH.
@@ -43,66 +42,75 @@ class t2blockincon(object):
         self.porosity = porosity
         self.permeability = permeability
         self.nseq, self.nadd = nseq, nadd
-    def __getitem__(self,key): return self.variable[key]
-    def __setitem__(self,key,value): self.variable[key]=value
+    def __getitem__(self, key): return self.variable[key]
+    def __setitem__(self, key, value): self.variable[key] = value
     def __repr__(self):
-        result=self.block+':'+str(self.variable)
-        if self.porosity is not None: result += ' ' + str(self.porosity)
-        if self.permeability is not None: result += ' ' + str(self.permeability)
-        if self.nseq is not None: result += ' (' + str(self.nseq) + ', ' + str(self.nadd) + ')'
+        result = self.block + ':' + str(self.variable)
+        if self.porosity is not None:
+            result += ' ' + str(self.porosity)
+        if self.permeability is not None:
+            result += ' ' + str(self.permeability)
+        if self.nseq is not None:
+            result += ' (' + str(self.nseq) + ', ' + str(self.nadd) + ')'
         return result
 
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
-    def __init__(self, filename = '', read_function = fortran_read_function, num_variables = None):
+    def __init__(self, filename = '',
+                 read_function = fortran_read_function, num_variables = None):
         self.simulator = 'TOUGH2'
         self.read_function = read_function
         self.empty()
         if filename: self.read(filename, num_variables)
 
-    def __getitem__(self,key):
-        if isinstance(key,(int,slice)): return self._blocklist[key]
-        elif isinstance(key,str): return self._block[key]
+    def __getitem__(self, key):
+        if isinstance(key, (int, slice)): return self._blocklist[key]
+        elif isinstance(key, str): return self._block[key]
         else: return None
-    def __setitem__(self,key,value):
-        if isinstance(value,(list,tuple)): value=t2blockincon(value,key)
-        if value.block<>key: value.block=key
+    def __setitem__(self, key, value):
+        if isinstance(value,(list,tuple)):
+            value = t2blockincon(value,key)
+        if value.block != key: value.block = key
         self.add_incon(value)
 
-    def __repr__(self): return self.simulator + ' initial conditions for '+str(self.num_blocks)+' blocks'
+    def __repr__(self):
+        return self.simulator + ' initial conditions for ' + \
+            str(self.num_blocks) + ' blocks'
 
     def empty(self):
-        self._block={}
-        self._blocklist=[]
-        self.timing=None
+        self._block = {}
+        self._blocklist = []
+        self.timing = None
 
     def get_num_blocks(self): return len(self._blocklist)
-    num_blocks=property(get_num_blocks)
+    num_blocks = property(get_num_blocks)
 
     def get_num_variables(self):
-        if self.num_blocks>0: return len(self._blocklist[0].variable)
+        if self.num_blocks > 0: return len(self._blocklist[0].variable)
         else: return 0
-    num_variables=property(get_num_variables)
+    num_variables = property(get_num_variables)
 
     def get_variable(self):
         """Returns an array of initial condition variables."""
         return np.array([inc.variable for inc in self._blocklist])
-    def set_variable(self,val):
+    def set_variable(self, val):
         """Sets all initial condition variables to values in an array."""
-        for i,inc in enumerate(self._blocklist): inc.variable=val[i]
-    variable=property(get_variable,set_variable)
+        for i, inc in enumerate(self._blocklist): inc.variable = val[i]
+    variable = property(get_variable, set_variable)
 
     def get_porosity(self):
         """Returns an array of porosities for each block."""
         return np.array([inc.porosity for inc in self._blocklist])
-    def set_porosity(self,por):
-        if isinstance(por,np.ndarray):
-            if len(por)==self.num_blocks: 
-                for i,p in enumerate(por): self._blocklist[i].porosity=p
-            else: raise Exception('Porosity array is the wrong length ('+str(len(por))+').')
-        elif isinstance(por,float) or (por==None):
-            for blk in self._blocklist: blk.porosity=por
-    porosity=property(get_porosity,set_porosity)
+    def set_porosity(self, por):
+        if isinstance(por, np.ndarray):
+            if len(por) == self.num_blocks:
+                for i, p in enumerate(por): self._blocklist[i].porosity = p
+            else:
+                raise Exception('Porosity array is the wrong length (' + \
+                                str(len(por)) + ').')
+        elif isinstance(por, float) or (por == None):
+            for blk in self._blocklist: blk.porosity = por
+    porosity = property(get_porosity, set_porosity)
 
     def get_permeability(self):
         """Returns an array of permeabilities for each block."""
@@ -113,39 +121,43 @@ class t2incon(object):
             if shape == (3,):
                 from copy import copy
                 for blk in self._blocklist: blk.permeability = copy(perm)
-            elif shape == (self.num_blocks,3):
-                for i,p in enumerate(perm): self._blocklist[i].permeability = p
-            else: raise Exception('Permeability array is the wrong shape ('+str(shape)+').')
+            elif shape == (self.num_blocks, 3):
+                for i, p in enumerate(perm): self._blocklist[i].permeability = p
+            else:
+                raise Exception('Permeability array is the wrong shape (' + \
+                                str(shape) + ').')
         elif isinstance(perm, float):
-            for blk in self._blocklist: blk.permeability = perm*np.ones(3)
+            for blk in self._blocklist:
+                blk.permeability = perm * np.ones(3)
         elif perm == None:
-            for blk in self._blocklist: blk.permeability = None
+            for blk in self._blocklist:
+                blk.permeability = None
 
-    porosity = property(get_porosity,set_porosity)
+    porosity = property(get_porosity, set_porosity)
     permeability = property(get_permeability, set_permeability)
 
     def get_blocklist(self):
         """Returns an ordered list of blocks."""
         return [inc.block for inc in self._blocklist]
-    blocklist=property(get_blocklist)
+    blocklist = property(get_blocklist)
 
-    def add_incon(self,incon):
+    def add_incon(self, incon):
         """Adds a t2blockincon."""
         if incon.block in self._block:
-            i=self._blocklist.index(self._block[incon.block])
-            self._blocklist[i]=incon
+            i = self._blocklist.index(self._block[incon.block])
+            self._blocklist[i] = incon
         else: self._blocklist.append(incon)
-        self._block[incon.block]=incon
+        self._block[incon.block] = incon
 
-    def insert_incon(self,index,incon):
+    def insert_incon(self, index, incon):
         """Inserts a t2blockincon at the specified index."""
-        self._blocklist.insert(index,incon)
-        self._block[incon.block]=incon
+        self._blocklist.insert(index, incon)
+        self._block[incon.block] = incon
 
-    def delete_incon(self,block):
+    def delete_incon(self, block):
         """Deletes a t2blockincon."""
         if block in self._block:
-            incon=self._block[block]
+            incon = self._block[block]
             del self._block[block]
             self._blocklist.remove(incon)
 
@@ -177,11 +189,14 @@ class t2incon(object):
                             linevals = infile.read_values('incon2')
                             while linevals and linevals[-1] is None: linevals.pop()
                             vals += linevals
-                            more = False if num_variables is None else len(vals) < num_variables
-                        incon = t2blockincon(vals, blkname, porosity, permeability, nseq, nadd)
+                            more = False if num_variables is None else \
+                                   len(vals) < num_variables
+                        incon = t2blockincon(vals, blkname, porosity, permeability,
+                                             nseq, nadd)
                         self.add_incon(incon)
-                    else: raise Exception('Invalid block name (' + blkname + ') in incon file: ' +
-                                          filename)
+                    else:
+                        raise Exception('Invalid block name (' + blkname + \
+                                        ') in incon file: ' + filename)
             else: finished = True
         self.timing = None
         if timing:
@@ -223,39 +238,49 @@ class t2incon(object):
             outfile.write_value_line(self.timing, timing_fmt)
         outfile.close()
 
-    def transfer_from(self,sourceinc,sourcegeo,geo,mapping={},colmapping={}):
-        """Transfers initial conditions from another t2incon object, using the two corresponding geometry objects, and the
-        optionally specified block and column mappings between them (these are created if not specified).  If there are 
-        no atmosphere blocks in the source initial conditions, default atmosphere conditions are assigned if necessary."""
+    def transfer_from(self, sourceinc, sourcegeo, geo, mapping = {}, colmapping = {}):
+        """Transfers initial conditions from another t2incon object, using the
+        two corresponding geometry objects, and the optionally
+        specified block and column mappings between them (these are
+        created if not specified).  If there are no atmosphere blocks
+        in the source initial conditions, default atmosphere
+        conditions are assigned if necessary.
+        """
         self.empty()
-        if (colmapping=={}) or (mapping=={}): mapping,colmapping = sourcegeo.block_mapping(geo,True)
+        if (colmapping == {}) or (mapping == {}):
+            mapping, colmapping = sourcegeo.block_mapping(geo, True)
         from copy import copy
         # atmosphere blocks:
-        default_atm_incons=t2blockincon([1.013e5,20.])
-        if geo.atmosphere_type==0: # single atmosphere block
-            atmblk=geo.block_name(geo.layerlist[0].name,geo.atmosphere_column_name)
-            if sourcegeo.atmosphere_type==0: self[atmblk]=copy(sourceinc[0])
-            elif sourcegeo.atmosphere_type==1: # take average over source column atmosphere incons
-                varsum=np.zeros(len(sourceinc[0].variable))
+        default_atm_incons = t2blockincon([1.013e5, 20.])
+        if geo.atmosphere_type == 0: # single atmosphere block
+            atmblk = geo.block_name(geo.layerlist[0].name, geo.atmosphere_column_name)
+            if sourcegeo.atmosphere_type == 0: self[atmblk] = copy(sourceinc[0])
+            elif sourcegeo.atmosphere_type == 1:
+                # take average over source column atmosphere incons
+                varsum = np.zeros(len(sourceinc[0].variable))
                 for col in sourcegeo.columnlist:
-                    blk=sourcegeo.block_name(sourcegeo.layerlist[0].name,col.name)
+                    blk = sourcegeo.block_name(sourcegeo.layerlist[0].name, col.name)
                     varsum+=np.array(sourceinc[blk].variable)
-                self[atmblk]=t2blockincon(varsum/sourcegeo.num_columns)
-            else: self[atmblk]=copy(default_atm_incons)
-        elif geo.atmosphere_type==1: # atmosphere block over each column
-            if sourcegeo.atmosphere_type==0: # broadcast single source atmosphere incons to each column
+                self[atmblk] = t2blockincon(varsum / sourcegeo.num_columns)
+            else: self[atmblk] = copy(default_atm_incons)
+        elif geo.atmosphere_type == 1:
+            # atmosphere block over each column
+            if sourcegeo.atmosphere_type == 0:
+                # broadcast single source atmosphere incons to each column
                 for col in geo.columnlist:
-                    blk=geo.block_name(geo.layerlist[0].name,col.name)
-                    self[blk]=copy(sourceinc[0])
-            elif sourcegeo.atmosphere_type==1: # atmosphere over each column in both source and destination
+                    blk = geo.block_name(geo.layerlist[0].name, col.name)
+                    self[blk] = copy(sourceinc[0])
+            elif sourcegeo.atmosphere_type == 1:
+                # atmosphere over each column in both source and destination
                 for col in geo.columnlist:
-                    mappedcol=colmapping[col.name]
-                    oldatmosblockname=sourcegeo.block_name(sourcegeo.layerlist[0].name,mappedcol)
-                    blk=geo.block_name(geo.layerlist[0].name,col.name)
-                    self[blk]=copy(sourceinc[oldatmosblockname])
+                    mappedcol = colmapping[col.name]
+                    oldatmosblockname = sourcegeo.block_name(sourcegeo.layerlist[0].name, mappedcol)
+                    blk = geo.block_name(geo.layerlist[0].name, col.name)
+                    self[blk] = copy(sourceinc[oldatmosblockname])
             else: # use default
                 for col in geo.columnlist:
-                    blk=geo.block_name(geo.layerlist[0].name,col.name)
-                    self[blk]=copy(default_atm_incons)
+                    blk = geo.block_name(geo.layerlist[0].name, col.name)
+                    self[blk] = copy(default_atm_incons)
         # underground blocks:
-        for blk in geo.block_name_list[geo.num_atmosphere_blocks:]: self[blk]=copy(sourceinc[mapping[blk]])
+        for blk in geo.block_name_list[geo.num_atmosphere_blocks:]:
+            self[blk] = copy(sourceinc[mapping[blk]])
