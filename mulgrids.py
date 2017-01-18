@@ -2982,6 +2982,20 @@ class mulgrid(object):
                     len(set(col.node) & bdynodes) >= 2])
     boundary_columns = property(get_boundary_columns)
 
+    def get_grid2d(self):
+        """Returns 2D horizontal nodes and elements for the grid."""
+        z = self.layerlist[0].top
+        nodes = []
+        node_index = {}
+        for i, node in enumerate(self.nodelist):
+            nodes.append(np.array(list(node.pos) + [z]))
+            node_index[node.name] = i
+        elts = []
+        for col in self.columnlist:
+            elt = [node_index[node.name] for node in col.node]
+            elts.append(elt)
+        return nodes, elts
+
     def get_grid3d(self, surface_snap):
         """Returns 3D nodes and elements for the grid. The surface_snap
         parameter is a tolerance determining how close column
@@ -3058,6 +3072,39 @@ class mulgrid(object):
                         elt.append(node_index[above_layer.name, node.name])
                 elt3d.append(elt)
         return node3d, elt3d
+
+    def get_meshio_grid(self, surface_snap = 0.1, dimension = 3):
+        """Returns mesh in meshio (points, cells) format. If dimension = 3,
+        the full 3D mesh is returned. If dimension = 2, the 2D
+        horizontal mesh is returned.
+        """
+        if dimension == 3:
+            nodes, elts = self.get_grid3d(surface_snap)
+            cell_types = {
+                6: 'wedge',
+                8: 'hexahedron'
+            }
+        elif dimension == 2:
+            nodes, elts = self.get_grid2d()
+            cell_types = {
+                3: 'triangle',
+                4: 'quad'
+            }
+        else:
+            raise Exception("Unrecognised dimension (%d)" % dimension)
+        points = np.array(nodes)
+        cells = {}
+        for elt in elts:
+            n = len(elt)
+            if n in cell_types:
+                cell_type = cell_types[n]
+                if cell_type in cells: cells[cell_type].append(elt)
+                else: cells[cell_type] = [elt]
+            else:
+                raise Exception("Unrecognised cell type (nodes: %d)" % n)
+        for cell_type in cells.keys():
+            cells[cell_type] = np.array(cells[cell_type])
+        return points, cells
 
     def get_vtk_grid(self, arrays = {}, surface_snap = 0.1):
         """Returns a vtkUnstructuredGrid object (for visualisation with VTK)
@@ -3301,6 +3348,19 @@ class mulgrid(object):
         if hasattr(writer, 'SetInput'): writer.SetInput(vtu)
         elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
+
+    def write_mesh(self, filename, surface_snap = 0.1, dimension = 3):
+        """Writes mesh file for the grid, with the specified filename. The
+        exported mesh file type is determined from the file extension
+        of the filename. If dimension = 3, the full 3D mesh is
+        written; if dimension = 2, the 2D horizontal mesh is written.
+        """
+        try: import meshio
+        except ImportError:
+            raise Exception("Can't find meshio library- this function " + \
+                            "requires it to be installed.")
+        points, cells = self.get_meshio_grid(surface_snap, dimension)
+        meshio.write(filename, points, cells)
 
     def snap_columns_to_layers(self, min_thickness = 1.0, columns = []):
         """Snaps column surfaces to the bottom of their layers, if the surface
