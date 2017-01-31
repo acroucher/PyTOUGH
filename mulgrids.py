@@ -3073,7 +3073,7 @@ class mulgrid(object):
                 elt3d.append(elt)
         return node3d, elt3d
 
-    def get_meshio_grid(self, surface_snap = 0.1, dimension = 3):
+    def meshio_grid(self, surface_snap = 0.1, dimension = 3):
         """Returns mesh in meshio (points, cells) format. If dimension = 3,
         the full 3D mesh is returned. If dimension = 2, the 2D
         horizontal mesh is returned.
@@ -3359,7 +3359,7 @@ class mulgrid(object):
         except ImportError:
             raise Exception("Can't find meshio library- this function " + \
                             "requires it to be installed.")
-        points, cells = self.get_meshio_grid(surface_snap, dimension)
+        points, cells = self.meshio_grid(surface_snap, dimension)
         meshio.write(filename, points, cells)
 
     def snap_columns_to_layers(self, min_thickness = 1.0, columns = []):
