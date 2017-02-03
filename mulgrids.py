@@ -2982,7 +2982,7 @@ class mulgrid(object):
                     len(set(col.node) & bdynodes) >= 2])
     boundary_columns = property(get_boundary_columns)
 
-    def get_grid2d(self):
+    def grid2d_horizontal(self):
         """Returns 2D horizontal nodes and elements for the grid."""
         z = self.layerlist[0].top
         nodes = []
@@ -2996,7 +2996,54 @@ class mulgrid(object):
             elts.append(elt)
         return nodes, elts
 
-    def get_grid3d(self, surface_snap):
+    def grid2d_vertical(self, line):
+        """Returns 2D vertical slice nodes and elements for the grid. Any
+        specified column surface elevations are not taken into
+        account."""
+        nodes, elts = [], []
+        if line is None:
+            l = self.bounds
+        elif isinstance(line, str):
+            axislines = {'x':[np.array([self.bounds[0][0], self.centre[1]]),
+                              np.array([self.bounds[1][0], self.centre[1]])],
+                         'y':[np.array([self.centre[0], self.bounds[0][1]]),
+                              np.array([self.centre[0], self.bounds[1][1]])]}
+            if line in axislines: l = axislines[line]
+            else: l = self.bounds
+        elif isinstance(line, (float, int)):
+            r = 0.5 * norm(self.bounds[1] - self.bounds[0])
+            from math import radians, cos, sin
+            theta = radians(line)
+            d = r * np.array([sin(theta), cos(theta)])
+            l = [self.centre - d, self.centre + d]
+        else: l = line
+        if norm(l[1] - l[0]) > 0.0:
+            track = self.column_track(l)
+            if track:
+                node_d = []
+                for itrack, trackitem in enumerate(track):
+                    points = trackitem[1:]
+                    inpoint = points[0]
+                    if len(points) > 1: outpoint = points[1]
+                    else: outpoint = inpoint
+                    if line == 'x': din, dout = inpoint[0], outpoint[0]
+                    elif line == 'y': din, dout = inpoint[1], outpoint[1]
+                    else: din, dout = norm(inpoint - l[0]), norm(outpoint - l[0])
+                    if itrack == 0: node_d.append(din)
+                    node_d.append(dout)
+                for lay in self.layerlist:
+                    for d in node_d:
+                        nodes.append(np.array([d, 0., lay.bottom]))
+                n = len(track)
+                for ilay, lay in enumerate(self.layerlist[1:]):
+                    for icol in range(n):
+                        off = ilay * (n + 1)
+                        elt = [off + icol + n + 1, off + icol + n + 2,
+                               off + icol + 1, off + icol]
+                        elts.append(elt)
+        return nodes, elts
+
+    def grid3d(self, surface_snap):
         """Returns 3D nodes and elements for the grid. The surface_snap
         parameter is a tolerance determining how close column
         elevations have to be to be considered 'equal'.
@@ -3073,19 +3120,21 @@ class mulgrid(object):
                 elt3d.append(elt)
         return node3d, elt3d
 
-    def meshio_grid(self, surface_snap = 0.1, dimension = 3):
+    def meshio_grid(self, surface_snap = 0.1, dimension = 3, slice = None):
         """Returns mesh in meshio (points, cells) format. If dimension = 3,
         the full 3D mesh is returned. If dimension = 2, the 2D
-        horizontal mesh is returned.
+        horizontal mesh is returned, unless a slice is specified, in
+        which case a 2D vertical slice mesh is returned.
         """
         if dimension == 3:
-            nodes, elts = self.get_grid3d(surface_snap)
+            nodes, elts = self.grid3d(surface_snap)
             cell_types = {
                 6: 'wedge',
                 8: 'hexahedron'
             }
         elif dimension == 2:
-            nodes, elts = self.get_grid2d()
+            if slice is None: nodes, elts = self.grid2d_horizontal()
+            else: nodes, elts = self.grid2d_vertical(slice)
             cell_types = {
                 3: 'triangle',
                 4: 'quad'
@@ -3114,7 +3163,7 @@ class mulgrid(object):
         from vtk import vtkUnstructuredGrid, vtkPoints, vtkIdList, \
             vtkWedge, vtkHexahedron, vtkPentagonalPrism, \
             vtkHexagonalPrism, vtkConvexPointSet
-        node3d, elt3d = self.get_grid3d(surface_snap)
+        node3d, elt3d = self.grid3d(surface_snap)
         # Construct the VTK grid:
         grid = vtkUnstructuredGrid()
         pts = vtkPoints()
@@ -3349,17 +3398,20 @@ class mulgrid(object):
         elif hasattr(writer, 'SetInputData'): writer.SetInputData(vtu)
         writer.Write()
 
-    def write_mesh(self, filename, surface_snap = 0.1, dimension = 3):
+    def write_mesh(self, filename, surface_snap = 0.1, dimension = 3,
+                   slice = None):
         """Writes mesh file for the grid, with the specified filename. The
         exported mesh file type is determined from the file extension
         of the filename. If dimension = 3, the full 3D mesh is
-        written; if dimension = 2, the 2D horizontal mesh is written.
+        written; if dimension = 2, the 2D horizontal mesh is written,
+        unless a slice is specified, in which case a 2D vertical slice
+        mesh is written.
         """
         try: import meshio
         except ImportError:
             raise Exception("Can't find meshio library- this function " + \
                             "requires it to be installed.")
-        points, cells = self.meshio_grid(surface_snap, dimension)
+        points, cells = self.meshio_grid(surface_snap, dimension, slice)
         meshio.write(filename, points, cells)
 
     def snap_columns_to_layers(self, min_thickness = 1.0, columns = []):
