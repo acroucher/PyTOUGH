@@ -3033,7 +3033,7 @@ class mulgrid(object):
                     node_d.append(dout)
                 for lay in self.layerlist:
                     for d in node_d:
-                        nodes.append(np.array([d, 0., lay.bottom]))
+                        nodes.append(np.array([d, lay.bottom, 0.]))
                 n = len(track)
                 for ilay, lay in enumerate(self.layerlist[1:]):
                     for icol in range(n):
