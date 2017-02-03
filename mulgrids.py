@@ -2471,7 +2471,7 @@ class mulgrid(object):
                 for trackitem in track:
                     col, points = trackitem[0], trackitem[1:]
                     inpoint = points[0]
-                    if len(points) > 1: outpoint=points[1]
+                    if len(points) > 1: outpoint = points[1]
                     else: outpoint = inpoint
                     if line == 'x':
                         din, dout = inpoint[0], outpoint[0]
