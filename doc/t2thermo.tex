@@ -209,22 +209,24 @@ from t2thermo import *
 geo = mulgrid('gmodel.dat')
 
 patm, tatm = 101.325e3, 15.0
-pblk = np.zeros(geo.num_blocks) + patm
-tblk = np.zeros(geo.num_blocks) + tatm
+ptblk = np.zeros((geo.num_blocks, 2))
+ptblk[:,0] = patm; ptblk[:,1] = tatm
+
 g = 9.8
 p, t = patm, tatm
 thick = 0.0
 tgradient = 30 # deg C/km
 for lay in geo.layerlist[1:]:
     d = cowat(t, p)[0]
-    thisthick = lay.top-lay.bottom
-    h = 0.5*(thick+thisthick)
-    p += d*g*h
-    t += tgradient/1.e3*h
+    thisthick = lay.top - lay.bottom
+    h = 0.5 * (thick + thisthick)
+    p += d * g * h
+    t += tgradient / 1.e3 * h
     thick = thisthick
     for col in geo.columnlist:
         blkname = geo.block_name(lay.name, col.name)
         iblk = geo.block_name_index[blkname]
-        pblk[iblk], tblk[iblk] = p, t
-geo.write_incons('model.incon', [pblk, tblk])
+        ptblk[iblk] = [p, t]
+inc = dat.grid.incons(ptblk)
+inc.write('model.incon')
 \end{lstlisting}

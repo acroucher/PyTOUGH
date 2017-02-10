@@ -1059,9 +1059,10 @@ class t2listing(object):
                         ts = tselect_short if is_short else tselect
                         for (lineindex, colname, reverse, sel_index) in ts:
                             if lineindex is not None:
-                                for k in range(lineindex - index - 1):
-                                    self._file.readline()
-                                line = self.readline()
+                                if lineindex > index:
+                                    for k in range(lineindex - index - 1):
+                                        self._file.readline()
+                                    line = self.readline()
                                 index = lineindex
                                 vals = self.read_table_line(line, ncols, fmt)
                                 valindex = self._table[tname]._col[colname]
