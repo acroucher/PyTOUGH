@@ -1901,7 +1901,8 @@ class mulgrid(object):
         def find_track_segment(linesegment, pos, col):
             """Finds track segment starting from the specified position and column."""
             track = []
-            cols, more, inpos, colnbr = set(), True, pos, col.neighbourlist
+            cols, more, inpos = set(), True, pos
+            colnbr, nextcol = col.neighbourlist, None
             lined = np.linalg.norm(linesegment[1] - linesegment[0])
             while more:
                 cols.add(col)
