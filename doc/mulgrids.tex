@@ -197,6 +197,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:layer_plot]{\texttt{layer\_plot}} & -- & plots a variable over a layer of the grid\\
   \hyperref[sec:mulgrid:line_plot]{\texttt{line\_plot}} & -- & plots a variable along an arbitrary line through the grid\\
   \hyperref[sec:mulgrid:line_values]{\texttt{line\_values}} & tuple & values of a variable along an arbitrary line through the grid\\
+  \hyperref[sec:mulgrid:meshio_grid]{\texttt{meshio\_grid}} & tuple & mesh in \texttt{meshio} format\\ 
   \hyperref[sec:mulgrid:minc_array]{\texttt{minc\_array}} & array & values for a particular level in a MINC grid\\ 
   \hyperref[sec:mulgrid:nodes_in_columns]{\texttt{nodes\_in\_columns}} & list & nodes in a specified list of columns\\ 
   \hyperref[sec:mulgrid:nodes_in_polygon]{\texttt{nodes\_in\_polygon}} & list & nodes inside a specified polygon (or rectangle)\\ 
@@ -219,6 +220,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:write]{\texttt{write}} & -- & writes to geometry file on disk\\
   \hyperref[sec:mulgrid:write_bna]{\texttt{write\_bna}} & -- & writes to Atlas BNA file on disk\\ 
   \hyperref[sec:mulgrid:write_exodusii]{\texttt{write\_exodusii}} &  -- & writes to ExodusII file on disk\\
+  \hyperref[sec:mulgrid:write_mesh]{\texttt{write\_mesh}} &  -- & writes to mesh file (various formats) on disk\\
   \hyperref[sec:mulgrid:write_vtk]{\texttt{write\_vtk}} &  -- & writes to VTK file on disk\\
   \hline
   \caption{Methods of a \texttt{mulgrid} object}
@@ -1009,6 +1011,24 @@ The routine returns a tuple of two arrays (\emph{l},\emph{v}), the first (\emph{
   Quadtree object for fast searching of grid columns (can be constructed using the \texttt{column\_quadtree()} method).
 \end{itemize}
 
+\begin{snugshade}\subsubsection{\texttt{meshio\_grid(\emph{surface\_snap} = 0.1, \emph{dimension} = 3, \emph{slice} = \texttt{None})}}\end{snugshade}
+\label{sec:mulgrid:meshio_grid}
+\index{MULgraph geometry!meshio grid}
+
+Returns mesh corresponding to the geometry, in the format used by the \texttt{meshio} library (\url{https://pypi.python.org/pypi/meshio}). This consists of a two-element tuple: firstly, an \texttt{np.array} of nodal coordinates, and secondly a dictionary of element definitions, indexed by number of nodes in the elements.
+
+The primary use of this is as an interchange format for input/output of meshes in different formats. Note that exporting the geometry directly to a mesh file can also be done using the \hyperref[sec:mulgrid:write_mesh]{\texttt{write\_mesh()}} method (which is just a wrapper for this one).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{surface\_snap}: float\\
+  Tolerance for eliminating elements with very small vertical thickness at the top of the mesh.
+\item \textbf{dimension}: integer\\
+  Dimension of the mesh: when set to 3, return the full 3-D mesh. When set to 2, return a 2-D mesh, corresponding either to the horizontal mesh only (the default), or a vertical slice mesh if the \texttt{slice} parameter is used.
+\item \textbf{slice}: list, string, float or \texttt{None}\\
+  Horizontal line defining the slice for vertical 2-D meshes. This can be a list of two horizontal (\emph{x},\emph{y}) points (\texttt{np.arrays}) defining the endpoints of the slice line, or string `x' or `y' to specify the \emph{x}- or \emph{y}-axis, or northing (float) through grid centre. If set to \texttt{None} (the default) then the horizontal 2-D mesh is returned.
+\end{itemize}
+
 \begin{snugshade}\subsubsection{\texttt{minc\_array(\emph{vals}, \emph{minc\_indices}, \emph{level}=0, \emph{outside}=0.0)}}\end{snugshade}
 \label{sec:mulgrid:minc_array}
 \index{MULgraph geometry!MINC arrays}
@@ -1547,6 +1567,30 @@ Writes a \texttt{mulgrid} object to an ExodusII file on disk, for visualisation 
   Data arrays to be included in the ExodusII file.  If set to \texttt{None}, default arrays (block name, layer index, column index, column area, column elevation, block number and volume) are included.
 \item \textbf{blockmap}: dictionary\\
   Dictionary mapping the block names in the geometry to another block naming system.
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{write\_mesh(\emph{filename}, \emph{surface\_snap} = 0.1, \emph{dimension} = 3, \emph{slice} = \texttt{None})}}\end{snugshade}
+\label{sec:mulgrid:write_mesh}
+\index{MULgraph geometry!writing!mesh files}
+
+Writes a \texttt{mulgrid} object to a mesh file on disk, with the specific format determined by the file extension of the specified filename. This method uses the \texttt{meshio} library:
+
+\url{https://pypi.python.org/pypi/meshio}
+
+which must be installed on your machine, and supports various mesh output formats including Dolfin XML, ExodusII, MSH, VTK, XDMF and others. The \texttt{meshio} library may be installed from PyPI (using e.g. \texttt{pip install meshio}).
+
+Note that many of these formats do not support columns with more than four sides.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{filename}: string\\
+  Name of the mesh file to be written. The mesh output format is determined from the file extension (see the \texttt{meshio} documentation for details).
+\item \textbf{surface\_snap}: float\\
+  Tolerance for eliminating elements with very small vertical thickness at the top of the mesh (3-D meshes only).
+\item \textbf{dimension}: integer\\
+  Dimension of the mesh: when set to 3 (the default), write the full 3-D mesh. When set to 2, write a 2-D mesh, corresponding either to the horizontal mesh only (the default), or a vertical slice mesh if the \texttt{slice} parameter is used.
+\item \textbf{slice}: list, string, float or \texttt{None}\\
+  Horizontal line defining the slice for vertical 2-D meshes. This can be a list of two horizontal (\emph{x},\emph{y}) points (\texttt{np.arrays}) defining the endpoints of the slice line, or string `x' or `y' to specify the \emph{x}- or \emph{y}-axis, or northing (float) through grid centre. If set to \texttt{None} (the default) then the horizontal 2-D mesh is written.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False, \emph{blockmap}=\{\}, \\
