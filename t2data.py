@@ -356,8 +356,8 @@ class t2data(object):
              self.output_times,
              self.selection,
              self.diffusion,
-             self.grid and self.grid.blocklist,
-             self.grid and self.grid.connectionlist,
+             self.grid,
+             self.grid,
              self.meshmaker,
              self.generatorlist,
              self.short_output,
@@ -746,8 +746,8 @@ class t2data(object):
         while infile.readline().strip(): pass
 
     def write_blocks(self, outfile):
+        outfile.write('ELEME\n')
         if self.grid.num_blocks > 0:
-            outfile.write('ELEME\n')
             from copy import copy
             for blk in self.grid.blocklist:
                 blkw = copy(blk.__dict__)
@@ -758,7 +758,7 @@ class t2data(object):
                             blk.rocktype.name, blk.volume,
                             blk.ahtx, blk.pmx] + list(blk.centre)
                     outfile.write_values(vals, 'blocks')
-            outfile.write('\n')
+        outfile.write('\n')
 
     def read_connections(self, infile):
         """Reads grid connections"""
@@ -783,15 +783,15 @@ class t2data(object):
         while infile.readline().strip(): pass
 
     def write_connections(self, outfile):
+        outfile.write('CONNE\n')
         if self.grid.num_connections > 0:
-            outfile.write('CONNE\n')
             for con in self.grid.connectionlist:
                 vals = [unfix_blockname(con.block[0].name),
                         unfix_blockname(con.block[1].name),
                         con.nseq, con.nad1, con.nad2, con.direction] + \
                     con.distance + [con.area, con.dircos]
                 outfile.write_values(vals, 'connections')
-            outfile.write('\n')
+        outfile.write('\n')
 
     def add_generator(self, generator = t2generator()):
         """Adds a generator."""
