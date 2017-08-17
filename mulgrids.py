@@ -2059,7 +2059,7 @@ class mulgrid(object):
                 else: flow_scale = 1.e-9
             flow_scale_factor = flow_scale * 10.
             if connection_flows:
-                pivot = 'start'
+                pivot = 'tail'
                 key_str = flow_variable_name + ' = ' + str(flow_scale) + ' ' + flow_unit
             else:
                 pivot = 'middle'
