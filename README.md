@@ -14,15 +14,13 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.4.3, which has:
+The latest stable version is 1.5.0, which has:
 
-* New t2grid reorder() method, for reordering blocks and connections in a grid
+* Python 3 support
 
-* improved generation of 3D grids from mulgrid geometry, e.g. for VTK output
+* Extensive code clean-up, inlcuding more PEP-8-compliant layout everywhere
 
-* new optional output_filename parameter to t2data run() method
-
-* updated user guide instructions on installing Python libraries on Windows (using pip)
+* Exporting mulgrid geometry to various mesh format via meshio library
 
 as well as various bug fixes and other minor enhancements.
 

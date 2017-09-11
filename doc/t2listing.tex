@@ -67,6 +67,11 @@ To skip tables, specify their table names (\texttt{element}, \texttt{connection}
 lst = t2listing('output.listing', skip_tables = ['connection', 'generation'])
 \end{lstlisting}
 
+\subsubsection{File encoding}
+\index{TOUGH2 listing files!file encoding}
+
+It is possible to specify the file encoding for the listing file using the optional \texttt{encoding} parameter when creating the \texttt{t2listing} object. The default for this parameter is ``latin-1'' encoding which should be fine for reading in most listing files. If you encounter exotic characters in your listing files which are not read correctly using the default encoding you may want to try other encodings.
+
 \subsubsection{Full and short output}
 \index{TOUGH2 listing files!short output}
 
