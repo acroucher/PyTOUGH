@@ -619,8 +619,7 @@ class t2grid(object):
 
         justfn = [str.rjust, str.ljust][justify == 'l']
         if case is not None:
-            from string import upper, lower
-            casefn = [upper, lower][case == 'l']
+            casefn = [str.upper, str.lower][case == 'l']
             chars = casefn(chars)
         chars = uniqstring(chars)
 

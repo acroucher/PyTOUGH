@@ -1438,8 +1438,7 @@ class mulgrid(object):
         nxb, nyb = len(xblocks), len(yblocks)
         justfn = [str.rjust, str.ljust][justify == 'l']
         if case is not None:
-            from string import upper, lower
-            casefn = [upper, lower][case == 'l']
+            casefn = [str.upper, str.lower][case == 'l']
             chars = casefn(chars)
         chars = uniqstring(chars)
         # create nodes:
