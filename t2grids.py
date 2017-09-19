@@ -617,8 +617,7 @@ class t2grid(object):
         if isinstance(origin, list): origin = np.array(origin)
         if len(origin) > 2: origin = origin[[0, 2]]
 
-        from string import ljust, rjust
-        justfn = [rjust, ljust][justify == 'l']
+        justfn = [str.rjust, str.ljust][justify == 'l']
         if case is not None:
             from string import upper, lower
             casefn = [upper, lower][case == 'l']
