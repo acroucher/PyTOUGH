@@ -18,12 +18,13 @@ from t2incons import *
 class rocktype(object):
     """Rock type"""
     def __init__(self, name = "dfalt", nad = 0, density = 2600.0, porosity = 0.1,
-                 permeability = 1.0e-15 * np.ones(3), conductivity = 1.5,
+                 permeability = None, conductivity = 1.5,
                  specific_heat = 900.0):
         self.name = name
         self.nad = nad
         self.density = density
         self.porosity = porosity
+        if permeability is None: permeability = np.ones(3) * 1.e-15
         if isinstance(permeability, list): permeability = np.array(permeability)
         self.permeability = permeability
         self.conductivity = conductivity
@@ -39,9 +40,10 @@ class rocktype(object):
 
 class t2block(object):
     """Grid block"""
-    def __init__(self, name = '     ', volume = 1.0, blockrocktype = rocktype(),
+    def __init__(self, name = '     ', volume = 1.0, blockrocktype = None,
                  centre = None, atmosphere = False, ahtx = None, pmx = None,
                  nseq = None, nadd = None):
+        if blockrocktype is None: blockrocktype = rocktype()
         self.name = name
         self.volume = volume
         self.rocktype = blockrocktype
@@ -63,9 +65,11 @@ class t2block(object):
 
 class t2connection(object):
     """Connection between two blocks"""
-    def __init__(self, blocks = [t2block(), t2block()], direction = 1,
-                 distance = [0.0, 0.0], area = 1.0, dircos = 0.0, sigma = None,
+    def __init__(self, blocks = None, direction = 1,
+                 distance = None, area = 1.0, dircos = 0.0, sigma = None,
                  nseq = None, nad1 = None, nad2 = None):
+        if blocks is None: blocks = [t2block(), t2block()]
+        if distance is None: distance = [0.0, 0.0]
         self.block = blocks
         self.direction = direction # permeability direction
         self.distance = distance
@@ -252,8 +256,9 @@ class t2grid(object):
         self.block = {}
         self.connection = {}
 
-    def add_rocktype(self, newrocktype = rocktype()):
+    def add_rocktype(self, newrocktype = None):
         """Adds a rock type to the grid.  Any existing rocktype of the same name is replaced."""
+        if newrocktype is None: newrocktype = rocktype()
         if newrocktype.name in self.rocktype:
             i = self.rocktypelist.index(self.rocktype[newrocktype.name])
             self.rocktypelist[i] = newrocktype
@@ -274,8 +279,9 @@ class t2grid(object):
             if self.rocktype_frequency(rt.name) == 0: unused_rocktypes.append(rt.name)
         for name in unused_rocktypes: self.delete_rocktype(name)
 
-    def add_block(self, newblock = t2block()):
+    def add_block(self, newblock = None):
         """Adds a block to the grid"""
+        if newblock is None: newblock = t2block()
         if newblock.name in self.block:
             i = self.blocklist.index(self.block[newblock.name])
             self.blocklist[i] = newblock
@@ -300,8 +306,9 @@ class t2grid(object):
             i = self.block_index(name)
             self.blocklist.append(self.blocklist.pop(i))
 
-    def add_connection(self, newconnection = t2connection()):
+    def add_connection(self, newconnection = None):
         """Adds a connection to the grid"""
+        if newconnection is None: newconnection = t2connection()
         conname = tuple([blk.name for blk in newconnection.block])
         if conname in self.connection:
             i = self.connectionlist.index(self.connection[conname])
@@ -380,8 +387,9 @@ class t2grid(object):
             self.add_horizontal_layer_connections(geo, lay, layercols, tilt, blockmap)
 
     def add_vertical_layer_connections(self, geo, lay, layercols = [],
-                                       tilt = np.array([0., 0., -1.]), blockmap = {}):
+                                       tilt = None, blockmap = {}):
         """Add vertical connections in layer"""
+        if tilt is None: tilt = np.array([0., 0., -1.])
         for col in layercols:
             thisblk = self.block[geo.block_name(lay.name, col.name, blockmap)]
             if (geo.layerlist.index(lay) == 1) or (col.surface <= lay.top):
@@ -405,8 +413,9 @@ class t2grid(object):
             self.add_connection(con)
 
     def add_horizontal_layer_connections(self, geo, lay, layercols = [],
-                                         tilt = np.array([0., 0., -1.]), blockmap = {}):
+                                         tilt = None, blockmap = {}):
         """Add horizontal connections in layer"""
+        if tilt is None: tilt = np.array([0., 0., -1.])
         from math import cos, sin, radians
         layercolset = set(layercols)
         anglerad = radians(geo.permeability_angle)
@@ -590,7 +599,7 @@ class t2grid(object):
         return A
 
     def radial(self, rblocks, zblocks, convention = 0, atmos_type = 2,
-               origin = np.array([0.,0.]), justify = 'r',
+               origin = None, justify = 'r',
                case = None, dimension = 2, blockmap = {}, chars = ascii_lowercase):
         """Returns a radial TOUGH2 grid with the specified radial and vertical
         block sizes.  The arguments are arrays of the block sizes in
@@ -612,6 +621,7 @@ class t2grid(object):
         in the z direction.
         """
 
+        if origin is None: origin = np.array([0.,0.])
         if isinstance(rblocks, list): rblocks = np.array(rblocks)
         if isinstance(zblocks, list): zblocks = np.array(zblocks)
         if isinstance(origin, list): origin = np.array(origin)

@@ -236,7 +236,9 @@ def vector_heading(p):
 
 class linear_trans2(object):
     """Class for 2D linear transformation (Ax+b)."""
-    def __init__(self, A = np.identity(2), b = np.zeros(2)):
+    def __init__(self, A = None, b = None):
+        if A is None: A = np.identity(2)
+        if b is None: b = np.zeros(2)
         self.A = A
         self.b = b
     def __repr__(self): return repr(self.A) + ' ' + repr(self.b)
@@ -320,11 +322,12 @@ class linear_trans2(object):
         else:
             print('The two points lists must contain the same number of points.')
             return None
-    def rotation(self, angle, centre = np.zeros(2)):
+    def rotation(self, angle, centre = None):
         """Returns a linear transformation representing a rotation by the
         specified angle (degrees clockwise), about an optionally
         specified centre.
         """
+        if centre is None: centre = np.zeros(2)
         T = linear_trans2(b = -centre)
         from math import radians, sin, cos
         angleradians = radians(angle)

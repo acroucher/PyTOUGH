@@ -162,7 +162,10 @@ class t2generator(object):
     def __init__(self, name = '     ', block = '     ',
                  nseq = None, nadd = None, nads = None, type = 'MASS', 
                  ltab = 0, itab = '', gx = 0.0, ex = 0.0, hg = 0.0, fg = 0.0,
-                 time = [], rate = [], enthalpy = []):
+                 time = None, rate = None, enthalpy = None):
+        if time is None: time = []
+        if rate is None: rate = []
+        if enthalpy is None: enthalpy = []
         self.name = name
         self.block = block
         self.nseq, self.nadd, self.nads = nseq, nadd, nads
@@ -793,8 +796,9 @@ class t2data(object):
                 outfile.write_values(vals, 'connections')
         outfile.write('\n')
 
-    def add_generator(self, generator = t2generator()):
+    def add_generator(self, generator = None):
         """Adds a generator."""
+        if generator is None: generator = t2generator()
         self.generatorlist.append(generator)
         self.generator[(generator.block, generator.name)] = self.generatorlist[-1]
 

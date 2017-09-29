@@ -156,7 +156,8 @@ mulgrid_format_specification = {
 
 class node(object):
     """Grid node class"""
-    def __init__(self, name = '   ', pos = np.array([0.0, 0.0])):
+    def __init__(self, name = '   ', pos = None):
+        if pos is None: pos = np.array([0.0, 0.0])
         self.name = name
         if isinstance(pos, (tuple, list)): pos = np.array(pos)
         self.pos = pos
@@ -165,7 +166,8 @@ class node(object):
 
 class column(object):
     """Grid column class"""
-    def __init__(self, name = '   ', node = [], centre = None, surface = None):
+    def __init__(self, name = '   ', node = None, centre = None, surface = None):
+        if node is None: node = []
         self.name = name
         self.node = node
         if centre is None:
@@ -400,7 +402,9 @@ class column(object):
 class connection(object):
     """Column connection class"""
 
-    def __init__(self, col = [column(), column()], nod = [node(), node()]):
+    def __init__(self, col = None, nod = None):
+        if col is None: col = [column(), column()]
+        if nod is None: nod = [node(), node()]
         self.column = col
         self.node = nod
 
@@ -445,7 +449,8 @@ class layer(object):
 class well(object):
     """Well class"""
 
-    def __init__(self, name = '  ', pos = []):
+    def __init__(self, name = '  ', pos = None):
+        if pos is None: pos = []
         self.name = name
         for i, p in enumerate(pos):
             if isinstance(p, (list, tuple)): pos[i] = np.array(p)
@@ -863,9 +868,10 @@ class mulgrid(object):
         return bounds_of_points([node.pos for node in self.nodelist])
     bounds = property(get_bounds)
 
-    def add_node(self, nod = node()):
+    def add_node(self, nod = None):
         """Adds node to the geometry. If a node with the specified name
         already exists in the geometry, no new node is added."""
+        if nod is None: nod = node()
         if nod.name not in self.node:
             self.nodelist.append(nod)
             self.node[nod.name] = self.nodelist[-1]
@@ -876,9 +882,10 @@ class mulgrid(object):
         del self.node[nodename]
         self.nodelist.remove(node)
 
-    def add_column(self, col = column()):
+    def add_column(self, col = None):
         """Adds column to the geometry. If a column with the specified
         name already exists in the geometry, no new column is added."""
+        if col is None: col = column()
         if col.name not in self.column:
             self.columnlist.append(col)
             self.column[col.name] = self.columnlist[-1]
@@ -964,9 +971,10 @@ class mulgrid(object):
         self.layer = {}
         self.layerlist = []
 
-    def add_layer(self, lay = layer()):
+    def add_layer(self, lay = None):
         """Adds layer to the grid. If a layer with the same name
         already exists in the geometry, no new layer is added."""
+        if lay is None: lay = layer()
         if lay.name not in self.layer:
             self.layerlist.append(lay)
             self.layer[lay.name] = self.layerlist[-1]
@@ -991,9 +999,10 @@ class mulgrid(object):
             return True
         except ValueError: return False
 
-    def add_connection(self, con = connection()):
+    def add_connection(self, con = None):
         """Adds connection to the grid. If a connection with the same
         names already exists in the geometry, no new connection is added."""
+        if con is None: con = connection()
         names = (con.column[0].name, con.column[1].name)
         if names not in self.connection:
             self.connectionlist.append(con)
@@ -1025,9 +1034,10 @@ class mulgrid(object):
         del self.connection[colnames]
         self.connectionlist.remove(con)
 
-    def add_well(self, wl = well()):
+    def add_well(self, wl = None):
         """Adds well to the geometry. If a well with the specified name
         already exists in the geometry, no new well is added."""
+        if wl is None: wl = well()
         if wl.name not in self.well:
             self.welllist.append(wl)
             self.well[wl.name] = self.welllist[-1]
@@ -1416,7 +1426,7 @@ class mulgrid(object):
         geo.write('\n')
 
     def rectangular(self, xblocks, yblocks, zblocks,
-                    convention = 0, atmos_type = 2, origin = [0., 0., 0.],
+                    convention = 0, atmos_type = 2, origin = None,
                     justify = 'r', case = None,  chars = ascii_lowercase):
         """Returns a rectangular MULgraph grid with specified block sizes.
         The arguments are arrays of the block sizes in each dimension
@@ -1426,6 +1436,7 @@ class mulgrid(object):
         block names (whether they are right or left justified, and
         lower or upper case).
         """
+        if origin is None: origin = [0., 0., 0.]
         if isinstance(xblocks, (list, tuple)): xblocks = np.array(xblocks)
         if isinstance(yblocks, (list, tuple)): yblocks = np.array(yblocks)
         if isinstance(zblocks, (list, tuple)): zblocks = np.array(zblocks)
