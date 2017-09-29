@@ -76,7 +76,7 @@ class listingtable(object):
                                     list(-self._data[rowindex,:])))
             else: return None
 
-    def __setitem__(self,key,value):
+    def __setitem__(self, key, value):
         if isinstance(key,int): self._data[key,:] = value
         else: self._data[self._row[key],:] = value
 
@@ -88,7 +88,7 @@ class listingtable(object):
         return len(self.row_name)
     num_rows=property(get_num_rows)
 
-    def key_from_line(self,line):
+    def key_from_line(self, line):
         key = [fix_blockname(line[pos: pos + 5]) for pos in self.row_format['key']]
         if len(key) == 1: return key[0]
         else: return tuple(key)
@@ -164,7 +164,8 @@ class t2listing(object):
        set the index, step (model time step number) or time properties
        directly."""
 
-    def __init__(self, filename = None, skip_tables = [], encoding = 'latin-1'):
+    def __init__(self, filename = None, skip_tables = None, encoding = 'latin-1'):
+        if skip_tables is None: skip_tables = []
         self._table = {}
         self._tablenames = []
         self.filename = filename
@@ -202,7 +203,7 @@ class t2listing(object):
             return self._file.readline().decode(self.encoding)
 
     def get_index(self): return self._index
-    def set_index(self,i):
+    def set_index(self, i):
         self._file.seek(self._fullpos[i])
         self._index = i
         if self._index < 0: self._index += self.num_fulltimes
@@ -210,7 +211,7 @@ class t2listing(object):
     index = property(get_index,set_index)
 
     def get_time(self): return self._time
-    def set_time(self,t):
+    def set_time(self, t):
         if t < self.fulltimes[0]: self.index = 0
         elif t > self.fulltimes[-1]: self.index = -1
         else:
@@ -224,7 +225,7 @@ class t2listing(object):
     num_fulltimes = property(get_num_fulltimes)
 
     def get_step(self): return self._step
-    def set_step(self,step):
+    def set_step(self, step):
         if step < self.fullsteps[0]: self.index = 0
         elif step > self.fullsteps[-1]: self.index = -1
         else:
@@ -328,13 +329,13 @@ class t2listing(object):
                         fname_sim = fname_sim.replace('plus','2')
                     setattr(self, fname, getattr(self, fname_sim))
 
-    def table_type_AUTOUGH2(self,keyword):
+    def table_type_AUTOUGH2(self, keyword):
         """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
         keytable = {'EEEEE': 'element', 'CCCCC': 'connection', 'GGGGG': 'generation'}
         if keyword in keytable: return keytable[keyword]
         else: return None
 
-    def table_type_TOUGH2(self,headers):
+    def table_type_TOUGH2(self, headers):
         """Returns TOUGH2 table name based on a tuple of the first three column headings."""
         if headers[0:2] in [('ELEM.','INDEX'),('ELEM.','IND.')]:
             if headers[2] == 'P': return 'element'
@@ -345,7 +346,7 @@ class t2listing(object):
             if headers in keytable: return keytable[headers]
         return None
 
-    def table_type_TOUGHplus(self,headers):
+    def table_type_TOUGHplus(self, headers):
         """Returns TOUGH+ table name based on a tuple of the first three column headings."""
         if headers[0:2] == ('ELEM','INDEX'):
             if headers[2] == 'X1': return 'primary'
@@ -550,7 +551,7 @@ class t2listing(object):
             return self.table_type(headers)
         else: return None
 
-    def skip_to_table_AUTOUGH2(self,tablename,last_tablename,nelt_tables):
+    def skip_to_table_AUTOUGH2(self, tablename, last_tablename, nelt_tables):
         """Skips forwards to headers of table with specified name at the current time."""
         tablechar = tablename[0].upper()
         if self._short[self._index]:
@@ -562,7 +563,7 @@ class t2listing(object):
         self.skip_to_blank()
         self.skip_to_nonblank()
 
-    def skip_to_table_TOUGH2(self,tablename,last_tablename,nelt_tables):
+    def skip_to_table_TOUGH2(self, tablename, last_tablename, nelt_tables):
         if last_tablename is None:
             self.skipto('@@@@@')
             self.skip_to_nonblank()
@@ -572,7 +573,7 @@ class t2listing(object):
             self.skipto('@@@@@')
             tname = self.next_table_TOUGH2()
 
-    def skip_to_table_TOUGHplus(self,tablename,last_tablename,nelt_tables):
+    def skip_to_table_TOUGHplus(self, tablename, last_tablename, nelt_tables):
         if last_tablename is None:
             self.skipto('=====',0)
             self.skip_to_nonblank()
@@ -588,7 +589,7 @@ class t2listing(object):
                 nelt_tables += 1
                 tname += str(nelt_tables)
 
-    def start_of_values(self,line):
+    def start_of_values(self, line):
         """Returns start index of values in a table line.  Characters before
         this start index are taken to contain the key(s) and row index."""
         pt = line.find('.')
@@ -644,7 +645,7 @@ class t2listing(object):
             else: cols[-1] += ' ' + s
         return nkeys,cols
 
-    def setup_table_AUTOUGH2(self,tablename):
+    def setup_table_AUTOUGH2(self, tablename):
         """Sets up table from AUTOUGH2 listing file."""
         keyword = tablename[0].upper()*5
         self.skiplines(3)
@@ -893,7 +894,7 @@ class t2listing(object):
                 nelt_tables += 1
                 tablename += str(nelt_tables)
 
-    def read_table_AUTOUGH2(self,tablename):
+    def read_table_AUTOUGH2(self, tablename):
         fmt = self._table[tablename].row_format
         keyword = tablename[0].upper()*5
         self.skip_to_blank()
@@ -908,25 +909,25 @@ class t2listing(object):
             line = self.readline()
         self._file.readline()
 
-    def skip_table_AUTOUGH2(self,tablename):
+    def skip_table_AUTOUGH2(self, tablename):
         keyword = tablename[0].upper()*5
         self.skip_to_blank()
         line = self.readline()
         while line[1:6] != keyword: line = self.readline()
         self._file.readline()
 
-    def read_table_line_AUTOUGH2(self,line,num_columns=None,fmt=None):
+    def read_table_line_AUTOUGH2(self, line, num_columns = None, fmt = None):
         start = fmt['values'][0]
         vals = [fortran_float(s) for s in line[start:].strip().split()]
         return vals
 
-    def read_table_line_TOUGH2(self,line,num_columns,fmt):
+    def read_table_line_TOUGH2(self, line, num_columns, fmt):
         """Reads values from a line in a TOUGH2 listing, given the number of columns, and format."""
         nvals = len(fmt['values']) - 1
         return [fortran_float(line[fmt['values'][i]: fmt['values'][i+1]])
                 for i in range(nvals)] + [0.0] * (num_columns - nvals)
 
-    def read_table_TOUGH2(self,tablename):
+    def read_table_TOUGH2(self, tablename):
         table = self._table[tablename]
         ncols = table.num_columns
         fmt = table.row_format
@@ -937,7 +938,7 @@ class t2listing(object):
             table[key] = self.read_table_line_TOUGH2(line, ncols, fmt)
             self.skiplines(skip)
 
-    def skip_table_TOUGH2(self,tablename):
+    def skip_table_TOUGH2(self, tablename):
         if tablename in self._table:
             table = self._table[tablename]
             self.skiplines(table.header_skiplines + table.num_rows + sum(table.skiplines))
@@ -1612,7 +1613,7 @@ class toughreact_tecplot(object):
     def __repr__(self): return "TOUGHREACT results for " + str(self.element.num_rows) + " blocks"
 
     def get_index(self): return self._index
-    def set_index(self,i):
+    def set_index(self, i):
         self._file.seek(self._pos[i])
         self._index = i
         if self._index < 0: self._index += self.num_times
@@ -1620,7 +1621,7 @@ class toughreact_tecplot(object):
     index = property(get_index, set_index)
 
     def get_time(self): return self.times[self._index]
-    def set_time(self,t):
+    def set_time(self, t):
         if t < self.times[0]: self.index=0
         elif t > self.times[-1]: self.index = -1
         else:
