@@ -758,7 +758,7 @@ Fits column surface elevations from data, using bilinear least-squares finite el
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
-    \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase)}}\end{snugshade}
+    \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
 \label{sec:mulgrid:from_gmsh}
 \index{MULgraph geometry!importing from \texttt{gmsh}}
 
@@ -778,6 +778,8 @@ Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is grid 
   Elevation of the top surface of the model (default is zero).
 \item \textbf{chars}: string\\
   Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{layer\_containing\_elevation(\emph{elevation})}}\end{snugshade}
@@ -1167,7 +1169,8 @@ geo = mulgrid(filename)
 
 \begin{snugshade}
 \subsubsection{\texttt{rectangular(\emph{xblocks}, \emph{yblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
-    \emph{origin}=[0,0,0], \emph{justify}='r', \emph{case}=None, \emph{chars}=ascii\_lowercase)}}\end{snugshade}
+    \emph{origin}=[0,0,0], \emph{justify}='r', \emph{case}=None, \emph{chars}=ascii\_lowercase),\\
+    \emph{spaces}=\texttt{True}}}\end{snugshade}
 \label{sec:mulgrid:rectangular}
 \index{MULgraph geometry!creating!rectangular}
 
@@ -1190,7 +1193,10 @@ Note that it is also possible to reverse-engineer a rectangular geometry from an
 \item \textbf{case}: string\\
   Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.  Now deprecated - using the \texttt{chars} parameter is more flexible.
 \item \textbf{chars}: string\\
-  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+  Specify a string of characters to be used to form the character part of block names.  For example, to u
+se both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \end{itemize}
 
 \textbf{Example:}
@@ -1215,7 +1221,7 @@ Reduces a grid so that it contains only the specified list of columns (or column
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{refine(\emph{columns}=[], \emph{bisect}=False, \emph{bisect\_edge\_columns}=[],\\
-    \emph{chars} = ascii\_lowercase)}}\end{snugshade}
+    \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
 \label{sec:mulgrid:refine}
 \index{MULgraph geometry!refining!columns}
 \index{MULgraph geometry!columns!refining}
@@ -1236,10 +1242,12 @@ The \texttt{bisect\_edge\_columns} parameter can be used to give more desirable 
     List of columns or column names in the transition region (just outside the refinement area) to be bisected prior to the refinement, to improve the aspect ratios of the transition columns.
   \item \textbf{chars}: string\\
     Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \end{itemize}
 
 \begin{snugshade}
-\subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2, \emph{chars} = ascii\_lowercase)}}\end{snugshade}
+\subsubsection{\texttt{refine\_layers(\emph{layers}=[], \emph{factor}=2, \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
 \label{sec:mulgrid:refine_layers}
 \index{MULgraph geometry!refining!layers}
 \index{MULgraph geometry!layers!refining}
@@ -1254,6 +1262,8 @@ Refines the specified layers in the grid.  If no layers are specified, all layer
     Refinement factor: default is 2, which bisects each layer.
   \item \textbf{chars}: string\\
     Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{rename\_column(\emph{oldcolname}, \emph{newcolname})}}\end{snugshade}

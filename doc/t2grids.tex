@@ -452,7 +452,7 @@ Fracture blocks retain the same block name as their original porous medium block
 
 \begin{snugshade}
 \subsubsection{\texttt{radial(\emph{rblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2, \emph{origin}=[0,0],\\
-    \emph{justify}='r', \emph{case}=None, \emph{dimension}=2, \emph{blockmap}=\{\}, \emph{chars}=ascii\_lowercase)}}
+    \emph{justify}='r', \emph{case}=None, \emph{dimension}=2, \emph{blockmap}=\{\}, \emph{chars}=ascii\_lowercase, \emph{spaces}=\texttt{True})}}
 \end{snugshade}
 \label{sec:t2grid:radial}
 \index{TOUGH2 grids!creating!radial}
@@ -481,6 +481,8 @@ The \texttt{dimension} parameter sets the flow dimension for `generalized radial
   Dictionary mapping the block names in the geometry to the block naming system used in the grid.
 \item \textbf{chars}: string\\
   Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \end{itemize}
 
 Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by creating a `dummy' vertical slice rectangular geometry, using the \texttt{mulgrid} \hyperref[sec:mulgrid:rectangular]{\texttt{rectangular()}} method, using its $x$ direction for radius (and having only one block in the $y$ direction - which is not used).  The \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot()}} method can then be used to plot results.
@@ -488,7 +490,7 @@ Visualization of radial $r-z$ model grids and results can be done in PyTOUGH by 
 \begin{snugshade}
 \subsubsection{\texttt{rectgeo(\emph{origin\_block}=None, \emph{atmos\_volume}=1.e25, \emph{remove\_inactive}=False,\\
     \emph{convention}=0, \emph{atmos\_type}=2, \emph{justify}='r', \emph{chars}=ascii\_lowercase,\\
-    \emph{layer\_snap}=0.1)}}
+    \emph{spaces}=\texttt{True}, \emph{layer\_snap}=0.1)}}
 \end{snugshade}
 \label{sec:t2grid:rectgeo}
 \index{MULgraph geometry!creating!from rectangular TOUGH2 grid}
@@ -521,6 +523,8 @@ The method should work on rectangular TOUGH2 grids that have been translated and
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{chars}: string\\
   Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \item \textbf{layer\_snap}: float\\
   Smallest desired surface block thickness.  Set to a positive value to eliminate surface blocks in the geometry with very small thicknesses (resulting from column surface elevations that are very close to the bottom of a layer).  Default value is 0.1 m. Note that it is not recommended to use a value of zero, as spurious small-thickness surface blocks can arise from rounding errors in reading the data file. If this still occurs, try increasing the snap value until they disappear.
 

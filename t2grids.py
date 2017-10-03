@@ -600,7 +600,8 @@ class t2grid(object):
 
     def radial(self, rblocks, zblocks, convention = 0, atmos_type = 2,
                origin = None, justify = 'r',
-               case = None, dimension = 2, blockmap = {}, chars = ascii_lowercase):
+               case = None, dimension = 2, blockmap = {},
+               chars = ascii_lowercase, spaces = True):
         """Returns a radial TOUGH2 grid with the specified radial and vertical
         block sizes.  The arguments are arrays of the block sizes in
         each dimension (r,z).  Naming convention, atmosphere type and
@@ -658,9 +659,9 @@ class t2grid(object):
         # dummy geometry for creating block names etc:
         geo = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
         for ir, dr in enumerate(rblocks):
-            colname = geo.column_name_from_number(ir + 1, justfn, chars)
+            colname = geo.column_name_from_number(ir + 1, justfn, chars, spaces)
             geo.add_column(column(colname, [], centre = np.array([rc[ir], 0.])))
-        geo.add_layers(zblocks, origin[1], justify, chars)
+        geo.add_layers(zblocks, origin[1], justify, chars, spaces)
         grid.add_atmosphereblocks(geo)
 
         for lay in geo.layerlist[1:]: # add blocks
@@ -741,8 +742,9 @@ class t2grid(object):
         return groups
 
     def rectgeo(self, origin_block = None, atmos_volume = 1.e25, remove_inactive = False,
-                             convention = 0, atmos_type = 2, justify = 'r',
-                             chars = ascii_lowercase, layer_snap = 0.1):
+                convention = 0, atmos_type = 2, justify = 'r',
+                chars = ascii_lowercase, spaces = True,
+                layer_snap = 0.1):
         """For a rectangular grid, returns a mulgrid object representing the
         geometry. The 'origin block' (the block on the bottom layer of
         the grid, at the origin of the permeability direction 1 & 2
@@ -963,7 +965,7 @@ class t2grid(object):
                 nblks = dict([(i, len(spacings[i])) for i in range(1,4)])
                 geo = mulgrid().rectangular(spacings[1], spacings[2], spacings[3],
                                             convention = convention, atmos_type = atmos_type,
-                                            justify = justify, chars = chars)
+                                            justify = justify, chars = chars, spaces = spaces)
                 blockmap = block_mapping(geo, self, ob, nblks, atmos_volume)
                 geo = match_position(geo, self, ob)
                 geo = find_surface(geo, self, blockmap, remove_inactive, atmos_volume)
