@@ -3108,7 +3108,7 @@ class mulgrid(object):
             asort.sort()
             asort = np.array(list(asort) + [asort[-1] + 2. * tol])
             d = np.diff(asort)
-            uniques = asort[d > tol]
+            uniques = asort[np.where(d > tol)]
             nearest = np.array([np.argmin(np.abs(uniques - x)) for x in a])
             groups = [list(np.where(nearest == i)[0]) for i in range(len(uniques))]
             return uniques, groups
