@@ -1567,7 +1567,7 @@ Writes a geometry object to an Atlas BNA file on disk, for visualisation with Su
 
 Writes a \texttt{mulgrid} object to an ExodusII file on disk, for visualisation or export to other software.
 
-(Note: this method uses the VTK-Python library, so you will need that installed on your machine before you can use it.)
+This method uses the VTK-Python library, so you will need that installed on your machine before you can use it. An alternative is to use the \hyperref[sec:mulgrid:write_mesh]{\texttt{write\_mesh}} method instead, which can also write meshes to ExodusII format (as well as others), and does not need the VTK-Python library (though you will need the \texttt{meshio} library).
 
 \textbf{Parameters:}
 \begin{itemize}
