@@ -3436,7 +3436,7 @@ class mulgrid(object):
         writer.Write()
 
     def write_mesh(self, filename, surface_snap = 0.1, dimension = 3,
-                   slice = None):
+                   slice = None, file_format = None):
         """Writes mesh file for the grid, with the specified filename. The
         exported mesh file type is determined from the file extension
         of the filename. If dimension = 3, the full 3D mesh is
@@ -3449,7 +3449,7 @@ class mulgrid(object):
             raise Exception("Can't find meshio library- this function " + \
                             "requires it to be installed.")
         points, cells = self.meshio_grid(surface_snap, dimension, slice)
-        meshio.write(filename, points, cells)
+        meshio.write(filename, points, cells, file_format = file_format)
 
     def snap_columns_to_layers(self, min_thickness = 1.0, columns = []):
         """Snaps column surfaces to the bottom of their layers, if the surface

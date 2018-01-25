@@ -1579,7 +1579,8 @@ Writes a \texttt{mulgrid} object to an ExodusII file on disk, for visualisation 
   Dictionary mapping the block names in the geometry to another block naming system.
 \end{itemize}
 
-\begin{snugshade}\subsubsection{\texttt{write\_mesh(\emph{filename}, \emph{surface\_snap} = 0.1, \emph{dimension} = 3, \emph{slice} = \texttt{None})}}\end{snugshade}
+\begin{snugshade}\subsubsection{\texttt{write\_mesh(\emph{filename}, \emph{surface\_snap} = 0.1, \emph{dimension} = 3, \emph{slice} = \texttt{None}, \\
+      \emph{file\_format} = \texttt{None})}}\end{snugshade}
 \label{sec:mulgrid:write_mesh}
 \index{MULgraph geometry!writing!mesh files}
 
@@ -1594,13 +1595,15 @@ Note that many of these formats do not support columns with more than four sides
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{filename}: string\\
-  Name of the mesh file to be written. The mesh output format is determined from the file extension (see the \texttt{meshio} documentation for details).
+  Name of the mesh file to be written.
 \item \textbf{surface\_snap}: float\\
   Tolerance for eliminating elements with very small vertical thickness at the top of the mesh (3-D meshes only).
 \item \textbf{dimension}: integer\\
   Dimension of the mesh: when set to 3 (the default), write the full 3-D mesh. When set to 2, write a 2-D mesh, corresponding either to the horizontal mesh only (the default), or a vertical slice mesh if the \texttt{slice} parameter is used.
 \item \textbf{slice}: list, string, float or \texttt{None}\\
   Horizontal line defining the slice for vertical 2-D meshes. This can be a list of two horizontal (\emph{x},\emph{y}) points (\texttt{np.arrays}) defining the endpoints of the slice line, or string `x' or `y' to specify the \emph{x}- or \emph{y}-axis, or northing (float) through grid centre. If set to \texttt{None} (the default) then the horizontal 2-D mesh is written.
+\item \textbf{file\_format}: string or \texttt{None}\\
+  File format for mesh output. If \texttt{None}, the file format will be decided from the filename extension (e.g. if the filename is `mesh.exo' then the mesh will be written in ExodusII format). See the \texttt{meshio} documentation for details.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{write\_vtk(\emph{filename}='', \emph{arrays}=None, \emph{wells}=False, \emph{blockmap}=\{\}, \\
