@@ -64,6 +64,7 @@ The details of all the \texttt{t2data} properties are given below.
       \hyperref[sec:t2data:lineq]{\texttt{lineq}} & dictionary & linear equation solver options (AUTOUGH2 only) & LINEQ\\
       \hyperref[sec:t2data:meshfilename]{\texttt{meshfilename}} & string or tuple & file name(s) on disk containing mesh data & --\\
       \hyperref[sec:t2data:meshmaker]{\texttt{meshmaker}} & list & mesh generation options & MESHM\\
+      \hyperref[sec:t2data:more_options]{\texttt{more\_option}} & array of integer & additional parameter options & MOMOP\\
       \hyperref[sec:t2data:multi]{\texttt{multi}} & dictionary & EOS configuration & MULTI\\
       \hyperref[sec:t2data:noversion]{\texttt{noversion}} & Boolean & suppressing printing of version summary & NOVER\\
       \hyperref[sec:t2data:num_generators]{\texttt{num\_generators}} & integer & number of generators & --\\
@@ -368,6 +369,14 @@ Possible sub-section types for \texttt{rz2d} data are \texttt{radii}, \texttt{eq
     \label{tb:minc}
   \end{center}
 \end{table}
+
+\begin{snugshade}
+\subsubsection{\texttt{more\_option} property}
+\end{snugshade}
+\label{sec:t2data:more_options}
+\index{TOUGH2 data files!simulation parameters}
+
+An array property containing additional integer parameter options, corresponding to the \textbf{MOMOP} input block in a TOUGH2 data file (it is not recognised by AUTOUGH2). Introduced by iTOUGH2, this is an extension of the \texttt{parameter.option} property. It is of length 21 and is populated with zeros by default. Like the \texttt{parameter.option} property, values are accessed using 1-based (not zero-based) indices.
 
 \begin{snugshade}
 \subsubsection{\texttt{multi} property}

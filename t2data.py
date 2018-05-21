@@ -42,6 +42,7 @@ t2data_format_specification = {
     'param3': [['relative_error', 'absolute_error', 'pivot', 'upstream_weight',
                'newton_weight', 'derivative_increment'],
               ['10.4e'] * 6],
+    '_more_option_str': [['_more_option_str'], ['21s']],
     'timestep': [['timestep'] * 8, ['10.4e'] * 8],
     'multi': [['num_components', 'num_equations', 'num_phases',
                'num_secondary_parameters', 'num_inc'],  ['5d'] * 5],
@@ -209,7 +210,7 @@ default_parameters = {
     'default_incons': []}
 
 t2data_sections = [
-    'SIMUL', 'ROCKS', 'PARAM', 'START', 'NOVER', 'RPCAP',
+    'SIMUL', 'ROCKS', 'PARAM', 'MOMOP', 'START', 'NOVER', 'RPCAP',
     'LINEQ', 'SOLVR', 'MULTI', 'TIMES', 'SELEC', 'DIFFU',
     'ELEME', 'CONNE', 'MESHM', 'GENER', 'SHORT', 'FOFT',
     'COFT', 'GOFT', 'INCON', 'INDOM']
@@ -226,6 +227,8 @@ class t2data(object):
         self.title = ''
         self.simulator = ''
         self.parameter = deepcopy(default_parameters)
+        self._more_option_str = '0' * 21,
+        self.more_option = np.zeros(22, int8)
         self.multi = {}
         self.start = False
         self.relative_permeability = {}
@@ -286,6 +289,7 @@ class t2data(object):
                 [self.read_simulator,
                  self.read_rocktypes,
                  self.read_parameters,
+                 self.read_more_options,
                  self.read_start,
                  self.read_noversion,
                  self.read_rpcap,
@@ -311,6 +315,7 @@ class t2data(object):
                 [self.write_simulator,
                  self.write_rocktypes,
                  self.write_parameters,
+                 self.write_more_options,
                  self.write_start,
                  self.write_noversion,
                  self.write_rpcap,
@@ -350,6 +355,7 @@ class t2data(object):
             [self.simulator,
              self.grid and self.grid.rocktypelist,
              self.parameter,
+             np.any(self.more_option),
              self.start,
              self.noversion,
              self.relative_permeability or self.capillarity,
@@ -636,6 +642,18 @@ class t2data(object):
             if len(vals) < 4: vals += [None] * (4 - len(vals))
             outfile.write_values(vals, 'default_incons')
 
+    def read_more_options(self, infile):
+        """Reads additional parameter options"""
+        infile.read_value_line(self.__dict__, '_more_option_str')
+        momops = self._more_option_str.rstrip().ljust(21).replace(' ', '0')
+        self.more_option = np.array([0] + [int(mop) for mop in momops], int8)
+        
+    def write_more_options(self, outfile):
+        """Writes additional parameter options"""
+        outfile.write('MOMOP\n')
+        self._more_option_str = ''.join([str(m) for m in self.more_option[1:]])
+        outfile.write_value_line(self.__dict__, '_more_option_str')
+        
     def read_timesteps(self, infile):
         """Reads time step sizes from file"""
         if self.parameter['const_timestep'] >= 0.0:
