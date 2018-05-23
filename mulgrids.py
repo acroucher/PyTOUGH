@@ -3247,6 +3247,9 @@ class mulgrid(object):
             'Block number': vtkIntArray(),
             'Volume': vtkFloatArray()},
                   'Node': {}}
+        # SetTupleValue() was changed to SetTypedTuple() in VTK 7.1:
+        if hasattr(vtkCharArray, 'SetTupleValue'):
+            arrays['Block']['Name'].SetTypedTuple = arrays['Block']['Name'].SetTupleValue
         nele = self.num_underground_blocks
         string_properties = ['Name']
         string_length = 5
@@ -3266,7 +3269,7 @@ class mulgrid(object):
             layname, colname = self.layer_name(blockname), self.column_name(blockname)
             lay, col = self.layer[layname], self.column[colname]
             mapped_name = blockmap[blockname] if blockname in blockmap else blockname
-            arrays['Block']['Name'].SetTupleValue(iblk, mapped_name)
+            arrays['Block']['Name'].SetTypedTuple(iblk, mapped_name)
             arrays['Block']['Layer index'].SetValue(iblk, layerindex[layname])
             arrays['Block']['Column index'].SetValue(iblk, colindex[colname])
             arrays['Block']['Column area'].SetValue(iblk, col.area)
@@ -3394,12 +3397,15 @@ class mulgrid(object):
                 i += 1
             grid.InsertNextCell(VTK_POLY_LINE, ids)
         namearray = vtkCharArray()
+        # SetTupleValue() was changed to SetTypedTuple() in VTK 7.1:
+        if hasattr(vtkCharArray, 'SetTupleValue'):
+            namearray.SetTypedTuple = namearray.SetTupleValue
         string_length = 5
         namearray.SetName('Name')
         namearray.SetNumberOfComponents(string_length)
         namearray.SetNumberOfTuples(self.num_wells)
         for i, well in enumerate(self.welllist):
-            namearray.SetTupleValue(i, well.name)
+            namearray.SetTypedTuple(i, well.name)
         grid.GetCellData().AddArray(namearray)
         return grid
 

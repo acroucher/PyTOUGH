@@ -515,6 +515,9 @@ class t2grid(object):
         from vtk import vtkIntArray, vtkFloatArray, vtkCharArray
         arrays = {'Block':{'Rock type index': vtkIntArray(), 'Porosity': vtkFloatArray(),
                          'Permeability': vtkFloatArray(), 'Name': vtkCharArray()}, 'Node': {}}
+        # SetTupleValue() was changed to SetTypedTuple() in VTK 7.1:
+        if hasattr(vtkCharArray, 'SetTupleValue'):
+            arrays['Block']['Name'].SetTypedTuple = arrays['Block']['Name'].SetTupleValue
         vector_properties = ['Permeability']
         string_properties = ['Name']
         string_length = 5
@@ -537,7 +540,7 @@ class t2grid(object):
         rockdict = dict(zip([blk.name for blk in self.blocklist], rindex))
         for i, blkname in enumerate(geo.block_name_list[natm:]):
             mapped_name = blockmap[blkname] if blkname in blockmap else blkname
-            arrays['Block']['Name'].SetTupleValue(i, mapped_name)
+            arrays['Block']['Name'].SetTypedTuple(i, mapped_name)
             ri = rockdict[mapped_name]
             arrays['Block']['Rock type index'].SetValue(i, ri)
             rt = self.rocktypelist[ri]
