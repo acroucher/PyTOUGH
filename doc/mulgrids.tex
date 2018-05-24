@@ -294,7 +294,7 @@ The optional \texttt{justify} and \texttt{case} parameters control the formattin
 \item \textbf{convention}: integer\\
   Naming convention for grid columns and layers.
 \item \textbf{node\_tolerance}: float or \texttt{None}\\
-  Horizontal tolerance for identifying distinct nodes in the segment file. If a node is read in with horizontal distance from an existing node less than the tolerance, then the two nodes are assumed to be identical. If \texttt{None} (the default), then the tolerance is set to 90\% of the smallest segment length.
+  Horizontal tolerance for identifying distinct nodes in the segment file. If a node is read in with horizontal distance from an existing node less than the tolerance, then the two nodes are assumed to be identical. If \texttt{None} (the default), then the tolerance is set to 90\% of the smallest segment length. If errors are encountered in identifying nodes belonging to the grid columns, it may be worth adjusting this parameter.
 \item \textbf{justify}: string\\
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{chars}: string\\
