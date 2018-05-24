@@ -3971,6 +3971,7 @@ class mulgrid(object):
         to be 2 (no atmosphere blocks)."""
 
         from scipy.spatial import cKDTree
+        thickness_tol = 1.e-3
 
         def parse_layers(filename):
             """Parse AMESH input to identify layer structure."""
@@ -3989,6 +3990,11 @@ class mulgrid(object):
                 if index in layers:
                     layers[index]['block_name'].append(blkname)
                     layers[index]['column_centre'][blkname] = pos
+                    thickness_diff = thickness - layers[index]['thickness']
+                    thickness_err = thickness_diff / layers[index]['thickness']
+                    if abs(thickness_err) > thickness_tol:
+                        raise Exception('Non-constant thickness ' +
+                                        'for layer containing block: ' + blkname)
                 else:
                     layers[index] = {'block_name': [blkname],
                                      'column_centre': {blkname: pos},
