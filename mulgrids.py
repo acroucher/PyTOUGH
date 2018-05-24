@@ -3960,3 +3960,150 @@ class mulgrid(object):
             vals_level = np.ones(self.num_blocks) * outside
         vals_level[minc_indices[0]] = vals[minc_indices[level]]
         return vals_level
+
+    def amesh(self, input_filename = 'in', segment_filename = 'segmt',
+              convention = 0, node_tolerance = None,
+              justify = 'r', chars = ascii_lowercase, spaces = True):
+        """Reads in AMESH input and segment files for a Voronoi mesh and
+        returns a corresponding mulgrid object and block mapping. The
+        block mapping dictionary maps block names in the geometry to
+        block names in the AMESH grid. The atmosphere type is assumed
+        to be 2 (no atmosphere blocks)."""
+
+        from scipy.spatial import cKDTree
+
+        def parse_layers(filename):
+            """Parse AMESH input to identify layer structure."""
+            f = file(filename, 'r')
+            found_locat = False
+            while not found_locat:
+                found_locat = f.readline()[:5] == 'locat'
+            layers = {}
+            line = f.readline()
+            while line.strip():
+                blkname = line[:5]
+                vals = line[5:].split()
+                index, x, y, z, thickness = int(vals[0]), float(vals[1]), float(vals[2]), \
+                                            float(vals[3]), float(vals[4])
+                pos = np.array([x, y])
+                if index in layers:
+                    layers[index]['block_name'].append(blkname)
+                    layers[index]['column_centre'][blkname] = pos
+                else:
+                    layers[index] = {'block_name': [blkname],
+                                     'column_centre': {blkname: pos},
+                                     'thickness': thickness,
+                                     'elevation': z}
+                line = f.readline()
+            layer_names = layers.keys()
+            elevations = np.array([layers[name]['elevation'] for name in layer_names])
+            isort = np.argsort(elevations)[::-1]
+            layers = [layers[layer_names[i]] for i in isort]
+            return layers
+
+        def parse_segments(filename, bottom_layer):
+            """Parse AMESH segment file and return list of 2-D segments, together
+            with the minimum segment length."""
+            from sys import float_info
+            segment_data = []
+            min_segment_length = float_info.max
+            for line in file(filename):
+                x1, y1, x2, y2 = float(line[0: 15]), float(line[15: 30]), \
+                                 float(line[30: 45]), float(line[45: 60])
+                points = (np.array([x1, y1]), np.array([x2, y2]))
+                idx = int(line[60: 63])
+                blocknames = (line[65: 70], line[70: 75])
+                if all([blkname in bottom_layer['block_name'] or blkname.startswith('*')
+                        for blkname in blocknames]):
+                    segment_data.append({'points': points,
+                                         'index': idx, 'blocknames': blocknames})
+                    min_segment_length = min(min_segment_length,
+                                             np.linalg.norm(points[0] - points[1]))
+            return segment_data, min_segment_length
+
+        layers = parse_layers(input_filename)
+        bottom_layer = layers[-1]
+        segment_data, min_segment_length = parse_segments(segment_filename, bottom_layer)
+
+        justfn = [str.rjust, str.ljust][justify == 'l']
+        geo = mulgrid(convention = convention, atmos_type = 2)
+
+        # Add nodes:
+        nodeindex = 1
+        segments = {}
+        for blkname in bottom_layer['block_name']: segments[blkname] = []
+        if node_tolerance is None: node_tolerance = 0.9 * min_segment_length
+        for seg in segment_data:
+            nodes = []
+            for point in seg['points']:
+                new = True
+                if geo.num_nodes > 1:
+                    kdt = cKDTree([n.pos for n in geo.nodelist])
+                    r,i = kdt.query(point)
+                    if r < node_tolerance:
+                        nodes.append(geo.nodelist[i]) # existing node
+                        new = False
+                if new: # new node
+                    name = geo.node_name_from_number(nodeindex, justfn, chars, spaces)
+                    newnode = node(name, point)
+                    geo.add_node(newnode)
+                    nodes.append(newnode)
+                    nodeindex += 1
+            for iname, blockname in enumerate(seg['blocknames']):
+                if not blockname.startswith('*'):
+                    segnodes = nodes if iname == 0 else nodes[::-1]
+                    if segnodes not in segments[blockname]:
+                        segments[blockname].append(segnodes)
+
+        # Add columns:
+        colindex = 1
+        for blockname in bottom_layer['block_name']:
+            segs = segments[blockname]
+            colnodes = segs[0]
+            done = False
+            while not done:
+                nextsegs = [seg for seg in segs if seg[0] == colnodes[-1]]
+                try:
+                    nextseg = nextsegs[0]
+                    if nextseg[-1] == colnodes[0]: done = True
+                    else: colnodes.append(nextseg[-1])
+                except: raise Exception(
+                        "Could not identify column nodes for block :" + blockname)
+            colname = geo.column_name_from_number(colindex, justfn, chars, spaces)
+            colindex += 1
+            pos = bottom_layer['column_centre'][blockname]
+            geo.add_column(column(colname, colnodes, pos))
+
+        # Add layers:
+        top_elevation = layers[0]['elevation'] + 0.5 * layers[0]['thickness']
+        geo.add_layers([lay['thickness'] for lay in layers], top_elevation,
+                       justify, chars, spaces)
+        for geolayer, lay in zip(geo.layerlist[1:], layers):
+            geolayer.centre = lay['elevation']
+
+        geo.set_default_surface()
+        geo.identify_neighbours()
+        geo.check(fix = True, silent = True)
+        geo.setup_block_name_index()
+        geo.setup_block_connection_name_index()
+
+        # compute block mapping:
+        orig_block_names = []
+        orig_centres = []
+        for lay in layers:
+            orig_block_names += lay['block_name']
+            for blkname in lay['block_name']:
+                pos = np.hstack((lay['column_centre'][blkname],
+                                 np.array([lay['elevation']])))
+                orig_centres.append(pos)
+        kdt = cKDTree(orig_centres)
+        blockmap = {}
+        for blkname in geo.block_name_list:
+            layname = geo.layer_name(blkname)
+            colname = geo.column_name(blkname)
+            pos = geo.block_centre(layname, colname)
+            r, i = kdt.query(pos)
+            blockmap[blkname] = orig_block_names[i]
+
+        return geo, blockmap
+
