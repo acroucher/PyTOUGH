@@ -61,7 +61,7 @@ t2data_format_specification = {
               ['5s', '5d', '5d', '5s'] + ['10.4e'] * 3 + ['10.3e'] * 3], 
     'connections': [['block1', 'block2', 'nseq', 'nad1', 'nad2',
                     'direction', 'distance1', 'distance2', 'area', 'dircos', 'sigma'],
-                   ['5s'] * 2 + ['5d'] * 4 + ['10.4e'] * 3 + ['10.7f', '10.4e']],
+                   ['5s'] * 2 + ['5d'] * 4 + ['10.4e'] * 3 + ['10.7f', '10.3e']],
     'generator': [['block', 'name', 'nseq', 'nadd', 'nads', 'ltab',
                   '', 'type', 'itab', 'gx', 'ex', 'hg', 'fg'],
                  ['5s'] * 2 + ['5d'] * 3 + ['5d', '5x', '4s', '1s'] + ['10.3e'] * 4], 
@@ -74,7 +74,7 @@ t2data_format_specification = {
     'solver': [['type', '', 'z_precond', '', 'o_precond', 'relative_max_iterations', 'closure'],
               ['1d', '2x', '2s', '3x', '2s'] + ['10.4e'] * 2], 
     'indom2': [['indom'] * 4, ['20.13e'] * 4], 
-    'diffusion':  [['diff'] * 8, ['10.4e'] * 8],
+    'diffusion':  [['diff'] * 8, ['10.3e'] * 8],
     'selec1': [['int_selec'] * 16, ['5d'] * 16],
     'selec2': [['float_selec'] * 8, ['10.3e'] * 8], 
     'radii1': [['nrad'], ['5d']],
@@ -88,7 +88,7 @@ t2data_format_specification = {
     'xyz3'  : [['deli'] * 8, ['10.4e'] * 8], 
     'minc'  : [['part', 'type', '', 'dual'], ['5s'] * 2 + ['5x', '5s']],
     'part1' : [['num_continua', 'nvol', 'where'] + ['spacing'] * 7,
-               ['3d'] * 2 + ['-4s'] + ['10.4e'] * 7], 
+               ['3d'] * 2 + ['-4s'] + ['10.4e'] * 7],
     'part2' : [['vol'] * 8, ['10.4e'] * 8]
     }
 
