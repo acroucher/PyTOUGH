@@ -285,6 +285,8 @@ The block naming convention for the output \texttt{mulgrid} object can be specif
 
 The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{chars} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
 
+The \texttt{amesh()} method assumes the original AMESH grid has layers of constant thickness (i.e. all blocks in each layer of the AMESH input file have the same specified thickness). Grids with layers of non-constant thickness cannot be represented by a \texttt{mulgrid} object and will cause an exception to be raised.
+
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{input\_filename}: string\\
