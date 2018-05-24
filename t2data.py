@@ -810,7 +810,7 @@ class t2data(object):
                 vals = [unfix_blockname(con.block[0].name),
                         unfix_blockname(con.block[1].name),
                         con.nseq, con.nad1, con.nad2, con.direction] + \
-                    con.distance + [con.area, con.dircos]
+                    con.distance + [con.area, con.dircos, con.sigma]
                 outfile.write_values(vals, 'connections')
         outfile.write('\n')
 
