@@ -3978,7 +3978,7 @@ class mulgrid(object):
             f = file(filename, 'r')
             found_locat = False
             while not found_locat:
-                found_locat = f.readline()[:5] == 'locat'
+                found_locat = f.readline()[:5].lower() == 'locat'
             layers = {}
             line = f.readline()
             while line.strip():
