@@ -3977,30 +3977,35 @@ class mulgrid(object):
             """Parse AMESH input to identify layer structure."""
             f = file(filename, 'r')
             found_locat = False
-            while not found_locat:
-                found_locat = f.readline()[:5].lower() == 'locat'
+            for line in f:
+                found_locat = line[:5].lower() == 'locat'
+                if found_locat: break
+            if not found_locat:
+                raise Exception('Could not find locat block in AMESH input file: ' +
+                                input_filename)
             layers = {}
-            line = f.readline()
-            while line.strip():
-                blkname = line[:5]
-                vals = line[5:].split()
-                index, x, y, z, thickness = int(vals[0]), float(vals[1]), float(vals[2]), \
-                                            float(vals[3]), float(vals[4])
-                pos = np.array([x, y])
-                if index in layers:
-                    layers[index]['block_name'].append(blkname)
-                    layers[index]['column_centre'][blkname] = pos
-                    thickness_diff = thickness - layers[index]['thickness']
-                    thickness_err = thickness_diff / layers[index]['thickness']
-                    if abs(thickness_err) > thickness_tol:
-                        raise Exception('Non-constant thickness ' +
-                                        'for layer containing block: ' + blkname)
-                else:
-                    layers[index] = {'block_name': [blkname],
-                                     'column_centre': {blkname: pos},
-                                     'thickness': thickness,
-                                     'elevation': z}
-                line = f.readline()
+            for line in f:
+                if line.strip():
+                    blkname = line[:5]
+                    vals = line[5:].split()
+                    index = int(vals[0])
+                    x, y, z = float(vals[1]), float(vals[2]), float(vals[3])
+                    pos = np.array([x, y])
+                    thickness = float(vals[4])
+                    if index in layers:
+                        layers[index]['block_name'].append(blkname)
+                        layers[index]['column_centre'][blkname] = pos
+                        thickness_diff = thickness - layers[index]['thickness']
+                        thickness_err = thickness_diff / layers[index]['thickness']
+                        if abs(thickness_err) > thickness_tol:
+                            raise Exception('Non-constant thickness ' +
+                                            'for layer containing block: ' + blkname)
+                    else:
+                        layers[index] = {'block_name': [blkname],
+                                         'column_centre': {blkname: pos},
+                                         'thickness': thickness,
+                                         'elevation': z}
+                else: break
             layer_names = layers.keys()
             elevations = np.array([layers[name]['elevation'] for name in layer_names])
             isort = np.argsort(elevations)[::-1]
