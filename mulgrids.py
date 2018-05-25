@@ -3961,7 +3961,7 @@ class mulgrid(object):
         vals_level[minc_indices[0]] = vals[minc_indices[level]]
         return vals_level
 
-    def amesh(self, input_filename = 'in', segment_filename = 'segmt',
+    def from_amesh(self, input_filename = 'in', segment_filename = 'segmt',
               convention = 0, node_tolerance = None,
               justify = 'r', chars = ascii_lowercase, spaces = True):
         """Reads in AMESH input and segment files for a Voronoi mesh and
