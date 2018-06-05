@@ -4070,21 +4070,23 @@ class mulgrid(object):
         colindex = 1
         for blockname in bottom_layer['block_name']:
             segs = segments[blockname]
-            colnodes = segs[0]
-            done = False
-            while not done:
-                nextsegs = [seg for seg in segs if seg[0] == colnodes[-1]]
-                try:
-                    nextseg = nextsegs[0]
-                    if nextseg[-1] == colnodes[0]: done = True
-                    else: colnodes.append(nextseg[-1])
-                except: raise Exception(
-                        "Could not identify column nodes for block :" + blockname)
-            colname = geo.column_name_from_number(colindex, justfn, chars, spaces)
-            colindex += 1
-            pos = bottom_layer['column_centre'][blockname]
-            geo.add_column(column(colname, colnodes, pos))
-
+            if segs:
+                colnodes = segs[0]
+                done = False
+                while not done:
+                    nextsegs = [seg for seg in segs if seg[0] == colnodes[-1]]
+                    try:
+                        nextseg = nextsegs[0]
+                        if nextseg[-1] == colnodes[0]: done = True
+                        else: colnodes.append(nextseg[-1])
+                    except: raise Exception(
+                            "Could not identify column nodes for block:" + blockname)
+                colname = geo.column_name_from_number(colindex, justfn, chars, spaces)
+                colindex += 1
+                pos = bottom_layer['column_centre'][blockname]
+                geo.add_column(column(colname, colnodes, pos))
+            else: raise Exception(
+                    "No line segments found for block: " + blockname)
         # Add layers:
         top_elevation = layers[0]['elevation'] + 0.5 * layers[0]['thickness']
         geo.add_layers([lay['thickness'] for lay in layers], top_elevation,
