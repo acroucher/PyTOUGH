@@ -635,12 +635,14 @@ class t2data(object):
         self.write_timesteps(outfile)
         outfile.write_value_line(self.parameter, 'param3')
         num_vars = len(self.parameter['default_incons'])
-        nlines = int(ceil(num_vars / 4.))
-        for i in range(nlines):
-            i1, i2 = i * 4, min((i + 1) * 4, num_vars)
-            vals = list(self.parameter['default_incons'][i1: i2])
-            if len(vals) < 4: vals += [None] * (4 - len(vals))
-            outfile.write_values(vals, 'default_incons')
+        if num_vars > 0:
+            nlines = int(ceil(num_vars / 4.))
+            for i in range(nlines):
+                i1, i2 = i * 4, min((i + 1) * 4, num_vars)
+                vals = list(self.parameter['default_incons'][i1: i2])
+                if len(vals) < 4: vals += [None] * (4 - len(vals))
+                outfile.write_values(vals, 'default_incons')
+        else: outfile.write('\n')
 
     def read_more_options(self, infile):
         """Reads additional parameter options"""
