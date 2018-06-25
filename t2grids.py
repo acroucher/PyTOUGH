@@ -1203,7 +1203,7 @@ class t2grid(object):
                         raise Exception("Unknown connection name: " + names)
             self.connectionlist = connectionlist
 
-    def rename_blocks(self, blockmap, fix_blocknames = True):
+    def rename_blocks(self, blockmap = {}, fix_blocknames = True):
         """Rename blocks according to the specified block mapping. The
         connections involving the renamed blocks must also be renamed."""
 
