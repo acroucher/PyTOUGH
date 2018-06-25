@@ -1216,7 +1216,8 @@ class t2grid(object):
                 blk.name = v
                 self.block[v] = blk
 
-        for names, con in self.connection.items():
+        for con in self.connectionlist:
+            names = tuple([blk.name for blk in con.block])
             if any([name in blockmap for name in names]):
                 del self.connection[names]
                 mapped_names = tuple([blockmap[name] if name in blockmap else name
