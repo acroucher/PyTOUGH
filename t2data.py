@@ -1954,3 +1954,52 @@ class t2data(object):
         self.multi['eos'] = eos
         self.convert_TOUGH2_parameters_to_AUTOUGH2(warn, MP)
         self.convert_history_to_short()
+
+    def rename_blocks(self, blockmap = {}, invert = False, fix_blocknames = True):
+        """Rename blocks in TOUGH2 data file according to specified block
+        mapping. The mapping is applied to block names in the grid,
+        initial conditions and generators, print block and history
+        file specifications. If invert is True, the inverse of the
+        specified block mapping is applied.
+        """
+
+        if invert: blockmap = {v:k for k,v in blockmap.items()}
+        if fix_blocknames: fix_block_mapping(blockmap)
+
+        self.grid.rename_blocks(blockmap, fix_blocknames = False)
+
+        if self.incon:
+            for k,v in blockmap.items():
+                if k in self.incon:
+                    inc = self.incon[k]
+                    del self.incon[k]
+                    self.incon[v] = inc
+
+        for gen in self.generatorlist:
+            if gen.block in blockmap:
+                keys = (gen.name, gen.block)
+                del self.generator[keys]
+                gen.block = blockmap[gen.block]
+                newkeys = (gen.name, gen.block)
+                self.generator[newkeys] = gen
+
+        if self.parameter['print_block'] in blockmap:
+            self.parameter['print_block'] = blockmap[self.parameter['print_block']]
+
+        for i, blk in enumerate(history_block):
+            if not isinstance(blk, t2block):
+                if blk in blockmap:
+                    history_block[i] = blockmap[blk]
+
+        for i, con in enumerate(history_connection):
+            if not isinstance(con, t2connection):
+                if any([name in blockmap for name in con]):
+                    mapped_con = tuple([blockmap[name] if name in blockmap else name
+                                          for name in con])
+                    history_connection[i] = mapped_con
+
+        for i, gen in enumerate(history_generator):
+            if not isinstance(gen, t2block):
+                if gen in blockmap:
+                    history_generator[i] = blockmap[gen]
+
