@@ -1986,20 +1986,20 @@ class t2data(object):
         if self.parameter['print_block'] in blockmap:
             self.parameter['print_block'] = blockmap[self.parameter['print_block']]
 
-        for i, blk in enumerate(history_block):
+        for i, blk in enumerate(self.history_block):
             if not isinstance(blk, t2block):
                 if blk in blockmap:
-                    history_block[i] = blockmap[blk]
+                    self.history_block[i] = blockmap[blk]
 
-        for i, con in enumerate(history_connection):
+        for i, con in enumerate(self.history_connection):
             if not isinstance(con, t2connection):
                 if any([name in blockmap for name in con]):
                     mapped_con = tuple([blockmap[name] if name in blockmap else name
                                           for name in con])
-                    history_connection[i] = mapped_con
+                    self.history_connection[i] = mapped_con
 
-        for i, gen in enumerate(history_generator):
+        for i, gen in enumerate(self.history_generator):
             if not isinstance(gen, t2block):
                 if gen in blockmap:
-                    history_generator[i] = blockmap[gen]
+                    self.history_generator[i] = blockmap[gen]
 
