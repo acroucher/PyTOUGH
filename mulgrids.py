@@ -62,6 +62,18 @@ def unfix_blockname(name):
     """The inverse of fix_blockname()."""
     return "%3s%2d" % (name[0:3], int(name[3:5]))
 
+def fix_block_mapping(blockmap):
+    """Fixes block names in specified block mapping."""
+    keys_to_fix = {}
+    for k, v in blockmap.items():
+        fixedk = fix_blockname(k)
+        if k != fixedk: keys_to_fix[k] = fixedk
+        blockmap[k] = fix_blockname(v)
+    for k,v in keys_to_fix.items():
+        item = blockmap[k]
+        del blockmap[k]
+        blockmap[v] = item
+
 def valid_blockname(name):
     """Tests if a 5-character string is a valid blockname.  Allows names
     with the first three characters either letters, numbers, spaces or

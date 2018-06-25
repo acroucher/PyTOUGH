@@ -1207,15 +1207,7 @@ class t2grid(object):
         """Rename blocks according to the specified block mapping. The
         connections involving the renamed blocks must also be renamed."""
 
-        keys_to_fix = {}
-        for k, v in blockmap.items():
-            fixedk = fix_blockname(k)
-            if k != fixedk: keys_to_fix[k] = fixedk
-            blockmap[k] = fix_blockname(v)
-        for k,v in keys_to_fix.items():
-            item = blockmap[k]
-            del blockmap[k]
-            blockmap[v] = item
+        mapping = fix_block_mapping(blockmap)
 
         for k,v in blockmap.items():
             if k in self.block:
