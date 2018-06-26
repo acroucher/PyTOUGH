@@ -1209,20 +1209,23 @@ class t2grid(object):
 
         if fix_blocknames: mapping = fix_block_mapping(blockmap)
 
-        for k,v in blockmap.items():
-            if k in self.block:
-                blk = self.block[k]
-                del self.block[k]
-                blk.name = v
-                self.block[v] = blk
+        for blk in self.blocklist:
+            name = blk.name
+            if name in blockmap:
+                del self.block[name]
+                mapped_name = blockmap[name]
+                self.block[mapped_name] = blk
+                blk.name = mapped_name
+            cons = set()
+            for names in list(blk.connection_name):
+                con = []
+                for name in names:
+                    mapped_name = blockmap[name] if name in blockmap else name
+                    con.append(mapped_name)
+                cons.add(tuple(con))
+            blk.connection_name = cons
 
+        self.connection = {}
         for con in self.connectionlist:
             names = tuple([blk.name for blk in con.block])
-            if any([name in blockmap for name in names]):
-                del self.connection[names]
-                mapped_names = tuple([blockmap[name] if name in blockmap else name
-                                for name in names])
-                self.connection[mapped_names] = con
-                for blk in con.block:
-                    blk.connection_name.remove(names)
-                    blk.connection_name.add(mapped_names)
+            self.connection[names] = con
