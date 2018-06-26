@@ -622,6 +622,7 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
       \hyperref[sec:t2data:delete_orphan_generators]{\texttt{delete\_orphan\_generators}} & -- & deletes orphaned generators\\
       \hyperref[sec:t2data:generator_index]{\texttt{generator\_index}} & integer & returns index of generator with specified name and block name\\
       \hyperref[sec:t2data:read]{\texttt{read}} & \hyperref[datafiles]{\texttt{t2data}} & reads data file from disk\\
+      \hyperref[sec:t2data:rename_blocks]{\texttt{rename\_blocks}} & -- & renames blocks\\
       \hyperref[sec:t2data:run]{\texttt{run}} & -- & runs a TOUGH2 simulation\\
       \hyperref[sec:t2data:specific_generation]{\texttt{specific\_generation}} & \texttt{np.array} & generation per unit volume in each block\\
       \hyperref[sec:t2data:total_generation]{\texttt{total\_generation}} & \texttt{np.array} & total generation in each block\\
@@ -758,6 +759,24 @@ Reads a \texttt{t2data} object from a TOUGH2 data file on disk.  The mesh data m
 \end{itemize}
 
 Note that it is possible to create a \texttt{t2data} object and read its contents in from disk files in one step, e.g.: \texttt{dat = t2data(filename,meshfilename)}.
+
+\begin{snugshade}
+\subsubsection{\texttt{rename\_blocks(\emph{blockmap}=\{\}, \emph{invert}=False, \emph{fix\_blocknames} = True)}}
+\end{snugshade}
+\label{sec:t2data:rename_blocks}
+\index{TOUGH2 data files!renaming blocks}
+
+Renames blocks in the model according to the specified block mapping dictionary. Any block whose name is a key of the block mapping dictionary is renamed with the corresponding dictionary value. The blocks in the \hyperref[t2grids]{\texttt{t2grid}} object are renamed using its own \hyperref[sec:t2grid:rename_blocks]{\texttt{rename\_blocks()}} method. Other \texttt{t2data} properties such as generators, initial conditions and history specifications are similarly renamed.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{blockmap}: dictionary\\
+  Block mapping dictionary, mapping strings to strings.
+\item \textbf{invert}: Boolean\\
+  Set \texttt{True} to invert the block mapping dictionary, i.e. to map its values to its keys. This can be used, for example, to rename the blocks to correspond to a geometry created using the \hyperref[t2grids]{\texttt{t2grid}} \hyperref[sec:t2grid:rectgeo]{\texttt{rectgeo()}} method, via the block mapping dictionary also created by that method.
+\item \textbf{fix\_blocknames}: Boolean\\
+  Set \texttt{True} (the default) to `fix' block names in the dictionary, using the \hyperref[sec:mulgrid:fix_blockname]{\texttt{fix\_blockname()}} function. 
+\end{itemize}
 
 \begin{snugshade}
 \subsubsection{\texttt{run(\emph{save\_filename}='', \emph{incon\_filename}='', \emph{simulator}='AUTOUGH2\_2',\\
