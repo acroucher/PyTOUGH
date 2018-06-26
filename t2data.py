@@ -1977,10 +1977,10 @@ class t2data(object):
 
         for gen in self.generatorlist:
             if gen.block in blockmap:
-                keys = (gen.name, gen.block)
+                keys = (gen.block, gen.name)
                 del self.generator[keys]
                 gen.block = blockmap[gen.block]
-                newkeys = (gen.name, gen.block)
+                newkeys = (gen.block, gen.name)
                 self.generator[newkeys] = gen
 
         if self.parameter['print_block'] in blockmap:
