@@ -190,7 +190,8 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:export_surfer]{\texttt{export\_surfer}} & -- & exports to various files on disk for visualization in Surfer\\ 
   \hyperref[sec:mulgrid:fit_columns]{\texttt{fit\_columns}} & \texttt{np.array} or dictionary & fits scattered data to column centres\\ 
   \hyperref[sec:mulgrid:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
-  \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & imports a grid from a \texttt{gmsh} mesh\\ 
+  \hyperref[sec:mulgrid:from_amesh]{\texttt{from\_amesh}} & (\hyperref[mulgrids]{\texttt{mulgrid}}, dict) & creates Voronoi geometry from AMESH grid\\ 
+  \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & creates geometry from a \texttt{gmsh} grid\\ 
   \hyperref[sec:mulgrid:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
   \hyperref[sec:mulgrid:layer_mapping]{\texttt{layer\_mapping}} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
   \hyperref[sec:mulgrid:layer_name]{\texttt{layer\_name}} & string & layer name of a block name\\ 
@@ -757,12 +758,43 @@ Fits column surface elevations from data, using bilinear least-squares finite el
   Set to \texttt{True} to suppress printing fitting progress.
 \end{itemize}
 
+\begin{snugshade}\subsubsection{\texttt{from\_amesh(\emph{input\_filename}='in', \emph{segment\_filename}='segmt', \emph{convention}=0, \\
+      \emph{node\_tolerance}=None, \emph{justify}='r', \emph{chars}=ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
+\label{sec:mulgrid:from_amesh}
+\index{MULgraph geometry!creating!Voronoi}
+
+Returns a \texttt{mulgrid} object (and a block mapping dictionary) from a Voronoi mesh previously created by the AMESH utility \citep{AMESH}, or by other software that uses AMESH (e.g. WinGridder or Steinar).
+
+The block naming convention for the output \texttt{mulgrid} object can be specified via the \texttt{convention} parameter. Note that in general this may not be the same as the block naming convention of the original mesh created by AMESH. In fact, AMESH can create meshes with block naming conventions that do not correspond to any of the \hyperref[tb:mulgrid_conventions]{MULgraph conventions}. This is why the \texttt{from\_amesh()} method also returns a block mapping dictionary, which maps block names in the \texttt{mulgrid} geometry to the block names in the original AMESH grid.
+
+The optional \texttt{justify} and \texttt{case} parameters control the formatting of the character part of the block names.  Additionally, the characters used to form node/column or layer names can be specified using the \texttt{chars} parameter.  (This can be useful for example for grids with large numbers of nodes and/or columns, for which lowercase letters alone may not be enough.)
+
+The \texttt{from\_amesh()} method assumes the original AMESH grid has layers of constant thickness (i.e. all blocks in each layer of the AMESH input file have the same specified thickness). Grids with layers of non-constant thickness cannot be represented by a \texttt{mulgrid} object and will cause an exception to be raised.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{input\_filename}: string\\
+  Filename for AMESH input file. Default is `in'.
+\item \textbf{segment\_filename}: string\\
+  Filename for AMESH output segment file. Default is `segmt'.
+\item \textbf{convention}: integer\\
+  Naming convention for grid columns and layers.
+\item \textbf{node\_tolerance}: float or \texttt{None}\\
+  Horizontal tolerance for identifying distinct nodes in the segment file. If a node is read in with horizontal distance from an existing node less than the tolerance, then the two nodes are assumed to be identical. If \texttt{None} (the default), then the tolerance is set to 90\% of the smallest segment length. If errors are encountered in identifying nodes belonging to the grid columns, it may be worth adjusting this parameter.
+\item \textbf{justify}: string\\
+  Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
+\item \textbf{chars}: string\\
+  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
+\end{itemize}
+
 \begin{snugshade}\subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
     \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
 \label{sec:mulgrid:from_gmsh}
 \index{MULgraph geometry!importing from \texttt{gmsh}}
 
-Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is grid generation program (see \url{http://geuz.org/gmsh/}).  The horizontal structure of the geometry object is created from the \texttt{gmsh} mesh, while the layer structure is specified via the \texttt{layers} parameter, a list of layer thicknesses.  The elevation of the top surface can also be specified, as well as the naming convention and atmosphere type.
+Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is a grid generation program (see \url{http://geuz.org/gmsh/}).  The horizontal structure of the geometry object is created from the \texttt{gmsh} mesh, while the layer structure is specified via the \texttt{layers} parameter, a list of layer thicknesses.  The elevation of the top surface can also be specified, as well as the naming convention and atmosphere type.
 
 \textbf{Parameters:}
 \begin{itemize}
@@ -1193,8 +1225,7 @@ Note that it is also possible to reverse-engineer a rectangular geometry from an
 \item \textbf{case}: string\\
   Specify `l' for the character part of the block names (first three characters) to be lower case, `u' for upper case.  Now deprecated - using the \texttt{chars} parameter is more flexible.
 \item \textbf{chars}: string\\
-  Specify a string of characters to be used to form the character part of block names.  For example, to u
-se both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
+  Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \item \textbf{spaces}: Boolean\\
   Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
 \end{itemize}
