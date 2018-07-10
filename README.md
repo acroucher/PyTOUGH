@@ -8,19 +8,21 @@ First, make sure you have [Python](http://www.python.org) and the [Numerical Pyt
 
 Click the _Clone or download_ button at the right of the PyTOUGH web page and then click [Download ZIP](https://github.com/acroucher/PyTOUGH/archive/master.zip) , and save the .zip file to your computer.  Unzip this to any directory on your computer.  This will create a directory containing a file called `setup.py`.  At the command line type `python setup.py install`.
 
+(Alternatively, if you are confident using the Git version control system, you can clone the PyTOUGH repository instead of downloading a .zip file.)
+
 # More information:
 
 For more detailed information on PyTOUGH, consult the user guide (PDF format, in the 'doc' directory of your PyTOUGH install) and the PyTOUGH [wiki](https://github.com/acroucher/PyTOUGH/wiki/), which has links to published articles on PyTOUGH.
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.5.0, which has:
+The latest stable version is 1.5.1, which has:
 
-* Python 3 support
-
-* Extensive code clean-up, inlcuding more PEP-8-compliant layout everywhere
-
-* Exporting mulgrid geometry to various mesh format via meshio library
+* ability to import mulgrid from AMESH Voronoi grids
+* new t2grid / t2data rename_blocks() methods
+* support for MOMOP section in TOUGH2 data files
+* ability to disallow spaces in block names when generating grids
+* fixes to enable running PyTOUGH with later versions of Numpy and VTK
 
 as well as various bug fixes and other minor enhancements.
 
