@@ -4018,7 +4018,7 @@ class mulgrid(object):
                                          'thickness': thickness,
                                          'elevation': z}
                 else: break
-            layer_names = layers.keys()
+            layer_names = list(layers.keys())
             elevations = np.array([layers[name]['elevation'] for name in layer_names])
             isort = np.argsort(elevations)[::-1]
             layers = [layers[layer_names[i]] for i in isort]
