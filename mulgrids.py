@@ -3987,7 +3987,7 @@ class mulgrid(object):
 
         def parse_layers(filename):
             """Parse AMESH input to identify layer structure."""
-            f = file(filename, 'r')
+            f = open(filename, 'r')
             found_locat = False
             for line in f:
                 found_locat = line[:5].lower() == 'locat'
@@ -4030,7 +4030,7 @@ class mulgrid(object):
             from sys import float_info
             segment_data = []
             min_segment_length = float_info.max
-            for line in file(filename):
+            for line in open(filename):
                 x1, y1, x2, y2 = float(line[0: 15]), float(line[15: 30]), \
                                  float(line[30: 45]), float(line[45: 60])
                 points = (np.array([x1, y1]), np.array([x2, y2]))
