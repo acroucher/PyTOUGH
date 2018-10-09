@@ -2911,8 +2911,8 @@ class mulgrid(object):
             write_pest_control_file()
             write_pest_templates()
             write_pest_model_file()
-            from os import system
-            system('pest pestmesh.pst')
+            from subprocess import call
+            call(['pest', 'pestmesh.pst'])
             dat = np.loadtxt('pestmesh.in').reshape((len(nodenames), 2))
             for pos, nodename in zip(dat, nodenames): self.node[nodename].pos = pos
             for colname in colnames:

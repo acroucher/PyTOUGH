@@ -437,7 +437,8 @@ class t2data(object):
         listing file."""
         if self.filename:
             from os.path import splitext, basename
-            from os import devnull, system, remove
+            from os import devnull, remove
+            from subprocess import call
             datbase, ext = splitext(self.filename)
             if (self.type == 'AUTOUGH2'):
                 if save_filename == '': save_filename = datbase + '.save'
@@ -451,17 +452,19 @@ class t2data(object):
                 f.write(inconbase + '\n')
                 f.write(datbase + '\n')
                 f.close()
-                if silent: out = ' > ' + devnull
-                else: out = ''
+                cmd = [simulator, '<', runfilename]
+                if silent: cmd += [' > ', devnull]
                 # run AUTOUGH2:
-                system(simulator + ' < ' + runfilename + out)
+                call(cmd)
                 remove(runfilename)
             else: # run TOUGH2 (need to specify simulator executable name)
+                cmd = [simulator, '<', self.filename]
                 if silent: out = devnull
                 else:
                     if output_filename == '': out = datbase + '.listing'
                     else: out = output_filename
-                system(simulator + ' < ' + self.filename + ' > ' + out)
+                cmd += ['>', out]
+                call(cmd)
 
     def get_type(self):
         """Returns type (TOUGH2 or AUTOUGH2) based on whether the simulator
