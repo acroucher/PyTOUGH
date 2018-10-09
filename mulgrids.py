@@ -2793,7 +2793,7 @@ class mulgrid(object):
         to True, the PEST parameter estimation software is used to
         perform the optimization.
         """
-        if nodenames is None: nodenames = self.node.keys()
+        if nodenames is None: nodenames = list(self.node.keys())
         # identify which columns are affected:
         colnames = [col.name for col in self.columnlist if
                     (set(nodenames) & set([node.name for node in col.node]))]
