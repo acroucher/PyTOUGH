@@ -445,26 +445,25 @@ class t2data(object):
                 if incon_filename == '': incon_filename = datbase + '.incon'
                 savebase, ext = splitext(save_filename)
                 inconbase, ext = splitext(incon_filename)
-                # write a file containing the filenames, to pipe into AUTOUGH2:
                 runfilename = datbase + '_' + basename(simulator) + '.in'
-                f = open(runfilename, 'w')
-                f.write(savebase + '\n')
-                f.write(inconbase + '\n')
-                f.write(datbase + '\n')
-                f.close()
-                cmd = [simulator, '<', runfilename]
-                if silent: cmd += [' > ', devnull]
+                open(runfilename, 'w').write('\n'.join([savebase, inconbase, datbase]))
+                infile = open(runfilename, 'r')
+                cmd = [simulator]
+                if silent: outfile = open(devnull, 'w')
+                else: outfile = None
                 # run AUTOUGH2:
-                call(cmd)
+                call(cmd, stdin = infile, stdout = outfile)
+                infile.close()
                 remove(runfilename)
             else: # run TOUGH2 (need to specify simulator executable name)
-                cmd = [simulator, '<', self.filename]
-                if silent: out = devnull
+                cmd = [simulator]
+                infile = open(self.filename, 'r')
+                if silent: outfile = None
                 else:
-                    if output_filename == '': out = datbase + '.listing'
-                    else: out = output_filename
-                cmd += ['>', out]
-                call(cmd)
+                    if output_filename == '': outfilename = datbase + '.listing'
+                    else: outfilename = output_filename
+                    outfile = open(outfilename, 'w')
+                call(cmd, stdin = infile, stdout = outfile)
 
     def get_type(self):
         """Returns type (TOUGH2 or AUTOUGH2) based on whether the simulator
