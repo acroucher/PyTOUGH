@@ -3467,7 +3467,11 @@ class mulgrid(object):
             raise Exception("Can't find meshio library- this function " + \
                             "requires it to be installed.")
         points, cells = self.meshio_grid(surface_snap, dimension, slice)
-        meshio.write(filename, points, cells, file_format = file_format)
+        if hasattr(meshio, 'write_points_cells'): # meshio v.2.0.0 or later
+            meshio.write_points_cells(filename, points, cells,
+                                      file_format = file_format)
+        elif hasattr(meshio, 'write'):
+            meshio.write(filename, points, cells, file_format = file_format)
 
     def snap_columns_to_layers(self, min_thickness = 1.0, columns = []):
         """Snaps column surfaces to the bottom of their layers, if the surface
