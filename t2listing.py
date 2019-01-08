@@ -589,9 +589,10 @@ class t2listing(object):
                 nelt_tables += 1
                 tname += str(nelt_tables)
 
-    def start_of_values(self, line):
+    def start_of_values(self, line, columns):
         """Returns start index of values in a table line.  Characters before
         this start index are taken to contain the key(s) and row index."""
+        start = None
         pt = line.find('.')
         if pt >= 2:
             nextpt = line.find('.', pt + 1)
@@ -600,14 +601,15 @@ class t2listing(object):
             exponential = s.find('e') >= 0 or s.find('+') >= 0 or s.find('-') >= 0
             if exponential:
                 c = line[pt - 2]
-                if c in ['-',' ']: return pt - 2
-                elif c.isdigit(): return pt - 1
+                if c in ['-',' ']: start = pt - 2
+                elif c.isdigit(): start = pt - 1
             else:
                 pos = pt - 1
                 while line[pos] != ' ' and pos > 0 : pos -= 1
                 while line[pos] == ' ' and pos > 0 : pos -= 1
-                if pos > 0 : return pos + 1
-        return None
+                if pos > 0 : start = pos + 1
+        if columns[0] == 'I': start -= 2 # e.g. ECO2M element table
+        return start
 
     def key_positions(self, line, nkeys):
         """Returns detected positions of keys in the start of a table line.
@@ -652,7 +654,7 @@ class t2listing(object):
         nkeys, cols = self.parse_table_header_AUTOUGH2()
         self._file.readline()
         line = self.readline()
-        start = self.start_of_values(line)
+        start = self.start_of_values(line, cols)
         rows = []
         # Double-check number of columns:
         nvalues = len([s for s in line[start:].strip().split()])
@@ -676,9 +678,12 @@ class t2listing(object):
         else:
             raise Exception('Error parsing '+tablename+' table columns: table not created.')
 
-    def parse_table_line(self, line, start):
+    def parse_table_line(self, line, start, columns):
         """Parses line of a table and returns starting indices of each column"""
         numpos = [start]
+        if columns[0] == 'I': # e.g. ECO2M element table
+          spos = line.find(' ', start + 1)
+          if spos >= 0: numpos.append(spos)
         from re import finditer,escape
         # find all decimal points:
         pts = [match.start() for match in finditer(escape('.'), line)]
@@ -732,20 +737,21 @@ class t2listing(object):
             else: num_lines += 1
         return num_lines
 
-    def table_expected_floats(self, tablename, num_columns):
+    def table_expected_floats(self, tablename, columns):
         """Returns number of floating point numbers expected in each line of the table.
         For most tables this is the number of table columns, but generation tables can
         have incomplete lines in them and sometimes have as few as one value per line."""
-        return 1 if tablename == 'generation' else num_columns
+        num_floats = 1 if tablename == 'generation' else len(columns)
+        if columns[0] == 'I': num_floats -= 1 # e.g. ECO2M element table
+        return num_floats
 
     def setup_table_TOUGH2(self, tablename):
         """Sets up table from TOUGH2 (or TOUGH+) listing file."""
         nkeys,cols = self.parse_table_header_TOUGH2()
-        ncols = len(cols)
-        expected_floats = self.table_expected_floats(tablename, ncols)
+        expected_floats = self.table_expected_floats(tablename, cols)
         header_skiplines = self.skip_to_results_line(expected_floats)
         line = self.readline()
-        start = self.start_of_values(line)
+        start = self.start_of_values(line, cols)
         keypos = self.key_positions(line[:start],nkeys)
         if keypos:
             index_pos = [keypos[-1]+5, start]
@@ -797,7 +803,7 @@ class t2listing(object):
             indices = sorted(rowdict.keys())
             row_line = [rowdict[index][0] for index in indices]
             rows = [rowdict[index][1] for index in indices]
-            numpos = self.parse_table_line(longest_line,start)
+            numpos = self.parse_table_line(longest_line, start, cols)
             row_format = {'key': keypos, 'index': keypos[-1] + 5, 'values': numpos}
             allow_rev = tablename == 'connection'
             self._table[tablename] = listingtable(cols, rows, row_format, row_line, num_keys = nkeys,
@@ -1051,8 +1057,9 @@ class t2listing(object):
                     if not (is_short and not (tablename in self.short_types)):
                         self.skip_to_table(tname, last_tname, nelt_tables)
                         if tname.startswith('element'): nelt_tables += 1
+                        cols = self._table[tname].column_name
                         ncols = self._table[tname].num_columns
-                        expected_floats = self.table_expected_floats(tname, ncols)
+                        expected_floats = self.table_expected_floats(tname, cols)
                         self.skip_to_results_line(expected_floats)
                         fmt = self._table[tname].row_format
                         index = 0
