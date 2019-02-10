@@ -1359,7 +1359,7 @@ class t2data(object):
                               section['where']] + section['spacing'], 'part1')
         nlines = int(ceil(nvol / 8.))
         for i in range(nlines):
-            i1, i2 = i * 8, min((i + 1) * 8, section['vol'])
+            i1, i2 = i * 8, min((i + 1) * 8, nvol)
             vals = section['vol'][i1: i2]
             if len(vals) < 8: vals += [None] * (8 - len(vals))
             outfile.write_values(vals, 'part2')
