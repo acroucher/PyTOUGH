@@ -1672,7 +1672,7 @@ class toughreact_tecplot(object):
 
     def find_next_time(self):
         """Advances to set of results at next time, and returns the time value."""
-        line, num_lines = self.skipto('ZONE', count = True)
+        line, num_lines = self.skipto(['ZONE', 'Zone', 'zone'], count = True)
         if line is None: return None, num_lines
         quotepos = line.find('"')
         if quotepos >= 0:
@@ -1711,7 +1711,7 @@ class toughreact_tecplot(object):
             raise Exception("Specified block name list is the wrong length for " +
                             "TOUGHREACT Tecplot file "+ self.filename)
         self._file.seek(0)
-        line = self.skipto('VARIABLES')
+        line = self.skipto(['VARIABLES', 'Variables', 'variables'])
         if line is not None:
             eqpos = line.find('=')
             cols = [col.strip() for col in line[eqpos+1:].strip().split(',')[:-1]]
