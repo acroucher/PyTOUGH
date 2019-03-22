@@ -1714,7 +1714,16 @@ class toughreact_tecplot(object):
         line = self.skipto(['VARIABLES', 'Variables', 'variables'])
         if line is not None:
             eqpos = line.find('=')
-            cols = [col.strip() for col in line[eqpos+1:].strip().split(',')[:-1]]
+            sep = ',' if ',' in line else None
+            rawcols = line[eqpos+1:].strip().split(sep)
+            cols = []
+            for col in rawcols:
+                colstrip = col.strip()
+                if colstrip:
+                    if col.startswith('"') and col.endswith('"'):
+                        cols.append(col[1:-1].strip())
+                    else:
+                        cols.append(colstrip)
             self.element = listingtable(cols, blocks, num_keys = 1)
         else:
             raise Exception("Could not find variable definitions " +
