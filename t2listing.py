@@ -1659,9 +1659,11 @@ class toughreact_tecplot(object):
 
     def skipto(self, keyword, count = False):
         """Advances file to next line starting with specified keyword, returning the line."""
+        if isinstance(keyword, list): keywords = keyword
+        else: keywords = [keyword]
         line = ''
         num_lines = 0
-        while not line.startswith(keyword):
+        while not any([line.startswith(kw) for kw in keywords]):
             line = self._file.readline()
             num_lines += 1
             if line == '': return None, num_lines
