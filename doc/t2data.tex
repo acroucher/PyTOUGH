@@ -621,6 +621,7 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
       \hyperref[sec:t2data:delete_generator]{\texttt{delete\_generator}} & -- & deletes a generator\\
       \hyperref[sec:t2data:delete_orphan_generators]{\texttt{delete\_orphan\_generators}} & -- & deletes orphaned generators\\
       \hyperref[sec:t2data:generator_index]{\texttt{generator\_index}} & integer & returns index of generator with specified name and block name\\
+      \hyperref[sec:t2data:json]{\texttt{json}} & dictionary & Waiwera JSON input \\
       \hyperref[sec:t2data:read]{\texttt{read}} & \hyperref[datafiles]{\texttt{t2data}} & reads data file from disk\\
       \hyperref[sec:t2data:rename_blocks]{\texttt{rename\_blocks}} & -- & renames blocks\\
       \hyperref[sec:t2data:run]{\texttt{run}} & -- & runs a TOUGH2 simulation\\
@@ -740,6 +741,35 @@ Returns the index (in the \texttt{generatorlist} list) of the generator with the
 \begin{itemize}
 \item \textbf{blocksourcenames}: tuple\\
   Tuple of block name and generator name (both strings) of the generator.
+\end{itemize}
+
+\begin{snugshade}
+  \subsubsection{\texttt{json(\emph{geo}, \emph{mesh\_filename}, \emph{atmos\_volume} = 1.e25,
+      \emph{incons} = \texttt{None}, \emph{eos} = \texttt{None}, \\
+      \emph{bdy\_incons} = \texttt{None}, \emph{mesh\_coords} = 'xyz')}}
+\end{snugshade}
+\label{sec:t2data:json}
+\index{TOUGH2 data files!JSON}
+
+Returns a JSON dictionary representing the contents of the \texttt{t2data} object (and associated
+mesh geometry), suitable for input to the Waiwera simulator (\url{http://waiwera.github.io}).
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
+  Geometry object.
+\item \textbf{mesh\_filename}: string\\
+  The filename of the mesh file (e.g. ExodusII or GMSH mesh) for the Waiwera simulation.
+\item \textbf{atmos\_volume}: float\\
+  Maximum block volume for blocks to be considered part of the geometric grid. Blocks with volume greater than this value (or zero) will be treated as boundary condition (e.g. atmosphere) blocks rather than part of the simulation mesh.
+\item \textbf{incons}: \hyperref[incons]{\texttt{t2incon}}, string, or \texttt{None}\\
+  Initial conditions for the Waiwera model. If specified as a string, this should be the filename of the Waiwera HDF5 output file for restarting the simulation from the output of a previous run. If \texttt{None} is specified, then default initial conditions will be applied from the \texttt{parameter} property (see \ref{sec:t2data:parameter}).  
+\item \textbf{eos}: string, integer or \texttt{None}\\
+  Equation of state used for the simulation. For AUTOUGH2 simulations, this can generally be set to \texttt{None}, and the EOS will be read from the \texttt{t2data} \texttt{simulator} or \texttt{multi} properties. Otherwise, it can be specified as an integer corresponding to the EOS number (1 being pure water, 2 being water / CO$_2$ etc.) or as a string corresponding to the AUTOUGH2 EOS names (EOS1 being `EW', EOS2 being `EWC' etc.). Note that only EOS modules 1 -- 4 (i.e. `W', `EW', `EWC', `EWA' and `EWAV' in terms of AUTOUGH2 EOS names) are supported.
+\item \textbf{bdy\_incons}: \hyperref[incons]{\texttt{t2incon}}, or \texttt{None})\\
+  TOUGH2 initial conditions from which boundary conditions are to be derived. Usually this will be the same as the \texttt{incons} parameter. If set to \texttt{None}, then default boundary conditions will be applied from the default initial conditions in the \texttt{t2data} \texttt{parameter} property. Faces on which to apply boundary conditions are identified by the presence of connections to blocks with either zero or large volume (above the volume specified by the \texttt{atmos\_volume} parameter).
+\item \textbf{mesh\_coords}: string\\
+  String representing the coordinate system to be used in the Waiwera model. 3-D Cartesian meshes are identified as `xyz'. 2-D Cartesian meshes may be identified as either `xy', `xz', or `yz' (depending on orientation), while 2-D radial meshes are identified as `rz'.
 \end{itemize}
 
 \begin{snugshade}
