@@ -2224,7 +2224,8 @@ class t2data(object):
         jsondata = {}
         if incons is None:
             incs = self.parameter['default_incons'][:]
-            while incs[-1] is None: incs.pop()
+            if incs:
+                while incs[-1] is None: incs.pop()
             jsondata['initial'] = {'primary': incs}
         elif isinstance(incons, str):
             jsondata['initial'] = {'filename': incons}
@@ -2344,7 +2345,8 @@ class t2data(object):
         if bdy_incons is None:
             default_incs = self.parameter['default_incons'][:]
             default_region = 1
-            while default_incs[-1] is None: default_incs.pop()
+            if default_incs:
+                while default_incs[-1] is None: default_incs.pop()
             def primary(blkname): return default_incs
             def region(pv): return default_region
         else:
