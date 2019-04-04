@@ -2021,7 +2021,7 @@ class t2data(object):
                 if gen in blockmap:
                     self.history_generator[i] = blockmap[gen]
 
-    def mesh_json(self, mesh_filename, geo):
+    def mesh_json(self, geo, mesh_filename):
         """Converts mesh data to Waiwera JSON dictionary, including overridden
         face permeability directions."""
         jsondata = {}
@@ -2447,7 +2447,7 @@ class t2data(object):
         jsondata['title'] = self.title.strip()
         jsondata['gravity'] = self.parameter['gravity']
         jsondata['thermodynamics'] = 'ifc67'
-        jsondata.update(self.mesh_json(mesh_filename, geo))
+        jsondata.update(self.mesh_json(geo, mesh_filename))
         jsondata.update(self.eos_json(eos))
         jsondata.update(self.timestepping_json())
         jsondata.update(self.output_json())
