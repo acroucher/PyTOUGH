@@ -2114,7 +2114,7 @@ class t2data(object):
         if self.parameter['option'][16] > 0:
             redlt = self.parameter['timestep_reduction']
             if redlt is None or redlt == 0:
-                redlt = 5 if self.type = 'AUTOUGH2' else 4
+                redlt = 5 if self.type == 'AUTOUGH2' else 4
             jsondata['time']['step']['adapt'].update(
                 {'method': 'iteration',
                  'reduction': 1. / redlt,
