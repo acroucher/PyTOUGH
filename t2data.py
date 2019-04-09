@@ -2227,6 +2227,9 @@ class t2data(object):
             if incs:
                 while incs[-1] is None: incs.pop()
             jsondata['initial'] = {'primary': incs}
+            if incs:
+                primary_to_region = primary_to_region_funcs[eos]
+                jsondata['initial']['region'] = primary_to_region(incs)
         elif isinstance(incons, str):
             jsondata['initial'] = {'filename': incons}
         elif isinstance(incons, t2incon):
