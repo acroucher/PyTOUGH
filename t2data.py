@@ -2228,8 +2228,11 @@ class t2data(object):
                 while incs[-1] is None: incs.pop()
             jsondata['initial'] = {'primary': incs}
             if incs:
-                primary_to_region = primary_to_region_funcs[eos]
-                jsondata['initial']['region'] = primary_to_region(incs)
+                if eos in primary_to_region_funcs:
+                    primary_to_region = primary_to_region_funcs[eos]
+                    jsondata['initial']['region'] = primary_to_region(incs)
+                else:
+                    raise Exception("Finding thermodynamic region from primary variables not yet supported for EOS:" + eos)
         elif isinstance(incons, str):
             jsondata['initial'] = {'filename': incons}
         elif isinstance(incons, t2incon):
