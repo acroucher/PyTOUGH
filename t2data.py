@@ -1842,7 +1842,7 @@ class t2data(object):
         MP is True, treat the file as a TOUGH2_MP data file.
         """
         # modify MULTI:
-        self.multi['num_inc'] = None
+        if self.multi: self.multi['num_inc'] = None
         # set up LINEQ:
         if MP: solver_type = 2
         else:
@@ -1948,12 +1948,13 @@ class t2data(object):
     def convert_to_AUTOUGH2(self, warn = True, MP = False,
                             simulator = 'AUTOUGH2.2', eos = 'EW'):
         """Converts a TOUGH2 data file to an AUTOUGH2 data file."""
-        if not self.filename.lower().endswith('.dat'):
-            if self.filename[0].isupper(): self.filename += '.DAT'
-            else: self.filename += '.dat'
+        if self.filename:
+            if not self.filename.lower().endswith('.dat'):
+                if self.filename[0].isupper(): self.filename += '.DAT'
+                else: self.filename += '.dat'
         self.simulator = simulator.ljust(10) + eos
         self.insert_section('SIMUL')
-        self.multi['eos'] = eos
+        if self.multi: self.multi['eos'] = eos
         self.convert_TOUGH2_parameters_to_AUTOUGH2(warn, MP)
         self.convert_history_to_short()
 
