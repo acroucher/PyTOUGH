@@ -2266,8 +2266,6 @@ class t2data(object):
         elif self.parameter['option'][12] == 1:
             interp_type, averaging_type = "step", "endpoint"
         else:
-            # there are actually more subtleties here- differences
-            # between TOUGH2/ AUTOUGH2 etc. for MOP(12) >= 2.
             interp_type, averaging_type = "linear", "integrate"
         if self.generatorlist:
             jsondata['source'] = []
