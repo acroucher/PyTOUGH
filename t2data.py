@@ -2421,7 +2421,7 @@ class t2data(object):
             else:
                 num_times = num_times_specified
             if num_times_specified >= 0:
-                times = self.output_times['time']
+                times = self.output_times['time'][:num_times_specified]
                 if 'time_increment' in self.output_times:
                     dt = self.output_times['time_increment']
                     if num_times_specified == 1 and abs(times[0] - dt) <= time_tol:
