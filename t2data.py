@@ -2434,7 +2434,7 @@ class t2data(object):
                 steps = self.output_times['time']
                 if 'time_increment' in self.output_times:
                     dt = self.output_times['time_increment']
-                    for i in range(num_times - num_times_specified):
+                    for i in range(num_times - abs(num_times_specified)):
                         steps.append(dt)
                 checkpoint['step'] = steps
             if self.type == 'AUTOUGH2': checkpoint['tolerance'] = 0.1
