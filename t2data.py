@@ -2460,6 +2460,8 @@ class t2data(object):
         jsondata['rock'].update(self.relative_permeability_json())
         jsondata['rock'].update(self.capillary_pressure_json())
         jsondata.update(self.initial_json(geo, incons, jsondata['eos']['name']))
+        if bdy_incons is None and isinstance(incons, t2incon):
+            bdy_incons = incons
         jsondata.update(self.boundaries_json(geo, bdy_incons, atmos_volume,
                                              jsondata['eos']['name'], mesh_coords))
         jsondata.update(self.generators_json(geo, jsondata['eos']['name']))
