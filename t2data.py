@@ -31,8 +31,8 @@ def primary_to_region_wge(primary):
     pwater = primary[0] - primary[2]
     return primary_to_region_we([pwater, primary[1]])
 
-primary_to_region_funcs = {'we': primary_to_region_we, 'wce': primary_to_region_wge,
-                           'wae': primary_to_region_wge}
+primary_to_region_funcs = {'w': primary_to_region_we, 'we': primary_to_region_we,
+                           'wce': primary_to_region_wge, 'wae': primary_to_region_wge}
 
 t2data_format_specification = {
     'title': [['title'], ['80s']],
