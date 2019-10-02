@@ -3492,6 +3492,24 @@ class mulgrid(object):
             self.setup_block_name_index()
             self.setup_block_connection_name_index()
 
+    def snap_columns_to_nearest_layers(self, columns = []):
+        """Snaps column surfaces to nearest layer (top or bottom
+        elevation). This can be carried out over an optional subset of
+        columns in the grid, otherwise over all columns."""
+        if columns == []: columns = self.columnlist
+        else:
+            if isinstance(columns[0], str):
+                columns = [self.column[col] for col in columns]
+        for col in columns:
+            toplayer = self.column_surface_layer(col)
+            if col.surface > toplayer.centre:
+                col.surface = toplayer.top
+            else:
+                col.surface = toplayer.bottom
+                col.num_layers -= 1
+        self.setup_block_name_index()
+        self.setup_block_connection_name_index()
+
     def subdivide_column(self, column_name, i0, colnodelist,
                          chars = ascii_lowercase, spaces = True):
         """Replaces specified column with columns based on subdividing it

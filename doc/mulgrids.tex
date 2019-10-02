@@ -215,6 +215,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:rotate]{\texttt{rotate}} & -- & rotates a grid in the horizontal plane\\
   \hyperref[sec:mulgrid:slice_plot]{\texttt{slice\_plot}} & -- & plots a variable over a vertical slice through the grid\\
   \hyperref[sec:mulgrid:snap_columns_to_layers]{\texttt{snap\_columns\_to\_layers}} & -- & snaps column surfaces to layer bottoms\\
+  \hyperref[sec:mulgrid:snap_columns_to_nearest_layers]{\texttt{snap\_columns\_to\_nearest\_layers}} & -- & snaps column surfaces to nearest layer elevations \\
   \hyperref[sec:mulgrid:split_column]{\texttt{split\_column}} & Boolean & splits a quadrilateral column into two triangles\\ 
   \hyperref[sec:mulgrid:translate]{\texttt{translate}} & -- & moves a grid by simple translation in 3D\\
   \hyperref[sec:mulgrid:well_values]{\texttt{well\_values}} & tuple & values of a variable down a well\\
@@ -1493,6 +1494,18 @@ Snaps column surfaces to the bottom of their layers, if the surface block thickn
 \begin{itemize}
 \item \textbf{min\_thickness}: float\\
   Minimum surface block thickness.  Blocks with thickness less than this value will be eliminated by `snapping' the column surface elevation to the bottom of the surface layer.  Values of \texttt{min\_thickness} less than or equal to zero will have no effect.
+\item \textbf{columns}: list (of \hyperref[columnobjects]{\texttt{column}} or string)\\
+  List of columns to process.  If empty (the default), process all columns.
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{snap\_columns\_to\_nearest\_layers(\emph{columns}=[])}}\end{snugshade}
+\label{sec:mulgrid:snap_columns_to_nearest_layers}
+\index{MULgraph geometry!columns!surface elevation}
+
+Snaps column surfaces to the nearest layer elevation (top or bottom). This can be carried out over an optional subset of columns in the grid, otherwise over all columns.
+
+\textbf{Parameters:}
+\begin{itemize}
 \item \textbf{columns}: list (of \hyperref[columnobjects]{\texttt{column}} or string)\\
   List of columns to process.  If empty (the default), process all columns.
 \end{itemize}
