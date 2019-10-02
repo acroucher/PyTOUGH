@@ -757,7 +757,7 @@ mesh geometry), suitable for input to the Waiwera simulator (\url{http://waiwera
 \textbf{Parameters:}
 \begin{itemize}
 \item \textbf{geo}: \hyperref[mulgrids]{\texttt{mulgrid}}\\
-  Geometry object.
+  Geometry object. Note that geometric meshes with column surface elevations that do not correspond to layer elevations are not supported in Waiwera. For meshes of this type, the column surface elevations can be ``snapped'' to layer elevations using the \hyperref[sec:mulgrid:snap_columns_to_nearest_layers]{\texttt{snap\_columns\_to\_nearest\_layers()}} method. In that case the \texttt{t2grid} in the \texttt{t2data} object must be updated so it corresponds to the snapped mesh geometry, and other parts of the data file updated to reference the new mesh (e.g. using the \hyperref[sec:t2data:transfer_from]{\texttt{transfer\_from()}} method).
 \item \textbf{mesh\_filename}: string\\
   The filename of the mesh file (e.g. ExodusII or GMSH mesh) for the Waiwera simulation.
 \item \textbf{atmos\_volume}: float\\
