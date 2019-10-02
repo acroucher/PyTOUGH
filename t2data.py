@@ -2100,12 +2100,13 @@ class t2data(object):
         reltol = self.parameter['relative_error']
         if reltol == 0.: reltol = 1.e-5
         jsondata['time']['step'] = \
-            {'maximum': {'size': self.parameter['max_timestep'],
-                         'number': self.parameter['max_timesteps']},
+            {'maximum': {'size': self.parameter['max_timestep']},
              'method': 'beuler',
              'solver': {'nonlinear': {'tolerance': {'function':
                                           {'absolute': abstol, 'relative': reltol}},
                                       'maximum': {'iterations': maxit}}}}
+        if self.parameter['max_timesteps'] >= 0:
+            jsondata['time']['step']['maximum']['number'] = self.parameter['max_timesteps']
         if self.parameter['const_timestep'] < 0. :
             jsondata['time']['step'].update({'size': self.parameter['timestep'],
                                              'adapt': {'on': False}})
