@@ -2250,19 +2250,17 @@ class t2data(object):
     def initial_json(self, geo, incons, eos):
         """Converts initial condition specifications to Waiwera JSON dictionary."""
         jsondata = {}
-        if incons is None:
-            incs = self.parameter['default_incons'][:]
-            if incs:
-                while incs[-1] is None: incs.pop()
-            jsondata['initial'] = {'primary': incs}
-            if incs:
+
+        if isinstance(incons, str):
+            jsondata['initial'] = {'filename': incons}
+        elif isinstance(incons, list):
+            jsondata['initial'] = {'primary': incons}
+            if incons:
                 if eos in primary_to_region_funcs:
                     primary_to_region = primary_to_region_funcs[eos]
-                    jsondata['initial']['region'] = primary_to_region(incs)
+                    jsondata['initial']['region'] = primary_to_region(incons)
                 else:
                     raise Exception("Finding thermodynamic region from primary variables not yet supported for EOS:" + eos)
-        elif isinstance(incons, str):
-            jsondata['initial'] = {'filename': incons}
         elif isinstance(incons, t2incon):
             if eos in primary_to_region_funcs:
                 jsondata['initial'] = {'primary': [], 'region': []}
@@ -2374,54 +2372,45 @@ class t2data(object):
         """
         jsondata = {}
         vertical_tolerance = 1.e-6
-        if bdy_incons is None:
-            default_incs = self.parameter['default_incons'][:]
-            default_region = 1
-            if default_incs:
-                while default_incs[-1] is None: default_incs.pop()
-            def primary(blkname): return default_incs
-            def region(pv): return default_region
-        else:
-            def primary(blkname): return bdy_incons[blkname].variable
-            if eos in primary_to_region_funcs:
-                primary_to_region = primary_to_region_funcs[eos]
-                def region(pv): return primary_to_region(pv)
-            else:
-                def region(pv): return default_region
-        jsondata['boundaries'] = []
-        for blk in self.grid.blocklist:
-            if not (0. < blk.volume < atmos_volume):
-                pv = primary(blk.name)
-                bc = {'primary': pv, 'region': region(pv), 'faces': []}
-                for conname in blk.connection_name:
-                    nz = -self.grid.connection[conname].dircos
-                    vertical_connection = abs(nz) > vertical_tolerance
-                    names = list(conname)
-                    names.remove(blk.name)
-                    interior_blkname = names[0]
-                    interior_blk = self.grid.block[interior_blkname]
-                    cell_index = geo.block_name_index[interior_blkname] - geo.num_atmosphere_blocks
-                    if blk.centre is None:
-                        if vertical_connection:
-                            normal = np.array([0., 0., nz])
+        if eos in primary_to_region_funcs:
+            primary_to_region = primary_to_region_funcs[eos]
+            jsondata['boundaries'] = []
+            for blk in self.grid.blocklist:
+                if not (0. < blk.volume < atmos_volume):
+                    pv = bdy_incons[blk.name].variable
+                    reg = primary_to_region(pv)
+                    bc = {'primary': pv, 'region': reg, 'faces': []}
+                    for conname in blk.connection_name:
+                        nz = -self.grid.connection[conname].dircos
+                        vertical_connection = abs(nz) > vertical_tolerance
+                        names = list(conname)
+                        names.remove(blk.name)
+                        interior_blkname = names[0]
+                        interior_blk = self.grid.block[interior_blkname]
+                        cell_index = geo.block_name_index[interior_blkname] - geo.num_atmosphere_blocks
+                        if blk.centre is None:
+                            if vertical_connection:
+                                normal = np.array([0., 0., nz])
+                            else:
+                                raise Exception("Can't find normal vector for connection: " +
+                                                str(conname))
                         else:
-                            raise Exception("Can't find normal vector for connection: " +
-                                            str(conname))
-                    else:
-                        normal = blk.centre - interior_blk.centre
-                    normal /= np.linalg.norm(normal)
-                    if mesh_coords != 'xyz':
-                        if vertical_connection:
-                            if mesh_coords in ['xz', 'yz', 'rz']:
-                                normal = normal[[0,2]]
-                            elif mesh_coords == 'xy': normal = None
-                        else: normal = normal[[0,1]]
-                    if normal is not None:
-                        bc['faces'].append({"cells": [cell_index],
-                                            "normal": list(normal)})
-                if len(bc['faces']) > 0:
-                    if len(bc['faces']) == 1: bc['faces'] = bc['faces'][0]
-                    jsondata['boundaries'].append(bc)
+                            normal = blk.centre - interior_blk.centre
+                        normal /= np.linalg.norm(normal)
+                        if mesh_coords != 'xyz':
+                            if vertical_connection:
+                                if mesh_coords in ['xz', 'yz', 'rz']:
+                                    normal = normal[[0,2]]
+                                elif mesh_coords == 'xy': normal = None
+                            else: normal = normal[[0,1]]
+                        if normal is not None:
+                            bc['faces'].append({"cells": [cell_index],
+                                                "normal": list(normal)})
+                    if len(bc['faces']) > 0:
+                        if len(bc['faces']) == 1: bc['faces'] = bc['faces'][0]
+                        jsondata['boundaries'].append(bc)
+        else:
+            raise Exception("Finding thermodynamic region from primary variables not yet supported for EOS:" + eos)
         return jsondata
 
     def output_json(self):
@@ -2486,9 +2475,13 @@ class t2data(object):
         jsondata.update(self.rocks_json(geo, atmos_volume, mesh_coords))
         jsondata['rock'].update(self.relative_permeability_json())
         jsondata['rock'].update(self.capillary_pressure_json())
-        jsondata.update(self.initial_json(geo, incons, jsondata['eos']['name']))
-        if bdy_incons is None and isinstance(incons, t2incon):
-            bdy_incons = incons
+        if isinstance(incons, str):
+            effective_incs = incons
+        else:
+            effective_incs = self.effective_incons(incons)
+        jsondata.update(self.initial_json(geo, effective_incs, jsondata['eos']['name']))
+        if bdy_incons is None:
+            bdy_incons = effective_incs
         jsondata.update(self.boundaries_json(geo, bdy_incons, atmos_volume,
                                              jsondata['eos']['name'], mesh_coords))
         jsondata.update(self.generators_json(geo, jsondata['eos']['name']))
