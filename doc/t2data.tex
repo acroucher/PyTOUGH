@@ -620,6 +620,7 @@ The main methods of a \texttt{t2data} object are listed in Table \ref{tb:t2data_
       \hyperref[sec:t2data:convert_to_TOUGH2]{\texttt{convert\_to\_TOUGH2}} & -- & converts from AUTOUGH2 input to TOUGH2\\
       \hyperref[sec:t2data:delete_generator]{\texttt{delete\_generator}} & -- & deletes a generator\\
       \hyperref[sec:t2data:delete_orphan_generators]{\texttt{delete\_orphan\_generators}} & -- & deletes orphaned generators\\
+      \hyperref[sec:t2data:effective_incons]{\texttt{effective\_incons}} & list or \hyperref[incons]{\texttt{t2incon}} & effective initial conditions\\
       \hyperref[sec:t2data:generator_index]{\texttt{generator\_index}} & integer & returns index of generator with specified name and block name\\
       \hyperref[sec:t2data:json]{\texttt{json}} & dictionary & Waiwera JSON input \\
       \hyperref[sec:t2data:read]{\texttt{read}} & \hyperref[datafiles]{\texttt{t2data}} & reads data file from disk\\
@@ -728,6 +729,35 @@ Deletes the generator with the specified block and generator (source) name, if i
 \index{TOUGH2 data files!deleting!generators}
 
 Deletes all generators with block names that are not in the grid.
+
+\begin{snugshade}
+\subsubsection{\texttt{effective\_incons(\emph{incons} = \texttt{None})}}
+\end{snugshade}
+\label{sec:t2data:effective_incons}
+\index{TOUGH2 data files!initial conditions}
+
+Returns effective initial conditions, based on on the specified initial conditions in combination
+with any initial conditions specified in the \texttt{t2data} object itself -- whether as
+default initial conditions specified via the
+\hyperref[sec:t2data:parameter]{\texttt{parameter}} property,
+or via the \hyperref[sec:t2data:incon]{\texttt{incon}} property, or the
+\hyperref[sec:t2data:indom]{\texttt{indom}} property (or any combination of these).
+
+Any \texttt{indom} specifications override the defaults in the \texttt{parameter} property.
+Values in the \texttt{incon} property override both the defaults and values in \texttt{indom}.
+Finally, values passed into this method via the \texttt{incons} parameter override any other
+specifications. Note that any of these may contain incomplete specifications (i.e. values
+are not specified for all blocks in the grid).
+
+If only default homogeneous initial conditions are in effect, then a list of the primary variables
+is returned. Otherwise, a \hyperref[incons]{\texttt{t2incon}} object is returned with initial
+conditions values for every block.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{incons}: \texttt{t2incon} or \texttt{None}\\
+  Initial conditions object, usually representing the contents of a separate initial conditions file.
+\end{itemize}
 
 \begin{snugshade}
 \subsubsection{\texttt{generator\_index(\emph{blocksourcenames})}}

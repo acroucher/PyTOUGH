@@ -2022,6 +2022,32 @@ class t2data(object):
                 if gen in blockmap:
                     self.history_generator[i] = blockmap[gen]
 
+    def effective_incons(self, incons = None):
+        """Returns effective initial conditions, based on combination of specified incons,
+        default initial conditions and INCON and INDOM data blocks in the t2data object.
+        If default initial conditions from PARAM are used everywhere, the function returns
+        a list with those values. Otherwise, a t2incon object is returned."""
+
+        default_incs = self.parameter['default_incons'][:]
+        if default_incs:
+            while default_incs[-1] is None: default_incs.pop()
+        effective_incs = default_incs
+
+        if self.indom or self.incon or incons:
+            effective_incs = self.grid.incons(default_incs)
+            if self.indom:
+                for blk in self.grid.blocklist:
+                    if blk.rocktype.name in self.indom:
+                        effective_incs[blk.name] = self.indom[blk.rocktype.name]
+            if self.incon:
+                for blkname in self.incon:
+                    effective_incs[blkname] = self.incon[blkname][1]
+            if isinstance(incons, t2incon):
+                for blkinc in incons:
+                    effective_incs[blkinc.block] = blkinc.variable
+
+        return effective_incs
+
     def mesh_json(self, geo, mesh_filename):
         """Converts mesh data to Waiwera JSON dictionary, including overridden
         face permeability directions."""
