@@ -2131,7 +2131,8 @@ class t2data(object):
              'solver': {'nonlinear': {'tolerance': {'function':
                                           {'absolute': abstol, 'relative': reltol}},
                                       'maximum': {'iterations': maxit}}}}
-        if self.parameter['max_timesteps'] >= 0:
+        if self.parameter['max_timesteps'] is not None and \
+           self.parameter['max_timesteps'] >= 0:
             jsondata['time']['step']['maximum']['number'] = self.parameter['max_timesteps']
         if self.parameter['const_timestep'] < 0. :
             jsondata['time']['step'].update({'size': self.parameter['timestep'],
@@ -2417,7 +2418,9 @@ class t2data(object):
         """Converts output specifications to Waiwera JSON dictionary."""
         datbase, ext = splitext(self.filename)
         jsondata = {}
-        if self.parameter['print_interval'] >= self.parameter['max_timesteps']:
+        if self.parameter['print_interval'] is not None and \
+           self.parameter['max_timesteps'] is not None and \
+           self.parameter['print_interval'] >= self.parameter['max_timesteps']:
             print_interval = 0
         else:
             print_interval = self.parameter['print_interval']
