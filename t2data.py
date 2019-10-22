@@ -1190,6 +1190,7 @@ class t2data(object):
         while line.strip():
             rockname = line[0: 5]
             variables = infile.read_values('indom2')
+            variables = trim_trailing_nones(variables)
             self.indom[rockname] = variables
             line = infile.readline()
 
