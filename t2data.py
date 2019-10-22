@@ -2451,7 +2451,7 @@ class t2data(object):
                                         allcells += face['cells']
                             normal = list(normals[0, :])
                             primary = list(primaries[0,:])
-                            region = regions[0]
+                            region = int(regions[0])
                             jsondata['boundaries'] = [{"primary": primary, "region": region,
                                                        "faces": {"normal": normal,
                                                                  "cells": allcells}}]
