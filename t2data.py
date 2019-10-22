@@ -2275,6 +2275,9 @@ class t2data(object):
                     primary = incons[blkname].variable
                     jsondata['initial']['primary'].append(primary)
                     jsondata['initial']['region'].append(primary_to_region(primary))
+                if np.isclose(jsondata['initial']['primary'],
+                              jsondata['initial']['primary'][0], rtol = 1.e-8).all():
+                    jsondata['initial']['primary'] = jsondata['initial']['primary'][0]
                 if len(set(jsondata['initial']['region'])) == 1:
                     jsondata['initial']['region'] = jsondata['initial']['region'][0]
             else:
