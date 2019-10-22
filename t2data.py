@@ -2415,9 +2415,46 @@ class t2data(object):
                         if normal is not None:
                             bc['faces'].append({"cells": [cell_index],
                                                 "normal": list(normal)})
-                    if len(bc['faces']) > 0:
-                        if len(bc['faces']) == 1: bc['faces'] = bc['faces'][0]
+                    normals = np.array([spec['normal'] for spec in bc['faces']])
+                    if np.isclose(normals, normals[0], rtol = 1.e-8).all():
+                        allcells = []
+                        for spec in bc['faces']:
+                            allcells += spec['cells']
+                        bc['faces'] = {"cells": allcells,
+                                       "normal": bc['faces'][0]["normal"]}
+                    if bc['faces']:
+                        if isinstance(bc['faces'], list) and \
+                           len(bc['faces']) == 1: bc['faces'] = bc['faces'][0]
                         jsondata['boundaries'].append(bc)
+
+            if jsondata['boundaries']:
+                # collapse down to one boundary if possible:
+                primaries = np.array([bc['primary'] for bc in jsondata['boundaries']])
+                if np.isclose(primaries, primaries[0], rtol = 1.e-8).all():
+                    regions = np.array([bc['region'] for bc in jsondata['boundaries']])
+                    if np.isclose(regions, regions[0]).all():
+                        normals = []
+                        for bc in jsondata['boundaries']:
+                            if isinstance(bc['faces'], dict):
+                                normals.append(bc['faces']['normal'])
+                            else:
+                                for face in bc['faces']:
+                                    normals.append(face['normal'])
+                        normals = np.array(normals)
+                        if np.isclose(normals, normals[0], rtol = 1.e-8).all():
+                            allcells = []
+                            for bc in jsondata['boundaries']:
+                                if isinstance(bc['faces'], dict):
+                                    allcells += bc['faces']['cells']
+                                else:
+                                    for face in bc['faces']:
+                                        allcells += face['cells']
+                            normal = list(normals[0, :])
+                            primary = list(primaries[0,:])
+                            region = regions[0]
+                            jsondata['boundaries'] = [{"primary": primary, "region": region,
+                                                       "faces": {"normal": normal,
+                                                                 "cells": allcells}}]
         else:
             raise Exception("Finding thermodynamic region from primary variables not yet supported for EOS:" + eos)
         return jsondata
