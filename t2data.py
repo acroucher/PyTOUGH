@@ -631,6 +631,7 @@ class t2data(object):
         infile.read_value_line(self.parameter, 'param3')
         for val in infile.read_values('default_incons'):
             self.parameter['default_incons'].append(val)
+        self.parameter['default_incons'] = trim_trailing_nones(self.parameter['default_incons'])
         # read any additional lines of default incons:
         more = True
         while more:
