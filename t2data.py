@@ -34,6 +34,12 @@ def primary_to_region_wge(primary):
 primary_to_region_funcs = {'w': primary_to_region_we, 'we': primary_to_region_we,
                            'wce': primary_to_region_wge, 'wae': primary_to_region_wge}
 
+def trim_trailing_nones(vals):
+    """Trim trailing None values from a list."""
+    while vals and vals[-1] is None:
+        vals.pop()
+    return vals
+
 t2data_format_specification = {
     'title': [['title'], ['80s']],
     'simulator': [['simulator'], ['80s']],
@@ -634,8 +640,7 @@ class t2data(object):
                 if section: more = False
                 else:
                     more_incons = infile.parse_string(line, 'default_incons')
-                    if more_incons:
-                        while more_incons[-1] is None: more_incons.pop()
+                    more_incons = trim_trailing_nones(more_incons)
                     self.parameter['default_incons'] += more_incons
             else: more, line = False, None
         return line
@@ -966,8 +971,7 @@ class t2data(object):
              porosity] = infile.parse_string(line,  'incon1')
             blockname = fix_blockname(blockname)
             variables = infile.read_values('incon2')
-            while variables and variables[-1] is None:
-                variables.pop()
+            variables = trim_trailing_nones(variables)
             if nseq == 0: nseq = None
             if nadd == 0: nadd = None
             if nseq is None:
@@ -2029,8 +2033,7 @@ class t2data(object):
         a list with those values. Otherwise, a t2incon object is returned."""
 
         default_incs = self.parameter['default_incons'][:]
-        if default_incs:
-            while default_incs[-1] is None: default_incs.pop()
+        default_incs = trim_trailing_nones(default_incs)
         effective_incs = default_incs
 
         if self.indom or self.incon or incons:
