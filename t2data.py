@@ -1189,7 +1189,7 @@ class t2data(object):
         line = infile.readline()
         while line.strip():
             rockname = line[0: 5]
-            variables = infile.read_values('incon2')
+            variables = infile.read_values('indom2')
             self.indom[rockname] = variables
             line = infile.readline()
 
@@ -1198,7 +1198,7 @@ class t2data(object):
             outfile.write('INDOM\n')
             for rockname, inc in self.indom.items():
                 outfile.write(rockname + '\n')
-                outfile.write_values(inc, 'incon2')
+                outfile.write_values(inc, 'indom2')
             outfile.write('\n')
 
     def read_noversion(self, infile):
