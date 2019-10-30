@@ -984,7 +984,7 @@ plots the variable \texttt{t} at elevation -500 m over the grid, with the values
 \begin{snugshade}
 \subsubsection{\texttt{line\_plot(\emph{start}=None, \emph{end}=None, \emph{variable}, \emph{variable\_name}=None,\\
 \emph{unit}=None, \emph{divisions}=100, \emph{plt}=None, \emph{subplot}=111, \emph{title}='',\\
-\emph{xlabel}='distance (m)')}}\end{snugshade}
+\emph{xlabel}='distance (m)', \emph{coordinate}=\texttt{False})}}\end{snugshade}
 \label{sec:mulgrid:line_plot}
 \index{MULgraph geometry!plotting!along a line}
 
@@ -1010,6 +1010,8 @@ Plots a variable along a line through the grid, using the \texttt{matplotlib} pl
   Plot title.  If set to \texttt{None} (the default value), a title will be constructed from the other plot parameters.  Set to `' for no title.
 \item \textbf{xlabel}: string\\
   x axis label (default is `distance (m)').
+\item \textbf{coordinate}: integer or Boolean\\
+  If \texttt{False}, plot against distance along the line, otherwise plot against specified coordinate (0,1 or 2) values.
 \end{itemize}
 
 \textbf{Example:}

@@ -2740,7 +2740,8 @@ class mulgrid(object):
 
     def line_plot(self, start = None, end = None, variable = None,
                   variable_name = None, unit = None, divisions = 100,
-                  plt = None, subplot = 111, title = '', xlabel = 'distance (m)'):
+                  plt = None, subplot = 111, title = '', xlabel = 'distance (m)',
+                  coordinate = False):
         """Produces a line plot of the specified variable through a Mulgraph grid."""
         if (start is None) or (end is None):
             [start, end] = self.bounds
@@ -2754,7 +2755,7 @@ class mulgrid(object):
                             ') to (' + ("%7.0f" % end[0]).strip() + \
                             ',' + ("%7.0f" % end[1]).strip() + \
                             ',' + ("%7.0f" % end[2]).strip() + ')'
-        x, y = self.line_values(start, end, variable, divisions)
+        x, y = self.line_values(start, end, variable, divisions, coordinate)
         import matplotlib
         if plt is None:
             import matplotlib.pyplot as plt
