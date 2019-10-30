@@ -2679,7 +2679,7 @@ class mulgrid(object):
             xi, yi = self.line_values(start, end, variable, divisions, coordinate, qtree = qtree)
             if i > 0:
                 xi = xi[1:]; yi = yi[1:]
-            if not coordinate:
+            if not isinstance(coordinate, int):
                 if len(x) > 0: xi += x[-1]  # add end distance from last segment
             x += list(xi)
             y += list(yi)
