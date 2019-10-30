@@ -2664,8 +2664,8 @@ class mulgrid(object):
                 dist = xi * line_length
                 blkname = self.block_name_containing_point(pos, qtree = qtree)
                 if blkname:
-                    if isinstance(coordinate, int): x.append(pos[coordinate])
-                    else: x.append(dist)
+                    if coordinate is False: x.append(dist)
+                    else: x.append(pos[coordinate])
                     y.append(variable[self.block_name_index[blkname]])
         return np.array(x), np.array(y)
 
@@ -2679,7 +2679,7 @@ class mulgrid(object):
             xi, yi = self.line_values(start, end, variable, divisions, coordinate, qtree = qtree)
             if i > 0:
                 xi = xi[1:]; yi = yi[1:]
-            if not isinstance(coordinate, int):
+            if coordinate is False:
                 if len(x) > 0: xi += x[-1]  # add end distance from last segment
             x += list(xi)
             y += list(yi)
