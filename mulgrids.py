@@ -2664,7 +2664,7 @@ class mulgrid(object):
                 dist = xi * line_length
                 blkname = self.block_name_containing_point(pos, qtree = qtree)
                 if blkname:
-                    if coordinate != None: x.append(pos[coordinate])
+                    if isinstance(coordinate, int): x.append(pos[coordinate])
                     else: x.append(dist)
                     y.append(variable[self.block_name_index[blkname]])
         return np.array(x), np.array(y)
