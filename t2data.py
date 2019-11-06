@@ -1364,9 +1364,9 @@ class t2data(object):
             [part, subsection['type'],
              dummy, subsection['dual']] = infile.parse_string(line, 'minc')
             vals = infile.read_values('part1')
-            subsection['num_continua'], nvol,
-            subsection['where'], subsection['spacing'] = vals[0], vals[1], \
-                                                         vals[2], vals[3:]
+            subsection['num_continua'], nvol, \
+                subsection['where'], subsection['spacing'] = vals[0], vals[1], \
+                                                             vals[2], vals[3:]
             nlines = int(ceil(nvol / 8.))
             vol = []
             for i in range(nlines): vol += infile.read_values('part2')
