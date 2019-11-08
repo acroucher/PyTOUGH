@@ -2092,8 +2092,7 @@ class t2data(object):
     def eos_json(self, eos):
         """Converts TOUGH2 EOS data to Waiwera JSON dictionary."""
         jsondata = {}
-        supported_eos = {'W': 'w', 'EW': 'we', 'EWC': 'wce',
-                         'EWA': 'wae', 'EWAV': 'wae'}
+        supported_eos = {'W': 'w', 'EW': 'we', 'EWC': 'wce', 'EWAV': 'wae'}
         aut2eosname = ''
         if eos is None:
             if self.multi:
@@ -2108,12 +2107,15 @@ class t2data(object):
                 eos_from_index = {1: 'EW', 2: 'EWC', 3: 'EWA', 4: 'EWAV'}
                 if eos in eos_from_index: aut2eosname = eos_from_index[eos]
             else: aut2eosname = eos
-        if aut2eosname == '': aut2eosname = 'EW'
-        if aut2eosname in supported_eos:
-            jsondata['eos'] = {'name': supported_eos[aut2eosname]}
-            if jsondata['eos']['name'] == 'w':
-                jsondata['eos']['temperature'] = self.parameter['default_incons'][1]
-        else: raise Exception ('Unhandled EOS:' + aut2eosname)
+        if aut2eosname:
+            if aut2eosname in supported_eos:
+                jsondata['eos'] = {'name': supported_eos[aut2eosname]}
+                if jsondata['eos']['name'] == 'w':
+                    jsondata['eos']['temperature'] = self.parameter['default_incons'][1]
+            else:
+                raise Exception ('EOS not supported:' + aut2eosname)
+        else:
+            raise Exception ('EOS not detected.')
         return jsondata
 
     def timestepping_json(self):
