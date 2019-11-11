@@ -2388,7 +2388,10 @@ class t2data(object):
             jsondata['boundaries'] = []
             for blk in self.grid.blocklist:
                 if not (0. < blk.volume < atmos_volume):
-                    pv = bdy_incons[blk.name].variable
+                    if isinstance(bdy_incons, t2incon):
+                        pv = bdy_incons[blk.name].variable
+                    else:
+                        pv = bdy_incons
                     reg = primary_to_region(pv)
                     bc = {'primary': pv, 'region': reg, 'faces': []}
                     for conname in blk.connection_name:
