@@ -16,13 +16,14 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.5.1, which has:
+The latest stable version is 1.5.2, which has:
 
-* ability to import mulgrid from AMESH Voronoi grids
-* new t2grid / t2data rename_blocks() methods
-* support for MOMOP section in TOUGH2 data files
-* ability to disallow spaces in block names when generating grids
-* fixes to enable running PyTOUGH with later versions of Numpy and VTK
+* fixes to accommodate more TOUGH2 and TOUGHREACT variants
+* further Python 3 compatibility fixes
+* new mulgrid snap\_columns\_to\_nearest_layers() method
+* new coordinate optional parameter in mulgrid line_plot() method
+* new t2data json() method
+* new t2data effective_incons() method
 
 as well as various bug fixes and other minor enhancements.
 
