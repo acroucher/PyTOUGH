@@ -1619,6 +1619,9 @@ class toughreact_tecplot(object):
 
     def __repr__(self): return "TOUGHREACT results for " + str(self.element.num_rows) + " blocks"
 
+    def close(self):
+        self._file.close()
+
     def get_index(self): return self._index
     def set_index(self, i):
         self._file.seek(self._pos[i])
