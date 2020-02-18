@@ -1610,7 +1610,8 @@ class toughreact_tecplot(object):
     """
     def __init__(self, filename, blocks):
         self.filename = filename
-        self._file = open(filename, 'rU')
+        mode = 'r' if sys.version_info > (3,) else 'rU'
+        self._file = open(filename, mode)
         self.setup_pos()
         self.setup_table(blocks)
         if self.num_times > 0:
