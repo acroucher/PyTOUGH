@@ -1513,6 +1513,8 @@ class t2data(object):
         fb.writerec('%di' % nel, blkdata[:]['rockindex'] + 1)
         for var in ['blk1index', 'blk2index']:
             fb.writerec('%di' % ncon, condata[:][var] + 1)
+        fa.close()
+        fb.close()
 
     def read_extra_precision(self):
         """Reads extra precision data from auxiliary file, with same base name
