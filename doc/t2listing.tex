@@ -154,6 +154,7 @@ The main methods of a \texttt{t2listing} object are listed in Table \ref{tb:t2li
       \textbf{Method} & \textbf{Type} & \textbf{Description}\\
       \hline
       \hyperref[sec:t2listing:add_side_recharge]{\texttt{add\_side\_recharge}} & -- & adds side recharge generators to a \texttt{t2data} object\\
+      \hyperref[sec:t2listing:close]{\texttt{close}} & -- & closes listing file\\
       \hyperref[sec:t2listing:first]{\texttt{first}} & -- & navigates to the first set of full results\\
       \hyperref[sec:t2listing:get_difference]{\texttt{get\_difference}} & dictionary & maximum differences in element table between two sets of results\\
       \hyperref[sec:t2listing:history]{\texttt{history}} & list or tuple & time history for a selection of locations and table columns\\
@@ -183,6 +184,14 @@ Adds side recharge generators to a \texttt{t2data} object \texttt{dat} for a pro
 \item \textbf{dat}: \texttt{t2data}\\
   TOUGH2 data object for the side recharge generators to be added to.
 \end{itemize}
+
+\begin{snugshade}
+\subsubsection{\texttt{close()}}
+\end{snugshade}
+\label{sec:t2listing:close}
+\index{TOUGH2 listing files!closing}
+
+Closes the listing file after use.
 
 \begin{snugshade}
 \subsubsection{\texttt{first()}}
@@ -553,6 +562,7 @@ The methods of a \texttt{toughreact\_tecplot} object are listed in Table \ref{tb
       \hline
       \textbf{Method} & \textbf{Type} & \textbf{Description}\\
       \hline
+      \hyperref[sec:toughreact_tecplot:close]{\texttt{close}} & -- & closes file\\
       \hyperref[sec:toughreact_tecplot:first]{\texttt{first}} & -- & navigates to the first set of full results\\
       \hyperref[sec:toughreact_tecplot:history]{\texttt{history}} & list or tuple & time history for a selection of locations and table columns\\
       \hyperref[sec:toughreact_tecplot:last]{\texttt{last}} & -- & navigates to the last set of full results\\
@@ -565,6 +575,14 @@ The methods of a \texttt{toughreact\_tecplot} object are listed in Table \ref{tb
     \label{tb:toughreact_tecplot_methods}
   \end{center}
 \end{table}
+
+\begin{snugshade}
+\subsubsection{\texttt{close()}}
+\end{snugshade}
+\label{sec:toughreact_tecplot:close}
+\index{TOUGHREACT Tecplot files!closing}
+
+Closes the file after use.
 
 \begin{snugshade}
 \subsubsection{\texttt{first()}}
