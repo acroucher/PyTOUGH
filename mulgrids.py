@@ -4011,37 +4011,37 @@ class mulgrid(object):
 
         def parse_layers(filename):
             """Parse AMESH input to identify layer structure."""
-            f = open(filename, 'r')
-            found_locat = False
-            for line in f:
-                found_locat = line[:5].lower() == 'locat'
-                if found_locat: break
-            if not found_locat:
-                raise Exception('Could not find locat block in AMESH input file: ' +
-                                input_filename)
-            layers = {}
-            for line in f:
-                if line.strip():
-                    blkname = line[:5]
-                    vals = line[5:].split()
-                    index = int(vals[0])
-                    x, y, z = float(vals[1]), float(vals[2]), float(vals[3])
-                    pos = np.array([x, y])
-                    thickness = float(vals[4])
-                    if index in layers:
-                        layers[index]['block_name'].append(blkname)
-                        layers[index]['column_centre'][blkname] = pos
-                        thickness_diff = thickness - layers[index]['thickness']
-                        thickness_err = thickness_diff / layers[index]['thickness']
-                        if abs(thickness_err) > thickness_tol:
-                            raise Exception('Non-constant thickness ' +
-                                            'for layer containing block: ' + blkname)
-                    else:
-                        layers[index] = {'block_name': [blkname],
-                                         'column_centre': {blkname: pos},
-                                         'thickness': thickness,
-                                         'elevation': z}
-                else: break
+            with open(filename, 'r') as f:
+                found_locat = False
+                for line in f:
+                    found_locat = line[:5].lower() == 'locat'
+                    if found_locat: break
+                if not found_locat:
+                    raise Exception('Could not find locat block in AMESH input file: ' +
+                                    input_filename)
+                layers = {}
+                for line in f:
+                    if line.strip():
+                        blkname = line[:5]
+                        vals = line[5:].split()
+                        index = int(vals[0])
+                        x, y, z = float(vals[1]), float(vals[2]), float(vals[3])
+                        pos = np.array([x, y])
+                        thickness = float(vals[4])
+                        if index in layers:
+                            layers[index]['block_name'].append(blkname)
+                            layers[index]['column_centre'][blkname] = pos
+                            thickness_diff = thickness - layers[index]['thickness']
+                            thickness_err = thickness_diff / layers[index]['thickness']
+                            if abs(thickness_err) > thickness_tol:
+                                raise Exception('Non-constant thickness ' +
+                                                'for layer containing block: ' + blkname)
+                        else:
+                            layers[index] = {'block_name': [blkname],
+                                             'column_centre': {blkname: pos},
+                                             'thickness': thickness,
+                                             'elevation': z}
+                    else: break
             layer_names = list(layers.keys())
             elevations = np.array([layers[name]['elevation'] for name in layer_names])
             isort = np.argsort(elevations)[::-1]
@@ -4053,18 +4053,19 @@ class mulgrid(object):
             with the minimum segment length."""
             segment_data = []
             min_segment_length = sys.float_info.max
-            for line in open(filename):
-                x1, y1, x2, y2 = float(line[0: 15]), float(line[15: 30]), \
-                                 float(line[30: 45]), float(line[45: 60])
-                points = (np.array([x1, y1]), np.array([x2, y2]))
-                idx = int(line[60: 63])
-                blocknames = (line[65: 70], line[70: 75])
-                if all([blkname in bottom_layer['block_name'] or blkname.startswith('*')
-                        for blkname in blocknames]):
-                    segment_data.append({'points': points,
-                                         'index': idx, 'blocknames': blocknames})
-                    min_segment_length = min(min_segment_length,
-                                             np.linalg.norm(points[0] - points[1]))
+            with open(filename) as f:
+                for line in f:
+                    x1, y1, x2, y2 = float(line[0: 15]), float(line[15: 30]), \
+                                     float(line[30: 45]), float(line[45: 60])
+                    points = (np.array([x1, y1]), np.array([x2, y2]))
+                    idx = int(line[60: 63])
+                    blocknames = (line[65: 70], line[70: 75])
+                    if all([blkname in bottom_layer['block_name'] or blkname.startswith('*')
+                            for blkname in blocknames]):
+                        segment_data.append({'points': points,
+                                             'index': idx, 'blocknames': blocknames})
+                        min_segment_length = min(min_segment_length,
+                                                 np.linalg.norm(points[0] - points[1]))
             return segment_data, min_segment_length
 
         layers = parse_layers(input_filename)
