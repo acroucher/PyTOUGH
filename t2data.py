@@ -11,7 +11,7 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
 from __future__ import print_function
-
+import sys
 from fixed_format_file import *
 from t2grids import *
 from t2incons import *
@@ -1521,7 +1521,8 @@ class t2data(object):
         from os.path import exists
         filename = self.extra_precision_filename
         if exists(filename):
-            xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, 'rU',
+            mode = 'r' if sys.version_info > (3,) else 'rU'
+            xpfile = t2_extra_precision_data_parser(self.extra_precision_filename, mode,
                                                     read_function = self.read_function)
             read_fn = dict(zip(t2_extra_precision_sections,
                                [self.read_rocktypes, self.read_blocks, self.read_connections,
@@ -1566,7 +1567,8 @@ class t2data(object):
         an associated '.pdat' file, if it exists.
         """
         if filename: self.filename = filename
-        infile = t2data_parser(self.filename, 'rU', read_function = self.read_function)
+        mode = 'r' if sys.version_info > (3,) else 'rU'
+        infile = t2data_parser(self.filename, mode, read_function = self.read_function)
         self.read_title(infile)
         self._sections = []
         more = True
@@ -1591,7 +1593,8 @@ class t2data(object):
         if meshfilename and (self.grid.num_blocks == 0):
             self.meshfilename = meshfilename
             if isinstance(meshfilename, str):
-                meshfile = t2data_parser(self.meshfilename, 'rU', read_function = self.read_function)
+                mode = 'r' if sys.version_info > (3,) else 'rU'
+                meshfile = t2data_parser(self.meshfilename, mode, read_function = self.read_function)
                 self.read_meshfile(meshfile)
                 meshfile.close()
             elif isinstance(meshfilename, (list, tuple)):

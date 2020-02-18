@@ -164,7 +164,8 @@ class t2incon(object):
     def read(self, filename, num_variables = None):
         """Reads initial conditions from file."""
         self.empty()
-        infile = t2incon_parser(filename, 'rU', read_function = self.read_function)
+        mode = 'r' if sys.version_info > (3,) else 'rU'
+        infile = t2incon_parser(filename, mode, read_function = self.read_function)
         infile.readline() # skip header
         finished = False
         timing = False

@@ -19,7 +19,7 @@ except ImportError: # try importing Numeric on old installs
 from mulgrids import fix_blockname, valid_blockname
 from fixed_format_file import fortran_float, fortran_int
 import io
-from sys import version_info
+import sys
 
 class listingtable(object):
 
@@ -191,7 +191,7 @@ class t2listing(object):
     def close(self):
         self._file.close()
 
-    if version_info[0] < 3:
+    if sys.version_info < (3,):
         def readline(self):
             """Reads next line and returns it as a string. In Python 2.x,
             readline() already returns a string and doesn't need decoding.
@@ -1388,7 +1388,8 @@ class t2historyfile(object):
         files = glob(filename)
         configured = False
         for i, fname in enumerate(files):
-            self._file = open(fname,'rU')
+            mode = 'r' if sys.version_info > (3,) else 'rU'
+            self._file = open(fname, mode)
             header = self._file.readline()
             if header:
                 if not configured:

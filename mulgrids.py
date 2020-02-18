@@ -11,7 +11,7 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
 from __future__ import print_function
-
+import sys
 from string import ascii_lowercase, ascii_uppercase
 from geometry import *
 from fixed_format_file import *
@@ -1285,7 +1285,8 @@ class mulgrid(object):
     def read(self, filename):
         """Reads MULgraph grid from file"""
         self.empty()
-        geo = fixed_format_file(filename, 'rU',
+        mode = 'r' if sys.version_info > (3,) else 'rU'
+        geo = fixed_format_file(filename, mode,
                                 mulgrid_format_specification, self.read_function)
         self.read_header(geo)
         if self.type == 'GENER':
@@ -1558,7 +1559,8 @@ class mulgrid(object):
         specified layer structure."""
         grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
         grid.empty()
-        gmsh = open(filename, 'rU')
+        mode = 'r' if sys.version_info > (3,) else 'rU'
+        gmsh = open(filename, mode)
         line = ''
         chars = uniqstring(chars)
         while not '$Nodes' in line: line = gmsh.readline()
@@ -3673,7 +3675,6 @@ class mulgrid(object):
         if grid_boundary: bounds = geo.boundary_polygon
         else: bounds = None
         qtree = geo.column_quadtree(columns)
-        import sys
         nd = len(data)
         for idata, d in enumerate(data):
             col = geo.column_containing_point(d[0:2], geo_columns,
@@ -4050,9 +4051,8 @@ class mulgrid(object):
         def parse_segments(filename, bottom_layer):
             """Parse AMESH segment file and return list of 2-D segments, together
             with the minimum segment length."""
-            from sys import float_info
             segment_data = []
-            min_segment_length = float_info.max
+            min_segment_length = sys.float_info.max
             for line in open(filename):
                 x1, y1, x2, y2 = float(line[0: 15]), float(line[15: 30]), \
                                  float(line[30: 45]), float(line[45: 60])
