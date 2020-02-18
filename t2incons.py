@@ -208,6 +208,7 @@ class t2incon(object):
                 [kcyc, itr, nm, tstart, sumtim] = infile.parse_string(line, timing_fmt)
                 self.timing = {'kcyc': kcyc, 'iter': itr, 'nm': nm,
                                'tstart': tstart, 'sumtim': sumtim}
+        infile.close()
 
     def write(self, filename, reset = True):
         """Writes initial conditions to file."""
