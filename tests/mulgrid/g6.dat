@@ -1,0 +1,2884 @@
+GENER00  1.00e+25  1.00e-06                                0.00
+VERTICES
+eaa      0.00      0.00
+eab     16.80      0.00
+eac     33.61      0.00
+ead     50.41      0.00
+eae     67.22      0.00
+eaf     84.02      0.00
+eag    100.83      0.00
+eah    117.63      0.00
+eai    134.44      0.00
+eaj    151.24      0.00
+eak    168.05      0.00
+eal    181.39      0.00
+eam    191.97      0.00
+ean    200.38      0.00
+eao    208.78      0.00
+eap    217.18      0.00
+eaq    225.58      0.00
+ear    233.99      0.00
+eas    242.39      0.00
+eat    250.79      0.00
+eau    259.19      0.00
+eav    267.60      0.00
+eaw    276.00      0.00
+eax    284.40      0.00
+eay    292.80      0.00
+eaz    301.21      0.00
+faa    309.61      0.00
+fab    318.01      0.00
+fac    326.41      0.00
+fad    334.82      0.00
+fae    343.22      0.00
+faf    351.62      0.00
+fag    360.02      0.00
+fah    368.43      0.00
+fai    376.83      0.00
+faj    385.23      0.00
+fak    393.63      0.00
+fal    402.04      0.00
+fam    410.44      0.00
+fan    418.84      0.00
+fao    429.43      0.00
+fap    442.77      0.00
+faq    459.57      0.00
+far    476.38      0.00
+fas    493.18      0.00
+fat    509.98      0.00
+fau    526.79      0.00
+fav    543.59      0.00
+faw    560.40      0.00
+fax    577.20      0.00
+fay    594.01      0.00
+faz    610.81      0.00
+gaa    627.62      0.00
+gab    644.42      0.00
+gac    661.23      0.00
+gad    678.03      0.00
+gae    694.84      0.00
+gaf    711.64      0.00
+gag    728.45      0.00
+gah    745.25      0.00
+gai    762.06      0.00
+gaj    778.86      0.00
+gak    795.67      0.00
+gal    812.47      0.00
+eba      0.00      5.00
+ebb     16.80      5.00
+ebc     33.61      5.00
+ebd     50.41      5.00
+ebe     67.22      5.00
+ebf     84.02      5.00
+ebg    100.83      5.00
+ebh    117.63      5.00
+ebi    134.44      5.00
+ebj    151.24      5.00
+ebk    168.05      5.00
+ebl    181.39      5.00
+ebm    191.97      5.00
+ebn    200.38      5.00
+ebo    208.78      5.00
+ebp    217.18      5.00
+ebq    225.58      5.00
+ebr    233.99      5.00
+ebs    242.39      5.00
+ebt    250.79      5.00
+ebu    259.19      5.00
+ebv    267.60      5.00
+ebw    276.00      5.00
+ebx    284.40      5.00
+eby    292.80      5.00
+ebz    301.21      5.00
+fba    309.61      5.00
+fbb    318.01      5.00
+fbc    326.41      5.00
+fbd    334.82      5.00
+fbe    343.22      5.00
+fbf    351.62      5.00
+fbg    360.02      5.00
+fbh    368.43      5.00
+fbi    376.83      5.00
+fbj    385.23      5.00
+fbk    393.63      5.00
+fbl    402.04      5.00
+fbm    410.44      5.00
+fbn    418.84      5.00
+fbo    429.43      5.00
+fbp    442.77      5.00
+fbq    459.57      5.00
+fbr    476.38      5.00
+fbs    493.18      5.00
+fbt    509.98      5.00
+fbu    526.79      5.00
+fbv    543.59      5.00
+fbw    560.40      5.00
+fbx    577.20      5.00
+fby    594.01      5.00
+fbz    610.81      5.00
+gba    627.62      5.00
+gbb    644.42      5.00
+gbc    661.23      5.00
+gbd    678.03      5.00
+gbe    694.84      5.00
+gbf    711.64      5.00
+gbg    728.45      5.00
+gbh    745.25      5.00
+gbi    762.06      5.00
+gbj    778.86      5.00
+gbk    795.67      5.00
+gbl    812.47      5.00
+eca      0.00     10.00
+ecb     16.80     10.00
+ecc     33.61     10.00
+ecd     50.41     10.00
+ece     67.22     10.00
+ecf     84.02     10.00
+ecg    100.83     10.00
+ech    117.63     10.00
+eci    134.44     10.00
+ecj    151.24     10.00
+eck    168.05     10.00
+ecl    181.39     10.00
+ecm    191.97     10.00
+ecn    200.38     10.00
+eco    208.78     10.00
+ecp    217.18     10.00
+ecq    225.58     10.00
+ecr    233.99     10.00
+ecs    242.39     10.00
+ect    250.79     10.00
+ecu    259.19     10.00
+ecv    267.60     10.00
+ecw    276.00     10.00
+ecx    284.40     10.00
+ecy    292.80     10.00
+ecz    301.21     10.00
+fca    309.61     10.00
+fcb    318.01     10.00
+fcc    326.41     10.00
+fcd    334.82     10.00
+fce    343.22     10.00
+fcf    351.62     10.00
+fcg    360.02     10.00
+fch    368.43     10.00
+fci    376.83     10.00
+fcj    385.23     10.00
+fck    393.63     10.00
+fcl    402.04     10.00
+fcm    410.44     10.00
+fcn    418.84     10.00
+fco    429.43     10.00
+fcp    442.77     10.00
+fcq    459.57     10.00
+fcr    476.38     10.00
+fcs    493.18     10.00
+fct    509.98     10.00
+fcu    526.79     10.00
+fcv    543.59     10.00
+fcw    560.40     10.00
+fcx    577.20     10.00
+fcy    594.01     10.00
+fcz    610.81     10.00
+gca    627.62     10.00
+gcb    644.42     10.00
+gcc    661.23     10.00
+gcd    678.03     10.00
+gce    694.84     10.00
+gcf    711.64     10.00
+gcg    728.45     10.00
+gch    745.25     10.00
+gci    762.06     10.00
+gcj    778.86     10.00
+gck    795.67     10.00
+gcl    812.47     10.00
+eda      0.00     15.00
+edb     16.80     15.00
+edc     33.61     15.00
+edd     50.41     15.00
+ede     67.22     15.00
+edf     84.02     15.00
+edg    100.83     15.00
+edh    117.63     15.00
+edi    134.44     15.00
+edj    151.24     15.00
+edk    168.05     15.00
+edl    181.39     15.00
+edm    191.97     15.00
+edn    200.38     15.00
+edo    208.78     15.00
+edp    217.18     15.00
+edq    225.58     15.00
+edr    233.99     15.00
+eds    242.39     15.00
+edt    250.79     15.00
+edu    259.19     15.00
+edv    267.60     15.00
+edw    276.00     15.00
+edx    284.40     15.00
+edy    292.80     15.00
+edz    301.21     15.00
+fda    309.61     15.00
+fdb    318.01     15.00
+fdc    326.41     15.00
+fdd    334.82     15.00
+fde    343.22     15.00
+fdf    351.62     15.00
+fdg    360.02     15.00
+fdh    368.43     15.00
+fdi    376.83     15.00
+fdj    385.23     15.00
+fdk    393.63     15.00
+fdl    402.04     15.00
+fdm    410.44     15.00
+fdn    418.84     15.00
+fdo    429.43     15.00
+fdp    442.77     15.00
+fdq    459.57     15.00
+fdr    476.38     15.00
+fds    493.18     15.00
+fdt    509.98     15.00
+fdu    526.79     15.00
+fdv    543.59     15.00
+fdw    560.40     15.00
+fdx    577.20     15.00
+fdy    594.01     15.00
+fdz    610.81     15.00
+gda    627.62     15.00
+gdb    644.42     15.00
+gdc    661.23     15.00
+gdd    678.03     15.00
+gde    694.84     15.00
+gdf    711.64     15.00
+gdg    728.45     15.00
+gdh    745.25     15.00
+gdi    762.06     15.00
+gdj    778.86     15.00
+gdk    795.67     15.00
+gdl    812.47     15.00
+eea      0.00     20.00
+eeb     16.80     20.00
+eec     33.61     20.00
+eed     50.41     20.00
+eee     67.22     20.00
+eef     84.02     20.00
+eeg    100.83     20.00
+eeh    117.63     20.00
+eei    134.44     20.00
+eej    151.24     20.00
+eek    168.05     20.00
+eel    181.39     20.00
+eem    191.97     20.00
+een    200.38     20.00
+eeo    208.78     20.00
+eep    217.18     20.00
+eeq    225.58     20.00
+eer    233.99     20.00
+ees    242.39     20.00
+eet    250.79     20.00
+eeu    259.19     20.00
+eev    267.60     20.00
+eew    276.00     20.00
+eex    284.40     20.00
+eey    292.80     20.00
+eez    301.21     20.00
+fea    309.61     20.00
+feb    318.01     20.00
+fec    326.41     20.00
+fed    334.82     20.00
+fee    343.22     20.00
+fef    351.62     20.00
+feg    360.02     20.00
+feh    368.43     20.00
+fei    376.83     20.00
+fej    385.23     20.00
+fek    393.63     20.00
+fel    402.04     20.00
+fem    410.44     20.00
+fen    418.84     20.00
+feo    429.43     20.00
+fep    442.77     20.00
+feq    459.57     20.00
+fer    476.38     20.00
+fes    493.18     20.00
+fet    509.98     20.00
+feu    526.79     20.00
+fev    543.59     20.00
+few    560.40     20.00
+fex    577.20     20.00
+fey    594.01     20.00
+fez    610.81     20.00
+gea    627.62     20.00
+geb    644.42     20.00
+gec    661.23     20.00
+ged    678.03     20.00
+gee    694.84     20.00
+gef    711.64     20.00
+geg    728.45     20.00
+geh    745.25     20.00
+gei    762.06     20.00
+gej    778.86     20.00
+gek    795.67     20.00
+gel    812.47     20.00
+efa      0.00     25.00
+efb     16.80     25.00
+efc     33.61     25.00
+efd     50.41     25.00
+efe     67.22     25.00
+eff     84.02     25.00
+efg    100.83     25.00
+efh    117.63     25.00
+efi    134.44     25.00
+efj    151.24     25.00
+efk    168.05     25.00
+efl    181.39     25.00
+efm    191.97     25.00
+efn    200.38     25.00
+efo    208.78     25.00
+efp    217.18     25.00
+efq    225.58     25.00
+efr    233.99     25.00
+efs    242.39     25.00
+eft    250.79     25.00
+efu    259.19     25.00
+efv    267.60     25.00
+efw    276.00     25.00
+efx    284.40     25.00
+efy    292.80     25.00
+efz    301.21     25.00
+ffa    309.61     25.00
+ffb    318.01     25.00
+ffc    326.41     25.00
+ffd    334.82     25.00
+ffe    343.22     25.00
+fff    351.62     25.00
+ffg    360.02     25.00
+ffh    368.43     25.00
+ffi    376.83     25.00
+ffj    385.23     25.00
+ffk    393.63     25.00
+ffl    402.04     25.00
+ffm    410.44     25.00
+ffn    418.84     25.00
+ffo    429.43     25.00
+ffp    442.77     25.00
+ffq    459.57     25.00
+ffr    476.38     25.00
+ffs    493.18     25.00
+fft    509.98     25.00
+ffu    526.79     25.00
+ffv    543.59     25.00
+ffw    560.40     25.00
+ffx    577.20     25.00
+ffy    594.01     25.00
+ffz    610.81     25.00
+gfa    627.62     25.00
+gfb    644.42     25.00
+gfc    661.23     25.00
+gfd    678.03     25.00
+gfe    694.84     25.00
+gff    711.64     25.00
+gfg    728.45     25.00
+gfh    745.25     25.00
+gfi    762.06     25.00
+gfj    778.86     25.00
+gfk    795.67     25.00
+gfl    812.47     25.00
+
+GRID
+eaa1 4      8.40      2.50
+eaa
+eab
+ebb
+eba
+eab1 4     25.21      2.50
+eab
+eac
+ebc
+ebb
+eac1 4     42.01      2.50
+eac
+ead
+ebd
+ebc
+ead1 4     58.82      2.50
+ead
+eae
+ebe
+ebd
+eae1 4     75.62      2.50
+eae
+eaf
+ebf
+ebe
+eaf1 4     92.43      2.50
+eaf
+eag
+ebg
+ebf
+eag1 4    109.23      2.50
+eag
+eah
+ebh
+ebg
+eah1 4    126.04      2.50
+eah
+eai
+ebi
+ebh
+eai1 4    142.84      2.50
+eai
+eaj
+ebj
+ebi
+eaj1 4    159.65      2.50
+eaj
+eak
+ebk
+ebj
+eak1 4    174.72      2.50
+eak
+eal
+ebl
+ebk
+eal1 4    186.68      2.50
+eal
+eam
+ebm
+ebl
+eam1 4    196.18      2.50
+eam
+ean
+ebn
+ebm
+ean1 4    204.58      2.50
+ean
+eao
+ebo
+ebn
+eao1 4    212.98      2.50
+eao
+eap
+ebp
+ebo
+eap1 4    221.38      2.50
+eap
+eaq
+ebq
+ebp
+eaq1 4    229.79      2.50
+eaq
+ear
+ebr
+ebq
+ear1 4    238.19      2.50
+ear
+eas
+ebs
+ebr
+eas1 4    246.59      2.50
+eas
+eat
+ebt
+ebs
+eat1 4    254.99      2.50
+eat
+eau
+ebu
+ebt
+eau1 4    263.39      2.50
+eau
+eav
+ebv
+ebu
+eav1 4    271.80      2.50
+eav
+eaw
+ebw
+ebv
+eaw1 4    280.20      2.50
+eaw
+eax
+ebx
+ebw
+eax1 4    288.60      2.50
+eax
+eay
+eby
+ebx
+eay1 4    297.00      2.50
+eay
+eaz
+ebz
+eby
+eaz1 4    305.41      2.50
+eaz
+faa
+fba
+ebz
+faa1 4    313.81      2.50
+faa
+fab
+fbb
+fba
+fab1 4    322.21      2.50
+fab
+fac
+fbc
+fbb
+fac1 4    330.61      2.50
+fac
+fad
+fbd
+fbc
+fad1 4    339.02      2.50
+fad
+fae
+fbe
+fbd
+fae1 4    347.42      2.50
+fae
+faf
+fbf
+fbe
+faf1 4    355.82      2.50
+faf
+fag
+fbg
+fbf
+fag1 4    364.22      2.50
+fag
+fah
+fbh
+fbg
+fah1 4    372.63      2.50
+fah
+fai
+fbi
+fbh
+fai1 4    381.03      2.50
+fai
+faj
+fbj
+fbi
+faj1 4    389.43      2.50
+faj
+fak
+fbk
+fbj
+fak1 4    397.83      2.50
+fak
+fal
+fbl
+fbk
+fal1 4    406.24      2.50
+fal
+fam
+fbm
+fbl
+fam1 4    414.64      2.50
+fam
+fan
+fbn
+fbm
+fan1 4    424.13      2.50
+fan
+fao
+fbo
+fbn
+fao1 4    436.10      2.50
+fao
+fap
+fbp
+fbo
+fap1 4    451.17      2.50
+fap
+faq
+fbq
+fbp
+faq1 4    467.97      2.50
+faq
+far
+fbr
+fbq
+far1 4    484.78      2.50
+far
+fas
+fbs
+fbr
+fas1 4    501.58      2.50
+fas
+fat
+fbt
+fbs
+fat1 4    518.39      2.50
+fat
+fau
+fbu
+fbt
+fau1 4    535.19      2.50
+fau
+fav
+fbv
+fbu
+fav1 4    552.00      2.50
+fav
+faw
+fbw
+fbv
+faw1 4    568.80      2.50
+faw
+fax
+fbx
+fbw
+fax1 4    585.61      2.50
+fax
+fay
+fby
+fbx
+fay1 4    602.41      2.50
+fay
+faz
+fbz
+fby
+faz1 4    619.22      2.50
+faz
+gaa
+gba
+fbz
+gaa1 4    636.02      2.50
+gaa
+gab
+gbb
+gba
+gab1 4    652.83      2.50
+gab
+gac
+gbc
+gbb
+gac1 4    669.63      2.50
+gac
+gad
+gbd
+gbc
+gad1 4    686.44      2.50
+gad
+gae
+gbe
+gbd
+gae1 4    703.24      2.50
+gae
+gaf
+gbf
+gbe
+gaf1 4    720.05      2.50
+gaf
+gag
+gbg
+gbf
+gag1 4    736.85      2.50
+gag
+gah
+gbh
+gbg
+gah1 4    753.66      2.50
+gah
+gai
+gbi
+gbh
+gai1 4    770.46      2.50
+gai
+gaj
+gbj
+gbi
+gaj1 4    787.27      2.50
+gaj
+gak
+gbk
+gbj
+gak1 4    804.07      2.50
+gak
+gal
+gbl
+gbk
+eba1 4      8.40      7.50
+eba
+ebb
+ecb
+eca
+ebb1 4     25.21      7.50
+ebb
+ebc
+ecc
+ecb
+ebc1 4     42.01      7.50
+ebc
+ebd
+ecd
+ecc
+ebd1 4     58.82      7.50
+ebd
+ebe
+ece
+ecd
+ebe1 4     75.62      7.50
+ebe
+ebf
+ecf
+ece
+ebf1 4     92.43      7.50
+ebf
+ebg
+ecg
+ecf
+ebg1 4    109.23      7.50
+ebg
+ebh
+ech
+ecg
+ebh1 4    126.04      7.50
+ebh
+ebi
+eci
+ech
+ebi1 4    142.84      7.50
+ebi
+ebj
+ecj
+eci
+ebj1 4    159.65      7.50
+ebj
+ebk
+eck
+ecj
+ebk1 4    174.72      7.50
+ebk
+ebl
+ecl
+eck
+ebl1 4    186.68      7.50
+ebl
+ebm
+ecm
+ecl
+ebm1 4    196.18      7.50
+ebm
+ebn
+ecn
+ecm
+ebn1 4    204.58      7.50
+ebn
+ebo
+eco
+ecn
+ebo1 4    212.98      7.50
+ebo
+ebp
+ecp
+eco
+ebp1 4    221.38      7.50
+ebp
+ebq
+ecq
+ecp
+ebq1 4    229.79      7.50
+ebq
+ebr
+ecr
+ecq
+ebr1 4    238.19      7.50
+ebr
+ebs
+ecs
+ecr
+ebs1 4    246.59      7.50
+ebs
+ebt
+ect
+ecs
+ebt1 4    254.99      7.50
+ebt
+ebu
+ecu
+ect
+ebu1 4    263.39      7.50
+ebu
+ebv
+ecv
+ecu
+ebv1 4    271.80      7.50
+ebv
+ebw
+ecw
+ecv
+ebw1 4    280.20      7.50
+ebw
+ebx
+ecx
+ecw
+ebx1 4    288.60      7.50
+ebx
+eby
+ecy
+ecx
+eby1 4    297.00      7.50
+eby
+ebz
+ecz
+ecy
+ebz1 4    305.41      7.50
+ebz
+fba
+fca
+ecz
+fba1 4    313.81      7.50
+fba
+fbb
+fcb
+fca
+fbb1 4    322.21      7.50
+fbb
+fbc
+fcc
+fcb
+fbc1 4    330.61      7.50
+fbc
+fbd
+fcd
+fcc
+fbd1 4    339.02      7.50
+fbd
+fbe
+fce
+fcd
+fbe1 4    347.42      7.50
+fbe
+fbf
+fcf
+fce
+fbf1 4    355.82      7.50
+fbf
+fbg
+fcg
+fcf
+fbg1 4    364.22      7.50
+fbg
+fbh
+fch
+fcg
+fbh1 4    372.63      7.50
+fbh
+fbi
+fci
+fch
+fbi1 4    381.03      7.50
+fbi
+fbj
+fcj
+fci
+fbj1 4    389.43      7.50
+fbj
+fbk
+fck
+fcj
+fbk1 4    397.83      7.50
+fbk
+fbl
+fcl
+fck
+fbl1 4    406.24      7.50
+fbl
+fbm
+fcm
+fcl
+fbm1 4    414.64      7.50
+fbm
+fbn
+fcn
+fcm
+fbn1 4    424.13      7.50
+fbn
+fbo
+fco
+fcn
+fbo1 4    436.10      7.50
+fbo
+fbp
+fcp
+fco
+fbp1 4    451.17      7.50
+fbp
+fbq
+fcq
+fcp
+fbq1 4    467.97      7.50
+fbq
+fbr
+fcr
+fcq
+fbr1 4    484.78      7.50
+fbr
+fbs
+fcs
+fcr
+fbs1 4    501.58      7.50
+fbs
+fbt
+fct
+fcs
+fbt1 4    518.39      7.50
+fbt
+fbu
+fcu
+fct
+fbu1 4    535.19      7.50
+fbu
+fbv
+fcv
+fcu
+fbv1 4    552.00      7.50
+fbv
+fbw
+fcw
+fcv
+fbw1 4    568.80      7.50
+fbw
+fbx
+fcx
+fcw
+fbx1 4    585.61      7.50
+fbx
+fby
+fcy
+fcx
+fby1 4    602.41      7.50
+fby
+fbz
+fcz
+fcy
+fbz1 4    619.22      7.50
+fbz
+gba
+gca
+fcz
+gba1 4    636.02      7.50
+gba
+gbb
+gcb
+gca
+gbb1 4    652.83      7.50
+gbb
+gbc
+gcc
+gcb
+gbc1 4    669.63      7.50
+gbc
+gbd
+gcd
+gcc
+gbd1 4    686.44      7.50
+gbd
+gbe
+gce
+gcd
+gbe1 4    703.24      7.50
+gbe
+gbf
+gcf
+gce
+gbf1 4    720.05      7.50
+gbf
+gbg
+gcg
+gcf
+gbg1 4    736.85      7.50
+gbg
+gbh
+gch
+gcg
+gbh1 4    753.66      7.50
+gbh
+gbi
+gci
+gch
+gbi1 4    770.46      7.50
+gbi
+gbj
+gcj
+gci
+gbj1 4    787.27      7.50
+gbj
+gbk
+gck
+gcj
+gbk1 4    804.07      7.50
+gbk
+gbl
+gcl
+gck
+eca1 4      8.40     12.50
+eca
+ecb
+edb
+eda
+ecb1 4     25.21     12.50
+ecb
+ecc
+edc
+edb
+ecc1 4     42.01     12.50
+ecc
+ecd
+edd
+edc
+ecd1 4     58.82     12.50
+ecd
+ece
+ede
+edd
+ece1 4     75.62     12.50
+ece
+ecf
+edf
+ede
+ecf1 4     92.43     12.50
+ecf
+ecg
+edg
+edf
+ecg1 4    109.23     12.50
+ecg
+ech
+edh
+edg
+ech1 4    126.04     12.50
+ech
+eci
+edi
+edh
+eci1 4    142.84     12.50
+eci
+ecj
+edj
+edi
+ecj1 4    159.65     12.50
+ecj
+eck
+edk
+edj
+eck1 4    174.72     12.50
+eck
+ecl
+edl
+edk
+ecl1 4    186.68     12.50
+ecl
+ecm
+edm
+edl
+ecm1 4    196.18     12.50
+ecm
+ecn
+edn
+edm
+ecn1 4    204.58     12.50
+ecn
+eco
+edo
+edn
+eco1 4    212.98     12.50
+eco
+ecp
+edp
+edo
+ecp1 4    221.38     12.50
+ecp
+ecq
+edq
+edp
+ecq1 4    229.79     12.50
+ecq
+ecr
+edr
+edq
+ecr1 4    238.19     12.50
+ecr
+ecs
+eds
+edr
+ecs1 4    246.59     12.50
+ecs
+ect
+edt
+eds
+ect1 4    254.99     12.50
+ect
+ecu
+edu
+edt
+ecu1 4    263.39     12.50
+ecu
+ecv
+edv
+edu
+ecv1 4    271.80     12.50
+ecv
+ecw
+edw
+edv
+ecw1 4    280.20     12.50
+ecw
+ecx
+edx
+edw
+ecx1 4    288.60     12.50
+ecx
+ecy
+edy
+edx
+ecy1 4    297.00     12.50
+ecy
+ecz
+edz
+edy
+ecz1 4    305.41     12.50
+ecz
+fca
+fda
+edz
+fca1 4    313.81     12.50
+fca
+fcb
+fdb
+fda
+fcb1 4    322.21     12.50
+fcb
+fcc
+fdc
+fdb
+fcc1 4    330.61     12.50
+fcc
+fcd
+fdd
+fdc
+fcd1 4    339.02     12.50
+fcd
+fce
+fde
+fdd
+fce1 4    347.42     12.50
+fce
+fcf
+fdf
+fde
+fcf1 4    355.82     12.50
+fcf
+fcg
+fdg
+fdf
+fcg1 4    364.22     12.50
+fcg
+fch
+fdh
+fdg
+fch1 4    372.63     12.50
+fch
+fci
+fdi
+fdh
+fci1 4    381.03     12.50
+fci
+fcj
+fdj
+fdi
+fcj1 4    389.43     12.50
+fcj
+fck
+fdk
+fdj
+fck1 4    397.83     12.50
+fck
+fcl
+fdl
+fdk
+fcl1 4    406.24     12.50
+fcl
+fcm
+fdm
+fdl
+fcm1 4    414.64     12.50
+fcm
+fcn
+fdn
+fdm
+fcn1 4    424.13     12.50
+fcn
+fco
+fdo
+fdn
+fco1 4    436.10     12.50
+fco
+fcp
+fdp
+fdo
+fcp1 4    451.17     12.50
+fcp
+fcq
+fdq
+fdp
+fcq1 4    467.97     12.50
+fcq
+fcr
+fdr
+fdq
+fcr1 4    484.78     12.50
+fcr
+fcs
+fds
+fdr
+fcs1 4    501.58     12.50
+fcs
+fct
+fdt
+fds
+fct1 4    518.39     12.50
+fct
+fcu
+fdu
+fdt
+fcu1 4    535.19     12.50
+fcu
+fcv
+fdv
+fdu
+fcv1 4    552.00     12.50
+fcv
+fcw
+fdw
+fdv
+fcw1 4    568.80     12.50
+fcw
+fcx
+fdx
+fdw
+fcx1 4    585.61     12.50
+fcx
+fcy
+fdy
+fdx
+fcy1 4    602.41     12.50
+fcy
+fcz
+fdz
+fdy
+fcz1 4    619.22     12.50
+fcz
+gca
+gda
+fdz
+gca1 4    636.02     12.50
+gca
+gcb
+gdb
+gda
+gcb1 4    652.83     12.50
+gcb
+gcc
+gdc
+gdb
+gcc1 4    669.63     12.50
+gcc
+gcd
+gdd
+gdc
+gcd1 4    686.44     12.50
+gcd
+gce
+gde
+gdd
+gce1 4    703.24     12.50
+gce
+gcf
+gdf
+gde
+gcf1 4    720.05     12.50
+gcf
+gcg
+gdg
+gdf
+gcg1 4    736.85     12.50
+gcg
+gch
+gdh
+gdg
+gch1 4    753.66     12.50
+gch
+gci
+gdi
+gdh
+gci1 4    770.46     12.50
+gci
+gcj
+gdj
+gdi
+gcj1 4    787.27     12.50
+gcj
+gck
+gdk
+gdj
+gck1 4    804.07     12.50
+gck
+gcl
+gdl
+gdk
+eda1 4      8.40     17.50
+eda
+edb
+eeb
+eea
+edb1 4     25.21     17.50
+edb
+edc
+eec
+eeb
+edc1 4     42.01     17.50
+edc
+edd
+eed
+eec
+edd1 4     58.82     17.50
+edd
+ede
+eee
+eed
+ede1 4     75.62     17.50
+ede
+edf
+eef
+eee
+edf1 4     92.43     17.50
+edf
+edg
+eeg
+eef
+edg1 4    109.23     17.50
+edg
+edh
+eeh
+eeg
+edh1 4    126.04     17.50
+edh
+edi
+eei
+eeh
+edi1 4    142.84     17.50
+edi
+edj
+eej
+eei
+edj1 4    159.65     17.50
+edj
+edk
+eek
+eej
+edk1 4    174.72     17.50
+edk
+edl
+eel
+eek
+edl1 4    186.68     17.50
+edl
+edm
+eem
+eel
+edm1 4    196.18     17.50
+edm
+edn
+een
+eem
+edn1 4    204.58     17.50
+edn
+edo
+eeo
+een
+edo1 4    212.98     17.50
+edo
+edp
+eep
+eeo
+edp1 4    221.38     17.50
+edp
+edq
+eeq
+eep
+edq1 4    229.79     17.50
+edq
+edr
+eer
+eeq
+edr1 4    238.19     17.50
+edr
+eds
+ees
+eer
+eds1 4    246.59     17.50
+eds
+edt
+eet
+ees
+edt1 4    254.99     17.50
+edt
+edu
+eeu
+eet
+edu1 4    263.39     17.50
+edu
+edv
+eev
+eeu
+edv1 4    271.80     17.50
+edv
+edw
+eew
+eev
+edw1 4    280.20     17.50
+edw
+edx
+eex
+eew
+edx1 4    288.60     17.50
+edx
+edy
+eey
+eex
+edy1 4    297.00     17.50
+edy
+edz
+eez
+eey
+edz1 4    305.41     17.50
+edz
+fda
+fea
+eez
+fda1 4    313.81     17.50
+fda
+fdb
+feb
+fea
+fdb1 4    322.21     17.50
+fdb
+fdc
+fec
+feb
+fdc1 4    330.61     17.50
+fdc
+fdd
+fed
+fec
+fdd1 4    339.02     17.50
+fdd
+fde
+fee
+fed
+fde1 4    347.42     17.50
+fde
+fdf
+fef
+fee
+fdf1 4    355.82     17.50
+fdf
+fdg
+feg
+fef
+fdg1 4    364.22     17.50
+fdg
+fdh
+feh
+feg
+fdh1 4    372.63     17.50
+fdh
+fdi
+fei
+feh
+fdi1 4    381.03     17.50
+fdi
+fdj
+fej
+fei
+fdj1 4    389.43     17.50
+fdj
+fdk
+fek
+fej
+fdk1 4    397.83     17.50
+fdk
+fdl
+fel
+fek
+fdl1 4    406.24     17.50
+fdl
+fdm
+fem
+fel
+fdm1 4    414.64     17.50
+fdm
+fdn
+fen
+fem
+fdn1 4    424.13     17.50
+fdn
+fdo
+feo
+fen
+fdo1 4    436.10     17.50
+fdo
+fdp
+fep
+feo
+fdp1 4    451.17     17.50
+fdp
+fdq
+feq
+fep
+fdq1 4    467.97     17.50
+fdq
+fdr
+fer
+feq
+fdr1 4    484.78     17.50
+fdr
+fds
+fes
+fer
+fds1 4    501.58     17.50
+fds
+fdt
+fet
+fes
+fdt1 4    518.39     17.50
+fdt
+fdu
+feu
+fet
+fdu1 4    535.19     17.50
+fdu
+fdv
+fev
+feu
+fdv1 4    552.00     17.50
+fdv
+fdw
+few
+fev
+fdw1 4    568.80     17.50
+fdw
+fdx
+fex
+few
+fdx1 4    585.61     17.50
+fdx
+fdy
+fey
+fex
+fdy1 4    602.41     17.50
+fdy
+fdz
+fez
+fey
+fdz1 4    619.22     17.50
+fdz
+gda
+gea
+fez
+gda1 4    636.02     17.50
+gda
+gdb
+geb
+gea
+gdb1 4    652.83     17.50
+gdb
+gdc
+gec
+geb
+gdc1 4    669.63     17.50
+gdc
+gdd
+ged
+gec
+gdd1 4    686.44     17.50
+gdd
+gde
+gee
+ged
+gde1 4    703.24     17.50
+gde
+gdf
+gef
+gee
+gdf1 4    720.05     17.50
+gdf
+gdg
+geg
+gef
+gdg1 4    736.85     17.50
+gdg
+gdh
+geh
+geg
+gdh1 4    753.66     17.50
+gdh
+gdi
+gei
+geh
+gdi1 4    770.46     17.50
+gdi
+gdj
+gej
+gei
+gdj1 4    787.27     17.50
+gdj
+gdk
+gek
+gej
+gdk1 4    804.07     17.50
+gdk
+gdl
+gel
+gek
+eea1 4      8.40     22.50
+eea
+eeb
+efb
+efa
+eeb1 4     25.21     22.50
+eeb
+eec
+efc
+efb
+eec1 4     42.01     22.50
+eec
+eed
+efd
+efc
+eed1 4     58.82     22.50
+eed
+eee
+efe
+efd
+eee1 4     75.62     22.50
+eee
+eef
+eff
+efe
+eef1 4     92.43     22.50
+eef
+eeg
+efg
+eff
+eeg1 4    109.23     22.50
+eeg
+eeh
+efh
+efg
+eeh1 4    126.04     22.50
+eeh
+eei
+efi
+efh
+eei1 4    142.84     22.50
+eei
+eej
+efj
+efi
+eej1 4    159.65     22.50
+eej
+eek
+efk
+efj
+eek1 4    174.72     22.50
+eek
+eel
+efl
+efk
+eel1 4    186.68     22.50
+eel
+eem
+efm
+efl
+eem1 4    196.18     22.50
+eem
+een
+efn
+efm
+een1 4    204.58     22.50
+een
+eeo
+efo
+efn
+eeo1 4    212.98     22.50
+eeo
+eep
+efp
+efo
+eep1 4    221.38     22.50
+eep
+eeq
+efq
+efp
+eeq1 4    229.79     22.50
+eeq
+eer
+efr
+efq
+eer1 4    238.19     22.50
+eer
+ees
+efs
+efr
+ees1 4    246.59     22.50
+ees
+eet
+eft
+efs
+eet1 4    254.99     22.50
+eet
+eeu
+efu
+eft
+eeu1 4    263.39     22.50
+eeu
+eev
+efv
+efu
+eev1 4    271.80     22.50
+eev
+eew
+efw
+efv
+eew1 4    280.20     22.50
+eew
+eex
+efx
+efw
+eex1 4    288.60     22.50
+eex
+eey
+efy
+efx
+eey1 4    297.00     22.50
+eey
+eez
+efz
+efy
+eez1 4    305.41     22.50
+eez
+fea
+ffa
+efz
+fea1 4    313.81     22.50
+fea
+feb
+ffb
+ffa
+feb1 4    322.21     22.50
+feb
+fec
+ffc
+ffb
+fec1 4    330.61     22.50
+fec
+fed
+ffd
+ffc
+fed1 4    339.02     22.50
+fed
+fee
+ffe
+ffd
+fee1 4    347.42     22.50
+fee
+fef
+fff
+ffe
+fef1 4    355.82     22.50
+fef
+feg
+ffg
+fff
+feg1 4    364.22     22.50
+feg
+feh
+ffh
+ffg
+feh1 4    372.63     22.50
+feh
+fei
+ffi
+ffh
+fei1 4    381.03     22.50
+fei
+fej
+ffj
+ffi
+fej1 4    389.43     22.50
+fej
+fek
+ffk
+ffj
+fek1 4    397.83     22.50
+fek
+fel
+ffl
+ffk
+fel1 4    406.24     22.50
+fel
+fem
+ffm
+ffl
+fem1 4    414.64     22.50
+fem
+fen
+ffn
+ffm
+fen1 4    424.13     22.50
+fen
+feo
+ffo
+ffn
+feo1 4    436.10     22.50
+feo
+fep
+ffp
+ffo
+fep1 4    451.17     22.50
+fep
+feq
+ffq
+ffp
+feq1 4    467.97     22.50
+feq
+fer
+ffr
+ffq
+fer1 4    484.78     22.50
+fer
+fes
+ffs
+ffr
+fes1 4    501.58     22.50
+fes
+fet
+fft
+ffs
+fet1 4    518.39     22.50
+fet
+feu
+ffu
+fft
+feu1 4    535.19     22.50
+feu
+fev
+ffv
+ffu
+fev1 4    552.00     22.50
+fev
+few
+ffw
+ffv
+few1 4    568.80     22.50
+few
+fex
+ffx
+ffw
+fex1 4    585.61     22.50
+fex
+fey
+ffy
+ffx
+fey1 4    602.41     22.50
+fey
+fez
+ffz
+ffy
+fez1 4    619.22     22.50
+fez
+gea
+gfa
+ffz
+gea1 4    636.02     22.50
+gea
+geb
+gfb
+gfa
+geb1 4    652.83     22.50
+geb
+gec
+gfc
+gfb
+gec1 4    669.63     22.50
+gec
+ged
+gfd
+gfc
+ged1 4    686.44     22.50
+ged
+gee
+gfe
+gfd
+gee1 4    703.24     22.50
+gee
+gef
+gff
+gfe
+gef1 4    720.05     22.50
+gef
+geg
+gfg
+gff
+geg1 4    736.85     22.50
+geg
+geh
+gfh
+gfg
+geh1 4    753.66     22.50
+geh
+gei
+gfi
+gfh
+gei1 4    770.46     22.50
+gei
+gej
+gfj
+gfi
+gej1 4    787.27     22.50
+gej
+gek
+gfk
+gfj
+gek1 4    804.07     22.50
+gek
+gel
+gfl
+gfk
+
+CONNECTIONS
+eaaeab
+eabeac
+eacead
+eadeae
+eaeeaf
+eafeag
+eageah
+eaheai
+eaieaj
+eajeak
+eakeal
+ealeam
+eamean
+eaneao
+eaoeap
+eapeaq
+eaqear
+eareas
+easeat
+eateau
+eaueav
+eaveaw
+eaweax
+eaxeay
+eayeaz
+eazfaa
+faafab
+fabfac
+facfad
+fadfae
+faefaf
+faffag
+fagfah
+fahfai
+faifaj
+fajfak
+fakfal
+falfam
+famfan
+fanfao
+faofap
+fapfaq
+faqfar
+farfas
+fasfat
+fatfau
+faufav
+favfaw
+fawfax
+faxfay
+fayfaz
+fazgaa
+gaagab
+gabgac
+gacgad
+gadgae
+gaegaf
+gafgag
+gaggah
+gahgai
+gaigaj
+gajgak
+ebaebb
+ebbebc
+ebcebd
+ebdebe
+ebeebf
+ebfebg
+ebgebh
+ebhebi
+ebiebj
+ebjebk
+ebkebl
+eblebm
+ebmebn
+ebnebo
+eboebp
+ebpebq
+ebqebr
+ebrebs
+ebsebt
+ebtebu
+ebuebv
+ebvebw
+ebwebx
+ebxeby
+ebyebz
+ebzfba
+fbafbb
+fbbfbc
+fbcfbd
+fbdfbe
+fbefbf
+fbffbg
+fbgfbh
+fbhfbi
+fbifbj
+fbjfbk
+fbkfbl
+fblfbm
+fbmfbn
+fbnfbo
+fbofbp
+fbpfbq
+fbqfbr
+fbrfbs
+fbsfbt
+fbtfbu
+fbufbv
+fbvfbw
+fbwfbx
+fbxfby
+fbyfbz
+fbzgba
+gbagbb
+gbbgbc
+gbcgbd
+gbdgbe
+gbegbf
+gbfgbg
+gbggbh
+gbhgbi
+gbigbj
+gbjgbk
+ecaecb
+ecbecc
+eccecd
+ecdece
+eceecf
+ecfecg
+ecgech
+echeci
+eciecj
+ecjeck
+eckecl
+eclecm
+ecmecn
+ecneco
+ecoecp
+ecpecq
+ecqecr
+ecrecs
+ecsect
+ectecu
+ecuecv
+ecvecw
+ecwecx
+ecxecy
+ecyecz
+eczfca
+fcafcb
+fcbfcc
+fccfcd
+fcdfce
+fcefcf
+fcffcg
+fcgfch
+fchfci
+fcifcj
+fcjfck
+fckfcl
+fclfcm
+fcmfcn
+fcnfco
+fcofcp
+fcpfcq
+fcqfcr
+fcrfcs
+fcsfct
+fctfcu
+fcufcv
+fcvfcw
+fcwfcx
+fcxfcy
+fcyfcz
+fczgca
+gcagcb
+gcbgcc
+gccgcd
+gcdgce
+gcegcf
+gcfgcg
+gcggch
+gchgci
+gcigcj
+gcjgck
+edaedb
+edbedc
+edcedd
+eddede
+edeedf
+edfedg
+edgedh
+edhedi
+ediedj
+edjedk
+edkedl
+edledm
+edmedn
+ednedo
+edoedp
+edpedq
+edqedr
+edreds
+edsedt
+edtedu
+eduedv
+edvedw
+edwedx
+edxedy
+edyedz
+edzfda
+fdafdb
+fdbfdc
+fdcfdd
+fddfde
+fdefdf
+fdffdg
+fdgfdh
+fdhfdi
+fdifdj
+fdjfdk
+fdkfdl
+fdlfdm
+fdmfdn
+fdnfdo
+fdofdp
+fdpfdq
+fdqfdr
+fdrfds
+fdsfdt
+fdtfdu
+fdufdv
+fdvfdw
+fdwfdx
+fdxfdy
+fdyfdz
+fdzgda
+gdagdb
+gdbgdc
+gdcgdd
+gddgde
+gdegdf
+gdfgdg
+gdggdh
+gdhgdi
+gdigdj
+gdjgdk
+eeaeeb
+eebeec
+eeceed
+eedeee
+eeeeef
+eefeeg
+eegeeh
+eeheei
+eeieej
+eejeek
+eekeel
+eeleem
+eemeen
+eeneeo
+eeoeep
+eepeeq
+eeqeer
+eerees
+eeseet
+eeteeu
+eeueev
+eeveew
+eeweex
+eexeey
+eeyeez
+eezfea
+feafeb
+febfec
+fecfed
+fedfee
+feefef
+feffeg
+fegfeh
+fehfei
+feifej
+fejfek
+fekfel
+felfem
+femfen
+fenfeo
+feofep
+fepfeq
+feqfer
+ferfes
+fesfet
+fetfeu
+feufev
+fevfew
+fewfex
+fexfey
+feyfez
+fezgea
+geageb
+gebgec
+gecged
+gedgee
+geegef
+gefgeg
+geggeh
+gehgei
+geigej
+gejgek
+eaaeba
+eabebb
+eacebc
+eadebd
+eaeebe
+eafebf
+eagebg
+eahebh
+eaiebi
+eajebj
+eakebk
+ealebl
+eamebm
+eanebn
+eaoebo
+eapebp
+eaqebq
+earebr
+easebs
+eatebt
+eauebu
+eavebv
+eawebw
+eaxebx
+eayeby
+eazebz
+faafba
+fabfbb
+facfbc
+fadfbd
+faefbe
+faffbf
+fagfbg
+fahfbh
+faifbi
+fajfbj
+fakfbk
+falfbl
+famfbm
+fanfbn
+faofbo
+fapfbp
+faqfbq
+farfbr
+fasfbs
+fatfbt
+faufbu
+favfbv
+fawfbw
+faxfbx
+fayfby
+fazfbz
+gaagba
+gabgbb
+gacgbc
+gadgbd
+gaegbe
+gafgbf
+gaggbg
+gahgbh
+gaigbi
+gajgbj
+gakgbk
+ebaeca
+ebbecb
+ebcecc
+ebdecd
+ebeece
+ebfecf
+ebgecg
+ebhech
+ebieci
+ebjecj
+ebkeck
+eblecl
+ebmecm
+ebnecn
+eboeco
+ebpecp
+ebqecq
+ebrecr
+ebsecs
+ebtect
+ebuecu
+ebvecv
+ebwecw
+ebxecx
+ebyecy
+ebzecz
+fbafca
+fbbfcb
+fbcfcc
+fbdfcd
+fbefce
+fbffcf
+fbgfcg
+fbhfch
+fbifci
+fbjfcj
+fbkfck
+fblfcl
+fbmfcm
+fbnfcn
+fbofco
+fbpfcp
+fbqfcq
+fbrfcr
+fbsfcs
+fbtfct
+fbufcu
+fbvfcv
+fbwfcw
+fbxfcx
+fbyfcy
+fbzfcz
+gbagca
+gbbgcb
+gbcgcc
+gbdgcd
+gbegce
+gbfgcf
+gbggcg
+gbhgch
+gbigci
+gbjgcj
+gbkgck
+ecaeda
+ecbedb
+eccedc
+ecdedd
+eceede
+ecfedf
+ecgedg
+echedh
+eciedi
+ecjedj
+eckedk
+ecledl
+ecmedm
+ecnedn
+ecoedo
+ecpedp
+ecqedq
+ecredr
+ecseds
+ectedt
+ecuedu
+ecvedv
+ecwedw
+ecxedx
+ecyedy
+eczedz
+fcafda
+fcbfdb
+fccfdc
+fcdfdd
+fcefde
+fcffdf
+fcgfdg
+fchfdh
+fcifdi
+fcjfdj
+fckfdk
+fclfdl
+fcmfdm
+fcnfdn
+fcofdo
+fcpfdp
+fcqfdq
+fcrfdr
+fcsfds
+fctfdt
+fcufdu
+fcvfdv
+fcwfdw
+fcxfdx
+fcyfdy
+fczfdz
+gcagda
+gcbgdb
+gccgdc
+gcdgdd
+gcegde
+gcfgdf
+gcggdg
+gchgdh
+gcigdi
+gcjgdj
+gckgdk
+edaeea
+edbeeb
+edceec
+eddeed
+edeeee
+edfeef
+edgeeg
+edheeh
+edieei
+edjeej
+edkeek
+edleel
+edmeem
+edneen
+edoeeo
+edpeep
+edqeeq
+edreer
+edsees
+edteet
+edueeu
+edveev
+edweew
+edxeex
+edyeey
+edzeez
+fdafea
+fdbfeb
+fdcfec
+fddfed
+fdefee
+fdffef
+fdgfeg
+fdhfeh
+fdifei
+fdjfej
+fdkfek
+fdlfel
+fdmfem
+fdnfen
+fdofeo
+fdpfep
+fdqfeq
+fdrfer
+fdsfes
+fdtfet
+fdufeu
+fdvfev
+fdwfew
+fdxfex
+fdyfey
+fdzfez
+gdagea
+gdbgeb
+gdcgec
+gddged
+gdegee
+gdfgef
+gdggeg
+gdhgeh
+gdigei
+gdjgej
+gdkgek
+
+LAYERS
+ 0    1000.00   1000.00
+ 1     988.00    994.00
+ 2     976.00    982.00
+ 3     964.00    970.00
+ 4     952.00    958.00
+ 5     940.00    946.00
+ 6     928.00    934.00
+ 7     916.00    922.00
+ 8     904.00    910.00
+ 9     892.00    898.00
+10     880.00    886.00
+11     868.00    874.00
+12     856.00    862.00
+13     844.00    850.00
+14     832.00    838.00
+15     820.00    826.00
+16     808.00    814.00
+17     796.00    802.00
+18     784.00    790.00
+19     772.00    778.00
+20     760.00    766.00
+21     748.00    754.00
+22     736.00    742.00
+23     724.00    730.00
+24     712.00    718.00
+25     700.00    706.00
+26     688.00    694.00
+27     664.00    676.00
+28     640.00    652.00
+29     616.00    628.00
+30     592.00    604.00
+31     568.00    580.00
+32     544.00    556.00
+33     520.00    532.00
+34     496.00    508.00
+35     472.00    484.00
+
+SURFA
+eaa   1000.00
+eab   1000.00
+eac   1000.00
+ead   1000.00
+eae   1000.00
+eaf   1000.00
+eag   1000.00
+eah   1000.00
+eai   1000.00
+eaj   1000.00
+eak   1000.00
+eal   1000.00
+eam   1000.00
+ean   1000.00
+eao   1000.00
+eap   1000.00
+eaq   1000.00
+ear   1000.00
+eas   1000.00
+eat   1000.00
+eau   1000.00
+eav   1000.00
+eaw   1000.00
+eax   1000.00
+eay   1000.00
+eaz   1000.00
+faa   1000.00
+fab   1000.00
+fac   1000.00
+fad   1000.00
+fae   1000.00
+faf   1000.00
+fag   1000.00
+fah   1000.00
+fai   1000.00
+faj   1000.00
+fak   1000.00
+fal   1000.00
+fam   1000.00
+fan   1000.00
+fao   1000.00
+fap   1000.00
+faq   1000.00
+far   1000.00
+fas   1000.00
+fat   1000.00
+fau   1000.00
+fav   1000.00
+faw   1000.00
+fax   1000.00
+fay   1000.00
+faz   1000.00
+gaa   1000.00
+gab   1000.00
+gac   1000.00
+gad   1000.00
+gae   1000.00
+gaf   1000.00
+gag   1000.00
+gah   1000.00
+gai   1000.00
+gaj   1000.00
+gak   1000.00
+eba   1000.00
+ebb   1000.00
+ebc   1000.00
+ebd   1000.00
+ebe   1000.00
+ebf   1000.00
+ebg   1000.00
+ebh   1000.00
+ebi   1000.00
+ebj   1000.00
+ebk   1000.00
+ebl   1000.00
+ebm   1000.00
+ebn   1000.00
+ebo   1000.00
+ebp   1000.00
+ebq   1000.00
+ebr   1000.00
+ebs   1000.00
+ebt   1000.00
+ebu   1000.00
+ebv   1000.00
+ebw   1000.00
+ebx   1000.00
+eby   1000.00
+ebz   1000.00
+fba   1000.00
+fbb   1000.00
+fbc   1000.00
+fbd   1000.00
+fbe   1000.00
+fbf   1000.00
+fbg   1000.00
+fbh   1000.00
+fbi   1000.00
+fbj   1000.00
+fbk   1000.00
+fbl   1000.00
+fbm   1000.00
+fbn   1000.00
+fbo   1000.00
+fbp   1000.00
+fbq   1000.00
+fbr   1000.00
+fbs   1000.00
+fbt   1000.00
+fbu   1000.00
+fbv   1000.00
+fbw   1000.00
+fbx   1000.00
+fby   1000.00
+fbz   1000.00
+gba   1000.00
+gbb   1000.00
+gbc   1000.00
+gbd   1000.00
+gbe   1000.00
+gbf   1000.00
+gbg   1000.00
+gbh   1000.00
+gbi   1000.00
+gbj   1000.00
+gbk   1000.00
+eca   1000.00
+ecb   1000.00
+ecc   1000.00
+ecd   1000.00
+ece   1000.00
+ecf   1000.00
+ecg   1000.00
+ech   1000.00
+eci   1000.00
+ecj   1000.00
+eck   1000.00
+ecl   1000.00
+ecm   1000.00
+ecn   1000.00
+eco   1000.00
+ecp   1000.00
+ecq   1000.00
+ecr   1000.00
+ecs   1000.00
+ect   1000.00
+ecu   1000.00
+ecv   1000.00
+ecw   1000.00
+ecx   1000.00
+ecy   1000.00
+ecz   1000.00
+fca   1000.00
+fcb   1000.00
+fcc   1000.00
+fcd   1000.00
+fce   1000.00
+fcf   1000.00
+fcg   1000.00
+fch   1000.00
+fci   1000.00
+fcj   1000.00
+fck   1000.00
+fcl   1000.00
+fcm   1000.00
+fcn   1000.00
+fco   1000.00
+fcp   1000.00
+fcq   1000.00
+fcr   1000.00
+fcs   1000.00
+fct   1000.00
+fcu   1000.00
+fcv   1000.00
+fcw   1000.00
+fcx   1000.00
+fcy   1000.00
+fcz   1000.00
+gca   1000.00
+gcb   1000.00
+gcc   1000.00
+gcd   1000.00
+gce   1000.00
+gcf   1000.00
+gcg   1000.00
+gch   1000.00
+gci   1000.00
+gcj   1000.00
+gck   1000.00
+eda   1000.00
+edb   1000.00
+edc   1000.00
+edd   1000.00
+ede   1000.00
+edf   1000.00
+edg   1000.00
+edh   1000.00
+edi   1000.00
+edj   1000.00
+edk   1000.00
+edl   1000.00
+edm   1000.00
+edn   1000.00
+edo   1000.00
+edp   1000.00
+edq   1000.00
+edr   1000.00
+eds   1000.00
+edt   1000.00
+edu   1000.00
+edv   1000.00
+edw   1000.00
+edx   1000.00
+edy   1000.00
+edz   1000.00
+fda   1000.00
+fdb   1000.00
+fdc   1000.00
+fdd   1000.00
+fde   1000.00
+fdf   1000.00
+fdg   1000.00
+fdh   1000.00
+fdi   1000.00
+fdj   1000.00
+fdk   1000.00
+fdl   1000.00
+fdm   1000.00
+fdn   1000.00
+fdo   1000.00
+fdp   1000.00
+fdq   1000.00
+fdr   1000.00
+fds   1000.00
+fdt   1000.00
+fdu   1000.00
+fdv   1000.00
+fdw   1000.00
+fdx   1000.00
+fdy   1000.00
+fdz   1000.00
+gda   1000.00
+gdb   1000.00
+gdc   1000.00
+gdd   1000.00
+gde   1000.00
+gdf   1000.00
+gdg   1000.00
+gdh   1000.00
+gdi   1000.00
+gdj   1000.00
+gdk   1000.00
+eea   1000.00
+eeb   1000.00
+eec   1000.00
+eed   1000.00
+eee   1000.00
+eef   1000.00
+eeg   1000.00
+eeh   1000.00
+eei   1000.00
+eej   1000.00
+eek   1000.00
+eel   1000.00
+eem   1000.00
+een   1000.00
+eeo   1000.00
+eep   1000.00
+eeq   1000.00
+eer   1000.00
+ees   1000.00
+eet   1000.00
+eeu   1000.00
+eev   1000.00
+eew   1000.00
+eex   1000.00
+eey   1000.00
+eez   1000.00
+fea   1000.00
+feb   1000.00
+fec   1000.00
+fed   1000.00
+fee   1000.00
+fef   1000.00
+feg   1000.00
+feh   1000.00
+fei   1000.00
+fej   1000.00
+fek   1000.00
+fel   1000.00
+fem   1000.00
+fen   1000.00
+feo   1000.00
+fep   1000.00
+feq   1000.00
+fer   1000.00
+fes   1000.00
+fet   1000.00
+feu   1000.00
+fev   1000.00
+few   1000.00
+fex   1000.00
+fey   1000.00
+fez   1000.00
+gea   1000.00
+geb   1000.00
+gec   1000.00
+ged   1000.00
+gee   1000.00
+gef   1000.00
+geg   1000.00
+geh   1000.00
+gei   1000.00
+gej   1000.00
+gek   1000.00
+
+

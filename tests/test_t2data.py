@@ -1,4 +1,5 @@
 import unittest
+import os
 from t2data import *
 
 def column_nan_to_num(x):
@@ -70,7 +71,7 @@ class t2dataTestCase(unittest.TestCase):
     def test_fromscratch(self):
         """construct data file from scratch"""
         filename = 'test_fromscratch.dat'
-        geo = mulgrid('/home/acro018/geothermal/models/Lihir/drain/JustinGeomSurfElev_0.dat')
+        geo = mulgrid(os.path.join('mulgrid', 'g6.dat'))
         dat = t2data_stats()
         dat.title = 'Test constructing data file from scratch'
         dat.simulator = 'AUTOUGH2.2EWAV'
