@@ -157,14 +157,16 @@ class t2dataTestCase(unittest.TestCase):
 
         expected = np.load(self.base + '_blocks.npy')
         expected['f0'] = np.array([fix_blockname(blk.decode()) for blk in expected['f0']])
-        blocks = np.array([(blk.name, blk.rocktype.name, blk.volume) for blk in self.dat.grid.blocklist],
+        blocks = np.array([(blk.name, blk.rocktype.name, blk.volume)
+                           for blk in self.dat.grid.blocklist],
                           dtype = [('f0','S5'), ('f1','S5'), ('f2','f')])
         self.assertTrue((blocks == expected).all(), 'Error in element table')
 
     def connections_test(self):
         """Tests connection table against expected values stored as numpy *.npy file."""
         expected = np.load(self.base + '_connections.npy')
-        for f in ['f0','f1']: expected[f] = np.array([fix_blockname(blk.decode()) for blk in expected[f]])
+        for f in ['f0','f1']:
+            expected[f] = np.array([fix_blockname(blk.decode()) for blk in expected[f]])
         con = column_nan_to_num(np.array([(con.block[0].name, con.block[1].name, con.direction,
                          con.distance[0], con.distance[1], con.area, con.dircos)
                         for con in self.dat.grid.connectionlist],
@@ -175,7 +177,8 @@ class t2dataTestCase(unittest.TestCase):
     def generators_test(self):
         """Tests generation table against expected values stored as numpy *.npy file."""
         expected = np.load(self.base + '_generators.npy')
-        for f in ['f0','f1']: expected[f] = np.array([fix_blockname(blk.decode()) for blk in expected[f]])
+        for f in ['f0','f1']:
+            expected[f] = np.array([fix_blockname(blk.decode()) for blk in expected[f]])
         gen = column_nan_to_num(np.array([(gen.block, gen.name, gen.type, gen.gx, gen.ex)
                         for gen in self.dat.generatorlist],
                        dtype = [('f0', 'S5'), ('f1', 'S5'), ('f2', 'S4'),
@@ -219,7 +222,8 @@ class t2dataTestCase(unittest.TestCase):
     def dict_test(self, testdict, expected):
         """Tests dictionary against supplied expected values."""
         for key in expected:
-            if isinstance(testdict[key], np.ndarray): self.assertTrue((testdict[key] == expected[key]).all())
+            if isinstance(testdict[key], np.ndarray):
+                self.assertTrue((testdict[key] == expected[key]).all())
             else: self.assertEqual(testdict[key], expected[key])
 
 #------------------------------------------------------------------------
@@ -261,7 +265,8 @@ class t2dataTestCase(unittest.TestCase):
 
         self.assertEqual(self.dat.simulator, 'AUTOUGH2  EWAV')
         self.dict_test(self.dat.parameter,
-                       {'print_level': 3, 'max_timesteps': 400, 'print_interval': 400, 'max_iterations': None,
+                       {'print_level': 3, 'max_timesteps': 400,
+                        'print_interval': 400, 'max_iterations': None,
                         'option': np.array([0,2,0,0,0,0,0,0,0,0,2,2,2,0,0,0,5,0,0,0,1,0,0,1,0]),
                         'tstart': 0.0, 'tstop': 0.15e17, 'timestep': [0.1e9], 'print_block': 'AR 20',
                         'gravity': 9.8065, 'default_incons': [.10135e06, 20.]})
@@ -284,7 +289,8 @@ class t2dataTestCase(unittest.TestCase):
 
         self.assertEqual(self.dat.simulator, 'AUTOUGH2  EWAV')
         self.dict_test(self.dat.parameter,
-                       {'print_level': 3, 'max_timesteps': 9999, 'print_interval': 500, 'max_iterations': None,
+                       {'print_level': 3, 'max_timesteps': 9999,
+                        'print_interval': 500, 'max_iterations': None,
                         'option': np.array([0,2,0,0,0,0,0,0,0,0,2,2,2,0,0,0,5,0,0,0,1,0,0,1,0]),
                         'tstart': 0.0, 'tstop': 0.15e17, 'timestep': [0.1e9], 'print_block': 'AR 20',
                         'gravity': 9.8065, 'default_incons': [.10135e06, 15.]})
@@ -312,7 +318,8 @@ class t2dataTestCase(unittest.TestCase):
         for i,section in enumerate(expected_meshmaker):
             self.dict_test(self.dat.meshmaker[0][1][i][1], section)
         self.dict_test(self.dat.parameter,
-                       {'print_level': 1, 'max_timesteps': 100, 'print_interval': 100, 'max_iterations': None,
+                       {'print_level': 1, 'max_timesteps': 100,
+                        'print_interval': 100, 'max_iterations': None,
                         'option': np.array([0,1,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,0,0,0,0,3,0,0,0]),
                         'tstart': 0.0, 'tstop': 1.e9, 'timestep': [1.e5], 'print_block': None,
                         'gravity': 0.0, 'default_incons': [60.e5, 0.1]})
@@ -343,7 +350,8 @@ class t2dataTestCase(unittest.TestCase):
 
         self.assertEqual(self.dat.simulator, '')
         self.dict_test(self.dat.parameter,
-                       {'print_level': 1, 'max_timesteps': 99, 'print_interval': 99, 'max_iterations': None,
+                       {'print_level': 1, 'max_timesteps': 99,
+                        'print_interval': 99, 'max_iterations': None,
                         'option': np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0]),
                         'tstart': 0.0, 'tstop': 1.151852E9, 'timestep': [1.e5], 'print_block': ' KA 1',
                         'gravity': 0.0, 'default_incons': [300., 0.01, 5.e5]})
@@ -411,7 +419,9 @@ class t2dataTestCase(unittest.TestCase):
         expected_surf = np.array([-0.5, 0., 0., 0., 0., 0., 0., 0., 0])
         self.assertAlmostEqual(array_diff(surf, expected_surf), 0.0, 3)
         layer_blk_nums = [1, 4, 7, 10, 13, 16, 19, 22, 25]
-        blk_nums = layer_blk_nums + [i+1 for i in layer_blk_nums] + [i+2 for i in layer_blk_nums]
+        blk_nums = layer_blk_nums + \
+                   [i+1 for i in layer_blk_nums] + \
+                   [i+2 for i in layer_blk_nums]
         block_names = ['%5d' % i for i in blk_nums]
         expected_mapping = dict(zip(geo.block_name_list, block_names))
         self.assertEqual(mapping, expected_mapping)
