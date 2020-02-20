@@ -28,7 +28,6 @@ class mulgrid_stats(mulgrid):
     def compare(self, other, testcase):
         """Compares self with another mulgrid_stats object and reports results
         to a unittest testcase."""
-        tol = 1.e-7
         wellpostol = 0.06  # need larger tolerance for well positions, due to roundoff
         msg = ' mismatch for geometry ' + self.filename
         testcase.assertEqual(self.type, other.type, 'type' + msg)
@@ -107,27 +106,26 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(geo.num_layers, num_layers + 1)
         self.assertEqual(geo.num_blocks, num_blocks)
         # check area and centre:
-        tol = 1.e-7
         lx = np.sum(dx)
         ly = np.sum(dy)
         a = lx * ly
         c = 0.5*np.array([lx, ly])
         self.assertAlmostEqual(geo.area, a)
-        self.assertTrue(np.linalg.norm(geo.centre - c) <= tol)
+        self.assertTrue(np.allclose(geo.centre, c))
         # translate, rotate:
         d = np.array([5321.5, -1245.2, 1000.])
         theta = 37.6
         geo.translate(d)
         c2 = c + d[:2]
         self.assertAlmostEqual(geo.area, a)
-        self.assertTrue(np.linalg.norm(geo.centre - c2) <= tol)
+        self.assertTrue(np.allclose(geo.centre, c2))
         geo.rotate(theta)
         self.assertAlmostEqual(geo.area, a)
-        self.assertTrue(np.linalg.norm(geo.centre - c2) <= tol)
+        self.assertTrue(np.allclose(geo.centre, c2))
         geo.rotate(-theta)
         geo.translate(-d)
         self.assertAlmostEqual(geo.area, a)
-        self.assertTrue(np.linalg.norm(geo.centre - c) <= tol)
+        self.assertTrue(np.allclose(geo.centre, c))
 
     def test_read_g2(self):
         """reading g2 geometry"""
@@ -214,7 +212,7 @@ class mulgridTestCase(unittest.TestCase):
         geo.fit_surface(d, alpha = 0.1, beta = 0.1, silent = True)
         s = np.array([col.surface for col in cols])
         r = np.load(os.path.join('mulgrid', 'fit_surface_result.npy'))
-        self.assertTrue((np.abs(s - r) <= tol).all())
+        self.assertTrue(np.allclose(s, r, atol = tol))
 
     def test_refine(self):
         """refine()"""
@@ -229,7 +227,7 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(geo.num_nodes, 169)
         areas = np.sort(np.array([col.area for col in geo.columnlist]))
         a = np.sort(np.load(os.path.join('mulgrid', 'refine_areas.npy')))
-        self.assertTrue((np.abs(areas - a) <= tol).all())
+        self.assertTrue(np.allclose(areas, a, atol = tol))
 
     def test_rename_column(self):
         """rename_column()"""
