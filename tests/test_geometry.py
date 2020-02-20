@@ -53,8 +53,8 @@ class geometryTestCase(unittest.TestCase):
             np.array([4., 3.])
         ]
         bds = bounds_of_points(pts)
-        self.assertTrue((np.array([-1.5, -1.1]) == bds[0]).all())
-        self.assertTrue((np.array([4., 3.]) == bds[1]).all())
+        self.assertTrue(np.allclose(np.array([-1.5, -1.1]), bds[0]))
+        self.assertTrue(np.allclose(np.array([4., 3.]), bds[1]))
 
     def test_polygon_area(self):
         """poygon_area()"""
@@ -77,7 +77,6 @@ class geometryTestCase(unittest.TestCase):
 
     def test_polygon_centroid(self):
         """polygon_centroid()"""
-        tol = 1.e-6
         poly = [
             np.array([1., 2.]),
             np.array([3., 2.]),
@@ -85,7 +84,7 @@ class geometryTestCase(unittest.TestCase):
             np.array([1., 4.]),
         ]
         c = polygon_centroid(poly)
-        self.assertTrue((np.abs(np.array([2., 3.]) - c) <= tol).all())
+        self.assertTrue(np.allclose(np.array([2., 3.]), c))
         poly = [
             np.array([0., 0.]),
             np.array([15., 0.]),
@@ -95,11 +94,10 @@ class geometryTestCase(unittest.TestCase):
             np.array([0., 10.])
         ]
         c = polygon_centroid(poly)
-        self.assertTrue((np.abs(np.array([6.5, 4.5]) - c) <= tol).all())
+        self.assertTrue(np.allclose(np.array([6.5, 4.5]), c))
 
     def test_line_polygon_intersect(self):
         """line_polygon_intersections()"""
-        tol = 1.e-6
         poly = [
             np.array([0., 0.]),
             np.array([15., 0.]),
@@ -114,18 +112,18 @@ class geometryTestCase(unittest.TestCase):
         ]
         pts = line_polygon_intersections(poly, line)
         self.assertEqual(2, len(pts))
-        self.assertTrue((np.abs(np.array([0., 0.]) - pts[0]) <= tol).all())
-        self.assertTrue((np.abs(np.array([15., 4.]) - pts[1]) <= tol).all())
+        self.assertTrue(np.allclose(np.array([0., 0.]), pts[0]))
+        self.assertTrue(np.allclose(np.array([15., 4.]), pts[1]))
         line = [
             np.array([0., 17.5]),
             np.array([17.5, 0.])
         ]
         pts = line_polygon_intersections(poly, line)
         self.assertEqual(4, len(pts))
-        self.assertTrue((np.abs(np.array([7.5, 10.]) - pts[0]) <= tol).all())
-        self.assertTrue((np.abs(np.array([10., 7.5]) - pts[1]) <= tol).all())
-        self.assertTrue((np.abs(np.array([12.5, 5.]) - pts[2]) <= tol).all())
-        self.assertTrue((np.abs(np.array([15., 2.5]) - pts[3]) <= tol).all())
+        self.assertTrue(np.allclose(np.array([7.5, 10.]), pts[0]))
+        self.assertTrue(np.allclose(np.array([10., 7.5]), pts[1]))
+        self.assertTrue(np.allclose(np.array([12.5, 5.]), pts[2]))
+        self.assertTrue(np.allclose(np.array([15., 2.5]), pts[3]))
 
     def test_simplify_polygon(self):
         """simplify_polygon()"""
@@ -154,7 +152,6 @@ class geometryTestCase(unittest.TestCase):
         
     def test_polygon_boundary(self):
         """polygon_boundary()"""
-        tol = 1.e-6
         poly = [
             np.array([0., 0.]),
             np.array([15., 0.]),
@@ -166,31 +163,30 @@ class geometryTestCase(unittest.TestCase):
         p1 = np.array([5., -1.])
         p2 = np.array([5., 12.])
         b = polygon_boundary(p1, p2, poly)
-        self.assertTrue((np.abs(np.array([5., 0.]) - b) <= tol).all())
+        self.assertTrue(np.allclose(np.array([5., 0.]), b))
         p1 = np.array([5., 2.5])
         p2 = np.array([20., 2.5])
         b = polygon_boundary(p1, p2, poly)
-        self.assertTrue((np.abs(np.array([15., 2.5]) - b) <= tol).all())
+        self.assertTrue(np.allclose(np.array([15., 2.5]), b))
         b = polygon_boundary(p2, p1, poly)
-        self.assertTrue((np.abs(np.array([15., 2.5]) - b) <= tol).all())
+        self.assertTrue(np.allclose(np.array([15., 2.5]), b))
 
     def test_line_projection_distance(self):
         """line_projection() and point_line_distance()"""
         from math import sqrt
-        tol = 1.e-6
         line = [
             np.array([0., 0.]),
             np.array([1., 1.])
         ]
         a = np.array([1., 0.])
         p, xi = line_projection(a, line, True)
-        self.assertTrue((np.abs(np.array([0.5, 0.5]) - p) <= tol).all())
+        self.assertTrue(np.allclose(np.array([0.5, 0.5]), p))
         self.assertAlmostEqual(0.5, xi)
         d = point_line_distance(a, line)
         self.assertAlmostEqual(sqrt(0.5), d)
         a = np.array([2., 1.])
         p, xi = line_projection(a, line, True)
-        self.assertTrue((np.abs(np.array([1.5, 1.5]) - p) <= tol).all())
+        self.assertTrue(np.allclose(np.array([1.5, 1.5]), p))
         self.assertAlmostEqual(1.5, xi)
         d = point_line_distance(a, line)
         self.assertAlmostEqual(sqrt(0.5), d)
@@ -217,7 +213,6 @@ class geometryTestCase(unittest.TestCase):
     def test_linear_trans(self):
         """Linear transformations"""
         from math import sqrt
-        tol = 1.e-6
         r1 = [
             np.array([5., 4.]),
             np.array([8., 11.]),
@@ -230,13 +225,13 @@ class geometryTestCase(unittest.TestCase):
         r2c = sum(r2) / len(r2)
 
         t = linear_trans2().between_rects(r1, r1)
-        self.assertTrue((np.abs(r1c - t(r1c)) <= tol).all())
+        self.assertTrue(np.allclose(r1c, t(r1c)))
 
         t = linear_trans2().between_rects(r1, r2)
-        self.assertTrue((np.abs(r2c - t(r1c)) <= tol).all())
+        self.assertTrue(np.allclose(r2c, t(r1c)))
 
         ti = t.inverse
-        self.assertTrue((np.abs(r1c - ti(r2c)) <= tol).all())
+        self.assertTrue(np.allclose(r1c, ti(r2c)))
 
         pts1 = [
             np.array([5., 4.]),
@@ -249,14 +244,14 @@ class geometryTestCase(unittest.TestCase):
             np.array([7., 10.])
         ]
         t = linear_trans2().between_points(pts1, pts2)
-        self.assertTrue((np.abs(r2c - t(r1c)) <= tol).all())
+        self.assertTrue(np.allclose(r2c, t(r1c)))
 
         t = linear_trans2().rotation(45., np.ones(2))
         p = np.array([1., 0.])
         sq2 = sqrt(2.)
         a = (sq2 - 1.) / sq2
         p1 = np.array([a, a])
-        self.assertTrue((np.abs(p1 - t(p)) <= tol).all())
+        self.assertTrue(np.allclose(p1, t(p)))
         
         
 if __name__ == '__main__':
