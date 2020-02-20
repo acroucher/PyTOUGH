@@ -219,7 +219,7 @@ class t2dataTestCase(unittest.TestCase):
     def test_AUTOUGH2_1(self):
         """AUTOUGH2 case 1"""
 
-        self.base = 'data/AUTOUGH2/1/case1'
+        self.base = os.path.join('data', 'AUTOUGH2', '1', 'case1')
         # This data file needs the Fortran read functions because of
         # the formatting in the generation table:
         self.dat = t2data_stats(self.base + '.dat', read_function = fortran_read_function)
@@ -246,7 +246,7 @@ class t2dataTestCase(unittest.TestCase):
     def test_AUTOUGH2_2(self):
         """AUTOUGH2 case2"""
 
-        self.base = 'data/AUTOUGH2/2/case2'
+        self.base = os.path.join('data', 'AUTOUGH2', '2', 'case2')
         # This data file needs the Fortran read functions because of
         # the formatting in the generation table:
         self.dat = t2data_stats(self.base+'.dat', read_function = fortran_read_function)
@@ -272,7 +272,7 @@ class t2dataTestCase(unittest.TestCase):
     def test_AUTOUGH2_3(self):
         """AUTOUGH2 extra precision input"""
 
-        self.base = 'data/AUTOUGH2/3/a1'
+        self.base = os.path.join('data', 'AUTOUGH2', '3', 'a1')
         self.dat = t2data_stats(self.base+'.dat')
 
         self.assertEqual(self.dat.simulator, 'AUTOUGH2  EWAV')
@@ -296,8 +296,9 @@ class t2dataTestCase(unittest.TestCase):
     def test_TOUGH2_1(self):
         """TOUGH2 r1q, reading grid from separate MESH file"""
 
-        self.base = 'data/TOUGH2/1/r1q'
-        self.dat = t2data_stats(self.base, meshfilename = 'data/TOUGH2/1/MESH')
+        self.base = os.path.join('data', 'TOUGH2', '1', 'r1q')
+        self.dat = t2data_stats(self.base,
+                                meshfilename = os.path.join('data', 'TOUGH2', '1', 'MESH'))
 
         self.assertEqual(self.dat.simulator, '')
         expected_meshmaker = [{'radii': [0.0, 100.0]}, {'nequ': 20, 'dr': 10.0},
@@ -322,7 +323,7 @@ class t2dataTestCase(unittest.TestCase):
 
     def test_TOUGH2_2(self):
         """TOUGH2 EOS7c"""
-        self.base = 'data/TOUGH2/2/eos7c.dat'
+        self.base = os.path.join('data', 'TOUGH2', '2', 'eos7c.dat')
         self.dat = t2data(self.base)
         self.assertEqual(len(self.dat.grid.rocktypelist), 5)
         self.assertEqual(self.dat.parameter['default_incons'], [1.e5, 0., 0., 0., 10.5, 15.])
@@ -332,9 +333,11 @@ class t2dataTestCase(unittest.TestCase):
     def test_TOUGH2_MP_1(self):
         """TOUGH2-MP rfp, reading grid from separate MESHA, MESHB files"""
 
-        d = 'data/TOUGH2-MP/1/'
-        self.base = d + 'rfp_nomesh'
-        self.dat = t2data_stats(self.base, meshfilename = (d + 'MESHA', d + 'MESHB'))
+        d = os.path.join('data', 'TOUGH2-MP', '1')
+        self.base = os.path.join(d, 'rfp_nomesh')
+        self.dat = t2data_stats(self.base,
+                                meshfilename = (os.path.join(d, 'MESHA'),
+                                                os.path.join(d, 'MESHB')))
 
         self.assertEqual(self.dat.simulator, '')
         self.dict_test(self.dat.parameter,
@@ -385,8 +388,8 @@ class t2dataTestCase(unittest.TestCase):
                 dat.compare(dat1, self)
 
         # Pseudo-PetraSim data file (blocks numbered down columns):
-        d = 'grid/rectgeo/'
-        dat = t2data(d + 'data.dat')
+        d = os.path.join('grid', 'rectgeo')
+        dat = t2data(os.path.join(d, 'data.dat'))
         geo, mapping = dat.grid.rectgeo(atmos_type = 2)
         self.assertEqual(geo.num_nodes, 16)
         self.assertEqual(geo.num_columns, 9)
