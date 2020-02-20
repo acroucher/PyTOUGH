@@ -1,0 +1,2919 @@
+GENER00  1.00e+25  1.00e-06                                0.00
+VERTICES
+aaa 580403.941848117.75
+aab 580850.231847892.31
+aac 581296.521847666.87
+aad 581519.671847554.15
+aae 581742.821847441.43
+aaf 581965.961847328.71
+aag 582189.111847215.99
+aah 582412.261847103.28
+aai 582635.401846990.56
+aaj 582858.551846877.84
+aak 583081.691846765.12
+aal 583304.841846652.40
+aam 583527.991846539.68
+aan 583751.131846426.96
+aao 583974.281846314.24
+aap 584197.431846201.52
+aaq 584420.571846088.80
+aar 584643.721845976.08
+aas 584866.871845863.36
+aat 585313.161845637.92
+aau 585759.451845412.48
+aba 580629.381848564.04
+abb 581075.671848338.60
+abc 581521.961848113.17
+abd 581745.111848000.45
+abe 581968.251847887.73
+abf 582191.401847775.01
+abg 582414.551847662.29
+abh 582637.691847549.57
+abi 582860.841847436.85
+abj 583083.991847324.13
+abk 583307.131847211.41
+abl 583530.281847098.69
+abm 583753.431846985.97
+abn 583976.571846873.25
+abo 584199.721846760.53
+abp 584422.871846647.81
+abq 584646.011846535.09
+abr 584869.161846422.37
+abs 585092.311846309.66
+abt 585538.601846084.22
+abu 585984.891845858.78
+aca 580854.821849010.34
+acb 581301.111848784.90
+acc 581747.401848559.46
+acd 581970.551848446.74
+ace 582193.691848334.02
+acf 582416.841848221.30
+acg 582639.991848108.58
+ach 582863.131847995.86
+aci 583086.281847883.14
+acj 583309.431847770.42
+ack 583532.571847657.70
+acl 583755.721847544.98
+acm 583978.871847432.26
+acn 584202.011847319.54
+aco 584425.161847206.83
+acp 584648.301847094.11
+acq 584871.451846981.39
+acr 585094.601846868.67
+acs 585317.741846755.95
+act 585764.041846530.51
+acu 586210.331846305.07
+ada 580967.531849233.48
+adb 581413.831849008.04
+adc 581860.121848782.60
+add 582083.271848669.89
+ade 582306.411848557.17
+adf 582529.561848444.45
+adg 582752.711848331.73
+adh 582975.851848219.01
+adi 583199.001848106.29
+adj 583422.151847993.57
+adk 583645.291847880.85
+adl 583868.441847768.13
+adm 584091.581847655.41
+adn 584314.731847542.69
+ado 584537.881847429.97
+adp 584761.021847317.25
+adq 584984.171847204.53
+adr 585207.321847091.81
+ads 585430.461846979.09
+adt 585876.761846753.66
+adu 586323.051846528.22
+aea 581080.251849456.63
+aeb 581526.551849231.19
+aec 581972.841849005.75
+aed 582195.991848893.03
+aee 582419.131848780.31
+aef 582642.281848667.59
+aeg 582865.431848554.87
+aeh 583088.571848442.15
+aei 583311.721848329.43
+aej 583534.861848216.72
+aek 583758.011848104.00
+ael 583981.161847991.28
+aem 584204.301847878.56
+aen 584427.451847765.84
+aeo 584650.601847653.12
+aep 584873.741847540.40
+aeq 585096.891847427.68
+aer 585320.041847314.96
+aes 585543.181847202.24
+aet 585989.481846976.80
+aeu 586435.771846751.36
+afa 581192.971849679.78
+afb 581639.271849454.34
+afc 582085.561849228.90
+afd 582308.711849116.18
+afe 582531.851849003.46
+aff 582755.001848890.74
+afg 582978.141848778.02
+afh 583201.291848665.30
+afi 583424.441848552.58
+afj 583647.581848439.86
+afk 583870.731848327.14
+afl 584093.881848214.42
+afm 584317.021848101.70
+afn 584540.171847988.98
+afo 584763.321847876.26
+afp 584986.461847763.55
+afq 585209.611847650.83
+afr 585432.761847538.11
+afs 585655.901847425.39
+aft 586102.201847199.95
+afu 586548.491846974.51
+aga 581305.691849902.92
+agb 581751.991849677.48
+agc 582198.281849452.04
+agd 582421.421849339.32
+age 582644.571849226.61
+agf 582867.721849113.89
+agg 583090.861849001.17
+agh 583314.011848888.45
+agi 583537.161848775.73
+agj 583760.301848663.01
+agk 583983.451848550.29
+agl 584206.601848437.57
+agm 584429.741848324.85
+agn 584652.891848212.13
+ago 584876.041848099.41
+agp 585099.181847986.69
+agq 585322.331847873.97
+agr 585545.481847761.25
+ags 585768.621847648.53
+agt 586214.911847423.10
+agu 586661.211847197.66
+aha 581418.411850126.07
+ahb 581864.701849900.63
+ahc 582311.001849675.19
+ahd 582534.141849562.47
+ahe 582757.291849449.75
+ahf 582980.441849337.03
+ahg 583203.581849224.31
+ahh 583426.731849111.59
+ahi 583649.881848998.87
+ahj 583873.021848886.15
+ahk 584096.171848773.44
+ahl 584319.321848660.72
+ahm 584542.461848548.00
+ahn 584765.611848435.28
+aho 584988.761848322.56
+ahp 585211.901848209.84
+ahq 585435.051848097.12
+ahr 585658.191847984.40
+ahs 585881.341847871.68
+aht 586327.631847646.24
+ahu 586773.931847420.80
+aia 581531.131850349.21
+aib 581977.421850123.78
+aic 582423.721849898.34
+aid 582646.861849785.62
+aie 582870.011849672.90
+aif 583093.161849560.18
+aig 583316.301849447.46
+aih 583539.451849334.74
+aii 583762.601849222.02
+aij 583985.741849109.30
+aik 584208.891848996.58
+ail 584432.041848883.86
+aim 584655.181848771.14
+ain 584878.331848658.42
+aio 585101.471848545.70
+aip 585324.621848432.98
+aiq 585547.771848320.27
+air 585770.911848207.55
+ais 585994.061848094.83
+ait 586440.351847869.39
+aiu 586886.651847643.95
+aja 581643.851850572.36
+ajb 582090.141850346.92
+ajc 582536.441850121.48
+ajd 582759.581850008.76
+aje 582982.731849896.04
+ajf 583205.881849783.33
+ajg 583429.021849670.61
+ajh 583652.171849557.89
+aji 583875.321849445.17
+ajj 584098.461849332.45
+ajk 584321.611849219.73
+ajl 584544.751849107.01
+ajm 584767.901848994.29
+ajn 584991.051848881.57
+ajo 585214.191848768.85
+ajp 585437.341848656.13
+ajq 585660.491848543.41
+ajr 585883.631848430.69
+ajs 586106.781848317.97
+ajt 586553.071848092.53
+aju 586999.371847867.10
+aka 581756.571850795.51
+akb 582202.861850570.07
+akc 582649.161850344.63
+akd 582872.301850231.91
+ake 583095.451850119.19
+akf 583318.601850006.47
+akg 583541.741849893.75
+akh 583764.891849781.03
+aki 583988.031849668.31
+akj 584211.181849555.59
+akk 584434.331849442.87
+akl 584657.471849330.16
+akm 584880.621849217.44
+akn 585103.771849104.72
+ako 585326.911848992.00
+akp 585550.061848879.28
+akq 585773.211848766.56
+akr 585996.351848653.84
+aks 586219.501848541.12
+akt 586665.791848315.68
+aku 587112.091848090.24
+ala 581869.291851018.65
+alb 582315.581850793.22
+alc 582761.881850567.78
+ald 582985.021850455.06
+ale 583208.171850342.34
+alf 583431.311850229.62
+alg 583654.461850116.90
+alh 583877.611850004.18
+ali 584100.751849891.46
+alj 584323.901849778.74
+alk 584547.051849666.02
+all 584770.191849553.30
+alm 584993.341849440.58
+aln 585216.491849327.86
+alo 585439.631849215.14
+alp 585662.781849102.42
+alq 585885.931848989.70
+alr 586109.071848876.99
+als 586332.221848764.27
+alt 586778.511848538.83
+alu 587224.801848313.39
+ama 581982.011851241.80
+amb 582428.301851016.36
+amc 582874.591850790.92
+amd 583097.741850678.20
+ame 583320.891850565.48
+amf 583544.031850452.76
+amg 583767.181850340.05
+amh 583990.331850227.33
+ami 584213.471850114.61
+amj 584436.621850001.89
+amk 584659.771849889.17
+aml 584882.911849776.45
+amm 585106.061849663.73
+amn 585329.211849551.01
+amo 585552.351849438.29
+amp 585775.501849325.57
+amq 585998.651849212.85
+amr 586221.791849100.13
+ams 586444.941848987.41
+amt 586891.231848761.97
+amu 587337.521848536.54
+ana 582094.731851464.95
+anb 582541.021851239.51
+anc 582987.311851014.07
+and 583210.461850901.35
+ane 583433.611850788.63
+anf 583656.751850675.91
+ang 583879.901850563.19
+anh 584103.051850450.47
+ani 584326.191850337.75
+anj 584549.341850225.03
+ank 584772.491850112.31
+anl 584995.631849999.59
+anm 585218.781849886.88
+ann 585441.931849774.16
+ano 585665.071849661.44
+anp 585888.221849548.72
+anq 586111.361849436.00
+anr 586334.511849323.28
+ans 586557.661849210.56
+ant 587003.951848985.12
+anu 587450.241848759.68
+aoa 582207.451851688.09
+aob 582653.741851462.65
+aoc 583100.031851237.22
+aod 583323.181851124.50
+aoe 583546.331851011.78
+aof 583769.471850899.06
+aog 583992.621850786.34
+aoh 584215.771850673.62
+aoi 584438.911850560.90
+aoj 584662.061850448.18
+aok 584885.211850335.46
+aol 585108.351850222.74
+aom 585331.501850110.02
+aon 585554.641849997.30
+aoo 585777.791849884.58
+aop 586000.941849771.86
+aoq 586224.081849659.14
+aor 586447.231849546.42
+aos 586670.381849433.71
+aot 587116.671849208.27
+aou 587562.961848982.83
+apa 582432.891852134.39
+apb 582879.181851908.95
+apc 583325.471851683.51
+apd 583548.621851570.79
+ape 583771.771851458.07
+apf 583994.911851345.35
+apg 584218.061851232.63
+aph 584441.201851119.91
+api 584664.351851007.19
+apj 584887.501850894.47
+apk 585110.641850781.75
+apl 585333.791850669.03
+apm 585556.941850556.31
+apn 585780.081850443.60
+apo 586003.231850330.88
+app 586226.381850218.16
+apq 586449.521850105.44
+apr 586672.671849992.72
+aps 586895.821849880.00
+apt 587342.111849654.56
+apu 587788.401849429.12
+aqa 582658.331852580.68
+aqb 583104.621852355.24
+aqc 583550.911852129.80
+aqd 583774.061852017.08
+aqe 583997.201851904.36
+aqf 584220.351851791.64
+aqg 584443.501851678.92
+aqh 584666.641851566.20
+aqi 584889.791851453.49
+aqj 585112.941851340.77
+aqk 585336.081851228.05
+aql 585559.231851115.33
+aqm 585782.381851002.61
+aqn 586005.521850889.89
+aqo 586228.671850777.17
+aqp 586451.811850664.45
+aqq 586674.961850551.73
+aqr 586898.111850439.01
+aqs 587121.251850326.29
+aqt 587567.551850100.85
+aqu 588013.841849875.41
+
+GRID
+aaa1 4 580739.801848228.18
+aaa
+aab
+abb
+aba
+aab1 4 581186.101848002.74
+aab
+aac
+abc
+abb
+aac1 4 581520.821847833.66
+aac
+aad
+abd
+abc
+aad1 4 581743.961847720.94
+aad
+aae
+abe
+abd
+aae1 4 581967.111847608.22
+aae
+aaf
+abf
+abe
+aaf1 4 582190.261847495.50
+aaf
+aag
+abg
+abf
+aag1 4 582413.401847382.78
+aag
+aah
+abh
+abg
+aah1 4 582636.551847270.06
+aah
+aai
+abi
+abh
+aai1 4 582859.691847157.34
+aai
+aaj
+abj
+abi
+aaj1 4 583082.841847044.62
+aaj
+aak
+abk
+abj
+aak1 4 583305.991846931.90
+aak
+aal
+abl
+abk
+aal1 4 583529.131846819.18
+aal
+aam
+abm
+abl
+aam1 4 583752.281846706.47
+aam
+aan
+abn
+abm
+aan1 4 583975.431846593.75
+aan
+aao
+abo
+abn
+aao1 4 584198.571846481.03
+aao
+aap
+abp
+abo
+aap1 4 584421.721846368.31
+aap
+aaq
+abq
+abp
+aaq1 4 584644.871846255.59
+aaq
+aar
+abr
+abq
+aar1 4 584868.011846142.87
+aar
+aas
+abs
+abr
+aas1 4 585202.731845973.79
+aas
+aat
+abt
+abs
+aat1 4 585649.031845748.35
+aat
+aau
+abu
+abt
+aba1 4 580965.241848674.47
+aba
+abb
+acb
+aca
+abb1 4 581411.541848449.03
+abb
+abc
+acc
+acb
+abc1 4 581746.251848279.95
+abc
+abd
+acd
+acc
+abd1 4 581969.401848167.23
+abd
+abe
+ace
+acd
+abe1 4 582192.551848054.51
+abe
+abf
+acf
+ace
+abf1 4 582415.691847941.79
+abf
+abg
+acg
+acf
+abg1 4 582638.841847829.07
+abg
+abh
+ach
+acg
+abh1 4 582861.991847716.36
+abh
+abi
+aci
+ach
+abi1 4 583085.131847603.64
+abi
+abj
+acj
+aci
+abj1 4 583308.281847490.92
+abj
+abk
+ack
+acj
+abk1 4 583531.431847378.20
+abk
+abl
+acl
+ack
+abl1 4 583754.571847265.48
+abl
+abm
+acm
+acl
+abm1 4 583977.721847152.76
+abm
+abn
+acn
+acm
+abn1 4 584200.871847040.04
+abn
+abo
+aco
+acn
+abo1 4 584424.011846927.32
+abo
+abp
+acp
+aco
+abp1 4 584647.161846814.60
+abp
+abq
+acq
+acp
+abq1 4 584870.311846701.88
+abq
+abr
+acr
+acq
+abr1 4 585093.451846589.16
+abr
+abs
+acs
+acr
+abs1 4 585428.171846420.08
+abs
+abt
+act
+acs
+abt1 4 585874.461846194.64
+abt
+abu
+acu
+act
+aca1 4 581134.321849009.19
+aca
+acb
+adb
+ada
+acb1 4 581580.611848783.75
+acb
+acc
+adc
+adb
+acc1 4 581915.331848614.67
+acc
+acd
+add
+adc
+acd1 4 582138.481848501.95
+acd
+ace
+ade
+add
+ace1 4 582361.631848389.23
+ace
+acf
+adf
+ade
+acf1 4 582584.771848276.51
+acf
+acg
+adg
+adf
+acg1 4 582807.921848163.79
+acg
+ach
+adh
+adg
+ach1 4 583031.071848051.07
+ach
+aci
+adi
+adh
+aci1 4 583254.211847938.36
+aci
+acj
+adj
+adi
+acj1 4 583477.361847825.64
+acj
+ack
+adk
+adj
+ack1 4 583700.511847712.92
+ack
+acl
+adl
+adk
+acl1 4 583923.651847600.20
+acl
+acm
+adm
+adl
+acm1 4 584146.801847487.48
+acm
+acn
+adn
+adm
+acn1 4 584369.941847374.76
+acn
+aco
+ado
+adn
+aco1 4 584593.091847262.04
+aco
+acp
+adp
+ado
+acp1 4 584816.241847149.32
+acp
+acq
+adq
+adp
+acq1 4 585039.381847036.60
+acq
+acr
+adr
+adq
+acr1 4 585262.531846923.88
+acr
+acs
+ads
+adr
+acs1 4 585597.251846754.80
+acs
+act
+adt
+ads
+act1 4 586043.541846529.36
+act
+acu
+adu
+adt
+ada1 4 581247.041849232.34
+ada
+adb
+aeb
+aea
+adb1 4 581693.331849006.90
+adb
+adc
+aec
+aeb
+adc1 4 582028.051848837.82
+adc
+add
+aed
+aec
+add1 4 582251.201848725.10
+add
+ade
+aee
+aed
+ade1 4 582474.351848612.38
+ade
+adf
+aef
+aee
+adf1 4 582697.491848499.66
+adf
+adg
+aeg
+aef
+adg1 4 582920.641848386.94
+adg
+adh
+aeh
+aeg
+adh1 4 583143.791848274.22
+adh
+adi
+aei
+aeh
+adi1 4 583366.931848161.50
+adi
+adj
+aej
+aei
+adj1 4 583590.081848048.78
+adj
+adk
+aek
+aej
+adk1 4 583813.221847936.06
+adk
+adl
+ael
+aek
+adl1 4 584036.371847823.34
+adl
+adm
+aem
+ael
+adm1 4 584259.521847710.62
+adm
+adn
+aen
+aem
+adn1 4 584482.661847597.90
+adn
+ado
+aeo
+aen
+ado1 4 584705.811847485.19
+ado
+adp
+aep
+aeo
+adp1 4 584928.961847372.47
+adp
+adq
+aeq
+aep
+adq1 4 585152.101847259.75
+adq
+adr
+aer
+aeq
+adr1 4 585375.251847147.03
+adr
+ads
+aes
+aer
+ads1 4 585709.971846977.95
+ads
+adt
+aet
+aes
+adt1 4 586156.261846752.51
+adt
+adu
+aeu
+aet
+aea1 4 581359.761849455.48
+aea
+aeb
+afb
+afa
+aeb1 4 581806.051849230.04
+aeb
+aec
+afc
+afb
+aec1 4 582140.771849060.96
+aec
+aed
+afd
+afc
+aed1 4 582363.921848948.25
+aed
+aee
+afe
+afd
+aee1 4 582587.071848835.53
+aee
+aef
+aff
+afe
+aef1 4 582810.211848722.81
+aef
+aeg
+afg
+aff
+aeg1 4 583033.361848610.09
+aeg
+aeh
+afh
+afg
+aeh1 4 583256.501848497.37
+aeh
+aei
+afi
+afh
+aei1 4 583479.651848384.65
+aei
+aej
+afj
+afi
+aej1 4 583702.801848271.93
+aej
+aek
+afk
+afj
+aek1 4 583925.941848159.21
+aek
+ael
+afl
+afk
+ael1 4 584149.091848046.49
+ael
+aem
+afm
+afl
+aem1 4 584372.241847933.77
+aem
+aen
+afn
+afm
+aen1 4 584595.381847821.05
+aen
+aeo
+afo
+afn
+aeo1 4 584818.531847708.33
+aeo
+aep
+afp
+afo
+aep1 4 585041.681847595.61
+aep
+aeq
+afq
+afp
+aeq1 4 585264.821847482.89
+aeq
+aer
+afr
+afq
+aer1 4 585487.971847370.17
+aer
+aes
+afs
+afr
+aes1 4 585822.691847201.09
+aes
+aet
+aft
+afs
+aet1 4 586268.981846975.66
+aet
+aeu
+afu
+aft
+afa1 4 581472.481849678.63
+afa
+afb
+agb
+aga
+afb1 4 581918.771849453.19
+afb
+afc
+agc
+agb
+afc1 4 582253.491849284.11
+afc
+afd
+agd
+agc
+afd1 4 582476.641849171.39
+afd
+afe
+age
+agd
+afe1 4 582699.781849058.67
+afe
+aff
+agf
+age
+aff1 4 582922.931848945.95
+aff
+afg
+agg
+agf
+afg1 4 583146.081848833.23
+afg
+afh
+agh
+agg
+afh1 4 583369.221848720.51
+afh
+afi
+agi
+agh
+afi1 4 583592.371848607.79
+afi
+afj
+agj
+agi
+afj1 4 583815.521848495.08
+afj
+afk
+agk
+agj
+afk1 4 584038.661848382.36
+afk
+afl
+agl
+agk
+afl1 4 584261.811848269.64
+afl
+afm
+agm
+agl
+afm1 4 584484.961848156.92
+afm
+afn
+agn
+agm
+afn1 4 584708.101848044.20
+afn
+afo
+ago
+agn
+afo1 4 584931.251847931.48
+afo
+afp
+agp
+ago
+afp1 4 585154.401847818.76
+afp
+afq
+agq
+agp
+afq1 4 585377.541847706.04
+afq
+afr
+agr
+agq
+afr1 4 585600.691847593.32
+afr
+afs
+ags
+agr
+afs1 4 585935.411847424.24
+afs
+aft
+agt
+ags
+aft1 4 586381.701847198.80
+aft
+afu
+agu
+agt
+aga1 4 581585.201849901.78
+aga
+agb
+ahb
+aha
+agb1 4 582031.491849676.34
+agb
+agc
+ahc
+ahb
+agc1 4 582366.211849507.26
+agc
+agd
+ahd
+ahc
+agd1 4 582589.361849394.54
+agd
+age
+ahe
+ahd
+age1 4 582812.501849281.82
+age
+agf
+ahf
+ahe
+agf1 4 583035.651849169.10
+agf
+agg
+ahg
+ahf
+agg1 4 583258.801849056.38
+agg
+agh
+ahh
+ahg
+agh1 4 583481.941848943.66
+agh
+agi
+ahi
+ahh
+agi1 4 583705.091848830.94
+agi
+agj
+ahj
+ahi
+agj1 4 583928.241848718.22
+agj
+agk
+ahk
+ahj
+agk1 4 584151.381848605.50
+agk
+agl
+ahl
+ahk
+agl1 4 584374.531848492.78
+agl
+agm
+ahm
+ahl
+agm1 4 584597.681848380.06
+agm
+agn
+ahn
+ahm
+agn1 4 584820.821848267.34
+agn
+ago
+aho
+ahn
+ago1 4 585043.971848154.62
+ago
+agp
+ahp
+aho
+agp1 4 585267.121848041.91
+agp
+agq
+ahq
+ahp
+agq1 4 585490.261847929.19
+agq
+agr
+ahr
+ahq
+agr1 4 585713.411847816.47
+agr
+ags
+ahs
+ahr
+ags1 4 586048.131847647.39
+ags
+agt
+aht
+ahs
+agt1 4 586494.421847421.95
+agt
+agu
+ahu
+aht
+aha1 4 581697.921850124.92
+aha
+ahb
+aib
+aia
+ahb1 4 582144.211849899.48
+ahb
+ahc
+aic
+aib
+ahc1 4 582478.931849730.40
+ahc
+ahd
+aid
+aic
+ahd1 4 582702.081849617.68
+ahd
+ahe
+aie
+aid
+ahe1 4 582925.221849504.97
+ahe
+ahf
+aif
+aie
+ahf1 4 583148.371849392.25
+ahf
+ahg
+aig
+aif
+ahg1 4 583371.521849279.53
+ahg
+ahh
+aih
+aig
+ahh1 4 583594.661849166.81
+ahh
+ahi
+aii
+aih
+ahi1 4 583817.811849054.09
+ahi
+ahj
+aij
+aii
+ahj1 4 584040.961848941.37
+ahj
+ahk
+aik
+aij
+ahk1 4 584264.101848828.65
+ahk
+ahl
+ail
+aik
+ahl1 4 584487.251848715.93
+ahl
+ahm
+aim
+ail
+ahm1 4 584710.401848603.21
+ahm
+ahn
+ain
+aim
+ahn1 4 584933.541848490.49
+ahn
+aho
+aio
+ain
+aho1 4 585156.691848377.77
+aho
+ahp
+aip
+aio
+ahp1 4 585379.831848265.05
+ahp
+ahq
+aiq
+aip
+ahq1 4 585602.981848152.33
+ahq
+ahr
+air
+aiq
+ahr1 4 585826.131848039.61
+ahr
+ahs
+ais
+air
+ahs1 4 586160.851847870.53
+ahs
+aht
+ait
+ais
+aht1 4 586607.141847645.10
+aht
+ahu
+aiu
+ait
+aia1 4 581810.641850348.07
+aia
+aib
+ajb
+aja
+aib1 4 582256.931850122.63
+aib
+aic
+ajc
+ajb
+aic1 4 582591.651849953.55
+aic
+aid
+ajd
+ajc
+aid1 4 582814.801849840.83
+aid
+aie
+aje
+ajd
+aie1 4 583037.941849728.11
+aie
+aif
+ajf
+aje
+aif1 4 583261.091849615.39
+aif
+aig
+ajg
+ajf
+aig1 4 583484.241849502.67
+aig
+aih
+ajh
+ajg
+aih1 4 583707.381849389.95
+aih
+aii
+aji
+ajh
+aii1 4 583930.531849277.23
+aii
+aij
+ajj
+aji
+aij1 4 584153.681849164.51
+aij
+aik
+ajk
+ajj
+aik1 4 584376.821849051.80
+aik
+ail
+ajl
+ajk
+ail1 4 584599.971848939.08
+ail
+aim
+ajm
+ajl
+aim1 4 584823.111848826.36
+aim
+ain
+ajn
+ajm
+ain1 4 585046.261848713.64
+ain
+aio
+ajo
+ajn
+aio1 4 585269.411848600.92
+aio
+aip
+ajp
+ajo
+aip1 4 585492.551848488.20
+aip
+aiq
+ajq
+ajp
+aiq1 4 585715.701848375.48
+aiq
+air
+ajr
+ajq
+air1 4 585938.851848262.76
+air
+ais
+ajs
+ajr
+ais1 4 586273.571848093.68
+ais
+ait
+ajt
+ajs
+ait1 4 586719.861847868.24
+ait
+aiu
+aju
+ajt
+aja1 4 581923.361850571.21
+aja
+ajb
+akb
+aka
+ajb1 4 582369.651850345.78
+ajb
+ajc
+akc
+akb
+ajc1 4 582704.371850176.70
+ajc
+ajd
+akd
+akc
+ajd1 4 582927.521850063.98
+ajd
+aje
+ake
+akd
+aje1 4 583150.661849951.26
+aje
+ajf
+akf
+ake
+ajf1 4 583373.811849838.54
+ajf
+ajg
+akg
+akf
+ajg1 4 583596.961849725.82
+ajg
+ajh
+akh
+akg
+ajh1 4 583820.101849613.10
+ajh
+aji
+aki
+akh
+aji1 4 584043.251849500.38
+aji
+ajj
+akj
+aki
+ajj1 4 584266.391849387.66
+ajj
+ajk
+akk
+akj
+ajk1 4 584489.541849274.94
+ajk
+ajl
+akl
+akk
+ajl1 4 584712.691849162.22
+ajl
+ajm
+akm
+akl
+ajm1 4 584935.831849049.50
+ajm
+ajn
+akn
+akm
+ajn1 4 585158.981848936.78
+ajn
+ajo
+ako
+akn
+ajo1 4 585382.131848824.06
+ajo
+ajp
+akp
+ako
+ajp1 4 585605.271848711.34
+ajp
+ajq
+akq
+akp
+ajq1 4 585828.421848598.63
+ajq
+ajr
+akr
+akq
+ajr1 4 586051.571848485.91
+ajr
+ajs
+aks
+akr
+ajs1 4 586386.291848316.83
+ajs
+ajt
+akt
+aks
+ajt1 4 586832.581848091.39
+ajt
+aju
+aku
+akt
+aka1 4 582036.081850794.36
+aka
+akb
+alb
+ala
+akb1 4 582482.371850568.92
+akb
+akc
+alc
+alb
+akc1 4 582817.091850399.84
+akc
+akd
+ald
+alc
+akd1 4 583040.241850287.12
+akd
+ake
+ale
+ald
+ake1 4 583263.381850174.40
+ake
+akf
+alf
+ale
+akf1 4 583486.531850061.69
+akf
+akg
+alg
+alf
+akg1 4 583709.671849948.97
+akg
+akh
+alh
+alg
+akh1 4 583932.821849836.25
+akh
+aki
+ali
+alh
+aki1 4 584155.971849723.53
+aki
+akj
+alj
+ali
+akj1 4 584379.111849610.81
+akj
+akk
+alk
+alj
+akk1 4 584602.261849498.09
+akk
+akl
+all
+alk
+akl1 4 584825.411849385.37
+akl
+akm
+alm
+all
+akm1 4 585048.551849272.65
+akm
+akn
+aln
+alm
+akn1 4 585271.701849159.93
+akn
+ako
+alo
+aln
+ako1 4 585494.851849047.21
+ako
+akp
+alp
+alo
+akp1 4 585717.991848934.49
+akp
+akq
+alq
+alp
+akq1 4 585941.141848821.77
+akq
+akr
+alr
+alq
+akr1 4 586164.291848709.05
+akr
+aks
+als
+alr
+aks1 4 586499.011848539.97
+aks
+akt
+alt
+als
+akt1 4 586945.301848314.53
+akt
+aku
+alu
+alt
+ala1 4 582148.801851017.51
+ala
+alb
+amb
+ama
+alb1 4 582595.091850792.07
+alb
+alc
+amc
+amb
+alc1 4 582929.811850622.99
+alc
+ald
+amd
+amc
+ald1 4 583152.951850510.27
+ald
+ale
+ame
+amd
+ale1 4 583376.101850397.55
+ale
+alf
+amf
+ame
+alf1 4 583599.251850284.83
+alf
+alg
+amg
+amf
+alg1 4 583822.391850172.11
+alg
+alh
+amh
+amg
+alh1 4 584045.541850059.39
+alh
+ali
+ami
+amh
+ali1 4 584268.691849946.67
+ali
+alj
+amj
+ami
+alj1 4 584491.831849833.95
+alj
+alk
+amk
+amj
+alk1 4 584714.981849721.23
+alk
+all
+aml
+amk
+all1 4 584938.131849608.52
+all
+alm
+amm
+aml
+alm1 4 585161.271849495.80
+alm
+aln
+amn
+amm
+aln1 4 585384.421849383.08
+aln
+alo
+amo
+amn
+alo1 4 585607.571849270.36
+alo
+alp
+amp
+amo
+alp1 4 585830.711849157.64
+alp
+alq
+amq
+amp
+alq1 4 586053.861849044.92
+alq
+alr
+amr
+amq
+alr1 4 586277.011848932.20
+alr
+als
+ams
+amr
+als1 4 586611.721848763.12
+als
+alt
+amt
+ams
+alt1 4 587058.021848537.68
+alt
+alu
+amu
+amt
+ama1 4 582261.521851240.65
+ama
+amb
+anb
+ana
+amb1 4 582707.811851015.22
+amb
+amc
+anc
+anb
+amc1 4 583042.531850846.14
+amc
+amd
+and
+anc
+amd1 4 583265.671850733.42
+amd
+ame
+ane
+and
+ame1 4 583488.821850620.70
+ame
+amf
+anf
+ane
+amf1 4 583711.971850507.98
+amf
+amg
+ang
+anf
+amg1 4 583935.111850395.26
+amg
+amh
+anh
+ang
+amh1 4 584158.261850282.54
+amh
+ami
+ani
+anh
+ami1 4 584381.411850169.82
+ami
+amj
+anj
+ani
+amj1 4 584604.551850057.10
+amj
+amk
+ank
+anj
+amk1 4 584827.701849944.38
+amk
+aml
+anl
+ank
+aml1 4 585050.851849831.66
+aml
+amm
+anm
+anl
+amm1 4 585273.991849718.94
+amm
+amn
+ann
+anm
+amn1 4 585497.141849606.22
+amn
+amo
+ano
+ann
+amo1 4 585720.291849493.50
+amo
+amp
+anp
+ano
+amp1 4 585943.431849380.78
+amp
+amq
+anq
+anp
+amq1 4 586166.581849268.06
+amq
+amr
+anr
+anq
+amr1 4 586389.721849155.35
+amr
+ams
+ans
+anr
+ams1 4 586724.441848986.27
+ams
+amt
+ant
+ans
+amt1 4 587170.741848760.83
+amt
+amu
+anu
+ant
+ana1 4 582374.231851463.80
+ana
+anb
+aob
+aoa
+anb1 4 582820.531851238.36
+anb
+anc
+aoc
+aob
+anc1 4 583155.251851069.28
+anc
+and
+aod
+aoc
+and1 4 583378.391850956.56
+and
+ane
+aoe
+aod
+ane1 4 583601.541850843.84
+ane
+anf
+aof
+aoe
+anf1 4 583824.691850731.12
+anf
+ang
+aog
+aof
+ang1 4 584047.831850618.41
+ang
+anh
+aoh
+aog
+anh1 4 584270.981850505.69
+anh
+ani
+aoi
+aoh
+ani1 4 584494.131850392.97
+ani
+anj
+aoj
+aoi
+anj1 4 584717.271850280.25
+anj
+ank
+aok
+aoj
+ank1 4 584940.421850167.53
+ank
+anl
+aol
+aok
+anl1 4 585163.571850054.81
+anl
+anm
+aom
+aol
+anm1 4 585386.711849942.09
+anm
+ann
+aon
+aom
+ann1 4 585609.861849829.37
+ann
+ano
+aoo
+aon
+ano1 4 585833.001849716.65
+ano
+anp
+aop
+aoo
+anp1 4 586056.151849603.93
+anp
+anq
+aoq
+aop
+anq1 4 586279.301849491.21
+anq
+anr
+aor
+aoq
+anr1 4 586502.441849378.49
+anr
+ans
+aos
+aor
+ans1 4 586837.161849209.41
+ans
+ant
+aot
+aos
+ant1 4 587283.461848983.97
+ant
+anu
+aou
+aot
+aoa1 4 582543.311851798.52
+aoa
+aob
+apb
+apa
+aob1 4 582989.611851573.08
+aob
+aoc
+apc
+apb
+aoc1 4 583324.331851404.00
+aoc
+aod
+apd
+apc
+aod1 4 583547.471851291.28
+aod
+aoe
+ape
+apd
+aoe1 4 583770.621851178.56
+aoe
+aof
+apf
+ape
+aof1 4 583993.771851065.84
+aof
+aog
+apg
+apf
+aog1 4 584216.911850953.12
+aog
+aoh
+aph
+apg
+aoh1 4 584440.061850840.41
+aoh
+aoi
+api
+aph
+aoi1 4 584663.201850727.69
+aoi
+aoj
+apj
+api
+aoj1 4 584886.351850614.97
+aoj
+aok
+apk
+apj
+aok1 4 585109.501850502.25
+aok
+aol
+apl
+apk
+aol1 4 585332.641850389.53
+aol
+aom
+apm
+apl
+aom1 4 585555.791850276.81
+aom
+aon
+apn
+apm
+aon1 4 585778.941850164.09
+aon
+aoo
+apo
+apn
+aoo1 4 586002.081850051.37
+aoo
+aop
+app
+apo
+aop1 4 586225.231849938.65
+aop
+aoq
+apq
+app
+aoq1 4 586448.381849825.93
+aoq
+aor
+apr
+apq
+aor1 4 586671.521849713.21
+aor
+aos
+aps
+apr
+aos1 4 587006.241849544.13
+aos
+aot
+apt
+aps
+aot1 4 587452.541849318.69
+aot
+aou
+apu
+apt
+apa1 4 582768.751852244.81
+apa
+apb
+aqb
+aqa
+apb1 4 583215.051852019.37
+apb
+apc
+aqc
+aqb
+apc1 4 583549.761851850.30
+apc
+apd
+aqd
+aqc
+apd1 4 583772.911851737.58
+apd
+ape
+aqe
+aqd
+ape1 4 583996.061851624.86
+ape
+apf
+aqf
+aqe
+apf1 4 584219.201851512.14
+apf
+apg
+aqg
+aqf
+apg1 4 584442.351851399.42
+apg
+aph
+aqh
+aqg
+aph1 4 584665.501851286.70
+aph
+api
+aqi
+aqh
+api1 4 584888.641851173.98
+api
+apj
+aqj
+aqi
+apj1 4 585111.791851061.26
+apj
+apk
+aqk
+aqj
+apk1 4 585334.941850948.54
+apk
+apl
+aql
+aqk
+apl1 4 585558.081850835.82
+apl
+apm
+aqm
+aql
+apm1 4 585781.231850723.10
+apm
+apn
+aqn
+aqm
+apn1 4 586004.381850610.38
+apn
+apo
+aqo
+aqn
+apo1 4 586227.521850497.66
+apo
+app
+aqp
+aqo
+app1 4 586450.671850384.94
+app
+apq
+aqq
+aqp
+apq1 4 586673.821850272.22
+apq
+apr
+aqr
+aqq
+apr1 4 586896.961850159.50
+apr
+aps
+aqs
+aqr
+aps1 4 587231.681849990.43
+aps
+apt
+aqt
+aqs
+apt1 4 587677.971849764.99
+apt
+apu
+aqu
+aqt
+
+CONNECTIONS
+aaaaab
+aabaac
+aacaad
+aadaae
+aaeaaf
+aafaag
+aagaah
+aahaai
+aaiaaj
+aajaak
+aakaal
+aalaam
+aamaan
+aanaao
+aaoaap
+aapaaq
+aaqaar
+aaraas
+aasaat
+abaabb
+abbabc
+abcabd
+abdabe
+abeabf
+abfabg
+abgabh
+abhabi
+abiabj
+abjabk
+abkabl
+ablabm
+abmabn
+abnabo
+aboabp
+abpabq
+abqabr
+abrabs
+absabt
+acaacb
+acbacc
+accacd
+acdace
+aceacf
+acfacg
+acgach
+achaci
+aciacj
+acjack
+ackacl
+aclacm
+acmacn
+acnaco
+acoacp
+acpacq
+acqacr
+acracs
+acsact
+adaadb
+adbadc
+adcadd
+addade
+adeadf
+adfadg
+adgadh
+adhadi
+adiadj
+adjadk
+adkadl
+adladm
+admadn
+adnado
+adoadp
+adpadq
+adqadr
+adrads
+adsadt
+aeaaeb
+aebaec
+aecaed
+aedaee
+aeeaef
+aefaeg
+aegaeh
+aehaei
+aeiaej
+aejaek
+aekael
+aelaem
+aemaen
+aenaeo
+aeoaep
+aepaeq
+aeqaer
+aeraes
+aesaet
+afaafb
+afbafc
+afcafd
+afdafe
+afeaff
+affafg
+afgafh
+afhafi
+afiafj
+afjafk
+afkafl
+aflafm
+afmafn
+afnafo
+afoafp
+afpafq
+afqafr
+afrafs
+afsaft
+agaagb
+agbagc
+agcagd
+agdage
+ageagf
+agfagg
+aggagh
+aghagi
+agiagj
+agjagk
+agkagl
+aglagm
+agmagn
+agnago
+agoagp
+agpagq
+agqagr
+agrags
+agsagt
+ahaahb
+ahbahc
+ahcahd
+ahdahe
+aheahf
+ahfahg
+ahgahh
+ahhahi
+ahiahj
+ahjahk
+ahkahl
+ahlahm
+ahmahn
+ahnaho
+ahoahp
+ahpahq
+ahqahr
+ahrahs
+ahsaht
+aiaaib
+aibaic
+aicaid
+aidaie
+aieaif
+aifaig
+aigaih
+aihaii
+aiiaij
+aijaik
+aikail
+ailaim
+aimain
+ainaio
+aioaip
+aipaiq
+aiqair
+airais
+aisait
+ajaajb
+ajbajc
+ajcajd
+ajdaje
+ajeajf
+ajfajg
+ajgajh
+ajhaji
+ajiajj
+ajjajk
+ajkajl
+ajlajm
+ajmajn
+ajnajo
+ajoajp
+ajpajq
+ajqajr
+ajrajs
+ajsajt
+akaakb
+akbakc
+akcakd
+akdake
+akeakf
+akfakg
+akgakh
+akhaki
+akiakj
+akjakk
+akkakl
+aklakm
+akmakn
+aknako
+akoakp
+akpakq
+akqakr
+akraks
+aksakt
+alaalb
+albalc
+alcald
+aldale
+alealf
+alfalg
+algalh
+alhali
+alialj
+aljalk
+alkall
+allalm
+almaln
+alnalo
+aloalp
+alpalq
+alqalr
+alrals
+alsalt
+amaamb
+ambamc
+amcamd
+amdame
+ameamf
+amfamg
+amgamh
+amhami
+amiamj
+amjamk
+amkaml
+amlamm
+ammamn
+amnamo
+amoamp
+ampamq
+amqamr
+amrams
+amsamt
+anaanb
+anbanc
+ancand
+andane
+aneanf
+anfang
+anganh
+anhani
+anianj
+anjank
+ankanl
+anlanm
+anmann
+annano
+anoanp
+anpanq
+anqanr
+anrans
+ansant
+aoaaob
+aobaoc
+aocaod
+aodaoe
+aoeaof
+aofaog
+aogaoh
+aohaoi
+aoiaoj
+aojaok
+aokaol
+aolaom
+aomaon
+aonaoo
+aooaop
+aopaoq
+aoqaor
+aoraos
+aosaot
+apaapb
+apbapc
+apcapd
+apdape
+apeapf
+apfapg
+apgaph
+aphapi
+apiapj
+apjapk
+apkapl
+aplapm
+apmapn
+apnapo
+apoapp
+appapq
+apqapr
+apraps
+apsapt
+aaaaba
+aababb
+aacabc
+aadabd
+aaeabe
+aafabf
+aagabg
+aahabh
+aaiabi
+aajabj
+aakabk
+aalabl
+aamabm
+aanabn
+aaoabo
+aapabp
+aaqabq
+aarabr
+aasabs
+aatabt
+abaaca
+abbacb
+abcacc
+abdacd
+abeace
+abfacf
+abgacg
+abhach
+abiaci
+abjacj
+abkack
+ablacl
+abmacm
+abnacn
+aboaco
+abpacp
+abqacq
+abracr
+absacs
+abtact
+acaada
+acbadb
+accadc
+acdadd
+aceade
+acfadf
+acgadg
+achadh
+aciadi
+acjadj
+ackadk
+acladl
+acmadm
+acnadn
+acoado
+acpadp
+acqadq
+acradr
+acsads
+actadt
+adaaea
+adbaeb
+adcaec
+addaed
+adeaee
+adfaef
+adgaeg
+adhaeh
+adiaei
+adjaej
+adkaek
+adlael
+admaem
+adnaen
+adoaeo
+adpaep
+adqaeq
+adraer
+adsaes
+adtaet
+aeaafa
+aebafb
+aecafc
+aedafd
+aeeafe
+aefaff
+aegafg
+aehafh
+aeiafi
+aejafj
+aekafk
+aelafl
+aemafm
+aenafn
+aeoafo
+aepafp
+aeqafq
+aerafr
+aesafs
+aetaft
+afaaga
+afbagb
+afcagc
+afdagd
+afeage
+affagf
+afgagg
+afhagh
+afiagi
+afjagj
+afkagk
+aflagl
+afmagm
+afnagn
+afoago
+afpagp
+afqagq
+afragr
+afsags
+aftagt
+agaaha
+agbahb
+agcahc
+agdahd
+ageahe
+agfahf
+aggahg
+aghahh
+agiahi
+agjahj
+agkahk
+aglahl
+agmahm
+agnahn
+agoaho
+agpahp
+agqahq
+agrahr
+agsahs
+agtaht
+ahaaia
+ahbaib
+ahcaic
+ahdaid
+aheaie
+ahfaif
+ahgaig
+ahhaih
+ahiaii
+ahjaij
+ahkaik
+ahlail
+ahmaim
+ahnain
+ahoaio
+ahpaip
+ahqaiq
+ahrair
+ahsais
+ahtait
+aiaaja
+aibajb
+aicajc
+aidajd
+aieaje
+aifajf
+aigajg
+aihajh
+aiiaji
+aijajj
+aikajk
+ailajl
+aimajm
+ainajn
+aioajo
+aipajp
+aiqajq
+airajr
+aisajs
+aitajt
+ajaaka
+ajbakb
+ajcakc
+ajdakd
+ajeake
+ajfakf
+ajgakg
+ajhakh
+ajiaki
+ajjakj
+ajkakk
+ajlakl
+ajmakm
+ajnakn
+ajoako
+ajpakp
+ajqakq
+ajrakr
+ajsaks
+ajtakt
+akaala
+akbalb
+akcalc
+akdald
+akeale
+akfalf
+akgalg
+akhalh
+akiali
+akjalj
+akkalk
+aklall
+akmalm
+aknaln
+akoalo
+akpalp
+akqalq
+akralr
+aksals
+aktalt
+alaama
+albamb
+alcamc
+aldamd
+aleame
+alfamf
+algamg
+alhamh
+aliami
+aljamj
+alkamk
+allaml
+almamm
+alnamn
+aloamo
+alpamp
+alqamq
+alramr
+alsams
+altamt
+amaana
+ambanb
+amcanc
+amdand
+ameane
+amfanf
+amgang
+amhanh
+amiani
+amjanj
+amkank
+amlanl
+ammanm
+amnann
+amoano
+ampanp
+amqanq
+amranr
+amsans
+amtant
+anaaoa
+anbaob
+ancaoc
+andaod
+aneaoe
+anfaof
+angaog
+anhaoh
+aniaoi
+anjaoj
+ankaok
+anlaol
+anmaom
+annaon
+anoaoo
+anpaop
+anqaoq
+anraor
+ansaos
+antaot
+aoaapa
+aobapb
+aocapc
+aodapd
+aoeape
+aofapf
+aogapg
+aohaph
+aoiapi
+aojapj
+aokapk
+aolapl
+aomapm
+aonapn
+aooapo
+aopapp
+aoqapq
+aorapr
+aosaps
+aotapt
+
+LAYERS
+ 0     200.00    200.01
+ 1     150.00    175.00
+ 2     100.00    125.00
+ 3      50.00     75.00
+ 4       0.00     25.00
+ 5     -50.00    -25.00
+ 6    -100.00    -75.00
+ 7    -150.00   -125.00
+ 8    -200.00   -175.00
+ 9    -250.00   -225.00
+10    -300.00   -275.00
+11    -400.00   -350.00
+12    -500.00   -450.00
+13    -600.00   -550.00
+14    -800.00   -700.00
+15   -1000.00   -900.00
+16   -1200.00  -1100.00
+17   -1400.00  -1300.00
+18   -1600.00  -1500.00
+19   -1800.00  -1700.00
+20   -2000.00  -1900.00
+21   -2400.00  -2200.00
+22   -2800.00  -2600.00
+23   -3200.00  -3000.00
+24   -3600.00  -3400.00
+25   -4000.00  -3800.00
+
+SURFA
+aaa      0.00
+aab      0.00
+aac      0.00
+aad      0.00
+aae      0.00
+aaf      0.00
+aag      0.00
+aah      0.00
+aai      5.00
+aaj      8.41
+aak     10.45
+aal     17.87
+aam     35.18
+aan     44.09
+aao     55.00
+aap     84.46
+aaq    108.41
+aar    110.47
+aas    125.69
+aat    159.55
+aba      0.00
+abb      0.00
+abc      0.00
+abd      0.00
+abe      0.00
+abf      0.00
+abg      7.55
+abh     14.72
+abi     22.26
+abj     29.54
+abk     39.33
+abl     57.96
+abm     85.16
+abn    106.51
+abo    109.85
+abp    116.05
+abq    144.34
+abr    175.57
+abs    193.65
+abt    216.20
+aca     18.75
+acb     23.64
+acc     16.23
+acd     17.28
+ace     18.93
+acf     13.92
+acg     19.60
+ach     30.67
+aci     38.60
+acj     48.53
+ack     58.82
+acl     74.76
+acm     99.60
+acn    132.49
+aco    159.43
+acp    165.55
+acq    161.12
+acr    187.97
+acs    249.71
+act    271.54
+ada     21.60
+adb     43.09
+adc     38.36
+add     47.00
+ade     55.00
+adf     32.59
+adg     30.75
+adh     43.04
+adi     50.00
+adj     62.72
+adk     74.39
+adl     91.81
+adm    115.63
+adn    142.26
+ado    174.57
+adp    204.95
+adq    208.62
+adr    199.24
+ads    259.77
+adt    325.66
+aea      8.43
+aeb     42.35
+aec     46.25
+aed     56.95
+aee     77.95
+aef     68.24
+aeg     55.80
+aeh     58.56
+aei     68.85
+aej     78.42
+aek     90.26
+ael    108.54
+aem    130.06
+aen    155.00
+aeo    187.83
+aep    220.00
+aeq    251.83
+aer    244.81
+aes    280.10
+aet    382.35
+afa     30.20
+afb     68.43
+afc     55.03
+afd     47.22
+afe     61.49
+aff     72.76
+afg     65.00
+afh     70.52
+afi     91.87
+afj    111.94
+afk    136.04
+afl    146.06
+afm    146.91
+afn    164.52
+afo    199.95
+afp    235.85
+afq    273.74
+afr    291.65
+afs    319.10
+aft    439.25
+aga     55.00
+agb    115.26
+agc     90.74
+agd     57.22
+age     42.30
+agf     50.00
+agg     63.34
+agh     91.57
+agi    137.29
+agj    164.37
+agk    207.65
+agl    241.43
+agm    204.17
+agn    184.34
+ago    214.94
+agp    250.79
+agq    290.04
+agr    332.17
+ags    361.18
+agt    476.53
+aha     75.54
+ahb    168.97
+ahc    133.80
+ahd     79.68
+ahe     57.75
+ahf     55.78
+ahg     75.07
+ahh    118.03
+ahi    199.97
+ahj    250.01
+ahk    281.99
+ahl    327.28
+ahm    281.30
+ahn    216.14
+aho    225.55
+ahp    252.61
+ahq    284.35
+ahr    330.26
+ahs    390.78
+aht    502.87
+aia     88.83
+aib    186.15
+aic    168.31
+aid    119.26
+aie     78.59
+aif     62.44
+aig     87.61
+aih    132.69
+aii    210.50
+aij    290.43
+aik    319.91
+ail    340.48
+aim    312.49
+ain    235.68
+aio    217.39
+aip    234.77
+aiq    271.27
+air    338.51
+ais    442.36
+ait    537.08
+aja     70.68
+ajb    169.30
+ajc    195.33
+ajd    155.18
+aje     94.99
+ajf     68.46
+ajg     90.58
+ajh    139.55
+aji    200.78
+ajj    259.25
+ajk    302.02
+ajl    320.23
+ajm    292.18
+ajn    231.79
+ajo    211.46
+ajp    234.85
+ajq    286.32
+ajr    367.72
+ajs    534.39
+ajt    624.11
+aka     59.58
+akb    148.43
+akc    162.41
+akd    135.25
+ake    100.00
+akf     85.74
+akg     97.32
+akh    133.14
+aki    184.16
+akj    231.67
+akk    282.72
+akl    304.53
+akm    264.50
+akn    216.67
+ako    218.93
+akp    255.13
+akq    308.60
+akr    366.88
+aks    562.05
+akt    684.40
+ala     45.80
+alb    100.00
+alc     96.39
+ald     86.40
+ale     75.49
+alf     78.10
+alg     92.14
+alh    115.75
+ali    150.00
+alj    191.62
+alk    225.42
+all    238.70
+alm    219.34
+aln    202.72
+alo    227.05
+alp    263.69
+alq    308.83
+alr    357.08
+als    509.68
+alt    620.23
+ama     17.57
+amb     43.07
+amc     50.00
+amd     56.93
+ame     65.31
+amf     76.62
+amg     83.59
+amh     95.50
+ami    118.19
+amj    139.38
+amk    156.87
+aml    169.67
+amm    179.13
+amn    203.05
+amo    234.47
+amp    267.32
+amq    304.79
+amr    346.79
+ams    436.86
+amt    536.41
+ana     37.99
+anb     32.79
+anc     43.36
+and     65.06
+ane     95.62
+anf    114.68
+ang    108.61
+anh    100.00
+ani    110.99
+anj    121.30
+ank    155.00
+anl    178.19
+anm    191.54
+ann    211.80
+ano    233.46
+anp    265.34
+anq    297.82
+anr    333.40
+ans    399.77
+ant    497.47
+aoa     87.45
+aob     89.18
+aoc     97.64
+aod    106.85
+aoe    125.19
+aof    155.00
+aog    155.00
+aoh    164.74
+aoi    183.59
+aoj    185.18
+aok    216.06
+aol    240.59
+aom    244.64
+aon    238.07
+aoo    249.54
+aop    284.46
+aoq    308.02
+aor    337.90
+aos    396.20
+aot    459.24
+apa    110.28
+apb    150.00
+apc    181.06
+apd    184.21
+ape    188.40
+apf    208.44
+apg    213.18
+aph    234.49
+api    271.11
+apj    278.60
+apk    296.27
+apl    316.95
+apm    290.72
+apn    289.50
+apo    316.36
+app    337.75
+apq    350.50
+apr    355.15
+aps    369.34
+apt    389.12
+
+

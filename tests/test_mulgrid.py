@@ -1,0 +1,324 @@
+import unittest
+import os
+from mulgrids import *
+
+class mulgrid_stats(mulgrid):
+    """Variant of mulgrid class with extra properties for vital statistics
+    of a mulgrid object- for comparisons between mulgrids that should
+    be the same.
+    """
+
+    def get_node_names(self): return [n.name for n in self.nodelist]
+    node_names = property(get_node_names)
+    def get_column_names(self): return [col.name for col in self.columnlist]
+    column_names = property(get_column_names)
+    def get_node_positions(self): return np.array([n.pos for n in self.nodelist])
+    node_positions = property(get_node_positions)
+    def get_column_nodes(self): return [[n.name for n in col.node] for col in self.columnlist]
+    column_nodes = property(get_column_nodes)
+    def get_layer_names(self): return [lay.name for lay in self.layerlist]
+    layer_names = property(get_layer_names)
+    def get_layer_centres(self): return np.array([lay.centre for lay in self.layerlist])
+    layer_centres = property(get_layer_centres)
+    def get_well_names(self): return [w.name for w in self.welllist]
+    well_names = property(get_well_names)
+    def get_well_positions(self): return np.array(sum([w.pos for w in self.welllist],[]))
+    well_positions = property(get_well_positions)
+
+    def compare(self, other, testcase):
+        """Compares self with another mulgrid_stats object and reports results
+        to a unittest testcase."""
+        tol = 1.e-7
+        wellpostol = 0.06  # need larger tolerance for well positions, due to roundoff
+        msg = ' mismatch for geometry ' + self.filename
+        testcase.assertEqual(self.type, other.type, 'type' + msg)
+        testcase.assertEqual(self.convention, other.convention, 'convention' + msg)
+        testcase.assertEqual(self.atmosphere_type, other.atmosphere_type,
+                             'atmosphere type' + msg)
+        testcase.assertEqual(self.atmosphere_volume, other.atmosphere_volume,
+                             'atmostphere volume' + msg)
+        testcase.assertEqual(self.atmosphere_connection, other.atmosphere_connection,
+                             'atmosphere connection' + msg)
+        testcase.assertEqual(self.unit_type, other.unit_type, 'unit type' + msg)
+        testcase.assertEqual(self.gdcx, other.gdcx, 'gdcx' + msg)
+        testcase.assertEqual(self.gdcy, other.gdcy, 'gdcy' + msg)
+        testcase.assertEqual(self.cntype, other.cntype, 'cntype' + msg)
+        testcase.assertEqual(self.permeability_angle, other.permeability_angle,
+                             'permeability angle' + msg)
+
+        testcase.assertEqual(self.node_names, other.node_names, 'node names' + msg)
+        testcase.assertEqual(self.column_names, other.column_names, 'column names' + msg)
+        testcase.assertTrue(np.allclose(self.node_positions, other.node_positions),
+                            'node positions' + msg)
+        testcase.assertEqual(self.column_nodes, other.column_nodes, 'column nodes' + msg)
+        testcase.assertEqual(self.layer_names, other.layer_names, 'layer names' + msg)
+        testcase.assertTrue(np.allclose(self.layer_centres, other.layer_centres),
+                            'layer centres' + msg)
+        testcase.assertEqual(self.well_names, other.well_names, 'well names' + msg)
+        testcase.assertTrue(np.max(np.abs(self.well_positions - other.well_positions)) <= wellpostol,
+                            'well positions' + msg)
+
+class mulgridTestCase(unittest.TestCase):
+
+    def test_fix_unfix_blockname(self):
+        """fix_blockname() and unfix_blockname() functions"""
+        blk = 'AA1 6'
+        fblk = fix_blockname(blk)
+        self.assertNotEqual(fblk[-2], ' ')
+        blk2 = unfix_blockname(fblk)
+        self.assertEqual(blk, blk2)
+        blk = 'A 200'
+        self.assertEqual(blk, fix_blockname(blk))
+
+    def test_valid_blockname(self):
+        """valid_blockname() function"""
+        self.assertTrue(valid_blockname('AA123'))
+        self.assertFalse(valid_blockname('AA12a'))
+        self.assertTrue(valid_blockname('A   1'))
+        self.assertTrue(valid_blockname('A? 21'))
+
+    def test_fortran_float(self):
+        """fortran_float() function"""
+        self.assertEqual(fortran_float('   '), 0.0)
+        self.assertEqual(fortran_float('1.0'), 1.0)
+        self.assertEqual(fortran_float('  -10.3'), -10.3)
+        self.assertEqual(fortran_float(' 0.3E+06'), 0.3e6)
+        self.assertEqual(fortran_float(' 0.3E+006'), 0.3e6)
+        self.assertEqual(fortran_float('1.234-314'), 1.234e-314)
+        self.assertEqual(fortran_float('1.234+314'), 1.234e314)
+        self.assertEqual(fortran_float('-0.14326-124'), -0.14326e-124)
+        self.assertEqual(fortran_float(' 0.3D+06'), 0.3e6)
+        self.assertEqual(fortran_float(' 0.3D-06'), 0.3e-6)
+        self.assertTrue(np.isnan(fortran_float('1.234x-10')))
+
+    def test_rect_grid_operations(self):
+        """rectangular grid operations"""
+        dx = np.logspace(1, 1.5, 10)
+        dx = np.hstack((dx[::-1], dx))
+        dy = np.logspace(0.8, 1.4, 9)
+        dy = np.hstack((dy[::-1],dy))
+        dz = np.logspace(0.6, 3, 12)
+        geo = mulgrid().rectangular(dx, dy, dz)
+        # check numbers of columns, layers and blocks:
+        num_cols = np.size(dx)*np.size(dy)
+        num_layers = np.size(dz)
+        num_blocks = num_cols * num_layers
+        self.assertEqual(geo.num_columns, num_cols)
+        self.assertEqual(geo.num_layers, num_layers + 1)
+        self.assertEqual(geo.num_blocks, num_blocks)
+        # check area and centre:
+        tol = 1.e-7
+        lx = np.sum(dx)
+        ly = np.sum(dy)
+        a = lx * ly
+        c = 0.5*np.array([lx, ly])
+        self.assertAlmostEqual(geo.area, a)
+        self.assertTrue(np.linalg.norm(geo.centre - c) <= tol)
+        # translate, rotate:
+        d = np.array([5321.5, -1245.2, 1000.])
+        theta = 37.6
+        geo.translate(d)
+        c2 = c + d[:2]
+        self.assertAlmostEqual(geo.area, a)
+        self.assertTrue(np.linalg.norm(geo.centre - c2) <= tol)
+        geo.rotate(theta)
+        self.assertAlmostEqual(geo.area, a)
+        self.assertTrue(np.linalg.norm(geo.centre - c2) <= tol)
+        geo.rotate(-theta)
+        geo.translate(-d)
+        self.assertAlmostEqual(geo.area, a)
+        self.assertTrue(np.linalg.norm(geo.centre - c) <= tol)
+
+    def test_read_g2(self):
+        """reading g2 geometry"""
+
+        try:
+            filename = os.path.join('mulgrid', 'g2.dat')
+            geo = mulgrid(filename)
+        except: self.fail('Could not open mulgrid: ' + filename)
+
+        self.assertTrue(geo.num_blocks == 28966)
+        self.assertTrue(geo.num_columns == 1036)
+        self.assertTrue(geo.num_layers == 35)
+        self.assertTrue(geo.num_wells == 186)
+
+        self.assertEqual(
+                [n.name for n in geo.nodelist[:10]],
+                ['mfq', 'aky', 'acy', 'bny', 'mbq', 'aku', 'acu', 'bru', 'mbi', 'akm'])
+
+        self.assertEqual(
+                [col.name for col in geo.columnlist[-10:]],
+                ['gko', 'goo', 'fbo', 'ffo', 'fjo', 'fno', 'fro', 'fvo', 'eco', 'ego'])
+
+        self.assertTrue(
+            (np.array([n.pos for n in geo.nodelist[100:110]]) ==
+            np.array([[ 2775720.36,  6283160.18], [ 2775686.41,  6281497.33],
+                      [ 2776095.96,  6281052.2 ], [ 2776542.34,  6280565.66],
+                      [ 2777019.52,  6280045.87], [ 2777554.27,  6279456.3 ],
+                      [ 2778114.41,  6278828.88], [ 2778669.16,  6278196.73],
+                      [ 2779219.24,  6277560.52], [ 2779852.28,  6276811.46]])).all())
+
+        self.assertEqual(
+            [n.name for n in geo.column['nio'].node],
+            ['nkq', 'nko', 'nio', 'niq'])
+
+        self.assertTrue(
+            (geo.column['eic'].centre == np.array([2778311.88, 6285540.38])).all())
+
+        self.assertEqual(
+            [l.centre for l in geo.layerlist],
+             [880.0, 840.0, 775.0, 725.0, 675.0, 625.0, 575.0, 525.0,
+              475.0, 425.0, 375.0, 325.0, 275.0, 225.0,
+              175.0, 125.0, 75.0, 25.0, -25.0, -75.0, -125.0, -175.0,
+              -225.0, -275.0, -350.0, -450.0, -562.5,
+              -687.5, -875.0, -1125.0, -1375.0, -1750.0, -2250.0, -2750.0, -3250.0])
+
+        self.assertEqual(
+            [geo.column[col].surface for col in \
+                 ['fbo', 'ffo', 'fjo', 'fno', 'fro', 'fvo', 'eco', 'ego', 'eko', 'eoo', 'eso']],
+            [355.18, 334.37, 333.61, 327.96, 320.19, 385.88, 380.84, 427.08, 617.12, 571.32, 637.08])
+
+        self.assertEqual(geo.welllist[4].name, 'A   5')
+
+        self.assertTrue(
+            (geo.well['I 304'].pos_coordinate(2)[:6] == 
+             np.array([341.0, 240.0, 189.0, 171.0, 143.0, 121.0])).all())
+
+        self.assertTrue(
+            (geo.well['I 310'].pos_coordinate(0)[:5] == 
+             np.array([2779465.0, 2779465.0, 2779465.0, 2779467.0, 2779470.0])).all())
+
+    def test_read_write(self):
+        """read/write tests"""
+        geoms = ['g1.dat', 'g2.dat', 'g3.dat', 'g4.dat']
+        from os import remove
+        outfilename = 'gread_write_test.dat'
+        for geoname in geoms:
+            filename = os.path.join('mulgrid', geoname)
+            geo = mulgrid_stats(filename)
+            geo.write(outfilename)
+            geo.filename = filename
+            geo2 = mulgrid_stats(outfilename)
+            geo.compare(geo2, self)
+            remove(outfilename)
+
+    def test_fit_surface(self):
+        """fit surface"""
+        tol = 1.e-3
+        geo = mulgrid(os.path.join('mulgrid', 'g2.dat'))
+        p = np.array([2.78153e6, 6.26941e6])
+        p2 = p + np.ones(2)*5.e3
+        r = [p, p2]
+        cols = geo.columns_in_polygon(r)
+        d = np.load(os.path.join('mulgrid', 'fit_surface_data.npy'))
+        geo.fit_surface(d, alpha = 0.1, beta = 0.1, silent = True)
+        s = np.array([col.surface for col in cols])
+        r = np.load(os.path.join('mulgrid', 'fit_surface_result.npy'))
+        self.assertTrue((np.abs(s - r) <= tol).all())
+
+    def test_refine(self):
+        """refine()"""
+        tol = 1.e-3
+        geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*3)
+        orig_area = geo.area
+        geo.rotate(30.)
+        cols = [col for col in geo.columnlist if 400. < col.centre[1] < 600.]
+        geo.refine(cols)
+        self.assertEqual(geo.area, orig_area)
+        self.assertEqual(geo.num_columns, 189)
+        self.assertEqual(geo.num_nodes, 169)
+        areas = np.sort(np.array([col.area for col in geo.columnlist]))
+        a = np.sort(np.load(os.path.join('mulgrid', 'refine_areas.npy')))
+        self.assertTrue((np.abs(areas - a) <= tol).all())
+
+    def test_rename_column(self):
+        """rename_column()"""
+        geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*3)
+        n = 20
+        origcols = [col.name for col in geo.columnlist] 
+        oldcols = origcols[:n]
+        origblocks  = geo.block_name_list
+        newcols = [name.upper() for name in oldcols]
+        geo.rename_column(oldcols,newcols)
+        expectedcols = ['  ' + l for l in ascii_uppercase[:n]] + origcols[n:]
+        self.assertEqual([col.name for col in geo.columnlist], expectedcols)
+        expectedblocks = [(blk[:2] + blk[2].upper() + blk[3:]
+                           if blk[:2] == '  ' and blk[2] < ascii_lowercase[n]
+                           else blk) for blk in origblocks]
+        self.assertEqual(geo.block_name_list, expectedblocks)
+
+    def test_column_track(self):
+        """column_track()"""
+        geo = mulgrid(os.path.join('mulgrid', 'g5.dat'))
+        names = ['aag', 'aah', 'abh', 'ach', 'aci', 'adi', 'aei', 'afi', 'afj', 'agj', 'ahj',
+                 'aik', 'ajk', 'akk', 'akl', 'all', 'aml', 'anl', 'anm', 'aom', 'apm', 'apn']
+        try:
+            t = geo.column_track(geo.bounds)
+            found_names = [ts[0].name for ts in t]
+            err = False
+            self.assertEqual(found_names, names)
+        except: err = True
+        self.assertFalse(err)
+
+    def test_write_mesh(self):
+        """mesh writer"""
+        from os.path import exists
+        from os import remove
+        filename = os.path.join('mulgrid', 'g5')
+        geofilename = filename + '.dat'
+        exofilename = filename + '.exo'
+        if exists(exofilename): remove(exofilename)
+        geo = mulgrid(geofilename)
+        geo.write_mesh(exofilename)
+        ok = exists(exofilename)
+        self.assertTrue(ok)
+        if ok: remove(exofilename)
+
+    def test_block_name_containing_point(self):
+        geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*3)
+
+        p = np.array([350., 500., -5.])
+        blkname = geo.block_name_containing_point(p)
+        self.assertEqual(' ah 1', blkname)
+
+        # point above mesh:
+        p[2] = 5.
+        blkname = geo.block_name_containing_point(p)
+        self.assertTrue(blkname is None)
+
+        # point below mesh:
+        p[2] = -50.
+        blkname = geo.block_name_containing_point(p)
+        self.assertTrue(blkname is None)
+
+        # point outside horizontal mesh:
+        p = np.array([-350., 500., -10.])
+        blkname = geo.block_name_containing_point(p)
+        self.assertTrue(blkname is None)
+
+    def test_well_values(self):
+        geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*10)
+        for col in geo.columnlist:
+            col.surface = -9.
+            geo.set_column_num_layers(col)
+        geo.setup_block_name_index()
+        geo.setup_block_connection_name_index()
+        wellname = '  w 1'
+        w = well(wellname, [np.array([450., 550., 0.]), np.array([400., 500., -100.])])
+        geo.add_well(w)
+        t = np.array([20. for name in geo.block_name_list])
+        elev, val = geo.well_values(wellname, t, elevation = True)
+        
+    def test_amesh(self):
+        infile = os.path.join('mulgrid', 'in')
+        segfile = os.path.join('mulgrid', 'segmt')
+        geo, blockmap = mulgrid().from_amesh(infile, segfile)
+        self.assertEqual(913, geo.num_nodes)
+        self.assertEqual(656, geo.num_columns)
+        self.assertEqual(9184, geo.num_blocks)
+        self.assertEqual(15, geo.num_layers)
+        
+if __name__ == '__main__':
+
+    suite = unittest.TestLoader().loadTestsFromTestCase(mulgridTestCase)
+    unittest.TextTestRunner(verbosity = 1).run(suite)
