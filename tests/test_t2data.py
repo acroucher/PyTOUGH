@@ -11,19 +11,6 @@ def column_nan_to_num(x):
             if dt[0].name.startswith('float'): x[key] = np.nan_to_num(x[key])
         return x
 
-def array_diff(x,y):
-    """Returns difference between two arrays- norm of relative absolute
-    difference where the first array is nonzero, otherwise the norm of
-    absolute difference.
-    """
-    if np.all(x == y): return 0.0
-    else: 
-        x,y = np.nan_to_num(x), np.nan_to_num(y)
-        nonzero = np.where(x != 0.0)
-        d = np.abs(x - y)
-        d[nonzero] = np.abs((x[nonzero] - y[nonzero]) / x[nonzero])
-        return np.linalg.norm(d)
-
 class t2data_stats(t2data):
     """Variant of t2data class with extra properties for vital statistics
     of a t2data object- for comparisons between t2data objects that
@@ -411,13 +398,13 @@ class t2dataTestCase(unittest.TestCase):
                                  [ 10.,  60.], [ 30.,  60.], [ 60.,  60.],
                                  [  0.,  75.], [ 10.,  75.], [ 30.,  75.],
                                  [ 60.,  75.]])
-        self.assertAlmostEqual(array_diff(node_pos, expected_pos), 0.0, 3)
+        self.assertTrue(np.allclose(node_pos, expected_pos))
         layer_centres = np.array([lay.centre for lay in geo.layerlist])
         expected_centres = np.array([ 0. , -0.5, -2. , -4.5])
-        self.assertAlmostEqual(array_diff(layer_centres, expected_centres), 0.0, 3)
+        self.assertTrue(np.allclose(layer_centres, expected_centres))
         surf = np.array([col.surface for col in geo.columnlist])
         expected_surf = np.array([-0.5, 0., 0., 0., 0., 0., 0., 0., 0])
-        self.assertAlmostEqual(array_diff(surf, expected_surf), 0.0, 3)
+        self.assertTrue(np.allclose(surf, expected_surf))
         layer_blk_nums = [1, 4, 7, 10, 13, 16, 19, 22, 25]
         blk_nums = layer_blk_nums + \
                    [i+1 for i in layer_blk_nums] + \
