@@ -1,0 +1,1732 @@
+
+ ===================================================================================================================================
+
+     PROBLEM TITLE:  Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+
+ 
+       @@@@@   @@   @  @   @@@  @  @    @         @@@  @  @   @  @  @  @      @@   @@@@@  @   @@   @   @     @@@   @  @  @   @
+         @    @  @  @  @  @     @  @    &        @     @  @@ @@  @  @  @     @  @    @    @  @  @  @@  @     @  @  @  @  @@  @
+         @    @  @  @  @  @ @@  @@@@  @@@@@       @@   @  @ @ @  @  @  @     @@@@    @    @  @  @  @ @ @     @@@   @  @  @ @ @
+         @    @  @  @  @  @  @  @  @    &           @  @  @   @  @  @  @     @  @    @    @  @  @  @  @@     @ @   @  @  @  @@
+         @     @@    @@    @@@  @  @    @        @@@   @  @   @   @@   @@@@  @  @    @    @   @@   @   @     @  @   @@   @   @
+
+
+                    TOUGH+ IS A PROGRAM FOR MULTIPHASE MULTICOMPONENT FLOW IN PERMEABLE MEDIA, INCLUDING HEAT FLOW.
+                        IT REPRESENTS THE NEXT GENERATION OF THE TOUGH2 [PRUESS et al., 1999] FAMILY OF CODES
+                                       DEVELOPED AT THE LAWRENCE BERKELEY NATIONAL LABORATORY
+
+************************************************************************************************************************************
+
+                   TOUGH+ v1.1 WAS DEVELOPED BY MORIDIS et al. [2009] AT THE LAWRENCE BERKELEY NATIONAL LABORATORY
+                       IT WAS WRITTEN IN FORTRAN 95/2003, AND IS BACKWARD COMPATIBLE WITH TOUGH2 INPUT FILES
+
+
+                          ********************************************************************************
+                          ********************                                        ********************
+                          ********************       TOUGH+ V1.1 (AUGUST  2009)       ********************
+                          ********************                                        ********************
+                          ********************************************************************************
+
+        Copyright 2009 by The Regents of the University of California (subject to approval by the U.S. Department of Energy).
+
+ NOTICE: This software was developed under funding from the U.S. Department of Energy and the U.S. Government consequently retains
+ certain rights as follows: the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive,
+ irrevocable, worldwide license in the software to reproduce, prepare derivative works, and perform publicly and display publicly.
+ Beginning five (5) years after the date permission to assert copyright is obtained from the U.S. Department of Energy, and subject
+ to any subsequent five (5) year renewals, the U.S. Government is granted for itself and others acting on its behalf a paid-up,
+ nonexclusive, irrevocable, worldwide license in the software to reproduce, prepare derivative works, distribute copies to the
+ public, perform publicly and display publicly, and to permit others to do so.
+
+
+ PARAMETERS FOR DYNAMIC DIMENSIONING OF MAJOR ARRAYS (MAIN PROGRAM) ARE AS FOLLOWS
+
+         Max_NumElem              =      37
+         Max_NumConx              =      92
+         Max_NumEquations         =       3
+         Max_NumMassComp          =       2
+         Max_NumPhases            =       4
+         Max_NumSS                =       4
+         accounting_for_diffusion =       F
+         NumAuxParam              =       1
+
+
+         element_by_element_properties =  F
+         porosity_perm_dependence      =  F
+         scaled_capillary_pressure     =  F
+
+         coupled_geochemistry          =  F      geochemical_property_update   = "N"
+         coupled_geomechanics          =  F      geomechanical_property_update = "N"
+         number_of_geomech_parameters  =  0      geomechanical_code_name       = "      "
+
+
+===================================================================================================================================
+
+ MAXIMUM NUMBER OF VOLUME ELEMENTS (GRID BLOCKS)   :         Max_NumElem        =       37
+ MAXIMUM NUMBER OF CONNECTIONS (INTERFACES)        :         Max_NumConx        =       92
+ MAXIMUM LENGTH OF PRIMARY VARIABLE ARRAYS         :         Max_NumPrimaryVar  =      111
+ MAXIMUM NUMBER OF GENERATION ITEMS (SINKS/SOURCES):         Max_NumSS          =        4
+ MAXIMUM NUMBER OF POROUS/FRACTURED MEDIA:                   Max_NumMedia       =        5
+
+ ===================================================================================================================================
+
+ Array dimensioning is dynamic.  The use of direct solvers will reduce the size of the maximum solvable problem
+
+
+ SUMMARY OF DISK FILES
+
+ File <VERS> does not exist ==> Open as a new file
+ File <MESH> does not exist ==> Open as a new file
+ File <INCON> does not exist ==> Open as a new file
+ File <GENER> does not exist ==> Open as a new file
+ File <SAVE> does not exist ==> Open as a new file
+ File <LINEQ> does not exist ==> Open as a new file
+ File <LINEQ> does not exist ==> Open as a new file
+
+ Domain No:  1     Material Name : DIRT1
+
+ Domain No:  2     Material Name : BOUND
+
+ FILE <Hydrate_Info> DOES NOT EXIST ==> OPEN AS A NEW FILE
+
+
+**********************************************************************************************************************************
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                     H Y D R A T E - R E L A T E D   I N F O R M A T I O N                                      *
+*                                                                                                                                *
+**********************************************************************************************************************************
+**********************************************************************************************************************************
+
+
+
+    HYDRATE COMPOSITION
+
+         Number of Components of the Composite Gas Hydrate = 1
+
+         The components are:
+
+              Component #1:   CH4-Hydrate
+                   Hydration number                       = 6.000E+00
+                   Mole Fraction in the composite hydrate = 1.00000E+00
+                   Molecular weight of component hydrate  = 1.24133E+02 g/mol
+
+
+    PROPERTIES OF THE COMPOSITE HYDRATE
+
+         MOLECULAR WEIGHT = 1.24133E+02 g/mol
+
+         THERMAL CONDUCTIVITY FUNCTION F_ThC = F(T)
+              Number of coefficients <GH%N_ThC> in the F(T) = A0+A1*T+A2*T^2+...+Am*T^m polynomial =  1
+
+              Coefficients Am = <GH%p_ThC> [ m = 0,...,GH%N_ThC - 1 ] => Units: W/m/C^(m+1) 
+              A0 =  4.50000E-01;  A
+
+         SPECIFIC HEAT FUNCTION F_SpH = F(T)
+              Number of coefficients <GH%N_SpH> in the F(T) = A0+A1*T+A2*T^2+...+Am*T^m polynomial =  1
+
+              Coefficients Am = <GH%p_SpH> [ m = 0,...,GH%N_SpH - 1 ] => Units: J/kg/C^(m+1) 
+              A0 =  2.10000E+03;  A
+
+         DENSITY FUNCTION F_Rho = F(T) 
+              Number of coefficients <GH%N_Rho> in the F(T) = A0+A1*T+A2*T^2+...+Am*T^m polynomial =  1
+
+              Coefficients Am = <GH%p_Rho> [ m = 0,...,GH%N_Rho - 1] => Units: kg/m^3/C^m 
+              A0 =  9.20000E+02;  A
+
+         INHIBITOR-INDUCED TEMPERATURE SHIFT IN THE EQUILIBRIUM HYDRATION CURVE (Salt or Alcohol)
+              Flag indicating presence of inhibitor <inhibitor_present>    =  F (T:True, F:False)
+
+         HYDRATION EQUATIONS OPTION NUMBER <EquationOption> = 2
+              Flag for selecting the equations used for (a) the hydration P-T and (b) H-T relationhips
+               = 0: Extended forms of the Moridis [2003] equations are used (DEFAULT)
+               = 1: The Kamath [1984] equations are used
+               = 2: The P-T relationship is from Moridis [2003], while the H-T relationship is from Kamath [1984] 
+
+
+
+    TYPE OF HYDRATE FORMATION OR DISSOCIATION : E Q U I L I B R I U M
+
+
+
+**********************************************************************************************************************************
+**********************************************************************************************************************************
+
+     
+ Write file <MESH> from input data
+     
+ Write file <GENER> from input data
+     
+ Write file <INCON> from input data
+ 
+                       **************************************************************************************
+                       *                                                                                    *
+                       *     Comments in Input Data (have encountered   6 records with unknown keywords)    *
+                       *                              (Print up to 50 of them)                              *
+                       *                                                                                    *
+                       **************************************************************************************
+                       *                                                                                    *
+                       *  ----*----1 MOP: 123456789*123456789*1234 ---*----5----*----6----*----7----*----8  *
+                       *                                                                                    *
+                       *                                                                                    *
+                       *                                                                                    *
+                       *                                                                                    *
+                       *                                                                                    *
+                       *                                                                                    *
+                       **************************************************************************************
+
+                        ************************************************************************************
+                        *                       EVALUATE FLOATING POINT ARITHMETIC                         *
+                        ************************************************************************************
+                        *                                                                                  *
+                        *         FLOATING POINT PROCESSOR HAS APPROXIMATELY 15 SIGNIFICANT DIGITS         *
+                        *                                                                                  *
+                        *               The default value of increment factor for numerical                *
+                        *                   derivatives is <derivative_increment> = 1.4901E-08             *
+                        *                                                                                  *
+                        *          User-specified value <derivative_increment> =  1.0000E-08 will be used  *
+                        *                                                                                  *
+                        ************************************************************************************
+
+ File <Plot_coord> exists ==> Open as an old file
+ File <Plot_Data_> exists ==> Open as an old file
+ File <Plot_Data_> exists ==> Open as an old file
+ 
+ !!!!! ==> WARNING <== !!!!! : ELEMENT "ina 0   " HAS NO DOMAIN ASSIGNMENT; ASSIGN TO DOMAIN # 1, "DIRT1"
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*        The number of active dimensions <NumActiveDimensions> = 1                                                               *
+*                                                                                                                                *
+*        The numbers of connections in the X-, Y- and Z-directions are     32,      0 and      0 respectively                    *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+
+ 
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   Summary of capabilities for random permeability modification   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ Modification of absolute permeability on a grid block-by-grid block basis will be made when a domain "SEED " is present in data
+ block "ROCKS", as follows:
+                                    k    ===>    k = k*m
+
+ Here, k is the absolute permeability specified for the reservoir domain to which the grid block belongs. Parameter m is a
+ "permeability modifier" which can be internally generated or externally prescribed by the user on a block-by-block basis.
+
+ When permeability modification is in effect, the strength of capillary pressure will automatically be
+ scaled as: Pcap ===> Pcap = Pcap/SQRT(m) following Leverett (1941). 
+
+ User-supplied permeability modifiers have to be entered as parameter "PMX" in columns 41-50 of an ELEMEnt record.
+ Permeability modification options are selected through parameters in data block "ROCKS".
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ Summary of available permeability modification options
+
+      (with s: random number between 0 and 1; PMX: user-supplied modifiers in data block "ELEME"):
+      (1) externally supplied:        m = PMX - PER(2)
+      (2) "Linear"      (DROK /= 0):  m = PER(1) * s - PER(2)
+      (3) "Logarithmic" (DROK == 0):  m = exp(- PER(1) * s) - PER(2)
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+            &&&& If a domain  "SEED " is present, permeability modification will be made
+            &&&& If no domain "SEED " is present, no permeability modification will be made
+
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>  domain = "SEED " is not present, no permeability modification will be made  <<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ Data provided in domain "SEED " are used to select the following options:
+
+ DROK   = *** random number seed for internal generation of "linear" permeability modifiers.
+        = 0: No internal generation of "linear" permeability modifiers (DEFAULT).
+        > 0: Perform "linear" permeability modification; random modifiers are generated internally with DROK as seed.
+
+ POR    = *** random number seed for internal generation of "logarithmic" permeability modifiers,
+        = 0: No internal generation of "logarithmic" permeability modifiers (DEFAULT).
+        > 0: Perform "logarithmic" permeability modification; random modifiers are generated internally with POR as seed.
+
+      &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+      &&&&&  Note: If both DROK and POR are specified as non-zero, DROK takes precedence                                   &&&&&
+      &&&&&        If both DROK and POR are zero, permeability modifiers as supplied through "ELEME" data will be used     &&&&&
+      &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ PER(1) = *** scale factor (optional) for internally generated permeability modifiers
+        = 0: (defaults to PER(1) = 1): permeability modifiers are generated as random numbers in the interval (0,1)
+        > 0: permeability modifiers are generated as randomnumbers in the interval (0, PER(1))
+
+ PER(2) = *** Shift (optional) for internal or external permeability modifiers
+        = 0: No shift is applied to permeability modifiers (DEFAULT). 
+        > 0: Permeability modifiers are shifted according to: m = m - PER(2). All m < 0 are set equal to zero.
+
+
+ MESH HAS     34 ELEMENTS (     31 ACTIVE) AND     32 CONNECTIONS (INTERFACES) BETWEEN THEM
+ GENER HAS     0 SINKS/SOURCES
+ 
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                           M A T R I X   S O L V E R   A N D   R E L E V A N T   I N F O R M A T I O N                          *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+    The solver is determined from MOP(21)
+
+    The solution method indicator <MatrixSolver> =  3
+         <MatrixSolver> = 1: SUBROUTINE LUBAND - Direct solver using LU decomposition 
+         <MatrixSolver> = 2: SUBROUTINE DSLUBC - BI-CONJUGATE GRADIENT SOLVER
+                                                 Incomplete LU factorization preconditioning
+         <MatrixSolver> = 3: SUBROUTINE DSLUCS (DEFAULT) - Lanczos-type Conjugate Gradient Squared solver 
+                                                           Incomplete LU factorization preconditioning
+         <MatrixSolver> = 4: SUBROUTINE DSLUGM - Generalized Minimum Residual Conjugate Gradient solver
+                                                 Incomplete LU factorization preconditioning
+         <MatrixSolver> = 5: SUBROUTINE DLUSTB - STABILIZED BI-CONJUGATE GRADIENT SOLVER 
+                                                 Incomplete LU factorization preconditioning
+
+    <Max_CGIterationRatio>: Maximum # of CG iterations as fraction of the total number of equa=  1.00000E-01
+         (0.0 < Max_CGIterationRatio <= 1.0,   Default = 0.1)
+
+    <CG_convergence_crit>: Convergence criterion for the CG iterations                        =  1.00000E-06
+         (1.0e-12 <= CG_convergence_crit <= 1.0e-6,  Default = 1.0e-6)
+
+    <Max_NumCGIterations>: Maximum # of CG iterations - not to exceed the total number of equa=    20matrix_order> 
+         (20 < Max_NumCGIterations <= matrix_order)
+
+
+    The matrix Z-preprocessing system is <Z_preprocessing> = Z1
+
+         <Z_preprocessing> = Z0: No Z-preprocessing; default for NumEqu = 1 and for <MatrixSolver> = 1
+         <Z_preprocessing> = Z1: Replacement of zeros on the main-diagonal by a small number; 
+                                 default for NumEqu > 1 and for 1 < MatrixSolver < 5
+         <Z_preprocessing> = Z2: Linear combination of equations in each element to produce non-zero main diagonal entries
+         <Z_preprocessing> = Z3: Normalization of equations, followed by Z2
+         <Z_preprocessing> = Z4: Same as in <O_preprocessing> = O4
+
+
+    The matrix O-preprocessing system is <O_preprocessing> = O0
+
+         <O_preprocessing> = O0: No O-preprocessing; default for NumEqu = 1 and for <MatrixSolver> = 1
+         <O_preprocessing> = O1: Elimination of lower half of the main-diagonal submatrix with center pivoting
+         <O_preprocessing> = O2: O1+Elimination of upper half of the main-diagonal submatrix with center pivoting
+         <O_preprocessing> = O3: O2+Normalization - Results in unit main-diagonal submatrices 
+         <O_preprocessing> = O4: pre-processing which results in unit main-diagonal submatrices without center pivoting
+
+ ===================================================================================================================================
+
+ Maximum number of Jacobian matrix elements:                 Max_NumNonZeros  =     1989
+
+ Large linear equation arrays - Length of "Row", "Col" and "CO" is             "Max_NumNonZeros+1"      =       1990
+
+ Maximum length of the Conjugate Gradient REAL*8 work array "real_work_array" is "real_work_array_size" =       4099
+ Maximum length of the Conjugate Gradient integer array "intg_work_array is" "intg_work_array_size"     =       2644
+
+ ===================================================================================================================================
+
+
+ END OF TOUGH+ INPUT JOB: Elapsed Time =  6.20000000E-02 seconds
+
+ 
+ ***********************************************************************************************************************************
+ *          ARRAY "MOP" ALLOWS TO GENERATE MORE PRINTOUT IN VARIOUS SUBROUTINES, AND TO MAKE SOME CALCULATIONAL CHOICES            *
+ ***********************************************************************************************************************************
+
+   MOP(1)  = 1 ==> ALLOWS TO GENERATE A SHORT PRINTOUT FOR EACH NEWTON-RAPHSON ITERATION
+           = 0, 1, OR 2: Generate 0, 1, or 2 lines of printout
+
+            More printout is generated for MOP(i) > 0 in the following subroutines (the larger the MOP value is, the more data will be printed)
+
+   MOP(2)  = 0 ==> CYCIT;  MOP(3) = 0 ==> MULTI;  MOP(4) = 0 ==> QU;  MOP(5) = 3 ==> EOS;  MOP(6) = 0 ==> LINEQ   
+
+   MOP(7)  = 0 ==> IF UNEQUAL ZERO, THE RUN WILL GENERATE A PRINTOUT OF INPUT DATA
+
+            CALCULATIONAL CHOICES OFFERED BY MOP ARE AS FOLLOWS:
+
+   MOP(8)  = 2 ==> METHODS FOR RELATIVE PERMEABILITY AND CAPILLARY PRESSURE ESTIMATION IN THE PRESSENCE OF SOLID PHASES
+           = 0: Relative permeability model based on the Original Porous Medium (OPM) concept, scaling of capillary pressures (EPM #1)
+           = 1: Relative permeability model based on the Evolving Porous Medium (EPM) #1 concept, scaling of capillary pressures (EPM #1)
+           = 2: Relative permeability model based on the Evolving Porous Medium (EPM) #2 concept, scaling of capillary pressures (EPM #2)
+           = 3: Relative permeability model based on the Evolving Porous Medium (EPM) #1 concept, no scaling of capillary pressures 
+           = 4: Relative permeability model based on the Evolving Porous Medium (EPM) #2 concept, no scaling of capillary pressures 
+           = 9: Relative permeability model based on the Original Porous Medium (OPM) concept, no scaling of capillary pressures
+
+   MOP(9)  = 0 ==> CHOOSES FLUID COMPOSITION ON WITHDRAWAL (PRODUCTION)
+           = 0: According to relative mobilities
+           = 1: According to composition in producing element
+
+   MOP(10) = 0 ==> CHOOSES INTERPOLATION FORMULA FOR DEPENDENCE OF THERMAL CONDUCTIVITY ON PHASE SATURATIONS 
+           = 0: k = k_dry + [sqrt(S_aqu) + sqrt(S_hyd)]*(k_wet - k_dry) + phi*S_ice*k_ice
+           = 1: k = k_dry + (S_aqu + S_hyd)*(k_wet - k_dry) + phi*S_ice*k_ice
+           = 2: k computed from component thermal conductivities (gas contribution is neglected)
+           = 3: k computed from all component thermal conductivities (gas contribution is included)
+
+   MOP(11) = 2 ==> CHOOSES EVALUATION OF MOBILITY AND ABSOLUTE PERMEABILITY AT INTERFACES 
+           = 0: Mobilities are upstream weighted with <W_upstream> (default is 1.0). Permeability is upstream weighted
+           = 1: Mobilities are averaged between adjacent elements. Permeability is upstream weighted
+           = 2: Mobilities are upstream weighted with <W_upstream> (default is 1.0). Permeability is harmonic weighted,
+           = 3: Mobilities are averaged between adjacent elements. Permeability is harmonic weighted
+           = 4: Mobility * permeability product is harmonic weighted
+
+   MOP(12) = 0 ==> CHOOSES PROCEDURE FOR INTERPOLATING GENERATION RATES FROM A TIME TABLE.
+           = 0: Triple linear interpolation
+           = 1: "Step function" option 
+
+   MOP(13) = 0 ==> CHOOSES METHOD OF PERMEABILITY ADJUSTMENT IN CASES OF VARIABLE POROSITY AND/OR GEOMECHANICAL CHANGES
+           = 0: No permeability adjustment
+           = 1: Permeability adjusted according to an empirical exponential model
+           = 2: Permeability adjusted according to a full geomechanical model
+
+   MOP(14) = 1 ==> SPECIFIES THE HANDLING OF GAS SOLUBILITY
+           = 0: Use Henry's constants (T-indepenent)
+           = 1: Use appropriate equations of Henry's constants (T-depenent)
+           > 1: Use fugacities (T- and P-depenent)
+
+   MOP(15) = 0 ==> ALLOWS TO SELECT A SEMI-ANALYTICAL HEAT EXCHANGE CALCULATION WITH CONFINING BEDS
+           = 0: No semi-analytical heat exchange
+           > 0: Semi-analytical heat exchange engaged (when a special sub-routine 'qloss' is present)
+
+   MOP(16) = 4 ==> PERMITS TO CHOOSE TIME STEP SELECTION OPTION
+           = 0: Use time steps explicitly provided as input
+           > 0: Increase time step by at least a factor 2, if convergence occurs in < MOP(16) iterations
+
+   MOP(17) = 0 ==> SPECIFIES THE HANDLING OF BINARY GAS DIFFUSIVITIES
+           = 0: Compute using the method of Fuller et al. [1969]
+           > 7: Adjust for high pressures using the method of Riazi and Whitson [1993]
+
+   MOP(18) = 0 ==> ALLOWS TO SELECT HANDLING OF INTERFACE DENSITY
+           = 0: Perform upstream weighting for interface density
+           > 0: Compute interface density as average of the two grid block densities
+                however, when one of the two phase saturations is zero, do upstream weighting
+
+   MOP(19) = 8 ==> CONTROLS THE TYPE(S) OF OUTPUT
+           < 8: The run produces a standard TOUGH+ output
+           = 8: In addition to the standard TOUGH+ output, the run produces the files "Plot_Data_Elem" and "Plot_Data_Conx" 
+                (of the most important element and connection variables) in plotter-ready format
+           = 9: No standard TOUGH+ output - The run produces only the files "Plot_Data_Elem" and "Plot_Data_Conx" 
+                (of the most important element and connection variables) in plotter-ready format
+
+   MOP(20) = 0 ==> CONTROLS THE CHECKING OF INITIAL CONDITIONS 
+
+           < 9: The initial conditions are checked to ensure physically meaningful primary variable values
+           = 9: No checking of initial conditions is performed 
+
+   MOP(21) = 3 ==> PERMITS TO SELECT LINEAR EQUATION SOLVER
+           = 0: DEFAULTS TO MOP(21) = 3
+           = 1: SUBROUTINE LUBAND: Direct solver using LU decomposition
+           = 2: SUBROUTINE DSLUBC: Bi-conjugate gradient solver; Preconditioner: Incomplete LU factorization
+           = 3: SUBROUTINE DSLUCS: Bi-conjugate gradient solver - Lanczos type; Preconditioner: Incomplete LU factorization
+           = 4: SUBROUTINE DSLUGM: Generalized minimum residual conjugate gradients; Preconditioner: Incomplete LU factorization
+           = 5: SUBROUTINE DLUSTB: Stabilized bi-conjugate gradient solver; Preconditioner: Incomplete LU factorization
+
+
+   MOP(22) = 0 ==> DETERMINES IF AN ADDITIONAL OUTPUT FILE OF max{P} WILL BE PRINTED
+           = 9: A time series of the maximum pressure in the domain and its location is printed in the file "MaxP_Time_Series"
+           < 9: No max{P} output is provided 
+
+   MOP(23) = 0 ==> Used in some EOS-modules for selecting different options
+
+
+   MOP(24) = 0 ==> PERMITS TO SELECT HANDLING OF MULTIPHASE DIFFUSIVE FLUXES AT INTERFACES
+           = 0: Harmonic weighting of fully-coupled effective multiphase diffusivity
+           = 1: Separate harmonic weighting of gas and liquid phase diffusivities
+
+ ***********************************************************************************************************************************
+ 
+ *******************************************************************************************************************************************
+ *      TOUGH+HYDRATE: EQUATION OF STATE FOR WATER, CH4 AND SALT MIXTURES DISTRIBUTED IN FOUR PHASES (AQUEOUS, GAS, HYDRATE AND ICE        *
+ *******************************************************************************************************************************************
+ *                                                                                                                                         *
+ *                      "EOS_Equilibrium":                                                                                                 *
+ *                             Equation of state for CH4 + H2O + Water distributed among 4 phases:                                         *
+ *                                 Gas, Aqueous, Hydrate, Ice (Equilibrium hydrate reaction)                                               *
+ *                      "EOS_Kinetic":                                                                                                     *
+ *                             Equation of state for CH4 + H2O + Water distributed among 4 phases:                                         *
+ *                                 Gas, Aqueous, Hydrate, Ice (Kinetic hydrate reaction)                                                   *
+ *                                                                                                                                         *
+ *******************************************************************************************************************************************
+ *                                                                                                                                         *
+ *                      "EOS_Equilibrium" + "EOS_Kinetic" were developed by G. Moridis at the Lawrence Berkeley National Laboratory        *
+ *                                                                                                                                         *
+ *                      References: (1) G. Moridis, "Numerical Studies of Gas Production From Methane Hydrates", 2003                      *
+ *                                  (2) G. Moridis, "TOUGH+HYDRATE v1.0 User’s Manual", Lawrence Berkeley National Laboratory,             *
+ *                                      Report LBNL-0149E, Berkeley, CA 2008                                                               *
+ *                                                                                                                                         *
+ *******************************************************************************************************************************************
+
+ OPTIONS SELECTED ARE: (NumCom, NumEqu, NumPhases, NumMobPhases, accounting_for_diffusion) = (2,3,4,2,F)
+
+                         NumCom                   =  2 - NUMBER OF FLUID COMPONENTS
+                         NumEqu                   =  3 - NUMBER OF EQUATIONS PER GRID BLOCK
+                         NumPhases                =  4 - NUMBER OF POSSIBLE PHASES 
+                         NumMobPhases             =  2 - NUMBER OF MOBILE PHASES
+                         accounting_for_diffusion =  F - FLAG INDICATING (when .TRUE.) CONSIDERATION OF MULTICOMPONENT/BINARY DIFFUSION
+
+ AVAILABLE OPTIONS ARE: (NumCom,NumEqu,NumPhases,NumMobPhases) = (2,3,4,2) - H2O, CH4, HYDRATE, NON_ISOTHERMAL, EQUILIBRIUM REACTION
+                                                                 (3,4,4,2) - H2O, CH4, HYDRATE, INHIBITOR, NON-ISOTHERMAL, EQUILIBRIUM REACTION
+                                                                 (3,4,4,2) - H2O, CH4, HYDRATE, NON-ISOTHERMAL, KINETIC REACTION
+                                                                 (4,5,4,2) - H2O, CH4, HYDRATE, INHIBITOR, NON-ISOTHERMAL, KINETIC REACTION
+
+ THE POSSIBLE PRIMARY VARIABLES ARE:
+
+                                P:   Pressure (Pa)
+                        Pg, P_gas:   Gas Pressure (Pa)
+                                T:   Temperature (C)
+                             X_mA:   Mass Fraction of CH4 Dissolved in the Aqueous Phase
+                             Y_mG:   Mole fraction of CH4 in the Gas Phase
+                        Sw, S_aqu:   Aqueous Phase Saturation
+                        Sg, S_gas:   Aqueous Phase Saturation
+                        Sh, S_hyd:   Hydrate Saturation
+                        Si, S_ice:   Ice Saturation
+                             X_iA:   Mass Fraction of Inhibitor Dissolved in the Aqueous Phase
+
+
+====================================================================================================================================
+
+ FOR (NumCom,NumEqu,NumPhases) = (2,3,4) - EQUILIBRIUM REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                              X1    X2   X3   X4  KEY  *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                             ------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS       P,  X_mA,  T,   -,  Aqu  *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  HEAT         *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS           Pg, Y_mG,  T,   -,  Gas  *
+ *                            *  *                            *   *                                                       *
+ *                            *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)          Pg,   Sw,  T,   -,  AqG  *
+ *                            *  *                            *   *                                                       *
+ ******************************  ******************************   *   2-PHASE (AQ.+HYDRATE)      P,    Sw,  T,   -,  AqH  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)          Pg,   Si,  T,   -,  IcG  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE)      P,    Si,  T,   -,  IcH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (AQ.+GAS+HYDRATE)  Sg,   Sw,  T,   -,  AGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (ICE+GAS+HYDRATE)  Sg,   Si,  T,   -,  IGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE)      Pg,   Sw,  Sg,  -,  AIG  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (HYDRATE+Aq.+ICE)  P,    Sw,  Si,  -,  AIH  *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT            Sg,   Sw,  Si,  -,  QuP  *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+ FOR (NumCom,NumEqu,NumPhases) = (3,4,4) - EQUILIBRIUM REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                              X1    X2   X3   X4  KEY  *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                             ------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS       P,  X_mA, x_iA,  T, Aqu  *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  INHIBITOR    *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS           Pg, Y_mG, x_iA,  T, Gas  *
+ *                            *  *                            *   *                                                       *
+ *       # 4  -  HEAT         *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)          Pg,   Sw, x_iA,  T, AqG  *
+ *                            *  *                            *   *                                                       *
+ ******************************  ******************************   *   2-PHASE (AQ.+HYDRATE)      Pg,   Sw, x_iA,  T, AqH  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)          Pg,   Si, x_iA,  T, IcG  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE)      P,    Si, x_iA,  T, IcH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (AQ.+GAS+HYDRATE)  Sg,   Sw, x_iA,  T, AGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (ICE+GAS+HYDRATE)  Sg,   Si, x_iA,  T, IGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE)      Pg,   Sw, x_iA,  T, AIG  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (HYDRATE+Aq.+ICE)  P,    Sw, x_iA, Si, AIH  *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT            Sg,   Sw, x_iA, Si, QuP  *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+ FOR (NumCom,NumEqu,NumPhases) = (3,4,4) - KINETIC REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                              X1    X2   X3   X4  KEY  *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                             ------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS       P,  X_mA,  Sh,   T, Aqu  *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  HYDRATE      *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS           Pg, X_mA,  Sh,   T, Gas  *
+ *                            *  *                            *   *                                                       *
+ *       # 4  -  HEAT         *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)          Pg,   Sw,  Sh,   T, AqG  *
+ *                            *  *                            *   *                                                       *
+ ******************************  ******************************   *   2-PHASE (AQ.+HYDRATE)      Pg,   Sw, x_mA,  T, AqH  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)          Pg,   Si,  Sh,   T, IcG  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE)      P,    Si,  Sh,   T, IcH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (AQ.+GAS+HYDRATE)  Pg,   Sw,  Sg,   T, AGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (ICE+GAS+HYDRATE)  Pg,   Si,  Sh,   T, IGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE)      Pg,   Sw,  Sg,   T, AIG  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (HYDRATE+Aq.+ICE)  P,    Sw,  Sh,   T, AIH  *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT            Pg,   Sw,  Sg,  Si, QuP  *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+ FOR (NumCom,NumEqu,NumPhases) = (4,5,4) - KINETIC REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                         X1   X2   X3    X4   X5   KEY *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                         ----------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS  P,  X_mA, Sh,  X_iA,  T,  Aqu *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  HYDRATE      *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS      Pg,  Sw,  Sh,  X_iA,  T,  Gas *
+ *                            *  *                            *   *                                                       *
+ *       # 4  -  INHIBITOR    *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)     Pg,  Sw,  Sh,  X_iA,  T,  AqG *
+ *                            *  *                            *   *                                                       *
+ *       # 5  -  HEAT         *  ******************************   *   2-PHASE               Pg,  Sw, X_mA, X_iA,  T,  AqH *
+ *                            *                                   *   (AQ.+HYDRATE)                                       *
+ ******************************                                   *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)     Pg,  Si,  Sh,  X_iA,  T,  IcG *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE) P,   Si,  Sh,  X_iA,  T,  IcH *
+                                                                  *                                                       *
+                                                                  *   3-PHASE               Pg,  Sw,  Sg,  X_iA,  T,  AGH *
+                                                                  *   (AQ.+GAS+HYDRATE)                                   *
+                                                                  *                                                       *
+                                                                  *   3-PHASE               Pg,  Si,  Sh,  X_iA,  T,  IGH *
+                                                                  *   (ICE+GAS+HYDRATE)                                   *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE) Pg,  Sw,  Sg,  X_iA,  T,  GAI *
+                                                                  *                                                       *
+                                                                  *   3-PHASE               P,   Sw,  Sh,  X_iA,  T,  HAI *
+                                                                  *   (HYDRATE+Aq.+ICE)                                   *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT       Pg,  Sw,  Sg,  X_iA,  Si, QuP *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [     0,      0]  =========             The time is  0.00000E+00 sec, or  0.00000E+00 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   0.00000000E+00   4.71242287E+04   4.71242287E+04   0.00000000E+00
+  MASS   (Kg)  |   0.00000000E+00   4.71978908E+07   4.34359783E+07   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   4.70846831E+07   1.13207759E+05   0.00000000E+00   0.00000000E+00
+                                              Hydrate       |   3.78222946E+07   5.61368371E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   8.49069776E+07   5.72689147E+06   0.00000000E+00   0.00000000E+00
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+ .... ITERATING:  At [     1, 1]: TimeStep =  3.000000E-02   MAX{Residual} =  3.749698E-02  at element "A00 1   ", equation  1
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 1   " ==> Px  =  7.56093487E+06  Peq =  8.88119132E+06
+ .... ITERATING:  At [     1, 2]: TimeStep =  3.000000E-02   MAX{Residual} =  2.956087E-02  at element "A00 1   ", equation  1
+ .... ITERATING:  At [     1, 3]: TimeStep =  3.000000E-02   MAX{Residual} =  9.510704E-04  at element "A00 1   ", equation  2
+ A00 1   (     1, 4) Time = 3.000000E-02 Dt =  3.000000E-02 DX1 = -9.110000E+06 DX2= -1.159230E-02 DX3= -5.530256E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 8.435728E+06  T =  1.144697E+01 Xi_A=  0.000000E+00 SG =  1.876534E-02 SA =  4.884077E-01 SH =  4.928270E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     2, 1]: TimeStep =  6.000000E-02   MAX{Residual} =  5.333887E-02  at element "A00 1   ", equation  1
+ .... ITERATING:  At [     2, 2]: TimeStep =  6.000000E-02   MAX{Residual} =  1.066504E-02  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 2   " ==> Px  =  8.96471288E+06  Peq =  8.96787342E+06
+ .... ITERATING:  At [     2, 3]: TimeStep =  6.000000E-02   MAX{Residual} =  6.660411E-05  at element "A00 2   ", equation  3
+ A00 1   (     2, 4) Time = 9.000000E-02 Dt =  6.000000E-02 DX1 =  2.964822E-02 DX2= -1.409184E-02 DX3= -7.945141E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 7.725688E+06  T =  1.065246E+01 Xi_A=  0.000000E+00 SG =  4.841356E-02 SA =  4.743159E-01 SH =  4.772706E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     3, 1]: TimeStep =  1.200000E-01   MAX{Residual} =  6.294886E-02  at element "A00 1   ", equation  1
+ .... ITERATING:  At [     3, 2]: TimeStep =  1.200000E-01   MAX{Residual} =  1.146494E-02  at element "A00 1   ", equation  3
+ .... ITERATING:  At [     3, 3]: TimeStep =  1.200000E-01   MAX{Residual} =  1.037117E-04  at element "A00 1   ", equation  1
+ A00 1   (     3, 4) Time = 2.100000E-01 Dt =  1.200000E-01 DX1 =  2.548733E-02 DX2= -7.035767E-03 DX3= -9.099527E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 7.000411E+06  T =  9.742508E+00 Xi_A=  0.000000E+00 SG =  7.390088E-02 SA =  4.672801E-01 SH =  4.588190E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     4, 1]: TimeStep =  2.400000E-01   MAX{Residual} =  5.279912E-02  at element "A00 1   ", equation  1
+ .... ITERATING:  At [     4, 2]: TimeStep =  2.400000E-01   MAX{Residual} =  1.339545E-02  at element "A00 1   ", equation  3
+ .... ITERATING:  At [     4, 3]: TimeStep =  2.400000E-01   MAX{Residual} =  7.380370E-05  at element "A00 1   ", equation  1
+ A00 1   (     4, 4) Time = 4.500000E-01 Dt =  2.400000E-01 DX1 =  1.061731E-02 DX2=  9.830338E-03 DX3= -9.096247E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 6.357075E+06  T =  8.832883E+00 Xi_A=  0.000000E+00 SG =  8.451819E-02 SA =  4.771104E-01 SH =  4.383714E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     5, 1]: TimeStep =  4.800000E-01   MAX{Residual} =  8.096191E-02  at element "A00 1   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 3   " ==> Px  =  8.91544359E+06  Peq =  8.96455359E+06
+ .... ITERATING:  At [     5, 2]: TimeStep =  4.800000E-01   MAX{Residual} =  1.491083E-02  at element "A00 1   ", equation  3
+ .... ITERATING:  At [     5, 3]: TimeStep =  4.800000E-01   MAX{Residual} =  3.210917E-05  at element "A00 1   ", equation  1
+ A00 3   (     5, 4) Time = 9.300000E-01 Dt =  4.800000E-01 DX1 = -9.023246E+06 DX2= -6.259972E-04 DX3= -3.897034E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 8.932320E+06  T =  1.195552E+01 Xi_A=  0.000000E+00 SG =  1.150420E-03 SA =  4.990498E-01 SH =  4.997998E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     6, 1]: TimeStep =  9.600000E-01   MAX{Residual} =  9.549774E-02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [     6, 2]: TimeStep =  9.600000E-01   MAX{Residual} =  1.285014E-02  at element "A00 1   ", equation  3
+ .... ITERATING:  At [     6, 3]: TimeStep =  9.600000E-01   MAX{Residual} =  1.063439E-04  at element "A00 1   ", equation  2
+ A00 1   (     6, 4) Time = 1.890000E+00 Dt =  9.600000E-01 DX1 = -6.132299E-03 DX2=  2.383741E-02 DX3= -4.242898E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.688606E+06  T =  7.761182E+00 Xi_A=  0.000000E+00 SG =  7.422300E-02 SA =  5.237978E-01 SH =  4.019792E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     7, 1]: TimeStep =  1.920000E+00   MAX{Residual} =  1.258951E-01  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 4   " ==> Px  =  8.88142142E+06  Peq =  8.96240598E+06
+ .... ITERATING:  At [     7, 2]: TimeStep =  1.920000E+00   MAX{Residual} =  1.128728E-02  at element "A00 1   ", equation  3
+ .... ITERATING:  At [     7, 3]: TimeStep =  1.920000E+00   MAX{Residual} =  6.146107E-04  at element "A00 1   ", equation  2
+ A00 1   (     7, 4) Time = 3.810000E+00 Dt =  1.920000E+00 DX1 =  4.141678E-03 DX2=  1.594939E-02 DX3= -3.190102E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.506042E+06  T =  7.442171E+00 Xi_A=  0.000000E+00 SG =  7.836468E-02 SA =  5.397472E-01 SH =  3.818881E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     8, 1]: TimeStep =  3.840000E+00   MAX{Residual} =  1.826505E-01  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 5   " ==> Px  =  8.93640093E+06  Peq =  8.96600121E+06
+ .... ITERATING:  At [     8, 2]: TimeStep =  3.840000E+00   MAX{Residual} =  1.117906E-02  at element "A00 1   ", equation  3
+ .... ITERATING:  At [     8, 3]: TimeStep =  3.840000E+00   MAX{Residual} =  4.944719E-04  at element "A00 1   ", equation  2
+ A00 1   (     8, 4) Time = 7.650000E+00 Dt =  3.840000E+00 DX1 =  1.019150E-02 DX2=  1.609809E-02 DX3= -2.972830E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.342058E+06  T =  7.144888E+00 Xi_A=  0.000000E+00 SG =  8.855618E-02 SA =  5.558453E-01 SH =  3.555985E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     9, 1]: TimeStep =  7.680000E+00   MAX{Residual} =  2.794795E-01  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 6   " ==> Px  =  8.94785053E+06  Peq =  8.96674701E+06
+ .... ITERATING:  At [     9, 2]: TimeStep =  7.680000E+00   MAX{Residual} =  1.481954E-02  at element "A00 1   ", equation  1
+ .... ITERATING:  At [     9, 3]: TimeStep =  7.680000E+00   MAX{Residual} =  2.925131E-04  at element "A00 1   ", equation  2
+ A00 1   (     9, 4) Time = 1.533000E+01 Dt =  7.680000E+00 DX1 =  6.222566E-03 DX2=  3.116616E-02 DX3= -2.849605E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.190152E+06  T =  6.859928E+00 Xi_A=  0.000000E+00 SG =  9.477875E-02 SA =  5.870114E-01 SH =  3.182098E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    10, 1]: TimeStep =  1.536000E+01   MAX{Residual} =  4.607770E-01  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 7   " ==> Px  =  8.93803294E+06  Peq =  8.96610768E+06
+ .... ITERATING:  At [    10, 2]: TimeStep =  1.536000E+01   MAX{Residual} =  3.853740E-02  at element "A00 1   ", equation  1
+ .... ITERATING:  At [    10, 3]: TimeStep =  1.536000E+01   MAX{Residual} =  4.840802E-04  at element "A00 1   ", equation  2
+ A00 1   (    10, 4) Time = 3.069000E+01 Dt =  1.536000E+01 DX1 =  6.353381E-03 DX2=  4.960869E-02 DX3= -2.326143E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.069801E+06  T =  6.627314E+00 Xi_A=  0.000000E+00 SG =  1.011321E-01 SA =  6.366201E-01 SH =  2.622477E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    11, 1]: TimeStep =  3.072000E+01   MAX{Residual} =  7.639911E-01  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 8   " ==> Px  =  8.91351042E+06  Peq =  8.96450662E+06
+ .... ITERATING:  At [    11, 2]: TimeStep =  3.072000E+01   MAX{Residual} =  1.001139E-01  at element "A00 1   ", equation  1
+ .... ITERATING:  At [    11, 3]: TimeStep =  3.072000E+01   MAX{Residual} =  1.356619E-03  at element "A00 1   ", equation  2
+ A00 1   (    11, 4) Time = 6.141000E+01 Dt =  3.072000E+01 DX1 =  1.108564E-02 DX2=  7.721460E-02 DX3= -1.921822E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.972743E+06  T =  6.435131E+00 Xi_A=  0.000000E+00 SG =  1.122178E-01 SA =  7.138347E-01 SH =  1.739475E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    12, 1]: TimeStep =  6.144000E+01   MAX{Residual} =  1.267381E+00  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A00 9   " ==> Px  =  8.87503852E+06  Peq =  8.96198028E+06
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0010   " ==> Px  =  8.96159127E+06  Peq =  8.96766069E+06
+ .... ITERATING:  At [    12, 2]: TimeStep =  6.144000E+01   MAX{Residual} =  2.202803E-01  at element "A00 1   ", equation  1
+ .... ITERATING:  At [    12, 3]: TimeStep =  6.144000E+01   MAX{Residual} =  3.050031E-03  at element "A00 1   ", equation  2
+ A00 1   (    12, 4) Time = 1.228500E+02 Dt =  6.144000E+01 DX1 =  1.846323E-02 DX2=  1.245840E-01 DX3= -1.542573E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.896339E+06  T =  6.280874E+00 Xi_A=  0.000000E+00 SG =  1.306810E-01 SA =  8.384188E-01 SH =  3.090024E-02 SI =  0.000000E+00
+ .... ITERATING:  At [    13, 1]: TimeStep =  1.228800E+02   MAX{Residual} =  3.244752E+00  at element "A00 1   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 1   " ==> S_hydr = -2.02496897E-01
+ !!!!!! "Phases2_AqG_Eql": Gas phase disappears at element "A00 1   " ==> S_aqu =  1.04291466E+00
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0011   " ==> Px  =  8.93751401E+06  Peq =  8.96608226E+06
+ .... ITERATING:  At [    13, 2]: TimeStep =  1.228800E+02   MAX{Residual} =  1.754084E+01  at element "A00 1   ", equation  2
+ !!!!!! "Phase1_Aqu_Eql": Gas phase evolves at element "A00 1   " ==> P =  4.70531851E+06  Peq_Hydr =  7.00169681E+06  X_mA =  1.29429274E-02  X_mA_max =  1.32506426E-03
+ .... ITERATING:  At [    13, 3]: TimeStep =  1.228800E+02   MAX{Residual} =  2.339117E+01  at element "A00 1   ", equation  2
+ !!!!!! "Phases2_AqG_Eql": Aqueous phase disappears at element "A00 1   " ==> S_aqu = -3.26802931E-01
+ !!!!!! "Phase1_Gas_Eql": Aqueous phase appears at element "A00 1   " ==> P_H2O =  1.14947609E+03  P_sat =  1.14947609E+03
+ .... ITERATING:  At [    13, 4]: TimeStep =  1.228800E+02   MAX{Residual} =  3.489572E+04  at element "A00 1   ", equation  2
+ >>>>>  REDUCE TIME STEP AT (    13, 4) ==>  New timestep =  3.072000E+01
+ .... ITERATING:  At [    13, 1]: TimeStep =  3.072000E+01   MAX{Residual} =  8.105686E-01  at element "A00 1   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 1   " ==> S_hydr = -3.56270571E-02
+ .... ITERATING:  At [    13, 2]: TimeStep =  3.072000E+01   MAX{Residual} =  3.179187E+00  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    13, 3]: TimeStep =  3.072000E+01   MAX{Residual} =  1.712357E+00  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    13, 4]: TimeStep =  3.072000E+01   MAX{Residual} =  1.307932E-01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    13, 5]: TimeStep =  3.072000E+01   MAX{Residual} =  9.952949E-04  at element "A00 1   ", equation  2
+ A00 1   (    13, 6) Time = 1.535700E+02 Dt =  3.072000E+01 DX1 =  4.872506E+06 DX2=  2.962243E-02 DX3=  5.844567E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.872506E+06  T =  6.865331E+00 Xi_A=  0.000000E+00 SG =  1.319588E-01 SA =  8.680412E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    14, 1]: TimeStep =  3.072000E+01   MAX{Residual} =  5.770744E-01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    14, 2]: TimeStep =  3.072000E+01   MAX{Residual} =  3.569610E-02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    14, 3]: TimeStep =  3.072000E+01   MAX{Residual} =  4.960752E-04  at element "A00 1   ", equation  2
+ A00 1   (    14, 4) Time = 1.842900E+02 Dt =  3.072000E+01 DX1 = -1.732684E+04 DX2=  9.374659E-04 DX3=  7.191673E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.855179E+06  T =  7.584498E+00 Xi_A=  0.000000E+00 SG =  1.310213E-01 SA =  8.689787E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    15, 1]: TimeStep =  6.144000E+01   MAX{Residual} =  1.977169E-01  at element "A00 1   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0011   " ==> Px  =  8.93591673E+06  Peq =  8.96613917E+06
+ .... ITERATING:  At [    15, 2]: TimeStep =  6.144000E+01   MAX{Residual} =  5.245196E-02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    15, 3]: TimeStep =  6.144000E+01   MAX{Residual} =  1.131367E-03  at element "A00 1   ", equation  2
+ A00 1   (    15, 4) Time = 2.457300E+02 Dt =  6.144000E+01 DX1 = -1.292103E+04 DX2= -1.141905E-04 DX3=  2.862716E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.842258E+06  T =  7.870770E+00 Xi_A=  0.000000E+00 SG =  1.311355E-01 SA =  8.688645E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    16, 1]: TimeStep =  1.228800E+02   MAX{Residual} =  1.542614E-01  at element "A00 2   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0012   " ==> Px  =  8.94551226E+06  Peq =  8.96677206E+06
+ .... ITERATING:  At [    16, 2]: TimeStep =  1.228800E+02   MAX{Residual} =  2.726416E-01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    16, 3]: TimeStep =  1.228800E+02   MAX{Residual} =  7.647409E-03  at element "A00 1   ", equation  2
+ A00 1   (    16, 4) Time = 3.686100E+02 Dt =  1.228800E+02 DX1 = -1.110689E+04 DX2=  2.873728E-04 DX3= -3.120223E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.831151E+06  T =  7.839567E+00 Xi_A=  0.000000E+00 SG =  1.308482E-01 SA =  8.691518E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    17, 1]: TimeStep =  2.457600E+02   MAX{Residual} =  2.789724E-01  at element "A00 2   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0013   " ==> Px  =  8.93281113E+06  Peq =  8.96596054E+06
+ .... ITERATING:  At [    17, 2]: TimeStep =  2.457600E+02   MAX{Residual} =  1.275624E+00  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    17, 3]: TimeStep =  2.457600E+02   MAX{Residual} =  4.390309E-02  at element "A00 1   ", equation  2
+ A00 1   (    17, 4) Time = 6.143700E+02 Dt =  2.457600E+02 DX1 = -9.186558E+03 DX2=  3.443129E-04 DX3= -1.578463E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.821965E+06  T =  7.681721E+00 Xi_A=  0.000000E+00 SG =  1.305038E-01 SA =  8.694962E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    18, 1]: TimeStep =  4.915200E+02   MAX{Residual} =  4.862246E-01  at element "A00 2   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0014   " ==> Px  =  8.89971656E+06  Peq =  8.96377418E+06
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0015   " ==> Px  =  8.96522140E+06  Peq =  8.96806834E+06
+ .... ITERATING:  At [    18, 2]: TimeStep =  4.915200E+02   MAX{Residual} =  5.381699E+00  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    18, 3]: TimeStep =  4.915200E+02   MAX{Residual} =  2.121750E-01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    18, 4]: TimeStep =  4.915200E+02   MAX{Residual} =  3.942536E-05  at element "A00 1   ", equation  2
+ A00 1   (    18, 5) Time = 1.105890E+03 Dt =  4.915200E+02 DX1 = -6.674679E+03 DX2=  1.829515E-04 DX3= -1.888919E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.815290E+06  T =  7.492829E+00 Xi_A=  0.000000E+00 SG =  1.303209E-01 SA =  8.696791E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    19, 1]: TimeStep =  4.915200E+02   MAX{Residual} =  4.042338E-01  at element "A00 2   ", equation  3
+ .... ITERATING:  At [    19, 2]: TimeStep =  4.915200E+02   MAX{Residual} =  3.046750E+00  at element "A00 1   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0016   " ==> Px  =  8.94855918E+06  Peq =  8.96751787E+06
+ .... ITERATING:  At [    19, 3]: TimeStep =  4.915200E+02   MAX{Residual} =  1.480702E-01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    19, 4]: TimeStep =  4.915200E+02   MAX{Residual} =  8.346958E-05  at element "A0016   ", equation  1
+ A00 1   (    19, 5) Time = 1.597410E+03 Dt =  4.915200E+02 DX1 = -4.914488E+03 DX2= -7.741860E-04 DX3= -1.135569E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.810376E+06  T =  7.379272E+00 Xi_A=  0.000000E+00 SG =  1.310951E-01 SA =  8.689049E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    20, 1]: TimeStep =  4.915200E+02   MAX{Residual} =  3.457318E-01  at element "A00 2   ", equation  3
+ .... ITERATING:  At [    20, 2]: TimeStep =  4.915200E+02   MAX{Residual} =  1.862725E+00  at element "A00 1   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0017   " ==> Px  =  8.95664227E+06  Peq =  8.96815340E+06
+ .... ITERATING:  At [    20, 3]: TimeStep =  4.915200E+02   MAX{Residual} =  7.275254E-02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    20, 4]: TimeStep =  4.915200E+02   MAX{Residual} =  2.335981E-05  at element "A0017   ", equation  1
+ A00 1   (    20, 5) Time = 2.088930E+03 Dt =  4.915200E+02 DX1 = -2.807254E+03 DX2= -3.898030E-04 DX3= -7.486553E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.807568E+06  T =  7.304407E+00 Xi_A=  0.000000E+00 SG =  1.314849E-01 SA =  8.685151E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ 
+ Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+          Output data after (    20,     89) time steps ..................................................... The time is  2.41774E-02 days
+
+=======================================================================================================================================================
+ 
+  TOTAL TIME (s)  Timestep #  NR-iterations  Convergence      DX1M          DX2M          DX3M        Max Residual      NER      KER        TimeStep
+  2.08893E+03           20           89           Y       8.999396E+06  3.734157E-02  2.416790E-01    3.293743E-07        1        2     4.915200E+02
+
+=======================================================================================================================================================
+ 
+ 
+   ELEM   INDEX    Pressure     Temperature  S_Hydrate   S_aqueous     S_gas       S_Ice         P_CH4        P_EqHydr       P_SatWat     X_Inhibitor
+                     (Pa)        (Deg. C)                                                        (Pa)           (Pa)           (Pa)         (kg/kg)
+_______________________________________________________________________________________________________________________________________________________
+
+   A00 1      1  4.8075685E+06  7.30441E+00  0.0000E+00  8.6852E-01  1.3148E-01  0.0000E+00  4.8065452E+06  5.4293318E+06  1.0232448E+03  0.00000E+00
+   A00 2      2  5.0400305E+06  6.56881E+00  1.4203E-01  7.4644E-01  1.1152E-01  0.0000E+00  5.0390576E+06  5.0400305E+06  9.7283595E+02  0.00000E+00
+   A00 3      3  5.3936972E+06  7.23964E+00  3.1252E-01  6.0042E-01  8.7064E-02  0.0000E+00  5.3926785E+06  5.3936972E+06  1.0187156E+03  0.00000E+00
+   A00 4      4  5.7909298E+06  7.93473E+00  3.7949E-01  5.4409E-01  7.6424E-02  0.0000E+00  5.7898616E+06  5.7909298E+06  1.0682588E+03  0.00000E+00
+   A00 5      5  6.1915013E+06  8.58051E+00  4.1463E-01  5.1559E-01  6.9785E-02  0.0000E+00  6.1903851E+06  6.1915013E+06  1.1161785E+03  0.00000E+00
+   A00 6      6  6.5814024E+06  9.16235E+00  4.3637E-01  4.9905E-01  6.4581E-02  0.0000E+00  6.5802414E+06  6.5814024E+06  1.1609666E+03  0.00000E+00
+   A00 7      7  6.9558519E+06  9.68286E+00  4.5153E-01  4.8884E-01  5.9628E-02  0.0000E+00  6.9546496E+06  6.9558519E+06  1.2023679E+03  0.00000E+00
+   A00 8      8  7.3116725E+06  1.01466E+01  4.6299E-01  4.8290E-01  5.4104E-02  0.0000E+00  7.3104322E+06  7.3116725E+06  1.2403431E+03  0.00000E+00
+   A00 9      9  7.6441335E+06  1.05555E+01  4.7213E-01  4.8067E-01  4.7192E-02  0.0000E+00  7.6428588E+06  7.6441335E+06  1.2747004E+03  0.00000E+00
+   A0010     10  7.9444504E+06  1.09065E+01  4.7956E-01  4.8217E-01  3.8261E-02  0.0000E+00  7.9431455E+06  7.9444504E+06  1.3048593E+03  0.00000E+00
+   A0011     11  8.2046942E+06  1.11977E+01  4.8539E-01  4.8636E-01  2.8252E-02  0.0000E+00  8.2033638E+06  8.2046942E+06  1.3303586E+03  0.00000E+00
+   A0012     12  8.4234022E+06  1.14339E+01  4.8993E-01  4.9068E-01  1.9393E-02  0.0000E+00  8.4220508E+06  8.4234022E+06  1.3513543E+03  0.00000E+00
+   A0013     13  8.6028932E+06  1.16222E+01  4.9345E-01  4.9404E-01  1.2509E-02  0.0000E+00  8.6015249E+06  8.6028932E+06  1.3683013E+03  0.00000E+00
+   A0014     14  8.7444264E+06  1.17673E+01  4.9612E-01  4.9645E-01  7.4380E-03  0.0000E+00  8.7430449E+06  8.7444264E+06  1.3814901E+03  0.00000E+00
+   A0015     15  8.8491702E+06  1.18728E+01  4.9803E-01  4.9809E-01  3.8809E-03  0.0000E+00  8.8477790E+06  8.8491702E+06  1.3911543E+03  0.00000E+00
+   A0016     16  8.9194437E+06  1.19428E+01  4.9928E-01  4.9914E-01  1.5830E-03  0.0000E+00  8.9180461E+06  8.9194437E+06  1.3975931E+03  0.00000E+00
+   A0017     17  8.9619692E+06  1.19848E+01  5.0009E-01  4.9969E-01  2.2055E-04  0.0000E+00  8.9605677E+06  8.9619692E+06  1.4014721E+03  0.00000E+00
+   A0018     18  9.0016684E+06  1.19935E+01  5.0021E-01  4.9979E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9708188E+06  1.4022777E+03  0.00000E+00
+   A0019     19  9.0400766E+06  1.19957E+01  5.0017E-01  4.9983E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9730998E+06  1.4024852E+03  0.00000E+00
+   A0020     20  9.0715138E+06  1.19976E+01  5.0011E-01  4.9989E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9750127E+06  1.4026593E+03  0.00000E+00
+   A0021     21  9.0926232E+06  1.19989E+01  5.0006E-01  4.9994E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9763245E+06  1.4027786E+03  0.00000E+00
+   A0022     22  9.1037991E+06  1.19996E+01  5.0002E-01  4.9998E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9770307E+06  1.4028428E+03  0.00000E+00
+   A0023     23  9.1083092E+06  1.19999E+01  5.0001E-01  4.9999E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9773194E+06  1.4028691E+03  0.00000E+00
+   A0024     24  9.1096578E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774066E+06  1.4028770E+03  0.00000E+00
+   A0025     25  9.1099498E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774256E+06  1.4028787E+03  0.00000E+00
+   A0026     26  9.1099947E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774286E+06  1.4028790E+03  0.00000E+00
+   A0027     27  9.1099996E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   A0028     28  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   A0029     29  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   A0030     30  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   A0031     31  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   ina 0*    32  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   A00 0*    33  4.5100000E+06  4.50000E+01  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  3.1760236E+08  9.5947136E+03  0.00000E+00
+   A0032*    34  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+                                                                          Timesteps =     20 :|: NR iterations =      89 :|: TIME =  2.088930E+03
+ 
+_________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX  C-CH4inGas C-CH4inAqu  Dens_Gas   Dens_Aqu   Dens_Hydr  Visc_Gas   Visc_Aqu       Phi          PC_w      Krel_Gas    Krel_Aqu
+                  (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m*s)   (Kg/m*s)                    (Pa)
+_________________________________________________________________________________________________________________________________________________
+
+   A00 1      1  3.7619E+01 1.4385E+00 3.7628E+01 1.0008E+03 0.0000E+00 1.1410E-05 1.4134E-03  2.99992E-01 -1.25170E+04  2.0333E-03  6.1539E-01
+   A00 2      2  3.9832E+01 1.5367E+00 3.9841E+01 1.0009E+03 9.2038E+02 1.1469E-05 1.4451E-03  2.99878E-01 -1.46626E+04  1.9524E-03  6.1910E-01
+   A00 3      3  4.2855E+01 1.6171E+00 4.2864E+01 1.0009E+03 9.2047E+02 1.1613E-05 1.4158E-03  2.99729E-01 -1.83873E+04  1.7796E-03  6.2742E-01
+   A00 4      4  4.6285E+01 1.7065E+00 4.6295E+01 1.0010E+03 9.2058E+02 1.1781E-05 1.3865E-03  2.99620E-01 -2.02356E+04  1.6111E-03  6.3615E-01
+   A00 5      5  4.9780E+01 1.7959E+00 4.9790E+01 1.0011E+03 9.2070E+02 1.1958E-05 1.3600E-03  2.99543E-01 -2.11373E+04  1.4331E-03  6.4616E-01
+   A00 6      6  5.3214E+01 1.8823E+00 5.3225E+01 1.0011E+03 9.2082E+02 1.2137E-05 1.3369E-03  2.99488E-01 -2.14782E+04  1.2415E-03  6.5804E-01
+   A00 7      7  5.6540E+01 1.9647E+00 5.6551E+01 1.0012E+03 9.2094E+02 1.2317E-05 1.3167E-03  2.99453E-01 -2.13833E+04  1.0247E-03  6.7327E-01
+   A00 8      8  5.9723E+01 2.0426E+00 5.9734E+01 1.0012E+03 9.2106E+02 1.2493E-05 1.2991E-03  2.99438E-01 -2.08189E+04  7.7266E-04  6.9435E-01
+   A00 9      9  6.2715E+01 2.1150E+00 6.2727E+01 1.0013E+03 9.2118E+02 1.2664E-05 1.2839E-03  2.99451E-01 -1.96294E+04  4.9054E-04  7.2513E-01
+   A0010     10  6.5431E+01 2.1801E+00 6.5443E+01 1.0013E+03 9.2129E+02 1.2823E-05 1.2711E-03  2.99494E-01 -1.76036E+04  2.2493E-04  7.6973E-01
+   A0011     11  6.7793E+01 2.2363E+00 6.7805E+01 1.0014E+03 9.2139E+02 1.2964E-05 1.2606E-03  2.99553E-01 -1.48840E+04  6.2378E-05  8.2427E-01
+   A0012     12  6.9783E+01 2.2834E+00 6.9796E+01 1.0014E+03 9.2147E+02 1.3084E-05 1.2522E-03  2.99618E-01 -1.20683E+04  8.5870E-06  8.7590E-01
+   A0013     13  7.1420E+01 2.3220E+00 7.1432E+01 1.0014E+03 9.2154E+02 1.3185E-05 1.2455E-03  2.99688E-01 -9.46336E+03  1.5174E-07  9.1816E-01
+   A0014     14  7.2712E+01 2.3523E+00 7.2725E+01 1.0015E+03 9.2160E+02 1.3266E-05 1.2404E-03  2.99760E-01 -7.10227E+03  0.0000E+00  9.5052E-01
+   A0015     15  7.3669E+01 2.3747E+00 7.3682E+01 1.0015E+03 9.2164E+02 1.3326E-05 1.2368E-03  2.99831E-01 -4.96311E+03  0.0000E+00  9.7387E-01
+   A0016     16  7.4312E+01 2.3898E+00 7.4325E+01 1.0015E+03 9.2167E+02 1.3366E-05 1.2343E-03  2.99888E-01 -3.02985E+03  0.0000E+00  9.8926E-01
+   A0017     17  7.4701E+01 2.3989E+00 7.4714E+01 1.0015E+03 9.2168E+02 1.3391E-05 1.2329E-03  2.99888E-01 -4.52141E+02  0.0000E+00  9.9850E-01
+   A0018     18  0.0000E+00 2.4008E+00 0.0000E+00 1.0015E+03 9.2170E+02 1.0000E+00 1.2326E-03  2.99888E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0019     19  0.0000E+00 2.4013E+00 0.0000E+00 1.0015E+03 9.2171E+02 1.0000E+00 1.2324E-03  2.99909E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0020     20  0.0000E+00 2.4018E+00 0.0000E+00 1.0015E+03 9.2172E+02 1.0000E+00 1.2324E-03  2.99940E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0021     21  0.0000E+00 2.4021E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2323E-03  2.99969E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0022     22  0.0000E+00 2.4022E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2323E-03  2.99988E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0023     23  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  2.99996E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0024     24  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  2.99999E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0025     25  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0026     26  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0027     27  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0028     28  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0029     29  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0030     30  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0031     31  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   ina 0*    32  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A00 0*    33  0.0000E+00 0.0000E+00 0.0000E+00 9.9219E+02 0.0000E+00 1.0000E+00 5.9679E-04  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0032*    34  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+                                                                          Timesteps =     20 :|: NR iterations =      89 :|: TIME =  2.088930E+03
+ 
+________________________________________________________________________________________________________________
+
+   ELEM1    ELEM2   INDEX  Heat Flow    Gas Flow   Aqu. Flow  CH4inGs-Flo CH4inAq-Flo   Gas Veloc   Aqu Veloc
+                              (W)        (Kg/s)      (Kg/s)      (Kg/s)      (Kg/s)      (m/s)       (m/s)
+________________________________________________________________________________________________________________
+
+   A00 0    A00 1       1  5.8502E+04  3.1368E-02  1.9527E+00  3.1360E-02  2.8067E-03  6.7265E-03  2.3834E-03
+   A00 1    A00 2       2  5.8468E+04  3.1176E-02  1.9529E+00  3.1170E-02  2.9983E-03  5.3202E-03  1.9820E-03
+   A00 2    A00 3       3  6.5013E+04  2.9244E-02  1.9540E+00  2.9238E-02  3.1568E-03  2.7014E-03  1.1208E-03
+   A00 3    A00 4       4  7.1453E+04  2.7077E-02  1.9552E+00  2.7071E-02  3.3332E-03  1.5954E-03  7.4837E-04
+   A00 4    A00 5       5  7.7454E+04  2.4599E-02  1.9562E+00  2.4594E-02  3.5095E-03  1.0006E-03  5.3569E-04
+   A00 5    A00 6       6  8.2905E+04  2.1638E-02  1.9568E+00  2.1634E-02  3.6791E-03  6.4182E-04  3.9932E-04
+   A00 6    A00 7       7  8.7801E+04  1.7968E-02  1.9556E+00  1.7964E-02  3.8377E-03  4.0709E-04  3.0528E-04
+   A00 7    A00 8       8  9.2010E+04  1.3433E-02  1.9489E+00  1.3430E-02  3.9759E-03  2.4412E-04  2.3675E-04
+   A00 8    A00 9       9  9.5009E+04  8.2485E-03  1.9267E+00  8.2470E-03  4.0697E-03  1.2808E-04  1.8401E-04
+   A00 9    A0010      10  9.5523E+04  3.5122E-03  1.8678E+00  3.5116E-03  4.0665E-03  5.1131E-05  1.4101E-04
+   A0010    A0011      11  9.2030E+04  8.6230E-04  1.7487E+00  8.6214E-04  3.9051E-03  1.3147E-05  1.0487E-04
+   A0011    A0012      12  8.4700E+04  1.0166E-04  1.5747E+00  1.0164E-04  3.5906E-03  1.7690E-06  7.5483E-05
+   A0012    A0013      13  7.4531E+04  1.4957E-06  1.3627E+00  1.4955E-06  3.1595E-03  3.2028E-08  5.2696E-05
+   A0013    A0014      14  6.2068E+04  0.0000E+00  1.1205E+00  0.0000E+00  2.6319E-03  0.0000E+00  3.5166E-05
+   A0014    A0015      15  4.7897E+04  0.0000E+00  8.5680E-01  0.0000E+00  2.0317E-03  0.0000E+00  2.1949E-05
+   A0015    A0016      16  3.3255E+04  0.0000E+00  5.9130E-01  0.0000E+00  1.4110E-03  0.0000E+00  1.2415E-05
+   A0016    A0017      17  2.1163E+04  0.0000E+00  3.7497E-01  0.0000E+00  8.9816E-04  0.0000E+00  6.4780E-06
+   A0017    A0018      18  1.8976E+04  0.0000E+00  3.3650E-01  0.0000E+00  8.0664E-04  0.0000E+00  4.7971E-06
+   A0018    A0019      19  1.8301E+04  0.0000E+00  3.2443E-01  0.0000E+00  7.7786E-04  0.0000E+00  3.8219E-06
+   A0019    A0020      20  1.5092E+04  0.0000E+00  2.6737E-01  0.0000E+00  6.4116E-04  0.0000E+00  2.6068E-06
+   A0020    A0021      21  1.0195E+04  0.0000E+00  1.8052E-01  0.0000E+00  4.3295E-04  0.0000E+00  1.4582E-06
+   A0021    A0022      22  5.4250E+03  0.0000E+00  9.6040E-02  0.0000E+00  2.3035E-04  0.0000E+00  6.4338E-07
+   A0022    A0023      23  2.1984E+03  0.0000E+00  3.8915E-02  0.0000E+00  9.3339E-05  0.0000E+00  2.1640E-07
+   A0023    A0024      24  6.5930E+02  0.0000E+00  1.1670E-02  0.0000E+00  2.7992E-05  0.0000E+00  5.3908E-08
+   A0024    A0025      25  1.4308E+02  0.0000E+00  2.5326E-03  0.0000E+00  6.0747E-06  0.0000E+00  9.7219E-09
+   A0025    A0026      26  2.2082E+01  0.0000E+00  3.9086E-04  0.0000E+00  9.3752E-07  0.0000E+00  1.2472E-09
+   A0026    A0027      27  2.3946E+00  0.0000E+00  4.2386E-05  0.0000E+00  1.0167E-07  0.0000E+00  1.1245E-10
+   A0027    A0028      28  1.8071E-01  0.0000E+00  3.1987E-06  0.0000E+00  7.6724E-09  0.0000E+00  7.0595E-12
+   A0028    A0029      29  9.4419E-03  0.0000E+00  1.6713E-07  0.0000E+00  4.0088E-10  0.0000E+00  3.0698E-13
+   A0029    A0030      30  3.3092E-04  0.0000E+00  5.8533E-09  0.0000E+00  1.4040E-11  0.0000E+00  8.9484E-15
+   A0030    A0031      31  8.1884E-06  0.0000E+00  1.4508E-10  0.0000E+00  3.4798E-13  0.0000E+00  1.8461E-16
+   A0031    A0032      32  2.1076E-08  0.0000E+00  3.7306E-13  0.0000E+00  8.9480E-16  0.0000E+00  3.9522E-19
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+                                                                          Timesteps =     20 :|: NR iterations =      89 :|: TIME =  2.088930E+03
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX       X1            X2            X3           DX1           DX2           DX3
+_______________________________________________________________________________________________________________________________________________________
+
+   A00 1      1  4.807568E+06  8.685151E-01  7.304407E+00 -2.807254E+03 -3.898030E-04 -7.486553E-02
+   A00 2      2  1.115241E-01  7.464410E-01  6.568807E+00  6.240980E-03  3.734157E-02 -7.988539E-02
+   A00 3      3  8.706353E-02  6.004212E-01  7.239636E+00  3.505363E-03  1.868948E-02 -1.630279E-01
+   A00 4      4  7.642373E-02  5.440856E-01  7.934734E+00  2.603076E-03  1.121361E-02 -2.102393E-01
+   A00 5      5  6.978508E-02  5.155884E-01  8.580509E+00  2.332932E-03  7.530850E-03 -2.329014E-01
+   A00 6      6  6.458065E-02  4.990481E-01  9.162351E+00  2.459512E-03  5.355893E-03 -2.416790E-01
+   A00 7      7  5.962830E-02  4.888384E-01  9.682858E+00  2.965006E-03  3.645501E-03 -2.415509E-01
+   A00 8      8  5.410372E-02  4.829021E-01  1.014659E+01  3.933190E-03  1.809976E-03 -2.334210E-01
+   A00 9      9  4.719236E-02  4.806737E-01  1.055549E+01  5.338085E-03 -3.927378E-04 -2.159830E-01
+   A0010     10  3.826117E-02  4.821743E-01  1.090650E+01  6.414279E-03 -2.262552E-03 -1.900870E-01
+   A0011     11  2.825201E-02  4.863553E-01  1.119775E+01  6.068619E-03 -2.645231E-03 -1.616553E-01
+   A0012     12  1.939310E-02  4.906782E-01  1.143389E+01  4.935192E-03 -2.166081E-03 -1.340586E-01
+   A0013     13  1.250859E-02  4.940407E-01  1.162215E+01  3.768431E-03 -1.611323E-03 -1.071257E-01
+   A0014     14  7.437967E-03  4.964459E-01  1.176726E+01  2.733361E-03 -1.151061E-03 -8.070436E-02
+   A0015     15  3.880910E-03  4.980928E-01  1.187281E+01  1.854725E-03 -7.705663E-04 -5.623107E-02
+   A0016     16  1.582989E-03  4.991411E-01  1.194277E+01  1.196872E-03 -4.152004E-04 -3.674876E-02
+   A0017     17  2.205465E-04  4.996900E-01  1.198479E+01 -8.999396E+06 -4.766464E-05 -8.490281E-03
+   A0018     18  9.001668E+06  4.997867E-01  1.199350E+01 -3.736113E+04 -1.333502E-05 -2.126510E-03
+   A0019     19  9.040077E+06  4.998309E-01  1.199574E+01 -3.039183E+04 -4.087613E-05 -1.786870E-03
+   A0020     20  9.071514E+06  4.998905E-01  1.199762E+01 -2.001239E+04 -4.258952E-05 -1.207377E-03
+   A0021     21  9.092623E+06  4.999439E-01  1.199891E+01 -1.037282E+04 -2.853032E-05 -6.384818E-04
+   A0022     22  9.103799E+06  4.999779E-01  1.199961E+01 -4.111748E+03 -1.331457E-05 -2.570123E-04
+   A0023     23  9.108309E+06  4.999935E-01  1.199989E+01 -1.213856E+03 -4.388061E-06 -7.676371E-05
+   A0024     24  9.109658E+06  4.999986E-01  1.199998E+01 -2.608259E+02 -1.018180E-06 -1.664039E-05
+   A0025     25  9.109950E+06  4.999998E-01  1.200000E+01 -4.004195E+01 -1.651593E-07 -2.571677E-06
+   A0026     26  9.109995E+06  5.000000E-01  1.200000E+01 -4.335184E+00 -1.861633E-08 -2.798937E-07
+   A0027     27  9.110000E+06  5.000000E-01  1.200000E+01 -3.276908E-01 -1.447943E-09 -2.132823E-08
+   A0028     28  9.110000E+06  5.000000E-01  1.200000E+01 -1.716513E-02 -7.854470E-11 -1.094630E-09
+   A0029     29  9.110000E+06  5.000000E-01  1.200000E+01 -6.104195E-04 -1.337883E-12 -9.231759E-11
+   A0030     30  9.110000E+06  5.000000E-01  1.200000E+01 -1.595969E-05 -7.470859E-13  1.942418E-11
+   A0031     31  9.110000E+06  5.000000E-01  1.200000E+01 -2.648641E-07 -1.155397E-15 -1.567946E-14
+   ina 0*    32  9.110000E+06  5.000000E-01  1.200000E+01  0.000000E+00  0.000000E+00  0.000000E+00
+   A00 0*    33  4.510000E+06  0.000000E+00  4.500000E+01  0.000000E+00  0.000000E+00  0.000000E+00
+   A0032*    34  9.110000E+06  5.000000E-01  1.200000E+01  0.000000E+00  0.000000E+00  0.000000E+00
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX    Enthl-Gas    Enthl-Aqu     Enthl-Hydr    Enthl-Ice    Reactn_Rate   Reactn_Heat     T-Shift       k-SPIAF     k-intrinsic
+                    (J/Kg)        (J/Kg)        (J/Kg)        (J/Kg)       (Kg/s)        (J/kg)          (K)                        (m^2)
+_______________________________________________________________________________________________________________________________________________________
+
+   A00 1      1 -4.551680E+04  3.383921E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 2      2 -5.047051E+04  3.087432E+04  1.379449E+04  0.000000E+00 -7.332343E-03  4.560622E+05  0.000000E+00  6.151869E-01  2.960000E-13
+   A00 3      3 -5.329137E+04  3.393424E+04  1.520324E+04  0.000000E+00 -3.710830E-03  4.560622E+05  0.000000E+00  3.021612E-01  2.960000E-13
+   A00 4      4 -5.655064E+04  3.712532E+04  1.666294E+04  0.000000E+00 -2.287916E-03  4.560622E+05  0.000000E+00  2.165795E-01  2.960000E-13
+   A00 5      5 -5.991617E+04  4.011090E+04  1.801907E+04  0.000000E+00 -1.614487E-03  4.560622E+05  0.000000E+00  1.789781E-01  2.960000E-13
+   A00 6      6 -6.325096E+04  4.282015E+04  1.924094E+04  0.000000E+00 -1.264692E-03  4.560622E+05  0.000000E+00  1.580437E-01  2.960000E-13
+   A00 7      7 -6.649400E+04  4.526082E+04  2.033400E+04  0.000000E+00 -1.060440E-03  4.560622E+05  0.000000E+00  1.444567E-01  2.960000E-13
+   A00 8      8 -6.960099E+04  4.744998E+04  2.130783E+04  0.000000E+00 -9.182421E-04  4.560622E+05  0.000000E+00  1.347199E-01  2.960000E-13
+   A00 9      9 -7.251759E+04  4.939268E+04  2.216652E+04  0.000000E+00 -7.928318E-04  4.560622E+05  0.000000E+00  1.272763E-01  2.960000E-13
+   A0010     10 -7.515730E+04  5.107022E+04  2.290364E+04  0.000000E+00 -6.685630E-04  4.560622E+05  0.000000E+00  1.214309E-01  2.960000E-13
+   A0011     11 -7.744474E+04  5.246946E+04  2.351527E+04  0.000000E+00 -5.541626E-04  4.560622E+05  0.000000E+00  1.169735E-01  2.960000E-13
+   A0012     12 -7.936474E+04  5.360905E+04  2.401117E+04  0.000000E+00 -4.525206E-04  4.560622E+05  0.000000E+00  1.135807E-01  2.960000E-13
+   A0013     13 -8.093759E+04  5.452096E+04  2.440653E+04  0.000000E+00 -3.581681E-04  4.560622E+05  0.000000E+00  1.109921E-01  2.960000E-13
+   A0014     14 -8.217538E+04  5.522590E+04  2.471124E+04  0.000000E+00 -2.682225E-04  4.560622E+05  0.000000E+00  1.090595E-01  2.960000E-13
+   A0015     15 -8.308977E+04  5.573987E+04  2.493289E+04  0.000000E+00 -1.862577E-04  4.560622E+05  0.000000E+00  1.076883E-01  2.960000E-13
+   A0016     16 -8.370236E+04  5.608112E+04  2.507982E+04  0.000000E+00 -1.220582E-04  4.560622E+05  0.000000E+00  1.067976E-01  2.960000E-13
+   A0017     17 -8.407269E+04  5.628626E+04  2.516805E+04  0.000000E+00 -2.237865E-05  4.560622E+05  0.000000E+00  1.062204E-01  2.960000E-13
+   A0018     18  0.000000E+00  5.635751E+04  2.518635E+04  0.000000E+00  3.329607E-07  4.560622E+05  0.000000E+00  1.061326E-01  2.960000E-13
+   A0019     19  0.000000E+00  5.640206E+04  2.519106E+04  0.000000E+00  2.797857E-07  4.560622E+05  0.000000E+00  1.061640E-01  2.960000E-13
+   A0020     20  0.000000E+00  5.643869E+04  2.519501E+04  0.000000E+00  1.890756E-07  4.560622E+05  0.000000E+00  1.062061E-01  2.960000E-13
+   A0021     21  0.000000E+00  5.646339E+04  2.519772E+04  0.000000E+00  1.000011E-07  4.560622E+05  0.000000E+00  1.062439E-01  2.960000E-13
+   A0022     22  0.000000E+00  5.647651E+04  2.519918E+04  0.000000E+00  4.025803E-08  4.560622E+05  0.000000E+00  1.062681E-01  2.960000E-13
+   A0023     23  0.000000E+00  5.648182E+04  2.519977E+04  0.000000E+00  1.202456E-08  4.560622E+05  0.000000E+00  1.062791E-01  2.960000E-13
+   A0024     24  0.000000E+00  5.648341E+04  2.519995E+04  0.000000E+00  2.606580E-09  4.560622E+05  0.000000E+00  1.062827E-01  2.960000E-13
+   A0025     25  0.000000E+00  5.648376E+04  2.519999E+04  0.000000E+00  4.031198E-10  4.560622E+05  0.000000E+00  1.062836E-01  2.960000E-13
+   A0026     26  0.000000E+00  5.648381E+04  2.520000E+04  0.000000E+00  4.361880E-11  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A0027     27  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  2.888575E-12  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A0028     28  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  3.061267E-13  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A0029     29  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00 -2.486900E-13  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A0030     30  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  1.129132E-13  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A0031     31  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00 -1.734723E-17  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   ina 0*    32  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  3.831444E+63  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A00 0*    33  0.000000E+00  1.922755E+05  0.000000E+00  0.000000E+00  3.831444E+63  0.000000E+00  0.000000E+00  1.000000E+00  2.960000E-13
+   A0032*    34  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  3.831444E+63  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [    20,     89]  =========             The time is  2.08893E+03 sec, or  2.41774E-02 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   3.87894909E+00   4.71221070E+04   4.71216871E+04   0.00000000E+00
+  MASS   (Kg)  |   2.57671235E+02   4.71957184E+07   4.34335857E+07   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   4.71565020E-02   2.57624079E+02   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   4.70825292E+07   1.13189120E+05   0.00000000E+00   0.00000000E+00
+                                              Hydrate       |   3.78202112E+07   5.61337449E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   8.49027405E+07   5.72682123E+06   0.00000000E+00   0.00000000E+00
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+ .... ITERATING:  At [    21, 1]: TimeStep =  4.915200E+02   MAX{Residual} =  3.050520E-01  at element "A00 2   ", equation  3
+ .... ITERATING:  At [    21, 2]: TimeStep =  4.915200E+02   MAX{Residual} =  1.273291E+00  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    21, 3]: TimeStep =  4.915200E+02   MAX{Residual} =  4.013338E-02  at element "A00 1   ", equation  2
+ A00 1   (    21, 4) Time = 2.580450E+03 Dt =  4.915200E+02 DX1 = -1.676791E+03 DX2= -1.867936E-04 DX3= -5.337576E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.805892E+06  T =  7.251031E+00 Xi_A=  0.000000E+00 SG =  1.316717E-01 SA =  8.683283E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    22, 1]: TimeStep =  9.830400E+02   MAX{Residual} =  5.488312E-01  at element "A00 2   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0018   " ==> Px  =  8.95107908E+06  Peq =  8.96774130E+06
+ .... ITERATING:  At [    22, 2]: TimeStep =  9.830400E+02   MAX{Residual} =  6.449285E+00  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    22, 3]: TimeStep =  9.830400E+02   MAX{Residual} =  1.215260E-01  at element "A00 1   ", equation  2
+ A00 1   (    22, 4) Time = 3.563490E+03 Dt =  9.830400E+02 DX1 = -1.589576E+02 DX2=  4.633405E-04 DX3= -6.957050E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.805733E+06  T =  7.181461E+00 Xi_A=  0.000000E+00 SG =  1.312083E-01 SA =  8.687917E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    23, 1]: TimeStep =  1.966080E+03   MAX{Residual} =  1.400134E+00  at element "A00 2   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 2   " ==> S_hydr = -6.45130444E-02
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0019   " ==> Px  =  8.95034479E+06  Peq =  8.96760425E+06
+ .... ITERATING:  At [    23, 2]: TimeStep =  1.966080E+03   MAX{Residual} =  3.829260E+02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    23, 3]: TimeStep =  1.966080E+03   MAX{Residual} =  2.812807E+03  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    23, 4]: TimeStep =  1.966080E+03   MAX{Residual} =  7.806618E+02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    23, 5]: TimeStep =  1.966080E+03   MAX{Residual} =  1.683505E+02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    23, 6]: TimeStep =  1.966080E+03   MAX{Residual} =  1.670717E+01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    23, 7]: TimeStep =  1.966080E+03   MAX{Residual} =  2.287200E-01  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    23, 8]: TimeStep =  1.966080E+03   MAX{Residual} =  4.475805E-05  at element "A00 1   ", equation  2
+ A00 2   (    23, 9) Time = 5.529570E+03 Dt =  1.966080E+03 DX1 =  4.952576E+06 DX2=  3.335436E-02 DX3=  2.332154E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.952576E+06  T =  6.676784E+00 Xi_A=  0.000000E+00 SG =  1.294383E-01 SA =  8.705617E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    24, 1]: TimeStep =  1.966080E+03   MAX{Residual} =  6.726929E-01  at element "A00 2   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0020   " ==> Px  =  8.96415114E+06  Peq =  8.96845899E+06
+ .... ITERATING:  At [    24, 2]: TimeStep =  1.966080E+03   MAX{Residual} =  8.011975E-01  at element "A00 2   ", equation  2
+ .... ITERATING:  At [    24, 3]: TimeStep =  1.966080E+03   MAX{Residual} =  3.207821E-02  at element "A00 2   ", equation  2
+ A00 2   (    24, 4) Time = 7.495650E+03 Dt =  1.966080E+03 DX1 = -8.839554E+03 DX2= -2.360322E-06 DX3=  1.101576E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 4.943737E+06  T =  6.786941E+00 Xi_A=  0.000000E+00 SG =  1.294406E-01 SA =  8.705594E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    25, 1]: TimeStep =  3.932160E+03   MAX{Residual} =  6.597219E-01  at element "A00 3   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0021   " ==> Px  =  8.95866845E+06  Peq =  8.96805333E+06
+ .... ITERATING:  At [    25, 2]: TimeStep =  3.932160E+03   MAX{Residual} =  2.922699E+00  at element "A00 2   ", equation  2
+ .... ITERATING:  At [    25, 3]: TimeStep =  3.932160E+03   MAX{Residual} =  7.631880E-02  at element "A00 2   ", equation  2
+ A00 2   (    25, 4) Time = 1.142781E+04 Dt =  3.932160E+03 DX1 = -3.742247E+03 DX2=  6.600393E-04 DX3= -5.150277E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.939995E+06  T =  6.735438E+00 Xi_A=  0.000000E+00 SG =  1.287806E-01 SA =  8.712194E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    26, 1]: TimeStep =  7.864320E+03   MAX{Residual} =  1.120768E+00  at element "A00 3   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 3   " ==> S_hydr = -2.89049134E-02
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0022   " ==> Px  =  8.94276543E+06  Peq =  8.96691918E+06
+ .... ITERATING:  At [    26, 2]: TimeStep =  7.864320E+03   MAX{Residual} =  1.104230E+02  at element "A00 2   ", equation  2
+ .... ITERATING:  At [    26, 3]: TimeStep =  7.864320E+03   MAX{Residual} =  6.992132E+01  at element "A00 2   ", equation  2
+ .... ITERATING:  At [    26, 4]: TimeStep =  7.864320E+03   MAX{Residual} =  6.490589E+00  at element "A00 2   ", equation  2
+ .... ITERATING:  At [    26, 5]: TimeStep =  7.864320E+03   MAX{Residual} =  7.619380E-02  at element "A00 2   ", equation  2
+ .... ITERATING:  At [    26, 6]: TimeStep =  7.864320E+03   MAX{Residual} =  1.089882E-05  at element "A00 2   ", equation  2
+ A00 4   (    26, 7) Time = 1.929213E+04 Dt =  7.864320E+03 DX1 =  9.493252E-03 DX2=  6.632482E-02 DX3= -1.355803E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.210513E+06  T =  6.898675E+00 Xi_A=  0.000000E+00 SG =  1.059065E-01 SA =  7.385770E-01 SH =  1.555165E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    27, 1]: TimeStep =  7.864320E+03   MAX{Residual} =  1.352202E+00  at element "A00 3   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0023   " ==> Px  =  8.94850791E+06  Peq =  8.96731807E+06
+ .... ITERATING:  At [    27, 2]: TimeStep =  7.864320E+03   MAX{Residual} =  1.946874E+00  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    27, 3]: TimeStep =  7.864320E+03   MAX{Residual} =  8.796597E-02  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    27, 4]: TimeStep =  7.864320E+03   MAX{Residual} =  2.700288E-05  at element "A00 3   ", equation  2
+ A00 3   (    27, 5) Time = 2.715645E+04 Dt =  7.864320E+03 DX1 = -1.192799E+04 DX2= -1.157873E-04 DX3=  1.261396E-01 DX4= 
+ !  >>>>>>>>>>>      P    = 5.062959E+06  T =  6.844990E+00 Xi_A=  0.000000E+00 SG =  1.272440E-01 SA =  8.727560E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    28, 1]: TimeStep =  7.864320E+03   MAX{Residual} =  4.182890E-01  at element "A00 4   ", equation  3
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0024   " ==> Px  =  8.95876414E+06  Peq =  8.96810267E+06
+ .... ITERATING:  At [    28, 2]: TimeStep =  7.864320E+03   MAX{Residual} =  1.020655E+00  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    28, 3]: TimeStep =  7.864320E+03   MAX{Residual} =  3.866152E-02  at element "A00 3   ", equation  2
+ A00 1   (    28, 4) Time = 3.502077E+04 Dt =  7.864320E+03 DX1 = -2.745917E+03 DX2= -1.412517E-04 DX3= -1.281169E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.779798E+06  T =  7.642148E+00 Xi_A=  0.000000E+00 SG =  1.288815E-01 SA =  8.711185E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    29, 1]: TimeStep =  1.572864E+04   MAX{Residual} =  1.034111E+00  at element "A00 4   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 4   " ==> S_hydr = -3.76372370E-02
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0025   " ==> Px  =  8.95774250E+06  Peq =  8.96806447E+06
+ .... ITERATING:  At [    29, 2]: TimeStep =  1.572864E+04   MAX{Residual} =  1.090579E+02  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    29, 3]: TimeStep =  1.572864E+04   MAX{Residual} =  1.201099E+02  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    29, 4]: TimeStep =  1.572864E+04   MAX{Residual} =  1.757736E+01  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    29, 5]: TimeStep =  1.572864E+04   MAX{Residual} =  6.202919E-01  at element "A00 3   ", equation  2
+ .... ITERATING:  At [    29, 6]: TimeStep =  1.572864E+04   MAX{Residual} =  8.648209E-04  at element "A00 3   ", equation  2
+ A00 5   (    29, 7) Time = 5.074941E+04 Dt =  1.572864E+04 DX1 =  7.348493E-03 DX2=  5.414646E-02 DX3= -6.720910E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.244967E+06  T =  6.963848E+00 Xi_A=  0.000000E+00 SG =  1.097259E-01 SA =  7.709877E-01 SH =  1.192864E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    30, 1]: TimeStep =  1.572864E+04   MAX{Residual} =  7.345742E-01  at element "A00 4   ", equation  2
+ .... ITERATING:  At [    30, 2]: TimeStep =  1.572864E+04   MAX{Residual} =  1.261880E+00  at element "A00 4   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0026   " ==> Px  =  8.95065706E+06  Peq =  8.96787828E+06
+ .... ITERATING:  At [    30, 3]: TimeStep =  1.572864E+04   MAX{Residual} =  4.717384E-02  at element "A00 4   ", equation  2
+ .... ITERATING:  At [    30, 4]: TimeStep =  1.572864E+04   MAX{Residual} =  5.625781E-05  at element "A0026   ", equation  1
+ A00 4   (    30, 5) Time = 6.647805E+04 Dt =  1.572864E+04 DX1 = -8.508253E+03 DX2= -3.654012E-05 DX3=  6.137442E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.138764E+06  T =  6.932431E+00 Xi_A=  0.000000E+00 SG =  1.259585E-01 SA =  8.740415E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    31, 1]: TimeStep =  1.572864E+04   MAX{Residual} =  4.190801E-01  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    31, 2]: TimeStep =  1.572864E+04   MAX{Residual} =  7.415146E-01  at element "A00 4   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0027   " ==> Px  =  8.96490895E+06  Peq =  8.96879056E+06
+ .... ITERATING:  At [    31, 3]: TimeStep =  1.572864E+04   MAX{Residual} =  2.054879E-02  at element "A00 4   ", equation  2
+ .... ITERATING:  At [    31, 4]: TimeStep =  1.572864E+04   MAX{Residual} =  1.346029E-05  at element "A00 4   ", equation  2
+ A00 4   (    31, 5) Time = 8.220669E+04 Dt =  1.572864E+04 DX1 = -4.823362E+03 DX2= -1.087692E-04 DX3= -1.996672E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.133941E+06  T =  6.912464E+00 Xi_A=  0.000000E+00 SG =  1.260673E-01 SA =  8.739327E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    32, 1]: TimeStep =  1.572864E+04   MAX{Residual} =  5.625420E-01  at element "A00 5   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 5   " ==> S_hydr = -1.78826945E-02
+ .... ITERATING:  At [    32, 2]: TimeStep =  1.572864E+04   MAX{Residual} =  3.240853E+01  at element "A00 4   ", equation  2
+ .... ITERATING:  At [    32, 3]: TimeStep =  1.572864E+04   MAX{Residual} =  9.055896E+00  at element "A00 4   ", equation  2
+ .... ITERATING:  At [    32, 4]: TimeStep =  1.572864E+04   MAX{Residual} =  3.162273E-01  at element "A00 4   ", equation  2
+ .... ITERATING:  At [    32, 5]: TimeStep =  1.572864E+04   MAX{Residual} =  4.340212E-04  at element "A00 4   ", equation  2
+ A00 5   (    32, 6) Time = 9.793533E+04 Dt =  1.572864E+04 DX1 =  5.203845E+06 DX2=  1.898793E-02 DX3=  5.217825E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.203845E+06  T =  6.954905E+00 Xi_A=  0.000000E+00 SG =  1.254799E-01 SA =  8.745201E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    33, 1]: TimeStep =  1.572864E+04   MAX{Residual} =  3.758275E-01  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    33, 2]: TimeStep =  1.572864E+04   MAX{Residual} =  2.204912E-01  at element "A00 5   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0028   " ==> Px  =  8.95681923E+06  Peq =  8.96838987E+06
+ .... ITERATING:  At [    33, 3]: TimeStep =  1.572864E+04   MAX{Residual} =  6.197635E-03  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    33, 4]: TimeStep =  1.572864E+04   MAX{Residual} =  1.120846E-05  at element "A0028   ", equation  1
+ A00 5   (    33, 5) Time = 1.136640E+05 Dt =  1.572864E+04 DX1 = -5.714127E+03 DX2=  1.520455E-04 DX3=  6.635726E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.198131E+06  T =  7.021262E+00 Xi_A=  0.000000E+00 SG =  1.253279E-01 SA =  8.746721E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    34, 1]: TimeStep =  1.572864E+04   MAX{Residual} =  1.970649E-01  at element "A00 6   ", equation  2
+ .... ITERATING:  At [    34, 2]: TimeStep =  1.572864E+04   MAX{Residual} =  1.583719E-01  at element "A00 5   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0029   " ==> Px  =  8.96677120E+06  Peq =  8.96898781E+06
+ .... ITERATING:  At [    34, 3]: TimeStep =  1.572864E+04   MAX{Residual} =  4.387487E-03  at element "A00 1   ", equation  2
+ A00 5   (    34, 4) Time = 1.293926E+05 Dt =  1.572864E+04 DX1 = -3.368898E+03 DX2=  5.073524E-05 DX3= -7.849585E-03 DX4= 
+ !  >>>>>>>>>>>      P    = 5.194762E+06  T =  7.013413E+00 Xi_A=  0.000000E+00 SG =  1.252771E-01 SA =  8.747229E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    35, 1]: TimeStep =  3.145728E+04   MAX{Residual} =  4.393486E-01  at element "A00 6   ", equation  2
+ .... ITERATING:  At [    35, 2]: TimeStep =  3.145728E+04   MAX{Residual} =  8.614680E-01  at element "A00 5   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0030   " ==> Px  =  8.96728417E+06  Peq =  8.96901118E+06
+ .... ITERATING:  At [    35, 3]: TimeStep =  3.145728E+04   MAX{Residual} =  1.291406E-02  at element "A00 5   ", equation  2
+ A00 5   (    35, 4) Time = 1.608499E+05 Dt =  3.145728E+04 DX1 = -2.379131E+03 DX2=  4.989322E-04 DX3= -1.687979E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.192383E+06  T =  6.996533E+00 Xi_A=  0.000000E+00 SG =  1.247782E-01 SA =  8.752218E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    36, 1]: TimeStep =  6.291456E+04   MAX{Residual} =  1.225738E+00  at element "A00 6   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 6   " ==> S_hydr = -5.52124277E-02
+ .... ITERATING:  At [    36, 2]: TimeStep =  6.291456E+04   MAX{Residual} =  1.511267E+02  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    36, 3]: TimeStep =  6.291456E+04   MAX{Residual} =  6.816035E+02  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    36, 4]: TimeStep =  6.291456E+04   MAX{Residual} =  1.755575E+02  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    36, 5]: TimeStep =  6.291456E+04   MAX{Residual} =  2.945775E+01  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    36, 6]: TimeStep =  6.291456E+04   MAX{Residual} =  1.479907E+00  at element "A00 5   ", equation  2
+ .... ITERATING:  At [    36, 7]: TimeStep =  6.291456E+04   MAX{Residual} =  4.392493E-03  at element "A00 5   ", equation  2
+ A00 6   (    36, 8) Time = 2.237644E+05 Dt =  6.291456E+04 DX1 =  5.249038E+06 DX2=  1.506212E-02 DX3=  8.120806E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.249038E+06  T =  7.069676E+00 Xi_A=  0.000000E+00 SG =  1.237296E-01 SA =  8.762704E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    37, 1]: TimeStep =  6.291456E+04   MAX{Residual} =  4.611186E-01  at element "A00 7   ", equation  2
+ !!!!!! "Phases2_AqH_Eql": Gas phase evolves at element "A0031   " ==> Px  =  8.96623228E+06  Peq =  8.96898365E+06
+ .... ITERATING:  At [    37, 2]: TimeStep =  6.291456E+04   MAX{Residual} =  1.447020E+00  at element "A00 6   ", equation  2
+ .... ITERATING:  At [    37, 3]: TimeStep =  6.291456E+04   MAX{Residual} =  5.592869E-02  at element "A00 1   ", equation  2
+ .... ITERATING:  At [    37, 4]: TimeStep =  6.291456E+04   MAX{Residual} =  1.641864E-05  at element "A00 1   ", equation  2
+ A00 8   (    37, 5) Time = 2.866790E+05 Dt =  6.291456E+04 DX1 =  5.227509E-03 DX2=  3.525221E-02 DX3= -4.836415E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.369776E+06  T =  7.195877E+00 Xi_A=  0.000000E+00 SG =  1.062641E-01 SA =  7.632027E-01 SH =  1.305332E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    38, 1]: TimeStep =  6.291456E+04   MAX{Residual} =  6.421345E-01  at element "A00 7   ", equation  2
+ !!!!!! "Phases3_AGH_Eql": Hydrate disappears at element "A00 7   " ==> S_hydr = -2.26150223E-02
+ .... ITERATING:  At [    38, 2]: TimeStep =  6.291456E+04   MAX{Residual} =  5.181579E+01  at element "A00 6   ", equation  2
+ .... ITERATING:  At [    38, 3]: TimeStep =  6.291456E+04   MAX{Residual} =  2.208226E+01  at element "A00 6   ", equation  2
+ .... ITERATING:  At [    38, 4]: TimeStep =  6.291456E+04   MAX{Residual} =  1.324260E+00  at element "A00 6   ", equation  2
+ .... ITERATING:  At [    38, 5]: TimeStep =  6.291456E+04   MAX{Residual} =  5.809453E-03  at element "A00 6   ", equation  2
+ A00 7   (    38, 6) Time = 3.495936E+05 Dt =  6.291456E+04 DX1 =  5.290732E+06 DX2=  1.907851E-02 DX3=  4.125783E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 5.290732E+06  T =  7.108958E+00 Xi_A=  0.000000E+00 SG =  1.236900E-01 SA =  8.763100E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ .... ITERATING:  At [    39, 1]: TimeStep =  5.690643E+04   MAX{Residual} =  3.411297E-01  at element "A00 7   ", equation  2
+ .... ITERATING:  At [    39, 2]: TimeStep =  5.690643E+04   MAX{Residual} =  3.001293E-01  at element "A00 7   ", equation  2
+ .... ITERATING:  At [    39, 3]: TimeStep =  5.690643E+04   MAX{Residual} =  2.523515E-02  at element "A00 1   ", equation  2
+ A00 1   (    39, 4) Time = 4.065000E+05 Dt =  5.690643E+04 DX1 = -1.941256E+03 DX2= -1.757679E-05 DX3=  4.331935E-02 DX4= 
+ !  >>>>>>>>>>>      P    = 4.756057E+06  T =  8.051451E+00 Xi_A=  0.000000E+00 SG =  1.268147E-01 SA =  8.731853E-01 SH =  0.000000E+00 SI =  0.000000E+00
+ 
+ Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+          Output data after (    39,    189) time steps ..................................................... The time is  4.70486E+00 days
+
+=======================================================================================================================================================
+ 
+  TOTAL TIME (s)  Timestep #  NR-iterations  Convergence      DX1M          DX2M          DX3M        Max Residual      NER      KER        TimeStep
+  4.06500E+05           39          189           Y       6.218562E+03  2.685370E-02  1.151626E-01    3.730249E-06        1        2     5.690643E+04
+
+=======================================================================================================================================================
+ 
+ 
+   ELEM   INDEX    Pressure     Temperature  S_Hydrate   S_aqueous     S_gas       S_Ice         P_CH4        P_EqHydr       P_SatWat     X_Inhibitor
+                     (Pa)        (Deg. C)                                                        (Pa)           (Pa)           (Pa)         (kg/kg)
+_______________________________________________________________________________________________________________________________________________________
+
+   A00 1      1  4.7560572E+06  8.05145E+00  0.0000E+00  8.7319E-01  1.2681E-01  0.0000E+00  4.7549804E+06  5.8609756E+06  1.0767830E+03  0.00000E+00
+   A00 2      2  4.8851634E+06  7.22220E+00  0.0000E+00  8.7354E-01  1.2646E-01  0.0000E+00  4.8841459E+06  5.3841482E+06  1.0174990E+03  0.00000E+00
+   A00 3      3  5.0087080E+06  7.17667E+00  0.0000E+00  8.7443E-01  1.2557E-01  0.0000E+00  5.0076937E+06  5.3593126E+06  1.0143291E+03  0.00000E+00
+   A00 4      4  5.0967524E+06  7.16580E+00  0.0000E+00  8.7503E-01  1.2497E-01  0.0000E+00  5.0957388E+06  5.3534034E+06  1.0135736E+03  0.00000E+00
+   A00 5      5  5.1679475E+06  7.15833E+00  0.0000E+00  8.7551E-01  1.2449E-01  0.0000E+00  5.1669344E+06  5.3493493E+06  1.0130551E+03  0.00000E+00
+   A00 6      6  5.2293790E+06  7.15250E+00  0.0000E+00  8.7591E-01  1.2409E-01  0.0000E+00  5.2283664E+06  5.3461850E+06  1.0126502E+03  0.00000E+00
+   A00 7      7  5.2845138E+06  7.14809E+00  0.0000E+00  8.7626E-01  1.2374E-01  0.0000E+00  5.2835015E+06  5.3437951E+06  1.0123443E+03  0.00000E+00
+   A00 8      8  5.3419358E+06  7.14466E+00  6.2664E-02  8.2210E-01  1.1523E-01  0.0000E+00  5.3409237E+06  5.3419358E+06  1.0121063E+03  0.00000E+00
+   A00 9      9  5.4134732E+06  7.27564E+00  1.5710E-01  7.4003E-01  1.0287E-01  0.0000E+00  5.4124519E+06  5.4134732E+06  1.0212312E+03  0.00000E+00
+   A0010     10  5.5046910E+06  7.43976E+00  2.2844E-01  6.7791E-01  9.3648E-02  0.0000E+00  5.5036582E+06  5.5046910E+06  1.0327676E+03  0.00000E+00
+   A0011     11  5.6169258E+06  7.63739E+00  2.8444E-01  6.2936E-01  8.6204E-02  0.0000E+00  5.6158789E+06  5.6169258E+06  1.0468110E+03  0.00000E+00
+   A0012     12  5.7502680E+06  7.86621E+00  3.2767E-01  5.9210E-01  8.0238E-02  0.0000E+00  5.7492047E+06  5.7502680E+06  1.0632818E+03  0.00000E+00
+   A0013     13  5.9037965E+06  8.12199E+00  3.6101E-01  5.6359E-01  7.5394E-02  0.0000E+00  5.9027145E+06  5.9037965E+06  1.0819634E+03  0.00000E+00
+   A0014     14  6.0752586E+06  8.39840E+00  3.8667E-01  5.4193E-01  7.1399E-02  0.0000E+00  6.0741562E+06  6.0752586E+06  1.1024769E+03  0.00000E+00
+   A0015     15  6.2621019E+06  8.68911E+00  4.0659E-01  5.2542E-01  6.7996E-02  0.0000E+00  6.2609775E+06  6.2621019E+06  1.1244206E+03  0.00000E+00
+   A0016     16  6.4615235E+06  8.98802E+00  4.2230E-01  5.1273E-01  6.4973E-02  0.0000E+00  6.4603761E+06  6.4615235E+06  1.1473837E+03  0.00000E+00
+   A0017     17  6.6709681E+06  9.29009E+00  4.3495E-01  5.0291E-01  6.2136E-02  0.0000E+00  6.6697971E+06  6.6709681E+06  1.1710091E+03  0.00000E+00
+   A0018     18  6.8881058E+06  9.59127E+00  4.4543E-01  4.9527E-01  5.9301E-02  0.0000E+00  6.8869109E+06  6.8881058E+06  1.1949897E+03  0.00000E+00
+   A0019     19  7.1105786E+06  9.88801E+00  4.5430E-01  4.8943E-01  5.6272E-02  0.0000E+00  7.1093595E+06  7.1105786E+06  1.2190394E+03  0.00000E+00
+   A0020     20  7.3359596E+06  1.01772E+01  4.6197E-01  4.8522E-01  5.2808E-02  0.0000E+00  7.3347167E+06  7.3359596E+06  1.2428889E+03  0.00000E+00
+   A0021     21  7.5611897E+06  1.04555E+01  4.6871E-01  4.8269E-01  4.8595E-02  0.0000E+00  7.5599235E+06  7.5611897E+06  1.2662267E+03  0.00000E+00
+   A0022     22  7.7818648E+06  1.07185E+01  4.7465E-01  4.8210E-01  4.3249E-02  0.0000E+00  7.7805762E+06  7.7818648E+06  1.2886321E+03  0.00000E+00
+   A0023     23  7.9922533E+06  1.09609E+01  4.7984E-01  4.8363E-01  3.6532E-02  0.0000E+00  7.9909437E+06  7.9922533E+06  1.3095864E+03  0.00000E+00
+   A0024     24  8.1869012E+06  1.11782E+01  4.8432E-01  4.8667E-01  2.9004E-02  0.0000E+00  8.1855726E+06  8.1869012E+06  1.3286334E+03  0.00000E+00
+   A0025     25  8.3625597E+06  1.13690E+01  4.8815E-01  4.9001E-01  2.1840E-02  0.0000E+00  8.3612141E+06  8.3625597E+06  1.3455522E+03  0.00000E+00
+   A0026     26  8.5175515E+06  1.15332E+01  4.9138E-01  4.9290E-01  1.5725E-02  0.0000E+00  8.5161912E+06  8.5175515E+06  1.3602749E+03  0.00000E+00
+   A0027     27  8.6505864E+06  1.16714E+01  4.9405E-01  4.9518E-01  1.0768E-02  0.0000E+00  8.6492136E+06  8.6505864E+06  1.3727626E+03  0.00000E+00
+   A0028     28  8.7603876E+06  1.17834E+01  4.9619E-01  4.9692E-01  6.8909E-03  0.0000E+00  8.7590046E+06  8.7603876E+06  1.3829680E+03  0.00000E+00
+   A0029     29  8.8459323E+06  1.18696E+01  4.9781E-01  4.9820E-01  3.9955E-03  0.0000E+00  8.8445414E+06  8.8459323E+06  1.3908568E+03  0.00000E+00
+   A0030     30  8.9074278E+06  1.19309E+01  4.9894E-01  4.9908E-01  1.9778E-03  0.0000E+00  8.9060313E+06  8.9074278E+06  1.3964947E+03  0.00000E+00
+   A0031     31  8.9470617E+06  1.19701E+01  4.9966E-01  4.9963E-01  7.0478E-04  0.0000E+00  8.9456616E+06  8.9470617E+06  1.4001137E+03  0.00000E+00
+   ina 0*    32  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+   A00 0*    33  4.5100000E+06  4.50000E+01  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  3.1760236E+08  9.5947136E+03  0.00000E+00
+   A0032*    34  9.1100000E+06  1.20000E+01  5.0000E-01  5.0000E-01  0.0000E+00  0.0000E+00  0.0000000E+00  8.9774289E+06  1.4028790E+03  0.00000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+                                                                          Timesteps =     39 :|: NR iterations =     189 :|: TIME =  4.065000E+05
+ 
+_________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX  C-CH4inGas C-CH4inAqu  Dens_Gas   Dens_Aqu   Dens_Hydr  Visc_Gas   Visc_Aqu       Phi          PC_w      Krel_Gas    Krel_Aqu
+                  (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m*s)   (Kg/m*s)                    (Pa)
+_________________________________________________________________________________________________________________________________________________
+
+   A00 1      1  3.7020E+01 1.3969E+00 3.7029E+01 1.0008E+03 0.0000E+00 1.1412E-05 1.3822E-03  2.99994E-01 -1.22018E+04  1.7883E-03  6.2699E-01
+   A00 2      2  3.8319E+01 1.4648E+00 3.8328E+01 1.0008E+03 0.0000E+00 1.1433E-05 1.4168E-03  2.99991E-01 -1.21777E+04  1.7704E-03  6.2788E-01
+   A00 3      3  3.9422E+01 1.5036E+00 3.9431E+01 1.0009E+03 0.0000E+00 1.1474E-05 1.4187E-03  2.99988E-01 -1.21175E+04  1.7263E-03  6.3011E-01
+   A00 4      4  4.0208E+01 1.5305E+00 4.0217E+01 1.0009E+03 0.0000E+00 1.1504E-05 1.4191E-03  2.99986E-01 -1.20770E+04  1.6971E-03  6.3161E-01
+   A00 5      5  4.0845E+01 1.5522E+00 4.0854E+01 1.0009E+03 0.0000E+00 1.1529E-05 1.4194E-03  2.99984E-01 -1.20450E+04  1.6743E-03  6.3280E-01
+   A00 6      6  4.1397E+01 1.5709E+00 4.1406E+01 1.0009E+03 0.0000E+00 1.1551E-05 1.4196E-03  2.99983E-01 -1.20180E+04  1.6551E-03  6.3381E-01
+   A00 7      7  4.1893E+01 1.5877E+00 4.1902E+01 1.0009E+03 0.0000E+00 1.1571E-05 1.4198E-03  2.99981E-01 -1.19941E+04  1.6383E-03  6.3469E-01
+   A00 8      8  4.2410E+01 1.6054E+00 4.2419E+01 1.0009E+03 9.2046E+02 1.1591E-05 1.4199E-03  2.99968E-01 -1.28053E+04  1.6004E-03  6.3673E-01
+   A00 9      9  4.3025E+01 1.6216E+00 4.3034E+01 1.0009E+03 9.2048E+02 1.1621E-05 1.4143E-03  2.99945E-01 -1.43030E+04  1.5590E-03  6.3899E-01
+   A0010     10  4.3810E+01 1.6422E+00 4.3819E+01 1.0010E+03 9.2050E+02 1.1659E-05 1.4073E-03  2.99920E-01 -1.57036E+04  1.5288E-03  6.4067E-01
+   A0011     11  4.4778E+01 1.6675E+00 4.4787E+01 1.0010E+03 9.2053E+02 1.1706E-05 1.3989E-03  2.99892E-01 -1.69829E+04  1.4882E-03  6.4296E-01
+   A0012     12  4.5932E+01 1.6974E+00 4.5942E+01 1.0010E+03 9.2057E+02 1.1763E-05 1.3893E-03  2.99865E-01 -1.80884E+04  1.4387E-03  6.4583E-01
+   A0013     13  4.7266E+01 1.7318E+00 4.7276E+01 1.0010E+03 9.2061E+02 1.1830E-05 1.3787E-03  2.99838E-01 -1.90025E+04  1.3807E-03  6.4928E-01
+   A0014     14  4.8762E+01 1.7701E+00 4.8772E+01 1.0011E+03 9.2066E+02 1.1906E-05 1.3674E-03  2.99814E-01 -1.97195E+04  1.3150E-03  6.5333E-01
+   A0015     15  5.0400E+01 1.8116E+00 5.0410E+01 1.0011E+03 9.2072E+02 1.1990E-05 1.3557E-03  2.99792E-01 -2.02522E+04  1.2417E-03  6.5802E-01
+   A0016     16  5.2155E+01 1.8558E+00 5.2166E+01 1.0011E+03 9.2078E+02 1.2081E-05 1.3438E-03  2.99774E-01 -2.06166E+04  1.1601E-03  6.6350E-01
+   A0017     17  5.4007E+01 1.9021E+00 5.4018E+01 1.0011E+03 9.2085E+02 1.2179E-05 1.3319E-03  2.99758E-01 -2.08249E+04  1.0685E-03  6.7001E-01
+   A0018     18  5.5936E+01 1.9498E+00 5.5947E+01 1.0012E+03 9.2092E+02 1.2284E-05 1.3202E-03  2.99744E-01 -2.08776E+04  9.6397E-04  6.7797E-01
+   A0019     19  5.7922E+01 1.9986E+00 5.7933E+01 1.0012E+03 9.2100E+02 1.2393E-05 1.3089E-03  2.99734E-01 -2.07561E+04  8.4262E-04  6.8805E-01
+   A0020     20  5.9941E+01 2.0479E+00 5.9952E+01 1.0012E+03 9.2107E+02 1.2506E-05 1.2980E-03  2.99727E-01 -2.04156E+04  7.0040E-04  7.0133E-01
+   A0021     21  6.1967E+01 2.0969E+00 6.1979E+01 1.0013E+03 9.2115E+02 1.2621E-05 1.2876E-03  2.99726E-01 -1.97754E+04  5.3560E-04  7.1947E-01
+   A0022     22  6.3959E+01 2.1449E+00 6.3971E+01 1.0013E+03 9.2123E+02 1.2736E-05 1.2779E-03  2.99732E-01 -1.87132E+04  3.5523E-04  7.4479E-01
+   A0023     23  6.5864E+01 2.1904E+00 6.5876E+01 1.0013E+03 9.2131E+02 1.2848E-05 1.2691E-03  2.99746E-01 -1.71153E+04  1.8601E-04  7.7917E-01
+   A0024     24  6.7631E+01 2.2324E+00 6.7643E+01 1.0014E+03 9.2138E+02 1.2954E-05 1.2613E-03  2.99767E-01 -1.50688E+04  6.9868E-05  8.2025E-01
+   A0025     25  6.9229E+01 2.2703E+00 6.9241E+01 1.0014E+03 9.2145E+02 1.3051E-05 1.2545E-03  2.99790E-01 -1.28697E+04  1.7095E-05  8.6148E-01
+   A0026     26  7.0641E+01 2.3036E+00 7.0654E+01 1.0014E+03 9.2151E+02 1.3137E-05 1.2487E-03  2.99817E-01 -1.07264E+04  1.9087E-06  8.9826E-01
+   A0027     27  7.1855E+01 2.3322E+00 7.1868E+01 1.0014E+03 9.2156E+02 1.3212E-05 1.2438E-03  2.99847E-01 -8.70195E+03  3.0974E-09  9.2919E-01
+   A0028     28  7.2858E+01 2.3557E+00 7.2871E+01 1.0015E+03 9.2160E+02 1.3275E-05 1.2399E-03  2.99879E-01 -6.80422E+03  0.0000E+00  9.5409E-01
+   A0029     29  7.3640E+01 2.3740E+00 7.3653E+01 1.0015E+03 9.2164E+02 1.3324E-05 1.2369E-03  2.99913E-01 -5.04058E+03  0.0000E+00  9.7312E-01
+   A0030     30  7.4202E+01 2.3872E+00 7.4215E+01 1.0015E+03 9.2166E+02 1.3359E-05 1.2347E-03  2.99945E-01 -3.42342E+03  0.0000E+00  9.8660E-01
+   A0031     31  7.4565E+01 2.3957E+00 7.4578E+01 1.0015E+03 9.2168E+02 1.3382E-05 1.2334E-03  2.99970E-01 -1.94066E+03  0.0000E+00  9.9521E-01
+   ina 0*    32  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A00 0*    33  0.0000E+00 0.0000E+00 0.0000E+00 9.9219E+02 0.0000E+00 1.0000E+00 5.9679E-04  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+   A0032*    34  0.0000E+00 2.4023E+00 0.0000E+00 1.0016E+03 9.2173E+02 1.0000E+00 1.2322E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+                                                                          Timesteps =     39 :|: NR iterations =     189 :|: TIME =  4.065000E+05
+ 
+________________________________________________________________________________________________________________
+
+   ELEM1    ELEM2   INDEX  Heat Flow    Gas Flow   Aqu. Flow  CH4inGs-Flo CH4inAq-Flo   Gas Veloc   Aqu Veloc
+                              (W)        (Kg/s)      (Kg/s)      (Kg/s)      (Kg/s)      (m/s)       (m/s)
+________________________________________________________________________________________________________________
+
+   A00 0    A00 1       1  5.4699E+04  2.2445E-02  1.6690E+00  2.2439E-02  2.3295E-03  5.0709E-03  2.0262E-03
+   A00 1    A00 2       2  5.4699E+04  2.2331E-02  1.6691E+00  2.2326E-02  2.4428E-03  3.4921E-03  1.4470E-03
+   A00 2    A00 3       3  5.4701E+04  2.2266E-02  1.6692E+00  2.2261E-02  2.5076E-03  1.5490E-03  6.5690E-04
+   A00 3    A00 4       4  5.4703E+04  2.2221E-02  1.6692E+00  2.2216E-02  2.5524E-03  9.2059E-04  3.9683E-04
+   A00 4    A00 5       5  5.4708E+04  2.2185E-02  1.6692E+00  2.2180E-02  2.5886E-03  6.1558E-04  2.6884E-04
+   A00 5    A00 6       6  5.4716E+04  2.2153E-02  1.6693E+00  2.2148E-02  2.6198E-03  4.3885E-04  1.9380E-04
+   A00 6    A00 7       7  5.4730E+04  2.2125E-02  1.6693E+00  2.2120E-02  2.6478E-03  3.2543E-04  1.4515E-04
+   A00 7    A00 8       8  5.4751E+04  2.2095E-02  1.6693E+00  2.2090E-02  2.6774E-03  2.6502E-04  1.1894E-04
+   A00 8    A00 9       9  5.5891E+04  2.1769E-02  1.6695E+00  2.1764E-02  2.7047E-03  2.2567E-04  1.0343E-04
+   A00 9    A0010      10  5.7209E+04  2.1382E-02  1.6698E+00  2.1378E-02  2.7394E-03  1.8967E-04  8.9572E-05
+   A0010    A0011      11  5.8790E+04  2.0908E-02  1.6701E+00  2.0903E-02  2.7821E-03  1.5798E-04  7.7341E-05
+   A0011    A0012      12  6.0617E+04  2.0340E-02  1.6705E+00  2.0336E-02  2.8327E-03  1.2986E-04  6.6331E-05
+   A0012    A0013      13  6.2656E+04  1.9674E-02  1.6709E+00  1.9670E-02  2.8907E-03  1.0556E-04  5.6637E-05
+   A0013    A0014      14  6.4860E+04  1.8904E-02  1.6713E+00  1.8900E-02  2.9553E-03  8.4689E-05  4.8062E-05
+   A0014    A0015      15  6.7182E+04  1.8013E-02  1.6718E+00  1.8010E-02  3.0254E-03  6.7163E-05  4.0621E-05
+   A0015    A0016      16  6.9575E+04  1.6977E-02  1.6722E+00  1.6973E-02  3.0998E-03  5.2593E-05  3.4206E-05
+   A0016    A0017      17  7.2003E+04  1.5753E-02  1.6724E+00  1.5750E-02  3.1775E-03  4.0594E-05  2.8730E-05
+   A0017    A0018      18  7.4429E+04  1.4284E-02  1.6723E+00  1.4282E-02  3.2569E-03  3.0738E-05  2.4077E-05
+   A0018    A0019      19  7.6808E+04  1.2501E-02  1.6712E+00  1.2498E-02  3.3361E-03  2.2627E-05  2.0124E-05
+   A0019    A0020      20  7.9060E+04  1.0337E-02  1.6680E+00  1.0335E-02  3.4116E-03  1.5949E-05  1.6772E-05
+   A0020    A0021      21  8.1026E+04  7.7820E-03  1.6601E+00  7.7805E-03  3.4766E-03  1.0459E-05  1.3904E-05
+   A0021    A0022      22  8.2360E+04  4.9953E-03  1.6417E+00  4.9944E-03  3.5167E-03  6.0621E-06  1.1418E-05
+   A0022    A0023      23  8.2424E+04  2.4677E-03  1.6028E+00  2.4673E-03  3.5061E-03  2.8578E-06  9.2246E-06
+   A0023    A0024      24  8.0479E+04  8.4938E-04  1.5321E+00  8.4923E-04  3.4155E-03  1.0022E-06  7.2777E-06
+   A0024    A0025      25  7.6345E+04  1.8598E-04  1.4277E+00  1.8594E-04  3.2369E-03  2.3657E-07  5.5972E-06
+   A0025    A0026      26  7.0262E+04  1.8197E-05  1.2947E+00  1.8194E-05  2.9783E-03  2.6189E-08  4.1941E-06
+   A0026    A0027      27  6.2412E+04  2.5203E-08  1.1362E+00  2.5199E-08  2.6459E-03  4.3290E-11  3.0454E-06
+   A0027    A0028      28  5.2924E+04  0.0000E+00  9.5408E-01  0.0000E+00  2.2443E-03  0.0000E+00  2.1197E-06
+   A0028    A0029      29  4.2137E+04  0.0000E+00  7.5398E-01  0.0000E+00  1.7873E-03  0.0000E+00  1.3904E-06
+   A0029    A0030      30  3.0848E+04  0.0000E+00  5.4907E-01  0.0000E+00  1.3088E-03  0.0000E+00  8.4116E-07
+   A0030    A0031      31  2.0256E+04  0.0000E+00  3.5933E-01  0.0000E+00  8.5957E-04  0.0000E+00  4.5765E-07
+   A0031    A0032      32  1.1312E+04  0.0000E+00  2.0017E-01  0.0000E+00  4.8011E-04  0.0000E+00  2.1206E-07
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          Test_3T: Equilibrium hydrate dissociation, cylindrical system, thermal stimulation                                      
+
+                                                                          Timesteps =     39 :|: NR iterations =     189 :|: TIME =  4.065000E+05
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX       X1            X2            X3           DX1           DX2           DX3
+_______________________________________________________________________________________________________________________________________________________
+
+   A00 1      1  4.756057E+06  8.731853E-01  8.051451E+00 -1.941256E+03 -1.757679E-05  4.331935E-02
+   A00 2      2  4.885163E+06  8.735424E-01  7.222195E+00 -2.990186E+03 -3.218184E-05  3.883598E-02
+   A00 3      3  5.008708E+06  8.744340E-01  7.176665E+00 -3.990949E+03 -3.802824E-05  3.856050E-02
+   A00 4      4  5.096752E+06  8.750330E-01  7.165796E+00 -4.702922E+03 -4.212315E-05  3.864685E-02
+   A00 5      5  5.167947E+06  8.755058E-01  7.158331E+00 -5.277988E+03 -4.535431E-05  3.877368E-02
+   A00 6      6  5.229379E+06  8.759062E-01  7.152500E+00 -5.773802E+03 -4.809324E-05  3.893575E-02
+   A00 7      7  5.284514E+06  8.762595E-01  7.148093E+00 -6.218562E+03 -5.052076E-05  3.913539E-02
+   A00 8      8  1.152312E-01  8.221048E-01  7.144663E+00  4.144398E-03  2.685370E-02 -1.948867E-02
+   A00 9      9  1.028673E-01  7.400343E-01  7.275643E+00  3.053935E-03  2.083461E-02 -3.297523E-02
+   A0010     10  9.364784E-02  6.779075E-01  7.439765E+00  2.565078E-03  1.691664E-02 -4.743667E-02
+   A0011     11  8.620404E-02  6.293553E-01  7.637386E+00  2.134774E-03  1.347526E-02 -6.215855E-02
+   A0012     12  8.023849E-02  5.920953E-01  7.866206E+00  1.780429E-03  1.057360E-02 -7.597375E-02
+   A0013     13  7.539445E-02  5.635947E-01  8.121986E+00  1.504179E-03  8.211335E-03 -8.798102E-02
+   A0014     14  7.139876E-02  5.419347E-01  8.398400E+00  1.306787E-03  6.367754E-03 -9.768061E-02
+   A0015     15  6.799633E-02  5.254158E-01  8.689110E+00  1.183173E-03  4.966174E-03 -1.050119E-01
+   A0016     16  6.497260E-02  5.127319E-01  8.988018E+00  1.128604E-03  3.910198E-03 -1.101711E-01
+   A0017     17  6.213570E-02  5.029101E-01  9.290092E+00  1.142136E-03  3.099233E-03 -1.134467E-01
+   A0018     18  5.930076E-02  4.952741E-01  9.591266E+00  1.229883E-03  2.437318E-03 -1.150775E-01
+   A0019     19  5.627168E-02  4.894321E-01  9.888006E+00  1.408677E-03  1.836699E-03 -1.151626E-01
+   A0020     20  5.280774E-02  4.852208E-01  1.017723E+01  1.708003E-03  1.209986E-03 -1.135943E-01
+   A0021     21  4.859459E-02  4.826940E-01  1.045555E+01  2.162593E-03  4.740278E-04 -1.100042E-01
+   A0022     22  4.324855E-02  4.821006E-01  1.071853E+01  2.749745E-03 -3.852822E-04 -1.038675E-01
+   A0023     23  3.653247E-02  4.836252E-01  1.096086E+01  3.207013E-03 -1.118604E-03 -9.518661E-02
+   A0024     24  2.900408E-02  4.866739E-01  1.117820E+01  3.182255E-03 -1.362113E-03 -8.507572E-02
+   A0025     25  2.184036E-02  4.900110E-01  1.136896E+01  2.794046E-03 -1.228186E-03 -7.450932E-02
+   A0026     26  1.572451E-02  4.928967E-01  1.153325E+01  2.307893E-03 -9.887137E-04 -6.366855E-02
+   A0027     27  1.076799E-02  4.951805E-01  1.167137E+01  1.830995E-03 -7.592891E-04 -5.242208E-02
+   A0028     28  6.890879E-03  4.969203E-01  1.178344E+01  1.380533E-03 -5.603602E-04 -4.073378E-02
+   A0029     29  3.995526E-03  4.981966E-01  1.186957E+01  9.600200E-04 -3.885422E-04 -2.897382E-02
+   A0030     30  1.977848E-03  4.990791E-01  1.193086E+01  5.920412E-04 -2.459619E-04 -1.816098E-02
+   A0031     31  7.047792E-04  4.996342E-01  1.197009E+01  3.213305E-04 -1.425388E-04 -9.969565E-03
+   ina 0*    32  9.110000E+06  5.000000E-01  1.200000E+01  0.000000E+00  0.000000E+00  0.000000E+00
+   A00 0*    33  4.510000E+06  0.000000E+00  4.500000E+01  0.000000E+00  0.000000E+00  0.000000E+00
+   A0032*    34  9.110000E+06  5.000000E-01  1.200000E+01  0.000000E+00  0.000000E+00  0.000000E+00
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX    Enthl-Gas    Enthl-Aqu     Enthl-Hydr    Enthl-Ice    Reactn_Rate   Reactn_Heat     T-Shift       k-SPIAF     k-intrinsic
+                    (J/Kg)        (J/Kg)        (J/Kg)        (J/Kg)       (Kg/s)        (J/kg)          (K)                        (m^2)
+_______________________________________________________________________________________________________________________________________________________
+
+   A00 1      1 -4.290476E+04  3.696363E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 2      2 -4.673864E+04  3.354072E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 3      3 -4.846223E+04  3.342615E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 4      4 -4.963417E+04  3.343564E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 5      5 -5.057836E+04  3.344885E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 6      6 -5.139141E+04  3.346278E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 7      7 -5.211889E+04  3.347874E+04  0.000000E+00  0.000000E+00  0.000000E+00  4.560622E+05  0.000000E+00  1.000000E+00  2.960000E-13
+   A00 8      8 -5.287339E+04  3.349991E+04  1.500379E+04  0.000000E+00 -4.510701E-05  4.560622E+05  0.000000E+00  8.148796E-01  2.960000E-13
+   A00 9      9 -5.345150E+04  3.409901E+04  1.527885E+04  0.000000E+00 -3.473948E-05  4.560622E+05  0.000000E+00  5.814160E-01  2.960000E-13
+   A0010     10 -5.419315E+04  3.485076E+04  1.562351E+04  0.000000E+00 -2.830289E-05  4.560622E+05  0.000000E+00  4.381655E-01  2.960000E-13
+   A0011     11 -5.511226E+04  3.575753E+04  1.603851E+04  0.000000E+00 -2.264453E-05  4.560622E+05  0.000000E+00  3.438663E-01  2.960000E-13
+   A0012     12 -5.621312E+04  3.680972E+04  1.651903E+04  0.000000E+00 -1.788387E-05  4.560622E+05  0.000000E+00  2.811249E-01  2.960000E-13
+   A0013     13 -5.749172E+04  3.798885E+04  1.705617E+04  0.000000E+00 -1.402471E-05  4.560622E+05  0.000000E+00  2.383149E-01  2.960000E-13
+   A0014     14 -5.893245E+04  3.926679E+04  1.763664E+04  0.000000E+00 -1.103830E-05  4.560622E+05  0.000000E+00  2.085095E-01  2.960000E-13
+   A0015     15 -6.051618E+04  4.061514E+04  1.824713E+04  0.000000E+00 -8.805380E-06  4.560622E+05  0.000000E+00  1.871618E-01  2.960000E-13
+   A0016     16 -6.222042E+04  4.200637E+04  1.887484E+04  0.000000E+00 -7.178374E-06  4.560622E+05  0.000000E+00  1.713963E-01  2.960000E-13
+   A0017     17 -6.402357E+04  4.341759E+04  1.950919E+04  0.000000E+00 -6.009327E-06  4.560622E+05  0.000000E+00  1.593554E-01  2.960000E-13
+   A0018     18 -6.590491E+04  4.483012E+04  2.014166E+04  0.000000E+00 -5.167652E-06  4.560622E+05  0.000000E+00  1.498325E-01  2.960000E-13
+   A0019     19 -6.784264E+04  4.622750E+04  2.076481E+04  0.000000E+00 -4.550854E-06  4.560622E+05  0.000000E+00  1.420679E-01  2.960000E-13
+   A0020     20 -6.981371E+04  4.759514E+04  2.137217E+04  0.000000E+00 -4.076086E-06  4.560622E+05  0.000000E+00  1.355704E-01  2.960000E-13
+   A0021     21 -7.178914E+04  4.891675E+04  2.195665E+04  0.000000E+00 -3.674930E-06  4.560622E+05  0.000000E+00  1.300307E-01  2.960000E-13
+   A0022     22 -7.372794E+04  5.017074E+04  2.250891E+04  0.000000E+00 -3.294467E-06  4.560622E+05  0.000000E+00  1.252759E-01  2.960000E-13
+   A0023     23 -7.557758E+04  5.133091E+04  2.301781E+04  0.000000E+00 -2.911461E-06  4.560622E+05  0.000000E+00  1.212160E-01  2.960000E-13
+   A0024     24 -7.728841E+04  5.237532E+04  2.347421E+04  0.000000E+00 -2.539432E-06  4.560622E+05  0.000000E+00  1.177840E-01  2.960000E-13
+   A0025     25 -7.883094E+04  5.329523E+04  2.387481E+04  0.000000E+00 -2.188387E-06  4.560622E+05  0.000000E+00  1.149042E-01  2.960000E-13
+   A0026     26 -8.019014E+04  5.408992E+04  2.421982E+04  0.000000E+00 -1.850274E-06  4.560622E+05  0.000000E+00  1.125101E-01  2.960000E-13
+   A0027     27 -8.135496E+04  5.475987E+04  2.450988E+04  0.000000E+00 -1.512933E-06  4.560622E+05  0.000000E+00  1.105545E-01  2.960000E-13
+   A0028     28 -8.231482E+04  5.530464E+04  2.474522E+04  0.000000E+00 -1.170292E-06  4.560622E+05  0.000000E+00  1.090071E-01  2.960000E-13
+   A0029     29 -8.306153E+04  5.572408E+04  2.492609E+04  0.000000E+00 -8.298649E-07  4.560622E+05  0.000000E+00  1.078445E-01  2.960000E-13
+   A0030     30 -8.359767E+04  5.602298E+04  2.505480E+04  0.000000E+00 -5.188346E-07  4.560622E+05  0.000000E+00  1.070344E-01  2.960000E-13
+   A0031     31 -8.394290E+04  5.621447E+04  2.513718E+04  0.000000E+00 -2.840378E-07  4.560622E+05  0.000000E+00  1.065240E-01  2.960000E-13
+   ina 0*    32  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  3.309348E+61  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+   A00 0*    33  0.000000E+00  1.922755E+05  0.000000E+00  0.000000E+00  3.309348E+61  0.000000E+00  0.000000E+00  1.000000E+00  2.960000E-13
+   A0032*    34  0.000000E+00  5.648382E+04  2.520000E+04  0.000000E+00  3.309348E+61  4.560622E+05  0.000000E+00  1.062837E-01  2.960000E-13
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [    39,    189]  =========             The time is  4.06500E+05 sec, or  4.70486E+00 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   6.96321717E+02   4.68510883E+04   4.66720621E+04   0.00000000E+00
+  MASS   (Kg)  |   4.71499518E+04   4.69196697E+07   4.30131001E+07   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   8.57432574E+00   4.71413775E+04   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   4.68094085E+07   1.10261142E+05   0.00000000E+00   0.00000000E+00
+                                              Hydrate       |   3.74540693E+07   5.55903075E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   8.42634864E+07   5.71643327E+06   0.00000000E+00   0.00000000E+00
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+
+ >>>>> Write file "SAVE" after      39 time steps  ==>  The time is  4.065000E+05 seconds
+
+
+************************************************************************************************************************************
+*                                                                                                                                  *
+*                                                  SUMMARY OF PROGRAM UNITS USED                                                   *
+*                                                                                                                                  *
+************************************************************************************************************************************
+
+                                                                                                                                  
+TOUGH+                                           [v1.0,  15 August    2009]                                                       
+:::::   The TOUGH+ main program (calls all the high-level routines)                                                               
+                                                                                                                                  
+Core_Memory_Allocation                           [v1.1,  15 August    2009]                                                       
+:::::   Allocate memory to most arrays based on size provided by input parameters                                                 
+                                                                                                                                  
+EOS_Defaults                                     [v1.0,  29 September 2007]                                                       
+:::::   Default parameters of the hydrate equation of state                                                                       
+                                                                                                                                  
+EOS_Primary_Variable_List                        [v1.0,  29 September 2007]                                                       
+:::::   Determines the list of primary variables for the hydrate equation of state                                                
+                                                                                                                                  
+Write_Headings                                   [v1.1,  15 August    2009]                                                       
+:::::   Routine for printing the headings in the standard TOUGH+ output file                                                      
+                                                                                                                                  
+Open_External_IO_Files                           [v1.0,  14 January   2006]                                                       
+:::::   Open files <VERS>, <MESH>, <INCON>, <GENER>, <SAVE>, <LINEQ>, and <TABLE>                                                 
+                                                                                                                                  
+CPU_Timing_Routine                               [v1.0,  10 March     2006]                                                       
+:::::   CPU time computation: Uses FORTRAN95 intrinsic timing functions                                                           
+                                                                                                                                  
+Allocate_Temp_Input_Memory                       [v1.0,  21 September 2007]                                                       
+:::::   Allocate memory to to temporary input arrays                                                                              
+                                                                                                                                  
+Read_Main_Input_File                             [v1.0,  29 September 2007]                                                       
+:::::   Read all data provided in the main TOUGH+ input file                                                                      
+                                                                                                                                  
+Initializations_and_Defaults                     [v1.0,  30 September 2007]                                                       
+:::::   Initialize important parameters and variables                                                                             
+                                                                                                                                  
+Read_Geologic_Media_Data                         [v1.1,  10 August    2009]                                                       
+:::::   Read the rock type data from the <ROCK> block of the TOUGH+ input data file                                               
+                                                                                                                                  
+Read_Hydrate_Specific_Data                       [v1.0,  30 September 2006]                                                       
+:::::   Read the hydrate data from the <HYDRATE> block of the input data file                                                     
+                                                                                                                                  
+Real_Gas_Setup                                   [v1.0,   8 April     2004]                                                       
+:::::   Mapping to the built-in reference parameter data set for real gas behavior                                                
+                                                                                                                                  
+K_PR                                             [v1.0,   9 April     2004]                                                       
+:::::   Setting the interaction coefficients in the Peng-Robinson EOS                                                             
+                                                                                                                                  
+Read_Computational_Parameters                    [v1.1,  14 August    2009]                                                       
+:::::   Read the computational parameter data from the PARAM block of the TOUGH+ input data file                                  
+                                                                                                                                  
+Read_Element_Data                                [v1.1,  15 August    2009]                                                       
+:::::   Read the element data from the <ELEME> block of the TOUGH+ input data file                                                
+                                                                                                                                  
+Read_Connection_Data                             [v1.0,   6 January   2007]                                                       
+:::::   Read the connection data from the <CONNE> block of the TOUGH+ input data file                                             
+                                                                                                                                  
+Read_Generation_Data                             [v1.0,  11 September 2007]                                                       
+:::::   Read the source/sink data from the <GENER> block of the TOUGH+ input data file                                            
+                                                                                                                                  
+Read_Domain_Initial_Conditions                   [v1.0,   26 September 2007]                                                      
+:::::   Read the domain-specific initial conditions from the <INDOM> block of the TOUGH+ input data file                          
+                                                                                                                                  
+Read_Initial_Conditions                          [v1.0,  26 September 2007]                                                       
+:::::   Read the initial condition data from the <INCON> block of the TOUGH+ input data file                                      
+                                                                                                                                  
+Significant_Digits                               [v1.0,  11 March     2006]                                                       
+:::::   Calculate number of significant digits for floating point arithmetic                                                      
+                                                                                                                                  
+Read_External_Input_Files                        [v1.0,  12 January   2007]                                                       
+:::::   Initialize data from files <MESH> or <MINC>, <GENER> and <INCON>                                                          
+        Also initializes permeability modifiers and coordinate arrays and optionally reads tables with flowing wellbore pressures 
+                                                                                                                                  
+Read_Elements_From_MESH                          [v1.1,  15 August    2009]                                                       
+:::::   Read the element data from the <ELEME> block of the file <MESH>                                                           
+                                                                                                                                  
+Time_Series_Printouts                            [v1.0,  29 September 2007]                                                       
+:::::   Determine element, connection or source/sink numbers for time-series printouts                                            
+                                                                                                                                  
+Read_Connections_From_MESH                       [v1.0,  20 August    2007]                                                       
+:::::   Read the connection data from the <CONNE> block of the file <MESH>                                                        
+                                                                                                                                  
+Initialize_Perm_Modifiers                        [v1.0,   2 April     2007]                                                       
+:::::   Initialize block-by-block permeability modifiers                                                                          
+                                                                                                                                  
+Read_Generic_File_GENER                          [v1.0,   8 March     2007]                                                       
+:::::   Read the sink/source data from file GENER (generic)                                                                       
+                                                                                                                                  
+Read_Initial_Conditions_File                     [v1.0,   1 October   2007]                                                       
+:::::   Read the initial condition data directly from the file <INCON>                                                            
+                                                                                                                                  
+Set_Solver_Options                               [v1.0,   3 July      2006]                                                       
+:::::   Initialize parameters for the solver package, and generate informative printout                                           
+                                                                                                                                  
+Solver_Memory_Allocation                         [v1.0,  27 April     2007]                                                       
+:::::   Allocate memory to the Jacobian  and solution matrix arrays                                                               
+                                                                                                                                  
+Deallocate_Unneeded_Arrays                       [v1.0,  27 April     2003]                                                       
+:::::   Deallocation of memory from all temporary and unnecessary arrays                                                          
+                                                                                                                                  
+Write_More_Generic_Info                          [v1.0,  23 April     2007]                                                       
+:::::   Routine for printing additional information in the output file                                                            
+                                                                                                                                  
+Write_EOS_Specific_Info                          [v1.0,  23 April     2006]                                                       
+:::::   Routine for printing additional EOS-specific information in the standard TOUGH+ output file                               
+                                                                                                                                  
+Simulation_Cycle                                 [v1.0,  18 August    2007]                                                       
+:::::   Executive routine that performs the simulation while marching in time                                                     
+                                                                                                                                  
+Equation_of_State                                [v1.0,  12 June      2006]                                                       
+:::::   Selects the appropriate version of the equation of state (for kinetic or equilibrium hydrate reaction)                    
+                                                                                                                                  
+Hydrate_Equilibrium_Pressure                     [v1.0,   9 May       2006]                                                       
+:::::   Equilibrium CH4 hydration pressure for a given temperature                                                                
+                                                                                                                                  
+Gas_Compressibility                              [v1.0,   9 April     2004]                                                       
+:::::   Computation of the compressibility factor Z and density of a real gas                                                     
+                                                                                                                                  
+A_PR                                             [v1.0,   4 April     2004]                                                       
+:::::   Compute the "alfa" parameters of the Peng-Robinson EOS of real gases                                                      
+                                                                                                                                  
+HUS_Departure                                    [v1.0,  11 April     2004]                                                       
+:::::   Computation of the enthalpy, internal energy and entropy departures of real gases                                         
+                                                                                                                                  
+EOS_Equilibrium                                  [v1.0,  12 June      2006]                                                       
+:::::   Selection of the appropriate state in the H2O + CH4 + Hydrate system - Equilibrium reaction                               
+                                                                                                                                  
+Initial_State_Assignment_Eql                     [v1.0,  29 September 2006]                                                       
+:::::   Initial assignment of state and thermophysical properties in a hydrate system - Equilibrium reaction                      
+                                                                                                                                  
+Hydrate_Equilibrium_Temperature                  [v1.5,  20 January   2007]                                                       
+:::::   Equilibrium CH4 hydration temperature for a given pressure                                                                
+                                                                                                                                  
+Hydrate_Enthalpy_Density                         [v1.0,   6 May       2007]                                                       
+:::::   Density and internal energy of solid hydrate                                                                              
+                                                                                                                                  
+Equilibrium_Hydration                            [v1.0,  18 January   2007]                                                       
+:::::   Determine the hydration equilibrium pressure, dissolved mass/mole fractions and T-shift                                   
+                                                                                                                                  
+Henrys_Constant                                  [v1.0,  24 March     2004]                                                       
+:::::   Calculate the temperature-dependent Henry’s constant for the dissolution of a non-condensible gas in water                
+                                                                                                                                  
+Phases2_AqH_Eql                                  [v1.0,  29 January   2007]                                                       
+:::::   Computes the secondary variables under 2-phase (Aqueous+Hydrate) conditions in a hydrate system - Equilibrium hydrate reac
+                                                                                                                                  
+T_Fusion_H2O_S                                   [v1.0   25 October   2006]                                                       
+:::::   Water fusion temperature as a function of temperature (scalar)                                                            
+                                                                                                                                  
+UHRho_Liquid_H2O                                 [v1.0,  19 April     2003]                                                       
+:::::   Liquid water density, internal energy and enthalpy versus temperature and pressure                                        
+                                                                                                                                  
+Viscosity_H2O                                    [v1.0,   9 April     2003]                                                       
+:::::   Viscosity of water (liquid or vapor) as a function of temperature and density (extended P-T range)                        
+                                                                                                                                  
+Ideal_Gas_HU                                     [v1.0,  11 April     2004]                                                       
+:::::   Computation of the ideal enthalpy and internal energy of ideal gases                                                      
+                                                                                                                                  
+Gas_Solution_Heat                                [v1.0,  24 March     2004]                                                       
+:::::   Heat of solution of non-condensible gas into water as a function of temperature and salt mole fraction                    
+                                                                                                                                  
+Hydrate_Dissociation_Heat                        [v1.0,   3 May       2007]                                                       
+:::::   Heat of dissociation of the CH4 hydrate pressure for a given temperature                                                  
+                                                                                                                                  
+Phase1_Aqu_Eql                                   [v1.0,  29 January   2007]                                                       
+:::::   Computes the secondary variables under 1-phase (aqueous) conditions in a hydrate system - Equilibrium hydrate reaction    
+                                                                                                                                  
+P_Sat_H2O_S                                      [v1.0,  18 October   2006]                                                       
+:::::   Water saturation pressure as a function of temperature (scalar)                                                           
+                                                                                                                                  
+Dissolved_CH4_Properties                         [v1.0,  18 January   2007]                                                       
+:::::   Determine dissolved mass/mole fractions and T-shift at the partial pressure P_CH4                                         
+                                                                                                                                  
+Wettability                                      [v1.0   05 January   2007]                                                       
+:::::     Compute wettability properties (rel. permeability and capillary pressure) of hydrate-bearing system                     
+          Scale capillary pressures and adjust intrinsic permeability to account for the effect of solid phases (EPM models)      
+          Adjust diffusion coefficients by the relative permeabilities                                                            
+                                                                                                                                  
+Capillary_Pressure_2Phase                        [v1.0,  12 January   2007]                                                       
+:::::   2-phase capillary pressure as function of saturation                                                                      
+                                                                                                                                  
+Permeability_Factor                              [v1.0   04 January   2007]                                                       
+:::::     Compute the adjustment factor of intrinsic permeability due to solid phases (EPM models)                                
+                                                                                                                                  
+Hydraulic_Property_Changes                       [v1.1   14 August    2009]                                                       
+:::::     Transient porosity and permeability as a function of P, T, stress and strain                                            
+                                                                                                                                  
+Mass_and_Energy_Balance                          [v1.1,  12 August    2009]                                                       
+:::::   Perform summary balances for volume, mass, and energy                                                                     
+                                                                                                                                  
+JACOBIAN_SetUp                                   [v1.0,  24 November  2007]                                                       
+:::::   Assemble all accumulation and flow terms; Populate the Jacobian matrix - Hydrate-bearing system                           
+                                                                                                                                  
+Thermal_Conductivity_HydrateBM                   [v1.0,   9 September 2003]                                                       
+:::::   Composite thermal conductivity of a hydrate-bearing porous medium                                                         
+                                                                                                                                  
+CPU_Elapsed_Time                                 [v1.0,  15 February  2007]                                                       
+:::::   Compute elapsed CPU time                                                                                                  
+                                                                                                                                  
+Solve_Jacobian_Matrix_Equation                   [v1.0   24 August    2007]                                                       
+:::::   Solves the Jacobian matrix equation through an interface with linear equation solvers                                     
+        Can call a direct solver or a package of conjugate gradient solvers                                                       
+                                                                                                                                  
+Preprocessor_Memory_Allocation                   [v1.0,  27 April     2007]                                                       
+:::::   Allocate memory to arrays for matrix preprocessing                                                                        
+                                                                                                                                  
+Phases3_AGH_Eql                                  [v1.0,  29 January   2007]                                                       
+:::::   Computes the secondary variables under 3-phase (Aqueous+Gas+Hydrate) conditions in a hydrate system - Equilibrium hydrate 
+                                                                                                                                  
+Gas_Viscosity                                    [v1.0,  11 April     2004]                                                       
+:::::   Viscosity of a real gas mixture - Method of Chung et al. (1984;1988)                                                      
+                                                                                                                                  
+Relative_Permability_2Phase                      [v1.0,  19 January   2007]                                                       
+:::::   2-phase relative permeability as a function of saturation (scalar version)                                                
+                                                                                                                                  
+Upon_Convergence_H                               [v1.0,  12 November  2007]                                                       
+:::::   Update primary variables and select timestep after convergence of the NI iterations (hydrate-specific)                    
+                                                                                                                                  
+Tabulate_Time_Series_Data_H                      [v1.1,  27 December  2007]                                                       
+:::::   Tabulate element, connection, and generation data vs. time for plotting in a hydrate system                               
+                                                                                                                                  
+Phases2_AqG_Eql                                  [v1.0,  29 January   2007]                                                       
+:::::   Computes the secondary variables under 2-phase (Aqueous+Gas) conditions in a hydrate system - Equilibrium hydrate reaction
+                                                                                                                                  
+Phase1_Gas_Eql                                   [v1.0,  29 January   2007]                                                       
+:::::   Computes the secondary variables under 1-phase (GasPhase) conditions in a hydrate system - Equilibrium hydrate reaction   
+                                                                                                                                  
+Timestep_Reduction                               [v1.0,  18 December  2007]                                                       
+:::::   Routine to reduce the timestep size                                                                                       
+                                                                                                                                  
+Print_Standard_Output                            [v1.1,  15 August    2009]                                                       
+:::::   Print results for elements, connections, and sinks & sources in the standard TOUGH+ output file                           
+                                                                                                                                  
+Write_File_SAVE                                  [v1.1,  14 August    2009]                                                       
+:::::   At the completion of a TOUGH+ run, write primary variables into file "SAVE"                                               
+
+
+************************************************************************************************************************************
+
+
+ END OF TOUGH+ SIMULATION RUN:     Elapsed Time             =  7.03000000E-01 sec
+                                   Data Input Time          =  6.20000000E-02 sec
+                                   Calculation Time         =  6.41000000E-01 sec
+                                        Matrix Solving Time =  6.20000000E-02 sec

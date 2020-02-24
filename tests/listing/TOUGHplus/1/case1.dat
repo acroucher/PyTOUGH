@@ -1,0 +1,1870 @@
+
+ ===================================================================================================================================
+
+     PROBLEM TITLE:  3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+
+ 
+       @@@@@   @@   @  @   @@@  @  @    @         @@@  @  @   @  @  @  @      @@   @@@@@  @   @@   @   @     @@@   @  @  @   @
+         @    @  @  @  @  @     @  @    &        @     @  @@ @@  @  @  @     @  @    @    @  @  @  @@  @     @  @  @  @  @@  @
+         @    @  @  @  @  @ @@  @@@@  @@@@@       @@   @  @ @ @  @  @  @     @@@@    @    @  @  @  @ @ @     @@@   @  @  @ @ @
+         @    @  @  @  @  @  @  @  @    &           @  @  @   @  @  @  @     @  @    @    @  @  @  @  @@     @ @   @  @  @  @@
+         @     @@    @@    @@@  @  @    @        @@@   @  @   @   @@   @@@@  @  @    @    @   @@   @   @     @  @   @@   @   @
+
+
+                    TOUGH+ IS A PROGRAM FOR MULTIPHASE MULTICOMPONENT FLOW IN PERMEABLE MEDIA, INCLUDING HEAT FLOW.
+                        IT REPRESENTS THE NEXT GENERATION OF THE TOUGH2 [PRUESS et al., 1999] FAMILY OF CODES
+                                       DEVELOPED AT THE LAWRENCE BERKELEY NATIONAL LABORATORY
+
+************************************************************************************************************************************
+
+                   TOUGH+ v1.1 WAS DEVELOPED BY MORIDIS et al. [2009] AT THE LAWRENCE BERKELEY NATIONAL LABORATORY
+                       IT WAS WRITTEN IN FORTRAN 95/2003, AND IS BACKWARD COMPATIBLE WITH TOUGH2 INPUT FILES
+
+
+                          ********************************************************************************
+                          ********************                                        ********************
+                          ********************       TOUGH+ V1.1 (AUGUST  2009)       ********************
+                          ********************                                        ********************
+                          ********************************************************************************
+
+        Copyright 2009 by The Regents of the University of California (subject to approval by the U.S. Department of Energy).
+
+ NOTICE: This software was developed under funding from the U.S. Department of Energy and the U.S. Government consequently retains
+ certain rights as follows: the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive,
+ irrevocable, worldwide license in the software to reproduce, prepare derivative works, and perform publicly and display publicly.
+ Beginning five (5) years after the date permission to assert copyright is obtained from the U.S. Department of Energy, and subject
+ to any subsequent five (5) year renewals, the U.S. Government is granted for itself and others acting on its behalf a paid-up,
+ nonexclusive, irrevocable, worldwide license in the software to reproduce, prepare derivative works, distribute copies to the
+ public, perform publicly and display publicly, and to permit others to do so.
+
+
+ PARAMETERS FOR DYNAMIC DIMENSIONING OF MAJOR ARRAYS (MAIN PROGRAM) ARE AS FOLLOWS
+
+         Max_NumElem              =      32
+         Max_NumConx              =      32
+         Max_NumEquations         =       4
+         Max_NumMassComp          =       3
+         Max_NumPhases            =       4
+         Max_NumSS                =       4
+         accounting_for_diffusion =       F
+         NumAuxParam              =       1
+
+
+         element_by_element_properties =  F
+         porosity_perm_dependence      =  T
+         scaled_capillary_pressure     =  F
+
+         coupled_geochemistry          =  F      geochemical_property_update   = "N"
+         coupled_geomechanics          =  F      geomechanical_property_update = "N"
+         number_of_geomech_parameters  =  0      geomechanical_code_name       = "      "
+
+
+===================================================================================================================================
+
+ MAXIMUM NUMBER OF VOLUME ELEMENTS (GRID BLOCKS)   :         Max_NumElem        =       32
+ MAXIMUM NUMBER OF CONNECTIONS (INTERFACES)        :         Max_NumConx        =       32
+ MAXIMUM LENGTH OF PRIMARY VARIABLE ARRAYS         :         Max_NumPrimaryVar  =      128
+ MAXIMUM NUMBER OF GENERATION ITEMS (SINKS/SOURCES):         Max_NumSS          =        4
+ MAXIMUM NUMBER OF POROUS/FRACTURED MEDIA:                   Max_NumMedia       =        6
+
+ ===================================================================================================================================
+
+ Array dimensioning is dynamic.  The use of direct solvers will reduce the size of the maximum solvable problem
+
+
+ SUMMARY OF DISK FILES
+
+ File <VERS> does not exist ==> Open as a new file
+ File <MESH> does not exist ==> Open as a new file
+ File <INCON> does not exist ==> Open as a new file
+ File <GENER> does not exist ==> Open as a new file
+ File <SAVE> does not exist ==> Open as a new file
+ File <LINEQ> does not exist ==> Open as a new file
+ File <LINEQ> does not exist ==> Open as a new file
+
+ Domain No:  1     Material Name : MHBL_
+
+ Domain No:  2     Material Name : OVERB
+
+ Domain No:  3     Material Name : TOPBD
+
+ Domain No:  4     Material Name : INTER
+
+ FILE <Hydrate_Info> DOES NOT EXIST ==> OPEN AS A NEW FILE
+
+
+**********************************************************************************************************************************
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                     H Y D R A T E - R E L A T E D   I N F O R M A T I O N                                      *
+*                                                                                                                                *
+**********************************************************************************************************************************
+**********************************************************************************************************************************
+
+
+
+    HYDRATE COMPOSITION
+
+         Number of Components of the Composite Gas Hydrate = 1
+
+         The components are:
+
+              Component #1:   CH4-Hydrate
+                   Hydration number                       = 6.000E+00
+                   Mole Fraction in the composite hydrate = 1.00000E+00
+                   Molecular weight of component hydrate  = 1.24133E+02 g/mol
+
+
+    PROPERTIES OF THE COMPOSITE HYDRATE
+
+         MOLECULAR WEIGHT = 1.24133E+02 g/mol
+
+         THERMAL CONDUCTIVITY FUNCTION F_ThC = F(T)
+              Number of coefficients <GH%N_ThC> in the F(T) = A0+A1*T+A2*T^2+...+Am*T^m polynomial =  1
+
+              Coefficients Am = <GH%p_ThC> [ m = 0,...,GH%N_ThC - 1 ] => Units: W/m/C^(m+1) 
+              A0 =  4.50000E-01;  A
+
+         SPECIFIC HEAT FUNCTION F_SpH = F(T)
+              Number of coefficients <GH%N_SpH> in the F(T) = A0+A1*T+A2*T^2+...+Am*T^m polynomial =  1
+
+              Coefficients Am = <GH%p_SpH> [ m = 0,...,GH%N_SpH - 1 ] => Units: J/kg/C^(m+1) 
+              A0 =  2.10000E+03;  A
+
+         DENSITY FUNCTION F_Rho = F(T) 
+              Number of coefficients <GH%N_Rho> in the F(T) = A0+A1*T+A2*T^2+...+Am*T^m polynomial =  1
+
+              Coefficients Am = <GH%p_Rho> [ m = 0,...,GH%N_Rho - 1] => Units: kg/m^3/C^m 
+              A0 =  9.20000E+02;  A
+
+         INHIBITOR-INDUCED TEMPERATURE SHIFT IN THE EQUILIBRIUM HYDRATION CURVE (Salt or Alcohol)
+              Flag indicating presence of inhibitor <inhibitor_present>        =  T (T:True, F:False)
+              Maximum temperature shift <Max_TShift>                           =  2.00000E+00 (degrees C or K)
+              Mole fraction <Y_atMax_TShift> at which <Max_TShift> occurs      =  1.33500E-02
+              Molecular weight of the inhibitor <InhibitorMW>                  =  5.84480E+01 (g/mol)
+              Density of the inhibitor <InhibitorDens>                         =  2.60000E+03 (kg/m^3)
+              Enthalpy of inhibitor dissolution <InhibitorEnthSol>             =  6.64790E+04 (J/kg)
+              A0 coefficient of the quadratic equation Cp = A0 + A1*T + A2^T^2 =  4.12930E+01 (J/mol/K)
+              A1 coefficient of the quadratic equation Cp = A0 + A1*T + A2^T^2 =  3.36070E-02 (J/mol/K^2)
+              A2 coefficient of the quadratic equation Cp = A0 + A1*T + A2^T^2 = -1.39270E-05 (J/mol/K^3)
+
+         HYDRATION EQUATIONS OPTION NUMBER <EquationOption> = 2
+              Flag for selecting the equations used for (a) the hydration P-T and (b) H-T relationhips
+               = 0: Extended forms of the Moridis [2003] equations are used (DEFAULT)
+               = 1: The Kamath [1984] equations are used
+               = 2: The P-T relationship is from Moridis [2003], while the H-T relationship is from Kamath [1984] 
+
+
+
+    TYPE OF HYDRATE FORMATION OR DISSOCIATION : E Q U I L I B R I U M
+
+
+
+**********************************************************************************************************************************
+**********************************************************************************************************************************
+
+     
+ Write file <MESH> from input data
+     
+ Write file <GENER> from input data
+     
+ Write file <INCON> from input data
+ 
+                       **************************************************************************************
+                       *                                                                                    *
+                       *     Comments in Input Data (have encountered   6 records with unknown keywords)    *
+                       *                              (Print up to 50 of them)                              *
+                       *                                                                                    *
+                       **************************************************************************************
+                       *                                                                                    *
+                       *  ----*----1 MOP: 123456789*123456789*1234 ---*----5----*----6----*----7----*----8  *
+                       *                                                                                    *
+                       *                                                                                    *
+                       *                                                                                    *
+                       *  			                                                                               *
+                       *                                                                                    *
+                       *                                                                                    *
+                       **************************************************************************************
+
+                        ************************************************************************************
+                        *                       EVALUATE FLOATING POINT ARITHMETIC                         *
+                        ************************************************************************************
+                        *                                                                                  *
+                        *         FLOATING POINT PROCESSOR HAS APPROXIMATELY 15 SIGNIFICANT DIGITS         *
+                        *                                                                                  *
+                        *               The default value of increment factor for numerical                *
+                        *                   derivatives is <derivative_increment> = 1.4901E-08             *
+                        *                                                                                  *
+                        *          User-specified value <derivative_increment> =  1.0000E-08 will be used  *
+                        *                                                                                  *
+                        ************************************************************************************
+
+ File <Plot_coord> exists ==> Open as an old file
+ File <Plot_Data_> exists ==> Open as an old file
+ File <Plot_Data_> exists ==> Open as an old file
+ 
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*        The number of active dimensions <NumActiveDimensions> = 1                                                               *
+*                                                                                                                                *
+*        The numbers of connections in the X-, Y- and Z-directions are      0,      0 and     21 respectively                    *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+
+ 
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   Summary of capabilities for random permeability modification   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ Modification of absolute permeability on a grid block-by-grid block basis will be made when a domain "SEED " is present in data
+ block "ROCKS", as follows:
+                                    k    ===>    k = k*m
+
+ Here, k is the absolute permeability specified for the reservoir domain to which the grid block belongs. Parameter m is a
+ "permeability modifier" which can be internally generated or externally prescribed by the user on a block-by-block basis.
+
+ When permeability modification is in effect, the strength of capillary pressure will automatically be
+ scaled as: Pcap ===> Pcap = Pcap/SQRT(m) following Leverett (1941). 
+
+ User-supplied permeability modifiers have to be entered as parameter "PMX" in columns 41-50 of an ELEMEnt record.
+ Permeability modification options are selected through parameters in data block "ROCKS".
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ Summary of available permeability modification options
+
+      (with s: random number between 0 and 1; PMX: user-supplied modifiers in data block "ELEME"):
+      (1) externally supplied:        m = PMX - PER(2)
+      (2) "Linear"      (DROK /= 0):  m = PER(1) * s - PER(2)
+      (3) "Logarithmic" (DROK == 0):  m = exp(- PER(1) * s) - PER(2)
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+            &&&& If a domain  "SEED " is present, permeability modification will be made
+            &&&& If no domain "SEED " is present, no permeability modification will be made
+
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>  domain = "SEED " is not present, no permeability modification will be made  <<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ Data provided in domain "SEED " are used to select the following options:
+
+ DROK   = *** random number seed for internal generation of "linear" permeability modifiers.
+        = 0: No internal generation of "linear" permeability modifiers (DEFAULT).
+        > 0: Perform "linear" permeability modification; random modifiers are generated internally with DROK as seed.
+
+ POR    = *** random number seed for internal generation of "logarithmic" permeability modifiers,
+        = 0: No internal generation of "logarithmic" permeability modifiers (DEFAULT).
+        > 0: Perform "logarithmic" permeability modification; random modifiers are generated internally with POR as seed.
+
+      &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+      &&&&&  Note: If both DROK and POR are specified as non-zero, DROK takes precedence                                   &&&&&
+      &&&&&        If both DROK and POR are zero, permeability modifiers as supplied through "ELEME" data will be used     &&&&&
+      &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ PER(1) = *** scale factor (optional) for internally generated permeability modifiers
+        = 0: (defaults to PER(1) = 1): permeability modifiers are generated as random numbers in the interval (0,1)
+        > 0: permeability modifiers are generated as randomnumbers in the interval (0, PER(1))
+
+ PER(2) = *** Shift (optional) for internal or external permeability modifiers
+        = 0: No shift is applied to permeability modifiers (DEFAULT). 
+        > 0: Permeability modifiers are shifted according to: m = m - PER(2). All m < 0 are set equal to zero.
+
+
+ MESH HAS     22 ELEMENTS (     22 ACTIVE) AND     21 CONNECTIONS (INTERFACES) BETWEEN THEM
+ GENER HAS     0 SINKS/SOURCES
+ 
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                           M A T R I X   S O L V E R   A N D   R E L E V A N T   I N F O R M A T I O N                          *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+    The solver is determined from MOP(21)
+
+    The solution method indicator <MatrixSolver> =  3
+         <MatrixSolver> = 1: SUBROUTINE LUBAND - Direct solver using LU decomposition 
+         <MatrixSolver> = 2: SUBROUTINE DSLUBC - BI-CONJUGATE GRADIENT SOLVER
+                                                 Incomplete LU factorization preconditioning
+         <MatrixSolver> = 3: SUBROUTINE DSLUCS (DEFAULT) - Lanczos-type Conjugate Gradient Squared solver 
+                                                           Incomplete LU factorization preconditioning
+         <MatrixSolver> = 4: SUBROUTINE DSLUGM - Generalized Minimum Residual Conjugate Gradient solver
+                                                 Incomplete LU factorization preconditioning
+         <MatrixSolver> = 5: SUBROUTINE DLUSTB - STABILIZED BI-CONJUGATE GRADIENT SOLVER 
+                                                 Incomplete LU factorization preconditioning
+
+    <Max_CGIterationRatio>: Maximum # of CG iterations as fraction of the total number of equa=  1.00000E-01
+         (0.0 < Max_CGIterationRatio <= 1.0,   Default = 0.1)
+
+    <CG_convergence_crit>: Convergence criterion for the CG iterations                        =  1.00000E-06
+         (1.0e-12 <= CG_convergence_crit <= 1.0e-6,  Default = 1.0e-6)
+
+    <Max_NumCGIterations>: Maximum # of CG iterations - not to exceed the total number of equa=    20matrix_order> 
+         (20 < Max_NumCGIterations <= matrix_order)
+
+
+    The matrix Z-preprocessing system is <Z_preprocessing> = Z1
+
+         <Z_preprocessing> = Z0: No Z-preprocessing; default for NumEqu = 1 and for <MatrixSolver> = 1
+         <Z_preprocessing> = Z1: Replacement of zeros on the main-diagonal by a small number; 
+                                 default for NumEqu > 1 and for 1 < MatrixSolver < 5
+         <Z_preprocessing> = Z2: Linear combination of equations in each element to produce non-zero main diagonal entries
+         <Z_preprocessing> = Z3: Normalization of equations, followed by Z2
+         <Z_preprocessing> = Z4: Same as in <O_preprocessing> = O4
+
+
+    The matrix O-preprocessing system is <O_preprocessing> = O0
+
+         <O_preprocessing> = O0: No O-preprocessing; default for NumEqu = 1 and for <MatrixSolver> = 1
+         <O_preprocessing> = O1: Elimination of lower half of the main-diagonal submatrix with center pivoting
+         <O_preprocessing> = O2: O1+Elimination of upper half of the main-diagonal submatrix with center pivoting
+         <O_preprocessing> = O3: O2+Normalization - Results in unit main-diagonal submatrices 
+         <O_preprocessing> = O4: pre-processing which results in unit main-diagonal submatrices without center pivoting
+
+ ===================================================================================================================================
+
+ Maximum number of Jacobian matrix elements:                 Max_NumNonZeros  =     1536
+
+ Large linear equation arrays - Length of "Row", "Col" and "CO" is             "Max_NumNonZeros+1"      =       1537
+
+ Maximum length of the Conjugate Gradient REAL*8 work array "real_work_array" is "real_work_array_size" =       3816
+ Maximum length of the Conjugate Gradient integer array "intg_work_array is" "intg_work_array_size"     =       2276
+
+ ===================================================================================================================================
+
+
+ END OF TOUGH+ INPUT JOB: Elapsed Time =  2.49000000E-01 seconds
+
+ 
+ ***********************************************************************************************************************************
+ *          ARRAY "MOP" ALLOWS TO GENERATE MORE PRINTOUT IN VARIOUS SUBROUTINES, AND TO MAKE SOME CALCULATIONAL CHOICES            *
+ ***********************************************************************************************************************************
+
+   MOP(1)  = 1 ==> ALLOWS TO GENERATE A SHORT PRINTOUT FOR EACH NEWTON-RAPHSON ITERATION
+           = 0, 1, OR 2: Generate 0, 1, or 2 lines of printout
+
+            More printout is generated for MOP(i) > 0 in the following subroutines (the larger the MOP value is, the more data will be printed)
+
+   MOP(2)  = 0 ==> CYCIT;  MOP(3) = 0 ==> MULTI;  MOP(4) = 0 ==> QU;  MOP(5) = 3 ==> EOS;  MOP(6) = 0 ==> LINEQ   
+
+   MOP(7)  = 0 ==> IF UNEQUAL ZERO, THE RUN WILL GENERATE A PRINTOUT OF INPUT DATA
+
+            CALCULATIONAL CHOICES OFFERED BY MOP ARE AS FOLLOWS:
+
+   MOP(8)  = 4 ==> METHODS FOR RELATIVE PERMEABILITY AND CAPILLARY PRESSURE ESTIMATION IN THE PRESSENCE OF SOLID PHASES
+           = 0: Relative permeability model based on the Original Porous Medium (OPM) concept, scaling of capillary pressures (EPM #1)
+           = 1: Relative permeability model based on the Evolving Porous Medium (EPM) #1 concept, scaling of capillary pressures (EPM #1)
+           = 2: Relative permeability model based on the Evolving Porous Medium (EPM) #2 concept, scaling of capillary pressures (EPM #2)
+           = 3: Relative permeability model based on the Evolving Porous Medium (EPM) #1 concept, no scaling of capillary pressures 
+           = 4: Relative permeability model based on the Evolving Porous Medium (EPM) #2 concept, no scaling of capillary pressures 
+           = 9: Relative permeability model based on the Original Porous Medium (OPM) concept, no scaling of capillary pressures
+
+   MOP(9)  = 0 ==> CHOOSES FLUID COMPOSITION ON WITHDRAWAL (PRODUCTION)
+           = 0: According to relative mobilities
+           = 1: According to composition in producing element
+
+   MOP(10) = 0 ==> CHOOSES INTERPOLATION FORMULA FOR DEPENDENCE OF THERMAL CONDUCTIVITY ON PHASE SATURATIONS 
+           = 0: k = k_dry + [sqrt(S_aqu) + sqrt(S_hyd)]*(k_wet - k_dry) + phi*S_ice*k_ice
+           = 1: k = k_dry + (S_aqu + S_hyd)*(k_wet - k_dry) + phi*S_ice*k_ice
+           = 2: k computed from component thermal conductivities (gas contribution is neglected)
+           = 3: k computed from all component thermal conductivities (gas contribution is included)
+
+   MOP(11) = 2 ==> CHOOSES EVALUATION OF MOBILITY AND ABSOLUTE PERMEABILITY AT INTERFACES 
+           = 0: Mobilities are upstream weighted with <W_upstream> (default is 1.0). Permeability is upstream weighted
+           = 1: Mobilities are averaged between adjacent elements. Permeability is upstream weighted
+           = 2: Mobilities are upstream weighted with <W_upstream> (default is 1.0). Permeability is harmonic weighted,
+           = 3: Mobilities are averaged between adjacent elements. Permeability is harmonic weighted
+           = 4: Mobility * permeability product is harmonic weighted
+
+   MOP(12) = 0 ==> CHOOSES PROCEDURE FOR INTERPOLATING GENERATION RATES FROM A TIME TABLE.
+           = 0: Triple linear interpolation
+           = 1: "Step function" option 
+
+   MOP(13) = 2 ==> CHOOSES METHOD OF PERMEABILITY ADJUSTMENT IN CASES OF VARIABLE POROSITY AND/OR GEOMECHANICAL CHANGES
+           = 0: No permeability adjustment
+           = 1: Permeability adjusted according to an empirical exponential model
+           = 2: Permeability adjusted according to a full geomechanical model
+
+   MOP(14) = 1 ==> SPECIFIES THE HANDLING OF GAS SOLUBILITY
+           = 0: Use Henry's constants (T-indepenent)
+           = 1: Use appropriate equations of Henry's constants (T-depenent)
+           > 1: Use fugacities (T- and P-depenent)
+
+   MOP(15) = 0 ==> ALLOWS TO SELECT A SEMI-ANALYTICAL HEAT EXCHANGE CALCULATION WITH CONFINING BEDS
+           = 0: No semi-analytical heat exchange
+           > 0: Semi-analytical heat exchange engaged (when a special sub-routine 'qloss' is present)
+
+   MOP(16) = 4 ==> PERMITS TO CHOOSE TIME STEP SELECTION OPTION
+           = 0: Use time steps explicitly provided as input
+           > 0: Increase time step by at least a factor 2, if convergence occurs in < MOP(16) iterations
+
+   MOP(17) = 0 ==> SPECIFIES THE HANDLING OF BINARY GAS DIFFUSIVITIES
+           = 0: Compute using the method of Fuller et al. [1969]
+           > 7: Adjust for high pressures using the method of Riazi and Whitson [1993]
+
+   MOP(18) = 0 ==> ALLOWS TO SELECT HANDLING OF INTERFACE DENSITY
+           = 0: Perform upstream weighting for interface density
+           > 0: Compute interface density as average of the two grid block densities
+                however, when one of the two phase saturations is zero, do upstream weighting
+
+   MOP(19) = 8 ==> CONTROLS THE TYPE(S) OF OUTPUT
+           < 8: The run produces a standard TOUGH+ output
+           = 8: In addition to the standard TOUGH+ output, the run produces the files "Plot_Data_Elem" and "Plot_Data_Conx" 
+                (of the most important element and connection variables) in plotter-ready format
+           = 9: No standard TOUGH+ output - The run produces only the files "Plot_Data_Elem" and "Plot_Data_Conx" 
+                (of the most important element and connection variables) in plotter-ready format
+
+   MOP(20) = 0 ==> CONTROLS THE CHECKING OF INITIAL CONDITIONS 
+
+           < 9: The initial conditions are checked to ensure physically meaningful primary variable values
+           = 9: No checking of initial conditions is performed 
+
+   MOP(21) = 3 ==> PERMITS TO SELECT LINEAR EQUATION SOLVER
+           = 0: DEFAULTS TO MOP(21) = 3
+           = 1: SUBROUTINE LUBAND: Direct solver using LU decomposition
+           = 2: SUBROUTINE DSLUBC: Bi-conjugate gradient solver; Preconditioner: Incomplete LU factorization
+           = 3: SUBROUTINE DSLUCS: Bi-conjugate gradient solver - Lanczos type; Preconditioner: Incomplete LU factorization
+           = 4: SUBROUTINE DSLUGM: Generalized minimum residual conjugate gradients; Preconditioner: Incomplete LU factorization
+           = 5: SUBROUTINE DLUSTB: Stabilized bi-conjugate gradient solver; Preconditioner: Incomplete LU factorization
+
+
+   MOP(22) = 0 ==> DETERMINES IF AN ADDITIONAL OUTPUT FILE OF max{P} WILL BE PRINTED
+           = 9: A time series of the maximum pressure in the domain and its location is printed in the file "MaxP_Time_Series"
+           < 9: No max{P} output is provided 
+
+   MOP(23) = 0 ==> Used in some EOS-modules for selecting different options
+
+
+   MOP(24) = 0 ==> PERMITS TO SELECT HANDLING OF MULTIPHASE DIFFUSIVE FLUXES AT INTERFACES
+           = 0: Harmonic weighting of fully-coupled effective multiphase diffusivity
+           = 1: Separate harmonic weighting of gas and liquid phase diffusivities
+
+ ***********************************************************************************************************************************
+ 
+ *******************************************************************************************************************************************
+ *      TOUGH+HYDRATE: EQUATION OF STATE FOR WATER, CH4 AND SALT MIXTURES DISTRIBUTED IN FOUR PHASES (AQUEOUS, GAS, HYDRATE AND ICE        *
+ *******************************************************************************************************************************************
+ *                                                                                                                                         *
+ *                      "EOS_Equilibrium":                                                                                                 *
+ *                             Equation of state for CH4 + H2O + Water distributed among 4 phases:                                         *
+ *                                 Gas, Aqueous, Hydrate, Ice (Equilibrium hydrate reaction)                                               *
+ *                      "EOS_Kinetic":                                                                                                     *
+ *                             Equation of state for CH4 + H2O + Water distributed among 4 phases:                                         *
+ *                                 Gas, Aqueous, Hydrate, Ice (Kinetic hydrate reaction)                                                   *
+ *                                                                                                                                         *
+ *******************************************************************************************************************************************
+ *                                                                                                                                         *
+ *                      "EOS_Equilibrium" + "EOS_Kinetic" were developed by G. Moridis at the Lawrence Berkeley National Laboratory        *
+ *                                                                                                                                         *
+ *                      References: (1) G. Moridis, "Numerical Studies of Gas Production From Methane Hydrates", 2003                      *
+ *                                  (2) G. Moridis, "TOUGH+HYDRATE v1.0 UserÕs Manual", Lawrence Berkeley National Laboratory,             *
+ *                                      Report LBNL-0149E, Berkeley, CA 2008                                                               *
+ *                                                                                                                                         *
+ *******************************************************************************************************************************************
+
+ OPTIONS SELECTED ARE: (NumCom, NumEqu, NumPhases, NumMobPhases, accounting_for_diffusion) = (3,4,4,2,F)
+
+                         NumCom                   =  3 - NUMBER OF FLUID COMPONENTS
+                         NumEqu                   =  4 - NUMBER OF EQUATIONS PER GRID BLOCK
+                         NumPhases                =  4 - NUMBER OF POSSIBLE PHASES 
+                         NumMobPhases             =  2 - NUMBER OF MOBILE PHASES
+                         accounting_for_diffusion =  F - FLAG INDICATING (when .TRUE.) CONSIDERATION OF MULTICOMPONENT/BINARY DIFFUSION
+
+ AVAILABLE OPTIONS ARE: (NumCom,NumEqu,NumPhases,NumMobPhases) = (2,3,4,2) - H2O, CH4, HYDRATE, NON_ISOTHERMAL, EQUILIBRIUM REACTION
+                                                                 (3,4,4,2) - H2O, CH4, HYDRATE, INHIBITOR, NON-ISOTHERMAL, EQUILIBRIUM REACTION
+                                                                 (3,4,4,2) - H2O, CH4, HYDRATE, NON-ISOTHERMAL, KINETIC REACTION
+                                                                 (4,5,4,2) - H2O, CH4, HYDRATE, INHIBITOR, NON-ISOTHERMAL, KINETIC REACTION
+
+ THE POSSIBLE PRIMARY VARIABLES ARE:
+
+                                P:   Pressure (Pa)
+                        Pg, P_gas:   Gas Pressure (Pa)
+                                T:   Temperature (C)
+                             X_mA:   Mass Fraction of CH4 Dissolved in the Aqueous Phase
+                             Y_mG:   Mole fraction of CH4 in the Gas Phase
+                        Sw, S_aqu:   Aqueous Phase Saturation
+                        Sg, S_gas:   Aqueous Phase Saturation
+                        Sh, S_hyd:   Hydrate Saturation
+                        Si, S_ice:   Ice Saturation
+                             X_iA:   Mass Fraction of Inhibitor Dissolved in the Aqueous Phase
+
+
+====================================================================================================================================
+
+ FOR (NumCom,NumEqu,NumPhases) = (2,3,4) - EQUILIBRIUM REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                              X1    X2   X3   X4  KEY  *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                             ------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS       P,  X_mA,  T,   -,  Aqu  *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  HEAT         *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS           Pg, Y_mG,  T,   -,  Gas  *
+ *                            *  *                            *   *                                                       *
+ *                            *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)          Pg,   Sw,  T,   -,  AqG  *
+ *                            *  *                            *   *                                                       *
+ ******************************  ******************************   *   2-PHASE (AQ.+HYDRATE)      P,    Sw,  T,   -,  AqH  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)          Pg,   Si,  T,   -,  IcG  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE)      P,    Si,  T,   -,  IcH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (AQ.+GAS+HYDRATE)  Sg,   Sw,  T,   -,  AGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (ICE+GAS+HYDRATE)  Sg,   Si,  T,   -,  IGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE)      Pg,   Sw,  Sg,  -,  AIG  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (HYDRATE+Aq.+ICE)  P,    Sw,  Si,  -,  AIH  *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT            Sg,   Sw,  Si,  -,  QuP  *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+ FOR (NumCom,NumEqu,NumPhases) = (3,4,4) - EQUILIBRIUM REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                              X1    X2   X3   X4  KEY  *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                             ------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS       P,  X_mA, x_iA,  T, Aqu  *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  INHIBITOR    *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS           Pg, Y_mG, x_iA,  T, Gas  *
+ *                            *  *                            *   *                                                       *
+ *       # 4  -  HEAT         *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)          Pg,   Sw, x_iA,  T, AqG  *
+ *                            *  *                            *   *                                                       *
+ ******************************  ******************************   *   2-PHASE (AQ.+HYDRATE)      Pg,   Sw, x_iA,  T, AqH  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)          Pg,   Si, x_iA,  T, IcG  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE)      P,    Si, x_iA,  T, IcH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (AQ.+GAS+HYDRATE)  Sg,   Sw, x_iA,  T, AGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (ICE+GAS+HYDRATE)  Sg,   Si, x_iA,  T, IGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE)      Pg,   Sw, x_iA,  T, AIG  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (HYDRATE+Aq.+ICE)  P,    Sw, x_iA, Si, AIH  *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT            Sg,   Sw, x_iA, Si, QuP  *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+ FOR (NumCom,NumEqu,NumPhases) = (3,4,4) - KINETIC REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                              X1    X2   X3   X4  KEY  *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                             ------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS       P,  X_mA,  Sh,   T, Aqu  *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  HYDRATE      *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS           Pg, X_mA,  Sh,   T, Gas  *
+ *                            *  *                            *   *                                                       *
+ *       # 4  -  HEAT         *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)          Pg,   Sw,  Sh,   T, AqG  *
+ *                            *  *                            *   *                                                       *
+ ******************************  ******************************   *   2-PHASE (AQ.+HYDRATE)      Pg,   Sw, x_mA,  T, AqH  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)          Pg,   Si,  Sh,   T, IcG  *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE)      P,    Si,  Sh,   T, IcH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (AQ.+GAS+HYDRATE)  Pg,   Sw,  Sg,   T, AGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (ICE+GAS+HYDRATE)  Pg,   Si,  Sh,   T, IGH  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE)      Pg,   Sw,  Sg,   T, AIG  *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (HYDRATE+Aq.+ICE)  P,    Sw,  Sh,   T, AIH  *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT            Pg,   Sw,  Sg,  Si, QuP  *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+ FOR (NumCom,NumEqu,NumPhases) = (4,5,4) - KINETIC REACTION
+
+ ******************************  ******************************   *********************************************************
+ *         COMPONENTS         *  *           PHASES           *   *   FLUID PHASE CONDITIONS       PRIMARY VARIABLES      *
+ ******************************  ******************************   *********************************************************
+ *                            *  *                            *   *                         X1   X2   X3    X4   X5   KEY *
+ *       # 1  -  H2O          *  *       # 1  -  GAS          *   *                         ----------------------------- *
+ *                            *  *                            *   *                                                       *
+ *       # 2  -  CH4          *  *       # 2  -  AQUEOUS      *   *   SINGLE-PHASE AQUEOUS  P,  X_mA, Sh,  X_iA,  T,  Aqu *
+ *                            *  *                            *   *                                                       *
+ *       # 3  -  HYDRATE      *  *       # 3  -  HYDRATE      *   *   SINGLE-PHASE GAS      Pg,  Sw,  Sh,  X_iA,  T,  Gas *
+ *                            *  *                            *   *                                                       *
+ *       # 4  -  INHIBITOR    *  *       # 4  -  ICE          *   *   2-PHASE (AQ.+GAS)     Pg,  Sw,  Sh,  X_iA,  T,  AqG *
+ *                            *  *                            *   *                                                       *
+ *       # 5  -  HEAT         *  ******************************   *   2-PHASE               Pg,  Sw, X_mA, X_iA,  T,  AqH *
+ *                            *                                   *   (AQ.+HYDRATE)                                       *
+ ******************************                                   *                                                       *
+                                                                  *   2-PHASE (ICE+GAS)     Pg,  Si,  Sh,  X_iA,  T,  IcG *
+                                                                  *                                                       *
+                                                                  *   2-PHASE (ICE+HYDRATE) P,   Si,  Sh,  X_iA,  T,  IcH *
+                                                                  *                                                       *
+                                                                  *   3-PHASE               Pg,  Sw,  Sg,  X_iA,  T,  AGH *
+                                                                  *   (AQ.+GAS+HYDRATE)                                   *
+                                                                  *                                                       *
+                                                                  *   3-PHASE               Pg,  Si,  Sh,  X_iA,  T,  IGH *
+                                                                  *   (ICE+GAS+HYDRATE)                                   *
+                                                                  *                                                       *
+                                                                  *   3-PHASE (GAS+AQ.+ICE) Pg,  Sw,  Sg,  X_iA,  T,  GAI *
+                                                                  *                                                       *
+                                                                  *   3-PHASE               P,   Sw,  Sh,  X_iA,  T,  HAI *
+                                                                  *   (HYDRATE+Aq.+ICE)                                   *
+                                                                  *                                                       *
+                                                                  *   QUADRUPLE POINT       Pg,  Sw,  Sg,  X_iA,  Si, QuP *
+                                                                  *   (AQ.+GAS+HYDRATE+ICE)                               *
+                                                                  *                                                       *
+                                                                  *********************************************************
+***************************************************************************************************************************
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [     0,      0]  =========             The time is  0.00000E+00 sec, or  0.00000E+00 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   0.00000000E+00   6.17400000E+04   1.02600000E+04   0.00000000E+00
+  MASS   (Kg)  |   0.00000000E+00   6.51837676E+07   9.51489385E+06   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   6.31760597E+07   5.21949483E+04   0.00000000E+00   1.95551303E+06
+                                              Hydrate       |   8.28518505E+06   1.22970880E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   7.14612447E+07   1.28190374E+06   0.00000000E+00   1.95551303E+06
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+ .... ITERATING:  At [     1, 1]: TimeStep =  1.000000E+02   MAX{Residual} =  1.028223E-03  at element "  a21   ", equation  2
+   a21   (     1, 2) Time = 1.000000E+02 Dt =  1.000000E+02 DX1 =  9.649403E+03 DX2= -4.096891E-04 DX3=  1.996063E-05 DX4=  2.332601E-02 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183965E+07  T =  1.662333E+01 Xi_A=  3.001996E-02 SG =  0.000000E+00 SA =  5.245903E-01 SH =  4.754097E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     2, 1]: TimeStep =  2.000000E+02   MAX{Residual} =  2.015163E-03  at element "  a21   ", equation  2
+ .... ITERATING:  At [     2, 2]: TimeStep =  2.000000E+02   MAX{Residual} =  1.388139E-04  at element "  a 2   ", equation  1
+   a21   (     2, 3) Time = 3.000000E+02 Dt =  2.000000E+02 DX1 =  2.750182E+04 DX2= -7.740597E-04 DX3=  3.782930E-05 DX4=  4.464500E-02 DX5= 
+ !  >>>>>>>>>>>      P    = 2.186715E+07  T =  1.666797E+01 Xi_A=  3.005779E-02 SG =  0.000000E+00 SA =  5.238163E-01 SH =  4.761837E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     3, 1]: TimeStep =  4.000000E+02   MAX{Residual} =  3.809385E-03  at element "  a21   ", equation  2
+ .... ITERATING:  At [     3, 2]: TimeStep =  4.000000E+02   MAX{Residual} =  4.022880E-04  at element "  a 2   ", equation  1
+ .... ITERATING:  At [     3, 3]: TimeStep =  4.000000E+02   MAX{Residual} =  1.921161E-06  at element "  a21   ", equation  2
+   a12   (     3, 4) Time = 7.000000E+02 Dt =  4.000000E+02 DX1 =  5.358736E+00 DX2= -1.565613E-12 DX3=  7.315982E-10 DX4= -6.645095E-06 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183001E+07  T =  1.659999E+01 Xi_A=  3.000000E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     4, 1]: TimeStep =  8.000000E+02   MAX{Residual} =  6.709373E-03  at element "  a21   ", equation  2
+ .... ITERATING:  At [     4, 2]: TimeStep =  8.000000E+02   MAX{Residual} =  8.869448E-04  at element "  a 2   ", equation  3
+   a21   (     4, 3) Time = 1.500000E+03 Dt =  8.000000E+02 DX1 =  1.055264E+05 DX2= -2.093547E-03 DX3=  1.033879E-04 DX4=  1.229344E-01 DX5= 
+ !  >>>>>>>>>>>      P    = 2.203124E+07  T =  1.687032E+01 Xi_A=  3.022817E-02 SG =  0.000000E+00 SA =  5.203575E-01 SH =  4.796425E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     5, 1]: TimeStep =  1.600000E+03   MAX{Residual} =  1.026388E-02  at element "  a21   ", equation  2
+ .... ITERATING:  At [     5, 2]: TimeStep =  1.600000E+03   MAX{Residual} =  1.710960E-03  at element "  a 2   ", equation  1
+ .... ITERATING:  At [     5, 3]: TimeStep =  1.600000E+03   MAX{Residual} =  8.325156E-06  at element "  a21   ", equation  2
+   a12   (     5, 4) Time = 3.100000E+03 Dt =  1.600000E+03 DX1 =  2.333701E+01 DX2= -1.590681E-12 DX3=  2.915277E-09 DX4= -2.648280E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183004E+07  T =  1.659995E+01 Xi_A=  3.000001E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     6, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  1.158678E-02  at element "  a21   ", equation  2
+ .... ITERATING:  At [     6, 2]: TimeStep =  3.200000E+03   MAX{Residual} =  2.897209E-03  at element "  a 2   ", equation  1
+ .... ITERATING:  At [     6, 3]: TimeStep =  3.200000E+03   MAX{Residual} =  6.438297E-05  at element "  a21   ", equation  2
+   a12   (     6, 4) Time = 6.300000E+03 Dt =  3.200000E+03 DX1 =  4.723315E+01 DX2= -1.628108E-12 DX3=  5.827617E-09 DX4= -5.293069E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183009E+07  T =  1.659990E+01 Xi_A=  3.000001E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     7, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  4.440361E-03  at element "  a21   ", equation  2
+ .... ITERATING:  At [     7, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  4.070312E-03  at element "  a 2   ", equation  3
+ .... ITERATING:  At [     7, 3]: TimeStep =  6.400000E+03   MAX{Residual} =  6.504091E-03  at element "  a21   ", equation  2
+ .... ITERATING:  At [     7, 4]: TimeStep =  6.400000E+03   MAX{Residual} =  2.387786E-05  at element "  a21   ", equation  3
+   a12   (     7, 5) Time = 1.270000E+04 Dt =  6.400000E+03 DX1 =  9.497775E+01 DX2= -2.275749E-12 DX3=  1.164970E-08 DX4= -1.058162E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183019E+07  T =  1.659979E+01 Xi_A=  3.000002E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     8, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  1.674986E-03  at element "  a 3   ", equation  1
+ .... ITERATING:  At [     8, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  4.294550E-03  at element "  a 2   ", equation  3
+ .... ITERATING:  At [     8, 3]: TimeStep =  6.400000E+03   MAX{Residual} =  5.505598E-06  at element "  a 2   ", equation  4
+   a12   (     8, 4) Time = 1.910000E+04 Dt =  6.400000E+03 DX1 =  1.395826E+02 DX2= -1.766804E-12 DX3=  1.140245E-08 DX4= -1.035729E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183032E+07  T =  1.659969E+01 Xi_A=  3.000003E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [     9, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  2.041851E-03  at element "  a 3   ", equation  1
+ .... ITERATING:  At [     9, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.701845E-03  at element "  a 3   ", equation  1
+ .... ITERATING:  At [     9, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.387254E-04  at element "  a 2   ", equation  4
+ .... ITERATING:  At [     9, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.944897E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [     9, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.944894E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [     9, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.944894E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [     9, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.944905E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [     9, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.944894E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [     9, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.944886E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (     9, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [     9, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  5.085782E-04  at element "  a 3   ", equation  1
+   a12   (     9, 2) Time = 2.230000E+04 Dt =  3.200000E+03 DX1 =  2.538137E+01 DX2= -6.295733E-13 DX3=  5.936181E-09 DX4= -5.400798E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183035E+07  T =  1.659963E+01 Xi_A=  3.000004E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    10, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.667037E-04  at element "  a 4   ", equation  1
+ .... ITERATING:  At [    10, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  4.156451E-04  at element "  a 4   ", equation  1
+   a12   (    10, 3) Time = 2.870000E+04 Dt =  6.400000E+03 DX1 =  7.449336E+01 DX2= -1.274156E-12 DX3=  1.174563E-08 DX4= -1.068115E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.183042E+07  T =  1.659953E+01 Xi_A=  3.000005E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [    11, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.396001E-03  at element "  a 4   ", equation  1
+ .... ITERATING:  At [    11, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.068039E-03  at element "  a 4   ", equation  1
+ .... ITERATING:  At [    11, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.970085E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [    11, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.974046E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [    11, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.974047E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [    11, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.974042E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [    11, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.974047E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [    11, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.974043E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [    11, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.974036E-06  at element "  a12   ", equation  3
+ 
+ 3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+          Output data after (   500,   3473) time steps ..................................................... The time is  2.75544E+01 days
+
+=======================================================================================================================================================
+ 
+  TOTAL TIME (s)  Timestep #  NR-iterations  Convergence      DX1M          DX2M          DX3M        Max Residual      NER      KER        TimeStep
+  2.38070E+06          500         3473           Y       3.709043E+02  4.965619E-08  1.149096E-08    9.703355E-07       12        3     6.400000E+03
+
+=======================================================================================================================================================
+ 
+ 
+   ELEM   INDEX    Pressure     Temperature  S_Hydrate   S_aqueous     S_gas       S_Ice         P_CH4        P_EqHydr       P_SatWat     X_Inhibitor
+                     (Pa)        (Deg. C)                                                        (Pa)           (Pa)           (Pa)         (kg/kg)
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  1.6650000E+07  2.30000E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  3.7888926E+06  7.2127876E+02  3.00000E-02
+     a 2      2  1.6914579E+07  8.10624E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8345687E+06  1.0808048E+03  3.00000E-02
+     a 3      3  1.7343136E+07  8.18281E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8906092E+06  1.0864480E+03  3.00000E-02
+     a 4      4  1.7772036E+07  8.18528E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8924282E+06  1.0866307E+03  3.00000E-02
+     a 5      5  1.8201407E+07  8.19038E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8961789E+06  1.0870072E+03  3.00000E-02
+     a 6      6  1.8631378E+07  8.19650E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9006878E+06  1.0874597E+03  3.00000E-02
+     a 7      7  1.9062068E+07  8.20301E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9054886E+06  1.0879412E+03  3.00000E-02
+     a 8      8  1.9493578E+07  8.20972E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9104365E+06  1.0884373E+03  3.00000E-02
+     a 9      9  1.9925993E+07  8.21648E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9154337E+06  1.0889381E+03  3.00000E-02
+     a10     10  2.0359379E+07  8.22290E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9201802E+06  1.0894135E+03  3.00000E-02
+     a11     11  2.0793778E+07  8.24446E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9361390E+06  1.0910104E+03  3.00000E-02
+     a12     12  2.1854613E+07  1.65605E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8446733E+07  1.8850336E+03  3.00043E-02
+     a13     13  2.1830121E+07  1.65998E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8537921E+07  1.8897493E+03  3.00000E-02
+     a14     14  2.1830000E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538371E+07  1.8897725E+03  3.00000E-02
+     a15     15  2.1830000E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538372E+07  1.8897725E+03  3.00000E-02
+     a16     16  2.1830000E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538372E+07  1.8897725E+03  3.00000E-02
+     a17     17  2.1830000E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538372E+07  1.8897725E+03  3.00000E-02
+     a18     18  2.1830000E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538372E+07  1.8897725E+03  3.00000E-02
+     a19     19  2.1829985E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538427E+07  1.8897754E+03  3.00000E-02
+     a20     20  2.1826944E+07  1.66048E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8549523E+07  1.8903482E+03  2.99995E-02
+     a21     21  2.2680097E+07  1.70960E+01  4.8284E-01  5.1716E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.9785629E+07  1.9502162E+03  3.03880E-02
+     a22+    22  2.2425685E+07  1.81000E+01  2.5000E-01  5.2500E-01  2.2500E-01  0.0000E+00  2.2423607E+07  2.2425685E+07  2.0777928E+03  3.00000E-02
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =    500 :|: NR iterations =    3473 :|: TIME =  2.380700E+06
+ 
+_________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX  C-CH4inGas C-CH4inAqu  Dens_Gas   Dens_Aqu   Dens_Hydr  Visc_Gas   Visc_Aqu       Phi          PC_w      Krel_Gas    Krel_Aqu
+                  (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m*s)   (Kg/m*s)                    (Pa)
+_________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  0.0000E+00 0.0000E+00 0.0000E+00 1.0558E+03 0.0000E+00 1.0000E+00 1.5387E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 2      2  0.0000E+00 0.0000E+00 0.0000E+00 1.0556E+03 0.0000E+00 1.0000E+00 1.3192E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 3      3  0.0000E+00 0.0000E+00 0.0000E+00 1.0558E+03 0.0000E+00 1.0000E+00 1.3167E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 4      4  0.0000E+00 0.0000E+00 0.0000E+00 1.0560E+03 0.0000E+00 1.0000E+00 1.3167E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 5      5  0.0000E+00 0.0000E+00 0.0000E+00 1.0562E+03 0.0000E+00 1.0000E+00 1.3166E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 6      6  0.0000E+00 0.0000E+00 0.0000E+00 1.0564E+03 0.0000E+00 1.0000E+00 1.3164E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 7      7  0.0000E+00 0.0000E+00 0.0000E+00 1.0566E+03 0.0000E+00 1.0000E+00 1.3163E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 8      8  0.0000E+00 0.0000E+00 0.0000E+00 1.0568E+03 0.0000E+00 1.0000E+00 1.3161E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 9      9  0.0000E+00 0.0000E+00 0.0000E+00 1.0569E+03 0.0000E+00 1.0000E+00 1.3159E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a10     10  0.0000E+00 0.0000E+00 0.0000E+00 1.0571E+03 0.0000E+00 1.0000E+00 1.3158E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a11     11  0.0000E+00 0.0000E+00 0.0000E+00 1.0573E+03 0.0000E+00 1.0000E+00 1.3151E-03  3.00001E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a12     12  0.0000E+00 4.5839E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0763E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a13     13  0.0000E+00 4.6026E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a14     14  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a15     15  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a16     16  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a17     17  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a18     18  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a19     19  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a20     20  0.0000E+00 4.6050E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0752E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a21     21  0.0000E+00 4.8639E+00 0.0000E+00 1.0536E+03 9.2789E+02 1.0000E+00 1.0638E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a22+    22  1.8474E+02 5.3959E+00 1.8476E+02 1.0522E+03 9.2810E+02 2.2944E-05 1.0395E-03  3.00000E-01 -1.55837E+04  2.0483E-01  5.0007E-02
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =    500 :|: NR iterations =    3473 :|: TIME =  2.380700E+06
+ 
+________________________________________________________________________________________________________________
+
+   ELEM1    ELEM2   INDEX  Heat Flow    Gas Flow   Aqu. Flow  CH4inGs-Flo CH4inAq-Flo   Gas Veloc   Aqu Veloc
+                              (W)        (Kg/s)      (Kg/s)      (Kg/s)      (Kg/s)      (m/s)       (m/s)
+________________________________________________________________________________________________________________
+
+     a 2      a 1       1  1.1745E+02  0.0000E+00  1.4307E-02  0.0000E+00  0.0000E+00  0.0000E+00  1.1292E-07
+     a 3      a 2       2  7.1799E+02  0.0000E+00  1.4061E-02  0.0000E+00  0.0000E+00  0.0000E+00  1.1100E-07
+     a 4      a 3       3  7.0062E+02  0.0000E+00  1.3492E-02  0.0000E+00  0.0000E+00  0.0000E+00  1.0649E-07
+     a 5      a 4       4  6.5987E+02  0.0000E+00  1.2609E-02  0.0000E+00  0.0000E+00  0.0000E+00  9.9504E-08
+     a 6      a 5       5  6.0310E+02  0.0000E+00  1.1433E-02  0.0000E+00  0.0000E+00  0.0000E+00  9.0206E-08
+     a 7      a 6       6  5.3125E+02  0.0000E+00  9.9908E-03  0.0000E+00  0.0000E+00  0.0000E+00  7.8814E-08
+     a 8      a 7       7  4.4577E+02  0.0000E+00  8.3170E-03  0.0000E+00  0.0000E+00  0.0000E+00  6.5598E-08
+     a 9      a 8       8  3.4846E+02  0.0000E+00  6.4506E-03  0.0000E+00  0.0000E+00  0.0000E+00  5.0868E-08
+     a10      a 9       9  2.4146E+02  0.0000E+00  4.4354E-03  0.0000E+00  0.0000E+00  0.0000E+00  3.4970E-08
+     a11      a10      10  1.2669E+02  0.0000E+00  2.3188E-03  0.0000E+00  0.0000E+00  0.0000E+00  1.8279E-08
+     a12      a11      11 -3.7252E+02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a13      a12      12 -3.6447E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a14      a13      13 -1.7910E-02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a15      a14      14 -5.8749E-05  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a16      a15      15 -5.3328E-07  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a17      a16      16  2.2821E-07  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a18      a17      17 -6.9460E-06  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a19      a18      18 -2.1817E-03  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a20      a19      19 -4.4216E-01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a21      a20      20 -4.5582E+01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a22      a21      21 -1.1436E+02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =    500 :|: NR iterations =    3473 :|: TIME =  2.380700E+06
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX       X1            X2            X3            X4           DX1           DX2           DX3           DX4
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  1.665000E+07  0.000000E+00  3.000000E-02  2.300000E+00 -5.544915E-43  0.000000E+00 -1.153950E-66  3.172704E-51
+     a 2      2  1.691458E+07  0.000000E+00  3.000000E-02  8.106237E+00  4.123879E+01  0.000000E+00  6.454267E-19 -7.494233E-05
+     a 3      3  1.734314E+07  0.000000E+00  3.000000E-02  8.182807E+00  9.737574E+01  0.000000E+00  1.624625E-18 -2.994239E-07
+     a 4      4  1.777204E+07  0.000000E+00  3.000000E-02  8.185280E+00  1.511279E+02  0.000000E+00 -1.375652E-18  1.232008E-06
+     a 5      5  1.820141E+07  0.000000E+00  3.000000E-02  8.190376E+00  2.013256E+02  0.000000E+00 -1.150805E-18  1.949043E-06
+     a 6      6  1.863138E+07  0.000000E+00  3.000000E-02  8.196497E+00  2.467855E+02  0.000000E+00  1.028074E-18  2.665067E-06
+     a 7      7  1.906207E+07  0.000000E+00  3.000000E-02  8.203010E+00  2.864390E+02  0.000000E+00  2.455725E-19  3.350883E-06
+     a 8      8  1.949358E+07  0.000000E+00  3.000000E-02  8.209716E+00  3.193553E+02  0.000000E+00  4.728104E-19  3.982276E-06
+     a 9      9  1.992599E+07  0.000000E+00  3.000000E-02  8.216483E+00  3.447631E+02  0.000000E+00 -4.594014E-18  4.538216E-06
+     a10     10  2.035938E+07  0.000000E+00  3.000000E-02  8.222905E+00  3.620707E+02  0.000000E+00 -3.450456E-19  5.060007E-06
+     a11     11  2.079378E+07  0.000000E+00  3.000000E-02  8.244457E+00  3.709043E+02  0.000000E+00 -7.975099E-13  5.047489E-05
+     a12     12  2.185461E+07  5.250000E-01  3.000433E-02  1.656053E+01  7.281273E+01 -3.291934E-12  1.149096E-08 -1.048372E-04
+     a13     13  2.183012E+07  5.250000E-01  3.000002E-02  1.659981E+01  7.199367E-01 -3.960075E-12  1.131238E-10 -1.028614E-06
+     a14     14  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01  2.391770E-03 -3.963500E-12  5.592969E-13 -5.140570E-09
+     a15     15  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -4.929938E-04 -3.963384E-12  1.684323E-13  7.554750E-11
+     a16     16  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -1.039127E-03 -3.963122E-12  3.184346E-14 -4.782133E-11
+     a17     17  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -1.037802E-03 -3.962859E-12  3.222408E-14 -4.794927E-11
+     a18     18  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -1.822787E-03 -3.962057E-12 -1.255135E-13  4.789853E-10
+     a19     19  2.182999E+07  5.250000E-01  3.000000E-02  1.660002E+01 -8.850832E-02 -3.869726E-12 -1.380424E-11  1.248407E-07
+     a20     20  2.182694E+07  5.249997E-01  2.999947E-02  1.660479E+01 -1.176324E+01 -9.882293E-09 -1.392011E-09  1.263553E-05
+     a21     21  2.268010E+07  5.171575E-01  3.038800E-02  1.709596E+01 -1.270628E-01  4.965619E-08 -2.420469E-09  2.037815E-05
+     a22+    22  2.250000E-01  5.250000E-01  3.000000E-02  1.810000E+01 -3.630522E-53 -6.512869E-53  4.222248E-54 -9.941919E-52
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX    Enthl-Gas    Enthl-Aqu     Enthl-Hydr    Enthl-Ice    Reactn_Rate   Reactn_Heat     T-Shift       k-SPIAF     k-intrinsic
+                    (J/Kg)        (J/Kg)        (J/Kg)        (J/Kg)       (Kg/s)        (J/kg)          (K)                        (m^2)
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  0.000000E+00  2.756426E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 2      2  0.000000E+00  5.122464E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 3      3  0.000000E+00  5.193425E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 4      4  0.000000E+00  5.234529E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 5      5  0.000000E+00  5.276712E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 6      6  0.000000E+00  5.319341E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 7      7  0.000000E+00  5.362172E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 8      8  0.000000E+00  5.405135E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 9      9  0.000000E+00  5.448184E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a10     10  0.000000E+00  5.491161E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a11     11  0.000000E+00  5.540289E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a12     12  0.000000E+00  8.467697E+04  3.477711E+04  0.000000E+00  2.977057E-09  4.560622E+05  1.411296E+00  1.250000E-01  2.960000E-13
+     a13     13  0.000000E+00  8.479431E+04  3.485959E+04  0.000000E+00  2.947711E-11  4.560622E+05  1.411085E+00  1.250000E-01  2.960000E-13
+     a14     14  0.000000E+00  8.479488E+04  3.486000E+04  0.000000E+00  1.457874E-13  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a15     15  0.000000E+00  8.479489E+04  3.486000E+04  0.000000E+00  4.364109E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a16     16  0.000000E+00  8.479489E+04  3.486000E+04  0.000000E+00  8.252066E-15  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a17     17  0.000000E+00  8.479489E+04  3.486000E+04  0.000000E+00  8.351986E-15  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a18     18  0.000000E+00  8.479489E+04  3.486000E+04  0.000000E+00 -3.251799E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a19     19  0.000000E+00  8.479496E+04  3.486005E+04  0.000000E+00 -3.576646E-12  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a20     20  0.000000E+00  8.480912E+04  3.487006E+04  0.000000E+00 -3.606603E-10  4.560622E+05  1.411058E+00  1.249998E-01  2.960000E-13
+     a21     21  0.000000E+00  8.727073E+04  3.590151E+04  0.000000E+00 -6.103048E-10  4.560622E+05  1.429772E+00  1.189102E-01  2.960000E-13
+     a22+    22 -1.695723E+05  9.055068E+04  3.801000E+04  0.000000E+00  0.000000E+00  4.560622E+05  1.410949E+00  4.000583E-01  2.960000E-13
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [   500,   3473]  =========             The time is  2.38070E+06 sec, or  2.75544E+01 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   0.00000000E+00   6.17231822E+04   1.02769411E+04   0.00000000E+00
+  MASS   (Kg)  |   0.00000000E+00   6.51684477E+07   9.53113954E+06   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   6.31605433E+07   5.23898547E+04   0.00000000E+00   1.95551464E+06
+                                              Hydrate       |   8.29933115E+06   1.23180840E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   7.14598744E+07   1.28419825E+06   0.00000000E+00   1.95551464E+06
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+ .... ITERATING:  At [   501, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.766558E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   501, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  4.082884E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   501, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928220E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   501, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929482E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   501, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929468E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   501, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929477E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   501, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929466E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   501, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929449E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   501, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929457E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   501, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   501, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.416395E-06  at element "  a 2   ", equation  4
+   a12   (   501, 2) Time = 2.383900E+06 Dt =  3.200000E+03 DX1 =  2.484788E+01 DX2= -1.659471E-12 DX3=  5.810563E-09 DX4= -5.299321E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185464E+07  T =  1.656048E+01 Xi_A=  3.000434E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   502, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.818257E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   502, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.432120E-06  at element "  a11   ", equation  3
+   a12   (   502, 3) Time = 2.390300E+06 Dt =  6.400000E+03 DX1 =  7.296872E+01 DX2= -3.303895E-12 DX3=  1.150691E-08 DX4= -1.048078E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185471E+07  T =  1.656037E+01 Xi_A=  3.000435E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   503, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.755110E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   503, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  4.039726E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   503, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.931191E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   503, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929276E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   503, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929256E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   503, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929257E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   503, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929248E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   503, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929241E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   503, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929234E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   503, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   503, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.387777E-06  at element "  a 2   ", equation  4
+   a12   (   503, 2) Time = 2.393500E+06 Dt =  3.200000E+03 DX1 =  2.498123E+01 DX2= -1.669108E-12 DX3=  5.844190E-09 DX4= -5.295462E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185474E+07  T =  1.656032E+01 Xi_A=  3.000436E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   504, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.761196E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   504, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.416618E-06  at element "  a11   ", equation  3
+   a12   (   504, 3) Time = 2.399900E+06 Dt =  6.400000E+03 DX1 =  7.289522E+01 DX2= -3.297662E-12 DX3=  1.145637E-08 DX4= -1.048450E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185481E+07  T =  1.656021E+01 Xi_A=  3.000437E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   505, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.743801E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   505, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.993395E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   505, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929772E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   505, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929119E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   505, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929108E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   505, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929117E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   505, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929119E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   505, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929101E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   505, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.929096E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   505, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   505, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.359503E-06  at element "  a 2   ", equation  4
+   a12   (   505, 2) Time = 2.403100E+06 Dt =  3.200000E+03 DX1 =  2.481396E+01 DX2= -1.658418E-12 DX3=  5.802076E-09 DX4= -5.299390E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185483E+07  T =  1.656016E+01 Xi_A=  3.000437E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   506, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.704822E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   506, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.401721E-06  at element "  a11   ", equation  3
+   a12   (   506, 3) Time = 2.409500E+06 Dt =  6.400000E+03 DX1 =  7.291700E+01 DX2= -3.299587E-12 DX3=  1.150216E-08 DX4= -1.047985E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185491E+07  T =  1.656006E+01 Xi_A=  3.000439E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   507, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.732628E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   507, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.950389E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   507, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.932820E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   507, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928938E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   507, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928928E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   507, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928935E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   507, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928934E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   507, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928922E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   507, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928915E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   507, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   507, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.331571E-06  at element "  a 2   ", equation  4
+   a12   (   507, 2) Time = 2.412700E+06 Dt =  3.200000E+03 DX1 =  2.486677E+01 DX2= -1.662594E-12 DX3=  5.815414E-09 DX4= -5.297624E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185493E+07  T =  1.656000E+01 Xi_A=  3.000439E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   508, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.649127E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   508, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.386977E-06  at element "  a11   ", equation  3
+   a12   (   508, 3) Time = 2.419100E+06 Dt =  6.400000E+03 DX1 =  7.292870E+01 DX2= -3.300489E-12 DX3=  1.149246E-08 DX4= -1.047978E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185500E+07  T =  1.655990E+01 Xi_A=  3.000440E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   509, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.721590E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   509, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.906458E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   509, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.926863E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   509, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928787E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   509, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928765E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   509, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928783E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   509, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928769E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   509, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928753E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   509, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928741E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   509, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   509, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.303975E-06  at element "  a 2   ", equation  4
+   a12   (   509, 2) Time = 2.422300E+06 Dt =  3.200000E+03 DX1 =  2.481610E+01 DX2= -1.659761E-12 DX3=  5.802678E-09 DX4= -5.298533E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185503E+07  T =  1.655985E+01 Xi_A=  3.000441E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   510, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.594104E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   510, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.372396E-06  at element "  a11   ", equation  3
+   a12   (   510, 3) Time = 2.428700E+06 Dt =  6.400000E+03 DX1 =  7.284162E+01 DX2= -3.298093E-12 DX3=  1.148277E-08 DX4= -1.048025E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185510E+07  T =  1.655974E+01 Xi_A=  3.000442E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   511, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.710684E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   511, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.864267E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   511, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928676E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   511, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928645E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   511, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928656E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   511, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928653E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   511, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928632E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   511, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928620E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   511, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928617E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   511, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   511, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.276711E-06  at element "  a 2   ", equation  4
+   a12   (   511, 2) Time = 2.431900E+06 Dt =  3.200000E+03 DX1 =  2.482875E+01 DX2= -1.661201E-12 DX3=  5.805894E-09 DX4= -5.297820E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185513E+07  T =  1.655969E+01 Xi_A=  3.000443E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   512, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.539743E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   512, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.358050E-06  at element "  a11   ", equation  3
+   a12   (   512, 3) Time = 2.438300E+06 Dt =  6.400000E+03 DX1 =  7.281571E+01 DX2= -3.298381E-12 DX3=  1.147325E-08 DX4= -1.048037E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185520E+07  T =  1.655958E+01 Xi_A=  3.000444E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   513, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.699910E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   513, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.821624E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   513, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.931079E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   513, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928507E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   513, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928495E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   513, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928487E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   513, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928485E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   513, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928473E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   513, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928476E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   513, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   513, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.249775E-06  at element "  a 2   ", equation  4
+   a12   (   513, 2) Time = 2.441500E+06 Dt =  3.200000E+03 DX1 =  2.479182E+01 DX2= -1.659274E-12 DX3=  5.796620E-09 DX4= -5.298366E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185522E+07  T =  1.655953E+01 Xi_A=  3.000444E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   514, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.486037E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   514, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.344187E-06  at element "  a11   ", equation  3
+   a12   (   514, 3) Time = 2.447900E+06 Dt =  6.400000E+03 DX1 =  7.281125E+01 DX2= -3.302226E-12 DX3=  1.148108E-08 DX4= -1.047896E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185530E+07  T =  1.655943E+01 Xi_A=  3.000446E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   515, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.689266E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   515, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.779640E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   515, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.932205E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   515, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928338E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   515, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928333E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   515, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928336E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   515, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928306E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   515, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928303E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   515, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928304E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   515, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   515, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.223165E-06  at element "  a 2   ", equation  4
+   a12   (   515, 2) Time = 2.451100E+06 Dt =  3.200000E+03 DX1 =  2.477052E+01 DX2= -1.658395E-12 DX3=  5.791284E-09 DX4= -5.298522E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185532E+07  T =  1.655937E+01 Xi_A=  3.000446E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   516, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.432978E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   516, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.329804E-06  at element "  a11   ", equation  3
+   a12   (   516, 3) Time = 2.457500E+06 Dt =  6.400000E+03 DX1 =  7.275262E+01 DX2= -3.298005E-12 DX3=  1.147149E-08 DX4= -1.047926E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185539E+07  T =  1.655927E+01 Xi_A=  3.000447E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   517, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.678749E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   517, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.739073E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   517, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.930774E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   517, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928180E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   517, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928201E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   517, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928184E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   517, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928181E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   517, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928185E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   517, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928171E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   517, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   517, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.196874E-06  at element "  a 2   ", equation  4
+   a12   (   517, 2) Time = 2.460700E+06 Dt =  3.200000E+03 DX1 =  2.479791E+01 DX2= -1.660804E-12 DX3=  5.798214E-09 DX4= -5.297413E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185542E+07  T =  1.655921E+01 Xi_A=  3.000448E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   518, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.380559E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   518, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.316537E-06  at element "  a11   ", equation  3
+   a12   (   518, 3) Time = 2.467100E+06 Dt =  6.400000E+03 DX1 =  7.283116E+01 DX2= -3.306816E-12 DX3=  1.148474E-08 DX4= -1.047696E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185549E+07  T =  1.655911E+01 Xi_A=  3.000449E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   519, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.668360E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   519, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.697961E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   519, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928666E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   519, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928006E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   519, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.928010E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   519, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927998E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   519, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927980E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   519, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927973E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   519, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927977E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   519, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   519, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.170901E-06  at element "  a 2   ", equation  4
+   a12   (   519, 2) Time = 2.470300E+06 Dt =  3.200000E+03 DX1 =  2.478332E+01 DX2= -1.660359E-12 DX3=  5.794571E-09 DX4= -5.297378E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185552E+07  T =  1.655906E+01 Xi_A=  3.000450E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   520, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.328771E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   520, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.302450E-06  at element "  a11   ", equation  3
+   a12   (   520, 3) Time = 2.476700E+06 Dt =  6.400000E+03 DX1 =  7.287147E+01 DX2= -3.305308E-12 DX3=  1.149847E-08 DX4= -1.047483E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185559E+07  T =  1.655895E+01 Xi_A=  3.000451E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   521, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.658096E-05  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   521, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  3.658341E-06  at element "  a11   ", equation  3
+ .... ITERATING:  At [   521, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.934281E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   521, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927830E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   521, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927812E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   521, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927802E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   521, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927800E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   521, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927804E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [   521, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.927788E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (   521, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [   521, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  4.145240E-06  at element "  a 2   ", equation  4
+   a12   (   521, 2) Time = 2.479900E+06 Dt =  3.200000E+03 DX1 =  2.482387E+01 DX2= -1.663641E-12 DX3=  5.804816E-09 DX4= -5.295945E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185562E+07  T =  1.655890E+01 Xi_A=  3.000451E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [   522, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  8.277607E-06  at element "  a 2   ", equation  4
+ .... ITERATING:  At [   522, 2]: TimeStep =  6.400000E+03   MAX{Residual} =  1.288522E-06  at element "  a11   ", equation  3
+   a12   (   522, 3) Time = 2.486300E+06 Dt =  6.400000E+03 DX1 =  7.278984E+01 DX2= -3.299399E-12 DX3=  1.146821E-08 DX4= -1.047694E-04 DX5= 
+ !  >>>>>>>>>>>      P    = 2.185569E+07  T =  1.655879E+01 Xi_A=  3.000452E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+   a12   (  2995, 2) Time = 1.435510E+07 Dt =  3.200000E+03 DX1 =  2.247932E+01 DX2= -1.348853E-12 DX3=  5.250140E-09 DX4= -4.889059E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194375E+07  T =  1.637005E+01 Xi_A=  3.002496E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  2996, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.237630E-06  at element "  a12   ", equation  4
+   a12   (  2996, 2) Time = 1.436150E+07 Dt =  6.400000E+03 DX1 =  4.490803E+01 DX2= -1.347270E-12 DX3=  1.048749E-08 DX4= -9.778950E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194380E+07  T =  1.636995E+01 Xi_A=  3.002497E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  2997, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.447472E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  2997, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.319172E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.748675E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751386E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751392E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751362E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751366E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751358E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2997, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751351E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  2997, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  2997, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.618680E-06  at element "  a12   ", equation  4
+   a12   (  2997, 2) Time = 1.436470E+07 Dt =  3.200000E+03 DX1 =  2.239041E+01 DX2= -1.343314E-12 DX3=  5.227764E-09 DX4= -4.891007E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194382E+07  T =  1.636990E+01 Xi_A=  3.002498E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  2998, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.237224E-06  at element "  a12   ", equation  4
+   a12   (  2998, 2) Time = 1.437110E+07 Dt =  6.400000E+03 DX1 =  4.498198E+01 DX2= -1.349373E-12 DX3=  1.050619E-08 DX4= -9.776289E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194387E+07  T =  1.636980E+01 Xi_A=  3.002499E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  2999, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.447391E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  2999, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.314440E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.753961E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751193E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751213E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751211E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751198E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751195E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  2999, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751184E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  2999, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  2999, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.618477E-06  at element "  a12   ", equation  4
+   a12   (  2999, 2) Time = 1.437430E+07 Dt =  3.200000E+03 DX1 =  2.233814E+01 DX2= -1.339999E-12 DX3=  5.214620E-09 DX4= -4.891989E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194389E+07  T =  1.636975E+01 Xi_A=  3.002500E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3000, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.236819E-06  at element "  a12   ", equation  4
+   a12   (  3000, 2) Time = 1.438070E+07 Dt =  6.400000E+03 DX1 =  4.478946E+01 DX2= -1.343387E-12 DX3=  1.045773E-08 DX4= -9.780599E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194393E+07  T =  1.636965E+01 Xi_A=  3.002501E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ 
+ 3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+          Output data after (  3000,  19759) time steps ..................................................... The time is  1.66443E+02 days
+
+=======================================================================================================================================================
+ 
+  TOTAL TIME (s)  Timestep #  NR-iterations  Convergence      DX1M          DX2M          DX3M        Max Residual      NER      KER        TimeStep
+  1.43807E+07         3000        19759           Y       4.478946E+01  4.595963E-08  1.045773E-08    6.609553E-07       12        3     6.400000E+03
+
+=======================================================================================================================================================
+ 
+ 
+   ELEM   INDEX    Pressure     Temperature  S_Hydrate   S_aqueous     S_gas       S_Ice         P_CH4        P_EqHydr       P_SatWat     X_Inhibitor
+                     (Pa)        (Deg. C)                                                        (Pa)           (Pa)           (Pa)         (kg/kg)
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  1.6650000E+07  2.30000E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  3.7888926E+06  7.2127876E+02  3.00000E-02
+     a 2      2  1.6919116E+07  8.03671E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.7841628E+06  1.0757028E+03  3.00000E-02
+     a 3      3  1.7353850E+07  8.18201E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8900244E+06  1.0863893E+03  3.00000E-02
+     a 4      4  1.7788663E+07  8.18546E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8925616E+06  1.0866441E+03  3.00000E-02
+     a 5      5  1.8223556E+07  8.19066E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8963851E+06  1.0870279E+03  3.00000E-02
+     a 6      6  1.8658529E+07  8.19688E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9009693E+06  1.0874879E+03  3.00000E-02
+     a 7      7  1.9093583E+07  8.20349E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9058443E+06  1.0879769E+03  3.00000E-02
+     a 8      8  1.9528716E+07  8.21029E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9108610E+06  1.0884799E+03  3.00000E-02
+     a 9      9  1.9963930E+07  8.21714E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9159184E+06  1.0889866E+03  3.00000E-02
+     a10     10  2.0399224E+07  8.22402E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9210026E+06  1.0894959E+03  3.00000E-02
+     a11     11  2.0834596E+07  8.32822E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9985920E+06  1.0972364E+03  3.00000E-02
+     a12     12  2.1943932E+07  1.63697E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8010342E+07  1.8622629E+03  3.00250E-02
+     a13     13  2.1833216E+07  1.65933E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8522740E+07  1.8889652E+03  3.00007E-02
+     a14     14  2.1830061E+07  1.65999E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538064E+07  1.8897566E+03  3.00000E-02
+     a15     15  2.1829999E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538367E+07  1.8897723E+03  3.00000E-02
+     a16     16  2.1829998E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538372E+07  1.8897725E+03  3.00000E-02
+     a17     17  2.1829998E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538372E+07  1.8897725E+03  3.00000E-02
+     a18     18  2.1829991E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538410E+07  1.8897745E+03  3.00000E-02
+     a19     19  2.1829607E+07  1.66008E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8540285E+07  1.8898713E+03  2.99999E-02
+     a20     20  2.1808388E+07  1.66283E+01  4.7504E-01  5.2496E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8604443E+07  1.8931802E+03  2.99969E-02
+     a21     21  2.2679941E+07  1.71326E+01  4.8275E-01  5.1725E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.9877317E+07  1.9547531E+03  3.03836E-02
+     a22+    22  2.2425685E+07  1.81000E+01  2.5000E-01  5.2500E-01  2.2500E-01  0.0000E+00  2.2423607E+07  2.2425685E+07  2.0777928E+03  3.00000E-02
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =   3000 :|: NR iterations =   19759 :|: TIME =  1.438070E+07
+ 
+_________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX  C-CH4inGas C-CH4inAqu  Dens_Gas   Dens_Aqu   Dens_Hydr  Visc_Gas   Visc_Aqu       Phi          PC_w      Krel_Gas    Krel_Aqu
+                  (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m*s)   (Kg/m*s)                    (Pa)
+_________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  0.0000E+00 0.0000E+00 0.0000E+00 1.0558E+03 0.0000E+00 1.0000E+00 1.5387E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 2      2  0.0000E+00 0.0000E+00 0.0000E+00 1.0556E+03 0.0000E+00 1.0000E+00 1.3216E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 3      3  0.0000E+00 0.0000E+00 0.0000E+00 1.0558E+03 0.0000E+00 1.0000E+00 1.3167E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 4      4  0.0000E+00 0.0000E+00 0.0000E+00 1.0560E+03 0.0000E+00 1.0000E+00 1.3167E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 5      5  0.0000E+00 0.0000E+00 0.0000E+00 1.0562E+03 0.0000E+00 1.0000E+00 1.3166E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 6      6  0.0000E+00 0.0000E+00 0.0000E+00 1.0564E+03 0.0000E+00 1.0000E+00 1.3164E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 7      7  0.0000E+00 0.0000E+00 0.0000E+00 1.0566E+03 0.0000E+00 1.0000E+00 1.3162E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 8      8  0.0000E+00 0.0000E+00 0.0000E+00 1.0568E+03 0.0000E+00 1.0000E+00 1.3161E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 9      9  0.0000E+00 0.0000E+00 0.0000E+00 1.0570E+03 0.0000E+00 1.0000E+00 1.3159E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a10     10  0.0000E+00 0.0000E+00 0.0000E+00 1.0572E+03 0.0000E+00 1.0000E+00 1.3157E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a11     11  0.0000E+00 0.0000E+00 0.0000E+00 1.0573E+03 0.0000E+00 1.0000E+00 1.3123E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a12     12  0.0000E+00 4.4941E+00 0.0000E+00 1.0531E+03 9.2736E+02 1.0000E+00 1.0811E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a13     13  0.0000E+00 4.5995E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0755E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a14     14  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a15     15  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a16     16  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a17     17  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a18     18  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a19     19  0.0000E+00 4.6031E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a20     20  0.0000E+00 4.6163E+00 0.0000E+00 1.0528E+03 9.2738E+02 1.0000E+00 1.0746E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a21     21  0.0000E+00 4.8826E+00 0.0000E+00 1.0535E+03 9.2790E+02 1.0000E+00 1.0630E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a22+    22  1.8474E+02 5.3959E+00 1.8476E+02 1.0522E+03 9.2810E+02 2.2944E-05 1.0395E-03  3.00000E-01 -1.55837E+04  2.0483E-01  5.0007E-02
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =   3000 :|: NR iterations =   19759 :|: TIME =  1.438070E+07
+ 
+________________________________________________________________________________________________________________
+
+   ELEM1    ELEM2   INDEX  Heat Flow    Gas Flow   Aqu. Flow  CH4inGs-Flo CH4inAq-Flo   Gas Veloc   Aqu Veloc
+                              (W)        (Kg/s)      (Kg/s)      (Kg/s)      (Kg/s)      (m/s)       (m/s)
+________________________________________________________________________________________________________________
+
+     a 2      a 1       1 -2.6989E+02  0.0000E+00  1.3463E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0627E-09
+     a 3      a 2       2  2.4410E+00  0.0000E+00  1.3211E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0430E-09
+     a 4      a 3       3  6.7542E+00  0.0000E+00  1.3200E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0418E-09
+     a 5      a 4       4  6.7519E+00  0.0000E+00  1.3188E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0407E-09
+     a 6      a 5       5  6.7696E+00  0.0000E+00  1.3172E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0393E-09
+     a 7      a 6       6  6.8044E+00  0.0000E+00  1.3152E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0375E-09
+     a 8      a 7       7  6.8432E+00  0.0000E+00  1.3129E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0355E-09
+     a 9      a 8       8  6.8841E+00  0.0000E+00  1.3102E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0332E-09
+     a10      a 9       9  6.9232E+00  0.0000E+00  1.3071E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0306E-09
+     a11      a10      10  4.0875E+00  0.0000E+00  1.3037E-04  0.0000E+00  0.0000E+00  0.0000E+00  1.0276E-09
+     a12      a11      11 -3.6022E+02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a13      a12      12 -2.0752E+01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a14      a13      13 -6.1116E-01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a15      a14      14 -1.2080E-02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a16      a15      15 -1.8027E-04  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a17      a16      16 -2.3922E-05  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a18      a17      17 -1.4766E-03  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a19      a18      18 -7.4773E-02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a20      a19      19 -2.5525E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a21      a20      20 -4.6801E+01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a22      a21      21 -1.1019E+02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =   3000 :|: NR iterations =   19759 :|: TIME =  1.438070E+07
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX       X1            X2            X3            X4           DX1           DX2           DX3           DX4
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  1.665000E+07  0.000000E+00  3.000000E-02  2.300000E+00 -2.599013E-45  0.000000E+00  5.825083E-70  5.614321E-51
+     a 2      2  1.691912E+07  0.000000E+00  3.000000E-02  8.036705E+00  3.775959E-03  0.000000E+00 -1.399651E-22 -3.351908E-05
+     a 3      3  1.735385E+07  0.000000E+00  3.000000E-02  8.182012E+00  9.039550E-03  0.000000E+00  2.578275E-22 -5.312746E-07
+     a 4      4  1.778866E+07  0.000000E+00  3.000000E-02  8.185461E+00  1.365703E-02  0.000000E+00 -9.566241E-23 -2.350460E-10
+     a 5      5  1.822356E+07  0.000000E+00  3.000000E-02  8.190656E+00  1.820765E-02  0.000000E+00 -5.395748E-23 -2.853542E-09
+     a 6      6  1.865853E+07  0.000000E+00  3.000000E-02  8.196879E+00  2.266573E-02  0.000000E+00 -8.984436E-23 -5.138154E-09
+     a 7      7  1.909358E+07  0.000000E+00  3.000000E-02  8.203492E+00  2.697110E-02  0.000000E+00  1.792406E-22 -5.793982E-09
+     a 8      8  1.952872E+07  0.000000E+00  3.000000E-02  8.210291E+00  3.106161E-02  0.000000E+00 -1.095371E-22 -6.193674E-09
+     a 9      9  1.996393E+07  0.000000E+00  3.000000E-02  8.217139E+00  3.532947E-02  0.000000E+00  9.860686E-23 -6.146627E-09
+     a10     10  2.039922E+07  0.000000E+00  3.000000E-02  8.224017E+00  4.307187E-02  0.000000E+00 -2.333753E-23  3.476703E-07
+     a11     11  2.083460E+07  0.000000E+00  3.000000E-02  8.328220E+00  5.980298E-02  0.000000E+00 -3.995369E-12  4.340589E-05
+     a12     12  2.194393E+07  5.250000E-01  3.002501E-02  1.636965E+01  4.478946E+01 -1.343387E-12  1.045773E-08 -9.780599E-05
+     a13     13  2.183322E+07  5.250000E-01  3.000074E-02  1.659328E+01  2.732751E+00 -2.759368E-12  6.354399E-10 -5.773199E-06
+     a14     14  2.183006E+07  5.250000E-01  3.000001E-02  1.659987E+01  8.086365E-02 -2.824739E-12  1.889464E-11 -1.716571E-07
+     a15     15  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01  1.066642E-03 -2.825918E-12  3.795279E-13 -3.449300E-09
+     a16     16  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -5.304673E-04 -2.825798E-12  8.925267E-15 -8.558333E-11
+     a17     17  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -7.462645E-04 -2.825501E-12 -4.149496E-14  3.768703E-10
+     a18     18  2.182999E+07  5.250000E-01  3.000000E-02  1.660002E+01 -1.042184E-02 -2.817236E-12 -2.304793E-12  2.102002E-08
+     a19     19  2.182961E+07  5.250000E-01  2.999991E-02  1.660082E+01 -3.352886E-01 -2.460002E-12 -7.832671E-11  7.116297E-07
+     a20     20  2.180839E+07  5.249633E-01  2.999688E-02  1.662833E+01 -1.108590E+01 -2.615374E-08 -1.362639E-09  1.233160E-05
+     a21     21  2.267994E+07  5.172470E-01  3.038363E-02  1.713264E+01 -7.879519E-02  4.595963E-08 -2.240062E-09  1.877285E-05
+     a22+    22  2.250000E-01  5.250000E-01  3.000000E-02  1.810000E+01 -1.748944E-53 -3.137467E-53  2.033998E-54 -4.789355E-52
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX    Enthl-Gas    Enthl-Aqu     Enthl-Hydr    Enthl-Ice    Reactn_Rate   Reactn_Heat     T-Shift       k-SPIAF     k-intrinsic
+                    (J/Kg)        (J/Kg)        (J/Kg)        (J/Kg)       (Kg/s)        (J/kg)          (K)                        (m^2)
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  0.000000E+00  2.756426E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 2      2  0.000000E+00  5.094862E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 3      3  0.000000E+00  5.194107E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 4      4  0.000000E+00  5.236157E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 5      5  0.000000E+00  5.278894E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 6      6  0.000000E+00  5.322030E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 7      7  0.000000E+00  5.365308E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 8      8  0.000000E+00  5.408644E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 9      9  0.000000E+00  5.451984E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a10     10  0.000000E+00  5.495321E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a11     11  0.000000E+00  5.577740E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a12     12  0.000000E+00  8.407960E+04  3.437628E+04  0.000000E+00  1.324246E-09  4.560622E+05  1.412309E+00  1.250000E-01  2.960000E-13
+     a13     13  0.000000E+00  8.477396E+04  3.484589E+04  0.000000E+00  8.123864E-11  4.560622E+05  1.411120E+00  1.250000E-01  2.960000E-13
+     a14     14  0.000000E+00  8.479447E+04  3.485972E+04  0.000000E+00  2.453680E-12  4.560622E+05  1.411085E+00  1.250000E-01  2.960000E-13
+     a15     15  0.000000E+00  8.479488E+04  3.486000E+04  0.000000E+00  8.316547E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a16     16  0.000000E+00  8.479488E+04  3.486000E+04  0.000000E+00  3.575407E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a17     17  0.000000E+00  8.479489E+04  3.486000E+04  0.000000E+00  2.927791E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a18     18  0.000000E+00  8.479493E+04  3.486003E+04  0.000000E+00 -2.566747E-13  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a19     19  0.000000E+00  8.479745E+04  3.486173E+04  0.000000E+00 -9.967106E-12  4.560622E+05  1.411080E+00  1.250000E-01  2.960000E-13
+     a20     20  0.000000E+00  8.487600E+04  3.491949E+04  0.000000E+00 -1.038464E-11  4.560622E+05  1.410931E+00  1.249711E-01  2.960000E-13
+     a21     21  0.000000E+00  8.739905E+04  3.597854E+04  0.000000E+00 -5.624975E-10  4.560622E+05  1.429557E+00  1.189786E-01  2.960000E-13
+     a22+    22 -1.695723E+05  9.055068E+04  3.801000E+04  0.000000E+00  0.000000E+00  4.560622E+05  1.410949E+00  4.000583E-01  2.960000E-13
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [  3000,  19759]  =========             The time is  1.43807E+07 sec, or  1.66443E+02 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   0.00000000E+00   6.17231748E+04   1.02768260E+04   0.00000000E+00
+  MASS   (Kg)  |   0.00000000E+00   6.51691791E+07   9.53102413E+06   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   6.31613062E+07   5.23190794E+04   0.00000000E+00   1.95555384E+06
+                                              Hydrate       |   8.29923065E+06   1.23179348E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   7.14605369E+07   1.28411256E+06   0.00000000E+00   1.95555384E+06
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+ .... ITERATING:  At [  3001, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.447310E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3001, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.318121E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751151E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751145E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751137E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751125E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751142E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751127E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3001, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751113E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3001, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3001, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.618274E-06  at element "  a12   ", equation  4
+   a12   (  3001, 2) Time = 1.438390E+07 Dt =  3.200000E+03 DX1 =  2.236124E+01 DX2= -1.341261E-12 DX3=  5.220468E-09 DX4= -4.891047E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194395E+07  T =  1.636961E+01 Xi_A=  3.002501E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3002, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.236413E-06  at element "  a12   ", equation  4
+   a12   (  3002, 2) Time = 1.439030E+07 Dt =  6.400000E+03 DX1 =  4.485149E+01 DX2= -1.345129E-12 DX3=  1.047341E-08 DX4= -9.778272E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194400E+07  T =  1.636951E+01 Xi_A=  3.002502E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3003, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.447229E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3003, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321658E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.752156E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750992E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750984E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750996E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750972E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750963E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3003, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750975E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3003, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3003, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.618072E-06  at element "  a12   ", equation  4
+   a12   (  3003, 2) Time = 1.439350E+07 Dt =  3.200000E+03 DX1 =  2.241584E+01 DX2= -1.344433E-12 DX3=  5.234254E-09 DX4= -4.889266E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194402E+07  T =  1.636946E+01 Xi_A=  3.002503E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3004, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.236008E-06  at element "  a12   ", equation  4
+   a12   (  3004, 2) Time = 1.439990E+07 Dt =  6.400000E+03 DX1 =  4.486287E+01 DX2= -1.345333E-12 DX3=  1.047634E-08 DX4= -9.777242E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194407E+07  T =  1.636936E+01 Xi_A=  3.002504E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3005, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.447147E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3005, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321808E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.747762E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750843E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750838E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750836E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750814E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750832E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3005, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750818E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3005, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3005, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.617869E-06  at element "  a12   ", equation  4
+   a12   (  3005, 2) Time = 1.440310E+07 Dt =  3.200000E+03 DX1 =  2.241938E+01 DX2= -1.344507E-12 DX3=  5.235175E-09 DX4= -4.888816E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194409E+07  T =  1.636931E+01 Xi_A=  3.002504E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3006, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.235603E-06  at element "  a12   ", equation  4
+   a12   (  3006, 2) Time = 1.440950E+07 Dt =  6.400000E+03 DX1 =  4.482955E+01 DX2= -1.344180E-12 DX3=  1.046799E-08 DX4= -9.777402E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194413E+07  T =  1.636921E+01 Xi_A=  3.002505E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3007, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.447066E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3007, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321878E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751108E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750712E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750712E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750710E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750714E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750687E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3007, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750680E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3007, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3007, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.617666E-06  at element "  a12   ", equation  4
+   a12   (  3007, 2) Time = 1.441270E+07 Dt =  3.200000E+03 DX1 =  2.241599E+01 DX2= -1.344160E-12 DX3=  5.234350E-09 DX4= -4.888539E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194416E+07  T =  1.636917E+01 Xi_A=  3.002506E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3008, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.235197E-06  at element "  a12   ", equation  4
+   a12   (  3008, 2) Time = 1.441910E+07 Dt =  6.400000E+03 DX1 =  4.489101E+01 DX2= -1.345904E-12 DX3=  1.048354E-08 DX4= -9.775078E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194420E+07  T =  1.636907E+01 Xi_A=  3.002507E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3009, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446985E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3009, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321692E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750170E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750556E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750540E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750543E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750527E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750527E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3009, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750530E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3009, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3009, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.617464E-06  at element "  a12   ", equation  4
+   a12   (  3009, 2) Time = 1.442230E+07 Dt =  3.200000E+03 DX1 =  2.242169E+01 DX2= -1.344364E-12 DX3=  5.235814E-09 DX4= -4.888036E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194422E+07  T =  1.636902E+01 Xi_A=  3.002507E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3010, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.234792E-06  at element "  a12   ", equation  4
+   a12   (  3010, 2) Time = 1.442870E+07 Dt =  6.400000E+03 DX1 =  4.492024E+01 DX2= -1.346649E-12 DX3=  1.049096E-08 DX4= -9.773604E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194427E+07  T =  1.636892E+01 Xi_A=  3.002508E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3011, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446904E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3011, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321627E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.753879E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750380E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750385E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750371E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750373E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750370E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3011, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750365E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3011, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3011, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.617261E-06  at element "  a12   ", equation  4
+   a12   (  3011, 2) Time = 1.443190E+07 Dt =  3.200000E+03 DX1 =  2.242477E+01 DX2= -1.344409E-12 DX3=  5.236616E-09 DX4= -4.887601E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194429E+07  T =  1.636887E+01 Xi_A=  3.002509E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3012, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.234387E-06  at element "  a12   ", equation  4
+   a12   (  3012, 2) Time = 1.443830E+07 Dt =  6.400000E+03 DX1 =  4.477579E+01 DX2= -1.342126E-12 DX3=  1.045462E-08 DX4= -9.776641E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194434E+07  T =  1.636877E+01 Xi_A=  3.002510E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3013, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446823E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3013, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.326332E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.751100E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750327E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750315E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750314E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750312E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750298E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3013, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750297E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3013, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3013, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.617059E-06  at element "  a12   ", equation  4
+   a12   (  3013, 2) Time = 1.444150E+07 Dt =  3.200000E+03 DX1 =  2.246759E+01 DX2= -1.346866E-12 DX3=  5.247435E-09 DX4= -4.886128E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194436E+07  T =  1.636873E+01 Xi_A=  3.002511E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3014, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.233982E-06  at element "  a12   ", equation  4
+   a12   (  3014, 2) Time = 1.444790E+07 Dt =  6.400000E+03 DX1 =  4.489990E+01 DX2= -1.345749E-12 DX3=  1.048595E-08 DX4= -9.772686E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194440E+07  T =  1.636863E+01 Xi_A=  3.002512E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3015, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446742E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3015, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.317993E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750498E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750101E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750096E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750083E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750075E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750082E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3015, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.750080E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3015, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3015, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.616856E-06  at element "  a12   ", equation  4
+   a12   (  3015, 2) Time = 1.445110E+07 Dt =  3.200000E+03 DX1 =  2.237458E+01 DX2= -1.341082E-12 DX3=  5.224023E-09 DX4= -4.888190E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194443E+07  T =  1.636858E+01 Xi_A=  3.002512E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3016, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.233576E-06  at element "  a12   ", equation  4
+   a12   (  3016, 2) Time = 1.445750E+07 Dt =  6.400000E+03 DX1 =  4.489140E+01 DX2= -1.345349E-12 DX3=  1.048386E-08 DX4= -9.772202E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194447E+07  T =  1.636848E+01 Xi_A=  3.002513E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3017, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446661E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3017, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.325986E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749990E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749985E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749974E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749965E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749954E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749958E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3017, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749952E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3017, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3017, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.616653E-06  at element "  a12   ", equation  4
+   a12   (  3017, 2) Time = 1.446070E+07 Dt =  3.200000E+03 DX1 =  2.247838E+01 DX2= -1.347237E-12 DX3=  5.250209E-09 DX4= -4.885132E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194449E+07  T =  1.636843E+01 Xi_A=  3.002514E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3018, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.233171E-06  at element "  a12   ", equation  4
+   a12   (  3018, 2) Time = 1.446710E+07 Dt =  6.400000E+03 DX1 =  4.496962E+01 DX2= -1.347579E-12 DX3=  1.050362E-08 DX4= -9.769457E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194454E+07  T =  1.636834E+01 Xi_A=  3.002515E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3019, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446580E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3019, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321560E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.746341E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749787E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749797E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749793E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749779E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749782E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3019, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749778E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3019, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3019, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.616451E-06  at element "  a12   ", equation  4
+   a12   (  3019, 2) Time = 1.447030E+07 Dt =  3.200000E+03 DX1 =  2.243066E+01 DX2= -1.344201E-12 DX3=  5.238212E-09 DX4= -4.886003E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194456E+07  T =  1.636829E+01 Xi_A=  3.002515E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3020, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.232766E-06  at element "  a12   ", equation  4
+   a12   (  3020, 2) Time = 1.447670E+07 Dt =  6.400000E+03 DX1 =  4.485293E+01 DX2= -1.343900E-12 DX3=  1.047428E-08 DX4= -9.771731E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194461E+07  T =  1.636819E+01 Xi_A=  3.002516E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3021, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446499E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3021, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.320150E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.747792E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749713E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749720E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749695E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749706E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749700E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3021, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749689E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3021, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3021, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.616248E-06  at element "  a12   ", equation  4
+   a12   (  3021, 2) Time = 1.447990E+07 Dt =  3.200000E+03 DX1 =  2.239693E+01 DX2= -1.342014E-12 DX3=  5.229738E-09 DX4= -4.886533E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194463E+07  T =  1.636814E+01 Xi_A=  3.002517E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3022, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.232361E-06  at element "  a12   ", equation  4
+   a12   (  3022, 2) Time = 1.448630E+07 Dt =  6.400000E+03 DX1 =  4.482652E+01 DX2= -1.342958E-12 DX3=  1.046768E-08 DX4= -9.771718E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194467E+07  T =  1.636804E+01 Xi_A=  3.002518E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3023, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446418E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3023, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.323537E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749973E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749590E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749572E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749568E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749552E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749557E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3023, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749544E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3023, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3023, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.616046E-06  at element "  a12   ", equation  4
+   a12   (  3023, 2) Time = 1.448950E+07 Dt =  3.200000E+03 DX1 =  2.243798E+01 DX2= -1.344362E-12 DX3=  5.240110E-09 DX4= -4.885103E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194469E+07  T =  1.636799E+01 Xi_A=  3.002518E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3024, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  7.231956E-06  at element "  a12   ", equation  4
+   a12   (  3024, 2) Time = 1.449590E+07 Dt =  6.400000E+03 DX1 =  4.474781E+01 DX2= -1.340431E-12 DX3=  1.044790E-08 DX4= -9.773076E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194474E+07  T =  1.636790E+01 Xi_A=  3.002519E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  3025, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.446337E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  3025, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.321403E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.752157E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749457E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749445E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749434E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749448E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749444E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  3025, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.749422E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  3025, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  3025, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.615843E-06  at element "  a12   ", equation  4
+   a12   (  3025, 2) Time = 1.449910E+07 Dt =  3.200000E+03 DX1 =  2.239976E+01 DX2= -1.341904E-12 DX3=  5.230507E-09 DX4= -4.885724E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.194476E+07  T =  1.636785E+01 Xi_A=  3.002520E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  4995, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.369405E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  4995, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.219838E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617540E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617890E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617886E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617881E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617875E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617878E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4995, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617864E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  4995, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  4995, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.423512E-06  at element "  a12   ", equation  4
+   a12   (  4995, 2) Time = 2.395510E+07 Dt =  3.200000E+03 DX1 =  2.071305E+01 DX2= -1.122264E-12 DX3=  4.831489E-09 DX4= -4.591757E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.200842E+07  T =  1.622788E+01 Xi_A=  3.004006E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  4996, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  6.846898E-06  at element "  a12   ", equation  4
+   a12   (  4996, 2) Time = 2.396150E+07 Dt =  6.400000E+03 DX1 =  4.145723E+01 DX2= -1.123082E-12 DX3=  9.670801E-09 DX4= -9.182237E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.200846E+07  T =  1.622779E+01 Xi_A=  3.004007E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  4997, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.369329E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  4997, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.213796E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.616349E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617769E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617764E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617775E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617765E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617756E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4997, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617755E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  4997, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  4997, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.423324E-06  at element "  a12   ", equation  4
+   a12   (  4997, 2) Time = 2.396470E+07 Dt =  3.200000E+03 DX1 =  2.062779E+01 DX2= -1.117480E-12 DX3=  4.810029E-09 DX4= -4.593633E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.200848E+07  T =  1.622775E+01 Xi_A=  3.004007E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  4998, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  6.846521E-06  at element "  a12   ", equation  4
+   a12   (  4998, 2) Time = 2.397110E+07 Dt =  6.400000E+03 DX1 =  4.144746E+01 DX2= -1.122705E-12 DX3=  9.668387E-09 DX4= -9.181870E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.200852E+07  T =  1.622765E+01 Xi_A=  3.004008E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  4999, 1]: TimeStep =  1.280000E+04   MAX{Residual} =  1.369254E-05  at element "  a12   ", equation  4
+ .... ITERATING:  At [  4999, 2]: TimeStep =  1.280000E+04   MAX{Residual} =  1.216896E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 3]: TimeStep =  1.280000E+04   MAX{Residual} =  1.615189E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 4]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617642E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 5]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617638E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 6]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617625E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 7]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617627E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 8]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617634E-06  at element "  a12   ", equation  3
+ .... ITERATING:  At [  4999, 9]: TimeStep =  1.280000E+04   MAX{Residual} =  1.617614E-06  at element "  a12   ", equation  3
+ >>>>>  REDUCE TIME STEP AT (  4999, 9) ==>  New timestep =  3.200000E+03
+ .... ITERATING:  At [  4999, 1]: TimeStep =  3.200000E+03   MAX{Residual} =  3.423135E-06  at element "  a12   ", equation  4
+   a12   (  4999, 2) Time = 2.397430E+07 Dt =  3.200000E+03 DX1 =  2.066725E+01 DX2= -1.119535E-12 DX3=  4.819995E-09 DX4= -4.592294E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.200854E+07  T =  1.622761E+01 Xi_A=  3.004008E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ .... ITERATING:  At [  5000, 1]: TimeStep =  6.400000E+03   MAX{Residual} =  6.846145E-06  at element "  a12   ", equation  4
+   a12   (  5000, 2) Time = 2.398070E+07 Dt =  6.400000E+03 DX1 =  4.128668E+01 DX2= -1.118188E-12 DX3=  9.627920E-09 DX4= -9.185352E-05 DX5= 
+ !  >>>>>>>>>>>      P    = 2.200858E+07  T =  1.622752E+01 Xi_A=  3.004009E-02 SG =  0.000000E+00 SA =  5.250000E-01 SH =  4.750000E-01 SI =  0.000000E+00
+ 
+ 3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+          Output data after (  5000,  32759) time steps ..................................................... The time is  2.77554E+02 days
+
+=======================================================================================================================================================
+ 
+  TOTAL TIME (s)  Timestep #  NR-iterations  Convergence      DX1M          DX2M          DX3M        Max Residual      NER      KER        TimeStep
+  2.39807E+07         5000        32759           Y       4.128668E+01  6.671964E-08  9.627920E-09    6.081460E-07       12        3     6.400000E+03
+
+=======================================================================================================================================================
+ 
+ 
+   ELEM   INDEX    Pressure     Temperature  S_Hydrate   S_aqueous     S_gas       S_Ice         P_CH4        P_EqHydr       P_SatWat     X_Inhibitor
+                     (Pa)        (Deg. C)                                                        (Pa)           (Pa)           (Pa)         (kg/kg)
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  1.6650000E+07  2.30000E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  3.7888926E+06  7.2127876E+02  3.00000E-02
+     a 2      2  1.6919121E+07  7.98681E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.7482748E+06  1.0720549E+03  3.00000E-02
+     a 3      3  1.7353863E+07  8.18108E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8893409E+06  1.0863206E+03  3.00000E-02
+     a 4      4  1.7788681E+07  8.18546E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8925599E+06  1.0866439E+03  3.00000E-02
+     a 5      5  1.8223580E+07  8.19065E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.8963823E+06  1.0870276E+03  3.00000E-02
+     a 6      6  1.8658560E+07  8.19687E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9009640E+06  1.0874874E+03  3.00000E-02
+     a 7      7  1.9093619E+07  8.20348E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9058383E+06  1.0879763E+03  3.00000E-02
+     a 8      8  1.9528759E+07  8.21028E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9108545E+06  1.0884792E+03  3.00000E-02
+     a 9      9  1.9963979E+07  8.21713E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9159132E+06  1.0889861E+03  3.00000E-02
+     a10     10  2.0399278E+07  8.22471E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  6.9215159E+06  1.0895473E+03  3.00000E-02
+     a11     11  2.0834655E+07  8.39234E+00  0.0000E+00  1.0000E+00  0.0000E+00  0.0000E+00  0.0000000E+00  7.0468674E+06  1.1020236E+03  3.00000E-02
+     a12     12  2.2008584E+07  1.62275E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.7692565E+07  1.8454634E+03  3.00401E-02
+     a13     13  2.1828376E+07  1.65814E+01  4.7505E-01  5.2495E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8495203E+07  1.8875420E+03  3.00020E-02
+     a14     14  2.1829685E+07  1.65994E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8536904E+07  1.8896967E+03  3.00001E-02
+     a15     15  2.1830001E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538336E+07  1.8897707E+03  3.00000E-02
+     a16     16  2.1829998E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538371E+07  1.8897725E+03  3.00000E-02
+     a17     17  2.1829997E+07  1.66000E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538376E+07  1.8897727E+03  3.00000E-02
+     a18     18  2.1829964E+07  1.66001E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8538538E+07  1.8897811E+03  3.00000E-02
+     a19     19  2.1828952E+07  1.66022E+01  4.7500E-01  5.2500E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8543527E+07  1.8900387E+03  2.99998E-02
+     a20     20  2.1801211E+07  1.66473E+01  4.7503E-01  5.2497E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.8648918E+07  1.8954699E+03  2.99948E-02
+     a21     21  2.2679827E+07  1.71599E+01  4.8269E-01  5.1731E-01  0.0000E+00  0.0000E+00  0.0000000E+00  1.9945786E+07  1.9581328E+03  3.03804E-02
+     a22+    22  2.2425685E+07  1.81000E+01  2.5000E-01  5.2500E-01  2.2500E-01  0.0000E+00  2.2423607E+07  2.2425685E+07  2.0777928E+03  3.00000E-02
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =   5000 :|: NR iterations =   32759 :|: TIME =  2.398070E+07
+ 
+_________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX  C-CH4inGas C-CH4inAqu  Dens_Gas   Dens_Aqu   Dens_Hydr  Visc_Gas   Visc_Aqu       Phi          PC_w      Krel_Gas    Krel_Aqu
+                  (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m^3)   (Kg/m*s)   (Kg/m*s)                    (Pa)
+_________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  0.0000E+00 0.0000E+00 0.0000E+00 1.0558E+03 0.0000E+00 1.0000E+00 1.5387E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 2      2  0.0000E+00 0.0000E+00 0.0000E+00 1.0556E+03 0.0000E+00 1.0000E+00 1.3232E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 3      3  0.0000E+00 0.0000E+00 0.0000E+00 1.0558E+03 0.0000E+00 1.0000E+00 1.3168E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 4      4  0.0000E+00 0.0000E+00 0.0000E+00 1.0560E+03 0.0000E+00 1.0000E+00 1.3167E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 5      5  0.0000E+00 0.0000E+00 0.0000E+00 1.0562E+03 0.0000E+00 1.0000E+00 1.3166E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 6      6  0.0000E+00 0.0000E+00 0.0000E+00 1.0564E+03 0.0000E+00 1.0000E+00 1.3164E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 7      7  0.0000E+00 0.0000E+00 0.0000E+00 1.0566E+03 0.0000E+00 1.0000E+00 1.3162E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 8      8  0.0000E+00 0.0000E+00 0.0000E+00 1.0568E+03 0.0000E+00 1.0000E+00 1.3161E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a 9      9  0.0000E+00 0.0000E+00 0.0000E+00 1.0570E+03 0.0000E+00 1.0000E+00 1.3159E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a10     10  0.0000E+00 0.0000E+00 0.0000E+00 1.0572E+03 0.0000E+00 1.0000E+00 1.3157E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a11     11  0.0000E+00 0.0000E+00 0.0000E+00 1.0573E+03 0.0000E+00 1.0000E+00 1.3102E-03  3.00000E-01  0.00000E+00  0.0000E+00  1.0000E+00
+     a12     12  0.0000E+00 4.4285E+00 0.0000E+00 1.0532E+03 9.2734E+02 1.0000E+00 1.0846E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a13     13  0.0000E+00 4.5938E+00 0.0000E+00 1.0529E+03 9.2737E+02 1.0000E+00 1.0758E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a14     14  0.0000E+00 4.6024E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a15     15  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a16     16  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a17     17  0.0000E+00 4.6027E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a18     18  0.0000E+00 4.6028E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a19     19  0.0000E+00 4.6038E+00 0.0000E+00 1.0529E+03 9.2738E+02 1.0000E+00 1.0753E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a20     20  0.0000E+00 4.6254E+00 0.0000E+00 1.0528E+03 9.2738E+02 1.0000E+00 1.0741E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a21     21  0.0000E+00 4.8966E+00 0.0000E+00 1.0535E+03 9.2791E+02 1.0000E+00 1.0623E-03  3.00000E-01  0.00000E+00  0.0000E+00  0.0000E+00
+     a22+    22  1.8474E+02 5.3959E+00 1.8476E+02 1.0522E+03 9.2810E+02 2.2944E-05 1.0395E-03  3.00000E-01 -1.55837E+04  2.0483E-01  5.0007E-02
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =   5000 :|: NR iterations =   32759 :|: TIME =  2.398070E+07
+ 
+________________________________________________________________________________________________________________
+
+   ELEM1    ELEM2   INDEX  Heat Flow    Gas Flow   Aqu. Flow  CH4inGs-Flo CH4inAq-Flo   Gas Veloc   Aqu Veloc
+                              (W)        (Kg/s)      (Kg/s)      (Kg/s)      (Kg/s)      (m/s)       (m/s)
+________________________________________________________________________________________________________________
+
+     a 2      a 1       1 -2.6789E+02  0.0000E+00  1.2081E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.5357E-10
+     a 3      a 2       2  2.7059E-01  0.0000E+00  1.1835E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.3432E-10
+     a 4      a 3       3  6.0116E+00  0.0000E+00  1.1823E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.3322E-10
+     a 5      a 4       4  6.0325E+00  0.0000E+00  1.1814E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.3227E-10
+     a 6      a 5       5  6.0457E+00  0.0000E+00  1.1800E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.3106E-10
+     a 7      a 6       6  6.0763E+00  0.0000E+00  1.1784E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.2959E-10
+     a 8      a 7       7  6.1110E+00  0.0000E+00  1.1764E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.2784E-10
+     a 9      a 8       8  6.1475E+00  0.0000E+00  1.1740E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.2578E-10
+     a10      a 9       9  6.1611E+00  0.0000E+00  1.1711E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.2333E-10
+     a11      a10      10  1.4685E+00  0.0000E+00  1.1678E-04  0.0000E+00  0.0000E+00  0.0000E+00  9.2052E-10
+     a12      a11      11 -3.5098E+02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a13      a12      12 -3.2842E+01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a14      a13      13 -1.6644E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a15      a14      14 -5.7078E-02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a16      a15      15 -1.4126E-03  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a17      a16      16 -1.8715E-04  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a18      a17      17 -6.4768E-03  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a19      a18      18 -1.9882E-01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a20      a19      19 -4.1873E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a21      a20      20 -4.7568E+01  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+     a22      a21      21 -1.0708E+02  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          3D_upper_col_gravity: Column test grid for gravity equilibriation of model, porosity_perm_dependence = TRUE             
+
+                                                                          Timesteps =   5000 :|: NR iterations =   32759 :|: TIME =  2.398070E+07
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX       X1            X2            X3            X4           DX1           DX2           DX3           DX4
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  1.665000E+07  0.000000E+00  3.000000E-02  2.300000E+00 -2.331632E-45  0.000000E+00  4.693538E-70  5.569145E-51
+     a 2      2  1.691912E+07  0.000000E+00  3.000000E-02  7.986814E+00  3.134778E-03  0.000000E+00 -1.305546E-22 -3.300566E-05
+     a 3      3  1.735386E+07  0.000000E+00  3.000000E-02  8.181083E+00  7.531739E-03  0.000000E+00  2.370899E-22 -7.069814E-07
+     a 4      4  1.778868E+07  0.000000E+00  3.000000E-02  8.185459E+00  1.132251E-02  0.000000E+00 -8.478662E-23 -2.994052E-09
+     a 5      5  1.822358E+07  0.000000E+00  3.000000E-02  8.190652E+00  1.512434E-02  0.000000E+00 -4.975632E-23 -2.196336E-09
+     a 6      6  1.865856E+07  0.000000E+00  3.000000E-02  8.196872E+00  1.900020E-02  0.000000E+00 -7.917685E-23 -4.472259E-09
+     a 7      7  1.909362E+07  0.000000E+00  3.000000E-02  8.203484E+00  2.304372E-02  0.000000E+00  1.607005E-22 -5.141766E-09
+     a 8      8  1.952876E+07  0.000000E+00  3.000000E-02  8.210282E+00  2.749714E-02  0.000000E+00 -9.826700E-23 -5.529327E-09
+     a 9      9  1.996398E+07  0.000000E+00  3.000000E-02  8.217132E+00  3.328068E-02  0.000000E+00  8.818780E-23 -2.921490E-09
+     a10     10  2.039928E+07  0.000000E+00  3.000000E-02  8.224711E+00  4.415759E-02  0.000000E+00 -2.968984E-23  5.763596E-07
+     a11     11  2.083465E+07  0.000000E+00  2.999999E-02  8.392341E+00  7.300620E-02  0.000000E+00 -5.746211E-12  4.210432E-05
+     a12     12  2.200858E+07  5.250000E-01  3.004009E-02  1.622752E+01  4.128668E+01 -1.118188E-12  9.627920E-09 -9.185352E-05
+     a13     13  2.182838E+07  5.249481E-01  3.000204E-02  1.658143E+01 -8.770837E+00 -6.671964E-08  1.084064E-09 -9.893827E-06
+     a14     14  2.182969E+07  5.249970E-01  3.000007E-02  1.659937E+01  1.511032E-03 -1.108142E-09  5.253949E-11 -4.774794E-07
+     a15     15  2.183000E+07  5.250000E-01  3.000000E-02  1.659998E+01  5.229814E-05 -3.841259E-11  1.821318E-12 -1.653439E-08
+     a16     16  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01  1.151165E-06 -8.458462E-13  4.010605E-14 -3.639943E-10
+     a17     17  2.183000E+07  5.250000E-01  3.000000E-02  1.660000E+01 -8.502891E-04  2.094691E-16 -1.988970E-13  1.806353E-09
+     a18     18  2.182996E+07  5.250000E-01  2.999999E-02  1.660007E+01 -2.594639E-02  6.566619E-15 -6.068308E-12  5.525274E-08
+     a19     19  2.182895E+07  5.250000E-01  2.999976E-02  1.660221E+01 -5.398463E-01  1.214919E-13 -1.262902E-10  1.145286E-06
+     a20     20  2.180121E+07  5.249723E-01  2.999478E-02  1.664734E+01  5.225425E-01  3.296344E-08 -1.430552E-09  1.292139E-05
+     a21     21  2.267983E+07  5.173139E-01  3.038038E-02  1.715991E+01 -7.369841E-02  4.327372E-08 -2.108965E-09  1.762019E-05
+     a22+    22  2.250000E-01  5.250000E-01  3.000000E-02  1.810000E+01 -1.699629E-53 -3.049000E-53  1.976646E-54 -4.654310E-52
+ 
+_______________________________________________________________________________________________________________________________________________________
+
+   ELEM   INDEX    Enthl-Gas    Enthl-Aqu     Enthl-Hydr    Enthl-Ice    Reactn_Rate   Reactn_Heat     T-Shift       k-SPIAF     k-intrinsic
+                    (J/Kg)        (J/Kg)        (J/Kg)        (J/Kg)       (Kg/s)        (J/kg)          (K)                        (m^2)
+_______________________________________________________________________________________________________________________________________________________
+
+     a 1+     1  0.000000E+00  2.756426E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 2      2  0.000000E+00  5.074751E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 3      3  0.000000E+00  5.193734E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 4      4  0.000000E+00  5.236157E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 5      5  0.000000E+00  5.278895E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 6      6  0.000000E+00  5.322030E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 7      7  0.000000E+00  5.365308E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 8      8  0.000000E+00  5.408644E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a 9      9  0.000000E+00  5.451986E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a10     10  0.000000E+00  5.495605E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a11     11  0.000000E+00  5.603505E+04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  1.411862E+00  1.000000E+00  2.960000E-13
+     a12     12  0.000000E+00  8.363205E+04  3.407778E+04  0.000000E+00  1.211960E-09  4.560622E+05  1.413049E+00  1.250000E-01  2.960000E-13
+     a13     13  0.000000E+00  8.472780E+04  3.482101E+04  0.000000E+00  5.545668E-10  4.560622E+05  1.411184E+00  1.249590E-01  2.960000E-13
+     a14     14  0.000000E+00  8.479238E+04  3.485868E+04  0.000000E+00  1.356639E-11  4.560622E+05  1.411087E+00  1.249976E-01  2.960000E-13
+     a15     15  0.000000E+00  8.479483E+04  3.485997E+04  0.000000E+00  4.702945E-13  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a16     16  0.000000E+00  8.479488E+04  3.486000E+04  0.000000E+00  1.035572E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a17     17  0.000000E+00  8.479489E+04  3.486000E+04  0.000000E+00 -2.521316E-14  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a18     18  0.000000E+00  8.479511E+04  3.486015E+04  0.000000E+00 -7.653664E-13  4.560622E+05  1.411084E+00  1.250000E-01  2.960000E-13
+     a19     19  0.000000E+00  8.480179E+04  3.486465E+04  0.000000E+00 -1.603885E-11  4.560622E+05  1.411072E+00  1.250000E-01  2.960000E-13
+     a20     20  0.000000E+00  8.493686E+04  3.495941E+04  0.000000E+00 -3.868575E-10  4.560622E+05  1.410828E+00  1.249781E-01  2.960000E-13
+     a21     21  0.000000E+00  8.749442E+04  3.603582E+04  0.000000E+00 -5.297082E-10  4.560622E+05  1.429398E+00  1.190297E-01  2.960000E-13
+     a22+    22 -1.695723E+05  9.055068E+04  3.801000E+04  0.000000E+00  0.000000E+00  4.560622E+05  1.410949E+00  4.000583E-01  2.960000E-13
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                                         V O L U M E   A N D   M A S S   B A L A N C E S                                        *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+ =========  [Timestep, NR-iterations] = [  5000,  32759]  =========             The time is  2.39807E+07 sec, or  2.77554E+02 days
+
+
+                                    PHASES PRESENT
+ ====================================================================================
+  PHASES       |         Gas            Aqueous         Hydrate            Ice
+ ====================================================================================
+               |
+  VOLUME (m^3) |   0.00000000E+00   6.17232198E+04   1.02767809E+04   0.00000000E+00
+  MASS   (Kg)  |   0.00000000E+00   6.51693296E+07   9.53097269E+06   0.00000000E+00
+               |
+ ====================================================================================
+
+
+                                                                         COMPONENT MASS IN PLACE (Kg)
+                                            ======================================================================================
+                                              COMPONENTS    |       Water             CH4            Hydrate           Salt
+                                            ======================================================================================
+                                              PHASES        |
+                                            ----------------|
+                                              Gas phase     |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                              Aqueous       |   6.31614932E+07   5.22649803E+04   0.00000000E+00   1.95557148E+06
+                                              Hydrate       |   8.29918586E+06   1.23178683E+06   0.00000000E+00   0.00000000E+00
+                                              Ice           |   0.00000000E+00   0.00000000E+00   0.00000000E+00   0.00000000E+00
+                                            --------------------------------------------------------------------------------------
+                                              TOTAL         |   7.14606790E+07   1.28405181E+06   0.00000000E+00   1.95557148E+06
+                                                            |
+                                            ======================================================================================
+
+ *********************************************************************************************************************************
+ *********************************************************************************************************************************
+
+
+
+ >>>>> Write file "SAVE" after    5000 time steps  ==>  The time is  2.39807E+07 seconds
+
+
+
+************************************************************************************************************************************
+
+
+ END OF TOUGH+ SIMULATION RUN:     Elapsed Time             =  1.21665000E+02 sec
+                                   Data Input Time          =  2.49000000E-01 sec
+                                   Calculation Time         =  1.21416000E+02 sec
+                                        Matrix Solving Time =  2.19110000E+01 sec
