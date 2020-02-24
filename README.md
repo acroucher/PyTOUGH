@@ -1,3 +1,5 @@
+![Unit tests](https://github.com/acroucher/PyTOUGH/workflows/Unit%20tests/badge.svg)
+
 # What is PyTOUGH?
 
 PyTOUGH (Python TOUGH) is a Python library for simplifying, extending and automating the use of the [TOUGH2](http://esd.lbl.gov/research/projects/tough/) subsurface fluid and heat flow simulator. Using PyTOUGH, it is possible to automate the creation and editing of TOUGH2 model grids and data files, and the analysis and display of model simulation results, using Python scripts.
