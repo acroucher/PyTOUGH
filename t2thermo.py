@@ -46,6 +46,10 @@ tc_k = 273.15
 Tc1_C = Tc1 - tc_k
 
 from math import sqrt, exp
+try:
+    from collections.abc import Iterable # Python >= 3.3
+except ImportError:
+    from collections import Iterable
 
 def cowat(t, p, bounds = False):
     """Density d and internal energy u of liquid water as a function of
@@ -288,8 +292,7 @@ def tsat(p, bounds = False):
         t0 = max(4606.0 / (24.02 - log(p)) - 273.15, 5.0) # starting estimate
         t = fsolve(f, t0)
         # need to check this as some versions of SciPy return an array from fsolve:
-        import collections
-        if isinstance(t, collections.Iterable): return t[0]
+        if isinstance(t, Iterable): return t[0]
         else: return t
     else: return None
 
