@@ -260,17 +260,15 @@ class mulgridTestCase(unittest.TestCase):
 
     def test_write_mesh(self):
         """mesh writer"""
-        from os.path import exists
-        from os import remove
         filename = os.path.join('mulgrid', 'g5')
         geofilename = filename + '.dat'
         exofilename = filename + '.exo'
-        if exists(exofilename): remove(exofilename)
+        if os.path.exists(exofilename): os.remove(exofilename)
         geo = mulgrid(geofilename)
         geo.write_mesh(exofilename)
-        ok = exists(exofilename)
+        ok = os.path.exists(exofilename)
         self.assertTrue(ok)
-        if ok: remove(exofilename)
+        if ok: os.remove(exofilename)
 
     def test_block_name_containing_point(self):
         geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*3)
