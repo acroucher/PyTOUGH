@@ -292,8 +292,9 @@ class t2listing(object):
 
     def detect_simulator(self):
         """Detects whether the listing has been produced by AUTOUGH2,
-        TOUGH2/TOUGH2_MP or TOUGH+, and sets some internal methods
+        TOUGH2, TOUGH2_MP, TOUGH+ or TOUGH3, and sets some internal methods
         according to the simulator type."""
+        self.simulator = None
         self._file.seek(0)
         simulator = {'EEEEE':'AUTOUGH2','ESHORT':'AUTOUGH2','BBBBB':'AUTOUGH2',
                      '@@@@@':'TOUGH2','=====':'TOUGH+'}
@@ -302,8 +303,10 @@ class t2listing(object):
         line = ' '
         while not ('output data after' in line or 'output after' in line or line == ''):
             line = self.readline().lower()
-        if line == '': self.simulator = None
-        else:
+            ip = line.find('is a program for')
+            if ip >= 0 and self.simulator is None:
+                self.simulator = line[:ip].strip().upper()
+        if line != '' and self.simulator is None:
             self.skip_to_nonblank()
             line = self.readline()
             if line[1:].startswith('THE TIME IS'): line = self.readline() # AUTOUGH2
@@ -311,23 +314,20 @@ class t2listing(object):
             if linechars in simulator.keys():
                 self.simulator = simulator[linechars]
                 if self.simulator == 'TOUGH2' and MP: self.simulator += '_MP'
-            else: self.simulator = None
-            if self.simulator:
-                # Set internal methods according to simulator type:
-                simname = self.simulator.replace('+','plus')
-                internal_fns = ['setup_pos','table_type','setup_table',
-                                'setup_tables','read_header','read_table','next_table',
-                                'read_tables','skip_to_table','read_table_line','read_title',
-                                'skip_table']
-                for fname in internal_fns:
-                    fname_sim = fname + '_' + simname
-                    # use TOUGH2 methods for TOUGH2_MP/TOUGH+ unless there are customized methods
-                    # for these simulators:
-                    if simname == 'TOUGH2_MP' and not hasattr(self, fname_sim):
-                        fname_sim = fname_sim.replace('_MP','')
-                    if simname == 'TOUGHplus' and not hasattr(self, fname_sim):
-                        fname_sim = fname_sim.replace('plus','2')
-                    setattr(self, fname, getattr(self, fname_sim))
+        if self.simulator:
+            # Set internal methods according to simulator type:
+            simname = self.simulator.replace('+','plus')
+            internal_fns = ['setup_pos','table_type','setup_table',
+                            'setup_tables','read_header','read_table','next_table',
+                            'read_tables','skip_to_table','read_table_line','read_title',
+                            'skip_table']
+            for fname in internal_fns:
+                fname_sim = fname + '_' + simname
+                # use TOUGH2 methods unless there are customized methods for these simulators:
+                if simname in ['TOUGH2_MP', 'TOUGHplus', 'TOUGHREACT', 'TOUGH3'] and \
+                   not hasattr(self, fname_sim):
+                       fname_sim = fname_sim.replace(simname, 'TOUGH2')
+                setattr(self, fname, getattr(self, fname_sim))
 
     def table_type_AUTOUGH2(self, keyword):
         """Returns AUTOUGH2 table name based on the 5-character keyword read at the top of the table."""
@@ -340,11 +340,10 @@ class t2listing(object):
         if headers[0:2] in [('ELEM.','INDEX'),('ELEM.','IND.')]:
             if headers[2] == 'P': return 'element'
             elif headers[2] == 'X1': return 'primary'
-        else:
-            keytable = {('ELEM1','ELEM2','INDEX'): 'connection',
-                        ('ELEMENT','SOURCE','INDEX'): 'generation'}
-            if headers in keytable: return keytable[headers]
-        return None
+        elif headers[0:3] == ('ELEM1','ELEM2','INDEX'): return 'connection'
+        elif headers[0:3] in [('ELEMENT','SOURCE','INDEX'), ('ELEM.','SOURCE','INDEX')]:
+            return 'generation'
+        else: return None
 
     def table_type_TOUGHplus(self, headers):
         """Returns TOUGH+ table name based on a tuple of the first three column headings."""
@@ -705,8 +704,8 @@ class t2listing(object):
     def parse_table_header_TOUGH2(self):
         """Parses table header line for TOUGH2, returning the number of keys and the column names."""
         cols = []
-        if self.simulator in ['TOUGH2','TOUGH2_MP']: flow_headers = ['RATE']
-        else: flow_headers = ['Flow','Veloc']
+        if self.simulator == 'TOUGH+': flow_headers = ['Flow', 'Veloc']
+        else: flow_headers = ['RATE']
         headline = self.readline().strip()
         headstrs = headline.split()
         indexstrs = ['INDEX','IND.'] # for EWASG
@@ -1284,7 +1283,9 @@ class t2listing(object):
         keyword = {'AUTOUGH2':{'P': 'Pressure', 'T': 'Temperature'},
                    'TOUGH2': {'P': 'P', 'T': 'T'},
                    'TOUGH2_MP': {'P': 'P', 'T': 'T'},
-                   'TOUGH+' : {'P': 'Pressure', 'T': 'Temperature'}}
+                   'TOUGH+' : {'P': 'Pressure', 'T': 'Temperature'},
+                   'TOUGHREACT': {'P': 'P', 'T': 'T'},
+                   'TOUGH3': {'P': 'P', 'T': 'T'}}
         self.last()
         bdy_nodes = geo.boundary_nodes
         for blk in dat.grid.blocklist[geo.num_atmosphere_blocks:]:

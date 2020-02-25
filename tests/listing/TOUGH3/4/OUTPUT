@@ -1,0 +1,1236 @@
+ 
+       @@@@@   @@   @  @   @@@  @  @   @@       @@@  @  @   @  @  @  @      @@   @@@@@  @   @@   @   @     @@@   @  @  @   @
+         @    @  @  @  @  @     @  @  @  @     @     @  @@ @@  @  @  @     @  @    @    @  @  @  @@  @     @  @  @  @  @@  @
+         @    @  @  @  @  @ @@  @@@@    @       @@   @  @ @ @  @  @  @     @@@@    @    @  @  @  @ @ @     @@@   @  @  @ @ @
+         @    @  @  @  @  @  @  @  @  @  @        @  @  @   @  @  @  @     @  @    @    @  @  @  @  @@     @ @   @  @  @  @@
+         @     @@    @@    @@@  @  @   @@      @@@   @  @   @   @@   @@@@  @  @    @    @   @@   @   @     @  @   @@   @   @
+
+
+                    TOUGH3 IS A PROGRAM FOR MULTIPHASE MULTICOMPONENT FLOW IN PERMEABLE MEDIA, INCLUDING HEAT FLOW.
+              IT IS A MEMBER OF THE MULKOM FAMILY OF CODES, DEVELOPED  AT LAWRENCE BERKELEY LABORATORY BY KARSTEN PRUESS ET AL.
+
+                          ********************************************************************************
+                          **********************   TOUGH3 VER. 1.0.0 (January 2018)  *********************
+                          ********************************************************************************
+
+
+ SUMMARY OF DISK FILES
+
+ FILE *MESH*  EXISTS --- OPEN AS AN OLD FILE
+ WARNING: FILES *MESHA* AND *MESHB* EXIST --- information in file MESH or ELEME and CONNE blocks in input file will be ignored
+ FILE *INCON* EXISTS --- OPEN AS AN OLD FILE
+ FILE *GENER* EXISTS --- OPEN AS AN OLD FILE
+ FILE *SAVE*  EXISTS --- OPEN AS AN OLD FILE
+ FILE *TABLE* EXISTS --- OPEN AS AN OLD FILE
+
+ ===================================================================================================================================
+
+     PROBLEM TITLE:  TOUGH3 version                                                                  
+
+
+(Reading ROCKS block)
+
+ DOMAIN NO.  1     MATERIAL NAME -- ATMOS
+
+ DOMAIN NO.  2     MATERIAL NAME -- AA   
+
+ DOMAIN NO. 80     MATERIAL NAME -- abc99
+(Reading PARAM block)
+(Reading RPCAP block)
+(Reading ELEME block)
+     
+ WRITE FILE *MESH* FROM INPUT DATA
+(Reading CONNE block)
+(Reading GENER block)
+     
+ WRITE FILE *GENER* FROM INPUT DATA
+(Reading ENDCY block)
+
+                        ************************************************************************************
+                        *                       EVALUATE FLOATING POINT ARITHMETIC                         *
+                        ************************************************************************************
+                        *                                                                                  *
+                        * FLOATING POINT PROCESSOR HAS APPROXIMATELY 15 SIGNIFICANT DIGITS                 *
+                        *                                                                                  *
+                        * DEFAULT VALUE OF INCREMENT FACTOR FOR NUMERICAL DERIVATIVES IS DFAC = 0.1490E-07 *
+                        * DEFAULT VALUE FOR DFAC WILL BE USED                                              *
+                        *                                                                                  *
+                        ************************************************************************************
+
+ 
+
+
+ PARAMETERS FOR FLEXIBLE DIMENSIONING OF MAJOR ARRAYS (MAIN PROGRAM) ARE AS FOLLOWS
+
+ MNEL =  31052  MNCON =   87962  MNEQ =  2  MNK =  1   MNPH =  2   MNB =  6   MNOGN = 1008   MGTAB =    0
+ ===================================================================================================================================
+
+ MAXIMUM NUMBER OF VOLUME ELEMENTS (GRID BLOCKS):            MNEL  =   31052
+ MAXIMUM NUMBER OF CONNECTIONS (INTERFACES):                 MNCON =   87962
+ MAXIMUM LENGTH OF PRIMARY VARIABLE ARRAYS:                  MPRIM =   62104
+ MAXIMUM NUMBER OF GENERATION ITEMS (SINKS/SOURCES):         MNOGN =   1008
+ MAXIMUM NUMBER OF TABULAR (TIME-DEPENDENT) GENERATION DATA: MGTAB =      0
+ LENGTH OF SECONDARY PARAMETER ARRAY:                        MNSEC  =     1490496
+
+ MESH HAS    31052 ELEMENTS AND    87962 CONNECTIONS (INTERFACES) BETWEEN THEM
+ GENER HAS  1008 SINKS/SOURCES
+
+
+END OF PART 1 INPUT JOB --- ELAPSED TIME =   0.6562 SECONDS
+
+ 
+ ***********************************************************************************************************************************
+ *          ARRAY *MOP* ALLOWS TO GENERATE MORE PRINTOUT IN VARIOUS SUBROUTINES, AND TO MAKE SOME CALCULATIONAL CHOICES.           *
+ ***********************************************************************************************************************************
+
+   MOP(1)  = 2 *** ALLOWS TO GENERATE A SHORT PRINTOUT FOR EACH NEWTON-RAPHSON ITERATION
+           = 0, 1, OR 2: GENERATE 0, 1, OR 2 LINES OF PRINTOUT
+
+            MORE PRINTOUT IS GENERATED FOR MOP(I) > 0 IN THE FOLLOWING SUBROUTINES (THE LARGER MOP IS, THE MORE WILL BE PRINTED).
+
+   MOP(2)  = 0 *** CYCIT       MOP(3) = 0 *** MULTI       MOP(4) = 0 *** QU       MOP(5) = 0 *** EOS       MOP(6) = 0 *** LINEQ    
+
+   MOP(7)  = 0 *** IF UNEQUAL ZERO, WILL GENERATE A PRINTOUT OF INPUT DATA
+
+            CALCULATIONAL CHOICES OFFERED BY MOP ARE AS FOLLOWS:
+
+   MOP(8)  = 0 *** IF ISOT IS NEGATIVE, CHOOSES OPTION FOR REDUCING FRACTURE-MATRIX INTERFACE AREA.
+
+   MOP(9)  = 0 *** CHOOSES FLUID COMPOSITION ON WITHDRAWAL (PRODUCTION).
+           = 0: ACCORDING TO RELATIVE MOBILITIES.
+           = 1: ACCORDING TO COMPOSITION IN PRODUCING ELEMENT.
+
+   MOP(10) = 0 *** CHOOSES INTERPOLATION FORMULA FOR DEPENDENCE OF THERMAL CONDUCTIVITY ON LIQUID SATURATION (SL).
+           = 0: K = KDRY + SQRT(SL)*(KWET-KDRY)
+           = 1: K = KDRY + SL*(KWET-KDRY)
+           = 2: K = C0+C1*T+C2*Sw+C3*POR
+
+   MOP(11) = 2 *** CHOOSES EVALUATION OF MOBILITY AND ABSOLUTE PERMEABILITY AT INTERFACES.
+           = 0: MOBILITIES ARE UPSTREAM WEIGHTED WITH WUP. (DEFAULT IS WUP = 1.0). PERMEABILITY IS UPSTREAM WEIGHTED.
+           = 1: MOBILITIES ARE AVERAGED BETWEEN ADJACENT ELEMENTS. PERMEABILITY IS UPSTREAM WEIGHTED.
+           = 2: MOBILITIES ARE UPSTREAM WEIGHTED WITH WUP. (DEFAULT IS WUP = 1.0). PERMEABILITY IS HARMONIC WEIGHTED.
+           = 3: MOBILITIES ARE AVERAGED BETWEEN ADJACENT ELEMENTS. PERMEABILITY IS HARMONIC WEIGHTED.
+           = 4: MOBILITY * PERMEABILITY PRODUCT IS HARMONIC WEIGHTED.
+
+   MOP(12) = 0 *** CHOOSES PROCEDURE FOR INTERPOLATING GENERATION RATES FROM A TIME TABLE.
+           = 0: TRIPLE LINEAR INTERPOLATION.
+           = 1: "STEP FUNCTION" OPTION.
+           = 2: RIGOROUS STEP RATE OPTION.
+
+   MOP(13) = 0 *** DEFINES CONTENT OF INCON AND SAVE FILE.
+           = 0: STANDARD CONTENT.
+           = 2: READS PARAMETERS OF HYSTERESIS MODEL FROM FILE INCON.
+
+   MOP(15) = 0 *** ALLOWS TO SELECT A SEMI-ANALYTICAL HEAT EXCHANGE CALCULATION WITH CONFINING BEDS.
+           = 0: NO SEMI-ANALYTICAL HEAT EXCHANGE.
+           = 1: SEMI-ANALYTICAL LINEAR HEAT EXCHANGE ENGAGED. INITIAL TEMPERATURE OF CONFINING BEDS IS UNIFORM.
+           = 2: SEMI-ANALYTICAL LINEAR HEAT EXCHANGE ENGAGED. INITIAL TEMPERATURE OF CONFINING LAYERS IS NOT UNIFORM.
+           = 5: SEMI-ANALYTICAL RADIAL HEAT EXCHANGE WITH PROPERTIES GIVEN IN MATERIAL QLOSS
+           = 6: SEMI-ANALYTICAL RADIAL HEAT EXCHANGE WITH DEPTH-DEPENDENT PROPERTIES (DEPTH, RADIUS, TEMPERATURE,
+                CONDUCTIVITY, DENSITY, CAPACITY) PROVIDED ON FILE radqloss.dat
+
+   MOP(16) = 5 *** PERMITS TO CHOOSE TIME STEP SELECTION OPTION
+           = 0: AUTOMATIC TIME STEPPING BASED ON MAXIMUM CHANGE IN SATURATION.
+           = 1: AUTOMATIC TIME STEPPING BASED ON NUMBER OF ITERATIONS NEEDED FOR CONVERGENCE.
+           > 1: INCREASE TIME STEP BY AT LEAST A FACTOR 2, IF CONVERGENCE OCCURS IN .LE. MOP(16) ITERATIONS.
+
+   MOP(17) = 0 *** HANDLES TIME STEPPING AFTER LINEAR EQUATION SOLVER FAILURE.
+           = 0: NO TIME STEP REDUCTION DESPITE LINEAR EQUATION SOLUTION FAILURE.
+           = 9: REDUCE TIME STEP AFTER LINEAR EQUATION SOLUTION FAILURE.
+
+   MOP(18) = 0 *** ALLOWS TO SELECT HANDLING OF INTERFACE DENSITY.
+           = 0: PERFORM UPSTREAM WEIGHTING FOR INTERFACE DENSITY.
+           > 0: COMPUTE INTERFACE DENSITY AS AVERAGE OF THE TWO GRID BLOCK DENSITIES.
+                HOWEVER, WHEN ONE OF THE TWO PHASE SATURATIONS IS ZERO, DO UPSTREAM WEIGHTING.
+
+   MOP(21) = 8 *** PERMITS TO SELECT LINEAR EQUATION SOLVER FROM PACKAGE 
+           < 2: DEFAULTS TO MOP(21) = 3
+           = 2: DSLUBC: BI-CONJUGATE GRADIENT SOLVER; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 3: DSLUCS: BI-CONJUGATE GRADIENT SOLVER - LANCZOS TYPE; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 4: DSLUGM: GENERALIZED MINIMUM RESIDUAL CONJUGATE GRADIENTS; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 5: DLUSTB: STABILIZED BI-CONJUGATE GRADIENT SOLVER; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 6: LUBAND: DIRECT SOLVER USING LU DECOMPOSITION
+           = 7: AZTEC: PARALLEL ITERATIVE SOLVER
+           = 8: PETSc: PARALLEL ITERATIVE SOLVER
+
+   MOP(24) = 0 *** PERMITS TO SELECT HANDLING OF MULTIPHASE DIFFUSIVE FLUXES AT INTERFACES
+           = 0: HARMONIC WEIGHTING OF FULLY-COUPLED EFFECTIVE MULTIPHASE DIFFUSIVITY
+           = 1: SEPARATE HARMONIC WEIGHTING  FOR EACH PHASE FLUX 
+
+ ***********************************************************************************************************************************
+
+ ***********************************************************************************************************************************
+
+
+ 
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   Summary of capabilities for random permeability modification   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ Modification of absolute permeability on a grid block-by-grid block basis will be made when a domain "SEED " is present in data
+ block "ROCKS", as follows.
+                                    k    --->    k' = k*m
+
+ Here, k is the absolute permeability specified for the reservoir domain to which the grid block belongs. Parameter m is a
+ "permeability modifier" which can be internally generated or externally prescribed by the user on a block-by-block basis.
+
+ When permeability modification is in effect, the strength of capillary pressure will, following Leverett (1941), automatically be
+ scaled as   Pcap ---> Pcap' = Pcap/SQRT(m).
+
+ User-supplied permeability modifiers have to be entered as parameter "PMX" in columns 41-50 of an ELEMEnt record.
+ Permeability modification options are selected through parameters in data block "ROCKS".
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ Summary of available permeability modification options
+          (with s - random number between 0 and 1; PMX - user-supplied modifiers in data block "ELEME"):
+      (1) externally supplied:        m = PMX - PER(2)
+      (2) "linear"      (DROK.ne.0):  m = PER(1) * s - PER(2)
+      (3) "logarithmic" (DROK.eq.0):  m = exp(- PER(1) * s) - PER(2)
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+            &&&& if a domain "SEED " is present, permeability modification will be made
+            &&&& if no domain "SEED " is present, no permeability modification will be made
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>  domain = "SEED " is not present, no permeability modification will be made  <<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ Data provided in domain "SEED " are used to select the following options.
+
+ DROK   = *** random number seed for internal generation of "linear" permeability modifiers.
+        = 0: (default) no internal generation of "linear" permeability modifiers.
+        > 0: perform "linear" permeability modification; random modifiers are generated internally with DROK as seed.
+
+ POR    = *** random number seed for internal generation of "logarithmic" permeability modifiers,
+        = 0: (default) no internal generation of "logarithmic" permeability modifiers.
+        > 0: perform "logarithmic" permeability modification; random modifiers are generated internally with POR as seed.
+
+            &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            &&&&& note: if both DROK and POR are specified as non-zero, DROK takes precedence                                  &&&&&
+            &&&&&       if both DROK and POR are zero, permeability modifiers as supplied through "ELEME" data will be used    &&&&&
+            &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ PER(1) = *** scale factor (optional) for internally generated  permeability modifiers.
+        = 0: (defaults to PER(1) = 1): permeability modifiers are generated as random numbers in the interval (0, 1).
+        > 0: permeability modifiers are generated as random numbers in the interval (0, PER(1)).
+
+ PER(2) = *** shift (optional) for internal or external permeability modifiers.
+        = 0: (default) no shift is applied to permeability modifiers.
+        > 0: permeability modifiers are shifted according to m' = m - PER(2). All m' < 0 are set equal to zero.
+
+ 
+ ***********************************************************************************************************************************
+ *                    EOS1: EQUATION OF STATE FOR WATER (OPTIONAL: TWO-WATER MIXTURES)                                             *
+ ***********************************************************************************************************************************
+
+
+    OPTIONS SELECTED ARE: (NK,NEQ,NPH,NB) = (1,2,2,6)
+
+                           NK  =  1   - NUMBER OF FLUID COMPONENTS
+                           NEQ =  2   - NUMBER OF EQUATIONS PER GRID BLOCK
+                           NPH =  2   - NUMBER OF PHASES THAT CAN BE PRESENT
+                           NB  =  6   - NUMBER OF SECONDARY PARAMETERS (OTHER THAN COMPONENT MASS FRACTIONS)
+
+                   For NK = 1 or NB = 6, diffusion is "off", for NK = 2 and NB = 8, diffusion is "on"
+
+
+    AVAILABLE OPTIONS ARE: (NK,NEQ,NPH,NB) = (1,2,2,6 or 8) - ONE WATER COMPONENT, NON-ISOTHERMAL
+                                             (1,1,2,6 or 8) - ONLY LIQUID, OR ONLY VAPOR, ISOTHERMAL
+                                             (2,3,2,6 or 8) - TWO WATERS, NON-ISOTHERMAL
+
+    Default options are (1,2,2,6) - "one" water, diffusion "off"
+
+ ***********************************************************************************************************************************
+
+
+ THE PRIMARY VARIABLES ARE
+  P - PRESSURE         T - TEMPERATURE         X2 - MASS FRACTION OF WATER "2"         S - GAS PHASE SATURATION
+
+ _______________________________________________________
+
+     PHASE CONDITION               PRIMARY VARIABLES
+ _______________________________________________________
+
+     SINGLE-PHASE GAS                P, T, [X2]
+
+     SINGLE-PHASE LIQUID             P, T, [X2]
+
+     TWO-PHASE                       P, S, [X2]
+
+ _______________________________________________________
+
+
+ ..... NEGLECT VAPOR PRESSURE LOWERING .....
+
+ ***********************************************************************************************************************************
+ 
+ ********** VOLUME- AND MASS-BALANCES ********************************************************************************************
+
+ ********** [KCYC,ITER] = [   0,  0] *****                                  THE TIME IS  0.00000E+00 SECONDS, OR  0.00000E+00 DAYS
+
+
+ PHASE VOLUMES IN PLACE
+ GAS 0.00000E+00 M**3;  AQUEOUS 0.44886E+12 M**3
+
+ MASS IN PLACE
+ GAS 0.00000E+00 KG;    AQUEOUS 0.43132E+15 KG;  TOTAL H2O 0.43132E+15 KG;  H2O(2) 0.00000E+00 KG;  INT. ENERGY 0.10173E+22 J
+
+ *********************************************************************************************************************************
+
+
+ ...ITERATING... AT [    1, 1] --- DELTEX = 0.200000E+11  MAX. RES. = 0.233570E+05 AT ELEMENT bwb12  EQUATION   1
+ TEMPERATURE = -.167945E+02  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *aan 7*      XX(M) =  0.15928E+07 -0.16795E+02
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (    1, 1) ++++++++ ++++++++   NEW DELT =0.400000E+10
+ ...ITERATING... AT [    1, 1] --- DELTEX = 0.400000E+10  MAX. RES. = 0.467141E+04 AT ELEMENT bwb12  EQUATION   1
+ TEMPERATURE = 0.595321E+03  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *apu38*      XX(M) =  0.37126E+08  0.59532E+03
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (    1, 1) ++++++++ ++++++++   NEW DELT =0.800000E+09
+ ...ITERATING... AT [    1, 1] --- DELTEX = 0.800000E+09  MAX. RES. = 0.934281E+03 AT ELEMENT bwb12  EQUATION   1
+ ...ITERATING... AT [    1, 2] --- DELTEX = 0.800000E+09  MAX. RES. = 0.796967E+01 AT ELEMENT bua12  EQUATION   1
+ ...ITERATING... AT [    1, 3] --- DELTEX = 0.800000E+09  MAX. RES. = 0.233307E+01 AT ELEMENT avp11  EQUATION   2
+ ...ITERATING... AT [    1, 4] --- DELTEX = 0.800000E+09  MAX. RES. = 0.389406E+00 AT ELEMENT avp11  EQUATION   2
+ ...ITERATING... AT [    1, 5] --- DELTEX = 0.800000E+09  MAX. RES. = 0.137159E-01 AT ELEMENT avp11  EQUATION   2
+ ...ITERATING... AT [    1, 6] --- DELTEX = 0.800000E+09  MAX. RES. = 0.145779E-04 AT ELEMENT avp11  EQUATION   2
+ avp11(    1, 7) ST = 0.800000E+09 DT = 0.800000E+09
+ ...ITERATING... AT [    2, 1] --- DELTEX = 0.800000E+09  MAX. RES. = 0.405454E+00 AT ELEMENT ayq 9  EQUATION   2
+ ...ITERATING... AT [    2, 2] --- DELTEX = 0.800000E+09  MAX. RES. = 0.251905E+00 AT ELEMENT aqw38  EQUATION   1
+ ...ITERATING... AT [    2, 3] --- DELTEX = 0.800000E+09  MAX. RES. = 0.101587E-02 AT ELEMENT aqv37  EQUATION   2
+ ...ITERATING... AT [    2, 4] --- DELTEX = 0.800000E+09  MAX. RES. = 0.381928E-04 AT ELEMENT aqv37  EQUATION   1
+ aqv37(    2, 5) ST = 0.160000E+10 DT = 0.800000E+09
+ ...ITERATING... AT [    3, 1] --- DELTEX = 0.160000E+10  MAX. RES. = 0.354598E+00 AT ELEMENT aty11  EQUATION   2
+ ...ITERATING... AT [    3, 2] --- DELTEX = 0.160000E+10  MAX. RES. = 0.102036E+01 AT ELEMENT aqw38  EQUATION   1
+ ...ITERATING... AT [    3, 3] --- DELTEX = 0.160000E+10  MAX. RES. = 0.172525E-01 AT ELEMENT aqv38  EQUATION   1
+ ...ITERATING... AT [    3, 4] --- DELTEX = 0.160000E+10  MAX. RES. = 0.512256E-03 AT ELEMENT aqv37  EQUATION   1
+ aqv36(    3, 5) ST = 0.320000E+10 DT = 0.160000E+10
+ ...ITERATING... AT [    4, 1] --- DELTEX = 0.320000E+10  MAX. RES. = 0.379938E+00 AT ELEMENT ala13  EQUATION   2
+ ...ITERATING... AT [    4, 2] --- DELTEX = 0.320000E+10  MAX. RES. = 0.516516E+01 AT ELEMENT aqw36  EQUATION   1
+ ...ITERATING... AT [    4, 3] --- DELTEX = 0.320000E+10  MAX. RES. = 0.486925E+00 AT ELEMENT aqw36  EQUATION   1
+ ...ITERATING... AT [    4, 4] --- DELTEX = 0.320000E+10  MAX. RES. = 0.370093E+00 AT ELEMENT aqv32  EQUATION   1
+ ...ITERATING... AT [    4, 5] --- DELTEX = 0.320000E+10  MAX. RES. = 0.148254E-01 AT ELEMENT aqv32  EQUATION   1
+ ...ITERATING... AT [    4, 6] --- DELTEX = 0.320000E+10  MAX. RES. = 0.883531E-04 AT ELEMENT aqw35  EQUATION   1
+ aqw35(    4, 7) ST = 0.640000E+10 DT = 0.320000E+10
+ ...ITERATING... AT [    5, 1] --- DELTEX = 0.320000E+10  MAX. RES. = 0.299215E+00 AT ELEMENT aqw30  EQUATION   2
+ ...ITERATING... AT [    5, 2] --- DELTEX = 0.320000E+10  MAX. RES. = 0.459380E+01 AT ELEMENT aqw29  EQUATION   1
+ ...ITERATING... AT [    5, 3] --- DELTEX = 0.320000E+10  MAX. RES. = 0.273638E+00 AT ELEMENT aqw29  EQUATION   1
+ ...ITERATING... AT [    5, 4] --- DELTEX = 0.320000E+10  MAX. RES. = 0.495847E-02 AT ELEMENT aqw29  EQUATION   1
+ ...ITERATING... AT [    5, 5] --- DELTEX = 0.320000E+10  MAX. RES. = 0.384307E-04 AT ELEMENT aqw29  EQUATION   1
+ aqw29(    5, 6) ST = 0.960000E+10 DT = 0.320000E+10
+ ...ITERATING... AT [    6, 1] --- DELTEX = 0.320000E+10  MAX. RES. = 0.278852E+00 AT ELEMENT aqw29  EQUATION   2
+ ...ITERATING... AT [    6, 2] --- DELTEX = 0.320000E+10  MAX. RES. = 0.167063E+01 AT ELEMENT apu26  EQUATION   1
+ ...ITERATING... AT [    6, 3] --- DELTEX = 0.320000E+10  MAX. RES. = 0.201827E-01 AT ELEMENT aqw29  EQUATION   1
+ ...ITERATING... AT [    6, 4] --- DELTEX = 0.320000E+10  MAX. RES. = 0.277176E-03 AT ELEMENT aqw29  EQUATION   1
+ aqw29(    6, 5) ST = 0.128000E+11 DT = 0.320000E+10
+ ...ITERATING... AT [    7, 1] --- DELTEX = 0.640000E+10  MAX. RES. = 0.449267E+00 AT ELEMENT apu26  EQUATION   2
+ ...ITERATING... AT [    7, 2] --- DELTEX = 0.640000E+10  MAX. RES. = 0.101332E+02 AT ELEMENT ayo13  EQUATION   1
+ ...ITERATING... AT [    7, 3] --- DELTEX = 0.640000E+10  MAX. RES. = 0.390776E+00 AT ELEMENT awp23  EQUATION   1
+ ...ITERATING... AT [    7, 4] --- DELTEX = 0.640000E+10  MAX. RES. = 0.729033E-02 AT ELEMENT awo22  EQUATION   2
+ ...ITERATING... AT [    7, 5] --- DELTEX = 0.640000E+10  MAX. RES. = 0.433014E-04 AT ELEMENT aqv33  EQUATION   1
+ aqv33(    7, 6) ST = 0.192000E+11 DT = 0.640000E+10
+ ...ITERATING... AT [    8, 1] --- DELTEX = 0.640000E+10  MAX. RES. = 0.362254E+00 AT ELEMENT apw21  EQUATION   2
+ ...ITERATING... AT [    8, 2] --- DELTEX = 0.640000E+10  MAX. RES. = 0.903750E+01 AT ELEMENT ayo13  EQUATION   1
+ ...ITERATING... AT [    8, 3] --- DELTEX = 0.640000E+10  MAX. RES. = 0.196012E+00 AT ELEMENT aym14  EQUATION   1
+ ...ITERATING... AT [    8, 4] --- DELTEX = 0.640000E+10  MAX. RES. = 0.321423E-02 AT ELEMENT aym13  EQUATION   1
+ aym15(    8, 5) ST = 0.256000E+11 DT = 0.640000E+10
+ ...ITERATING... AT [    9, 1] --- DELTEX = 0.128000E+11  MAX. RES. = 0.650450E+00 AT ELEMENT awo15  EQUATION   2
+ ...ITERATING... AT [    9, 2] --- DELTEX = 0.128000E+11  MAX. RES. = 0.995925E+03 AT ELEMENT asw11  EQUATION   1
+ TEMPERATURE = 0.603276E+03  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *asw12*      XX(M) =  0.18935E+07  0.10000E-05
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (    9, 2) ++++++++ ++++++++   NEW DELT =0.256000E+10
+ ...ITERATING... AT [    9, 1] --- DELTEX = 0.256000E+10  MAX. RES. = 0.130090E+00 AT ELEMENT awo15  EQUATION   2
+ ...ITERATING... AT [    9, 2] --- DELTEX = 0.256000E+10  MAX. RES. = 0.511947E+00 AT ELEMENT ayo13  EQUATION   1
+ ...ITERATING... AT [    9, 3] --- DELTEX = 0.256000E+10  MAX. RES. = 0.597288E-01 AT ELEMENT axn16  EQUATION   1
+ ...ITERATING... AT [    9, 4] --- DELTEX = 0.256000E+10  MAX. RES. = 0.111730E-03 AT ELEMENT axn17  EQUATION   1
+ axn16(    9, 5) ST = 0.281600E+11 DT = 0.256000E+10
+ ...ITERATING... AT [   10, 1] --- DELTEX = 0.512000E+10  MAX. RES. = 0.273221E+00 AT ELEMENT awo14  EQUATION   2
+ ...ITERATING... AT [   10, 2] --- DELTEX = 0.512000E+10  MAX. RES. = 0.650078E+01 AT ELEMENT avm13  EQUATION   1
+ ...ITERATING... AT [   10, 3] --- DELTEX = 0.512000E+10  MAX. RES. = 0.291813E+00 AT ELEMENT axn16  EQUATION   1
+ ...ITERATING... AT [   10, 4] --- DELTEX = 0.512000E+10  MAX. RES. = 0.412826E-02 AT ELEMENT aym13  EQUATION   1
+ aym15(   10, 5) ST = 0.332800E+11 DT = 0.512000E+10
+ ...ITERATING... AT [   11, 1] --- DELTEX = 0.102400E+11  MAX. RES. = 0.482657E+00 AT ELEMENT awn14  EQUATION   2
+ ...ITERATING... AT [   11, 2] --- DELTEX = 0.102400E+11  MAX. RES. = 0.339276E+04 AT ELEMENT asw11  EQUATION   1
+ TEMPERATURE = 0.148407E+04  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *ayo 9*      XX(M) =  0.24946E+07  0.10000E-05
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   11, 2) ++++++++ ++++++++   NEW DELT =0.204800E+10
+ ...ITERATING... AT [   11, 1] --- DELTEX = 0.204800E+10  MAX. RES. = 0.965313E-01 AT ELEMENT awn14  EQUATION   2
+ ...ITERATING... AT [   11, 2] --- DELTEX = 0.204800E+10  MAX. RES. = 0.690999E+00 AT ELEMENT avm13  EQUATION   1
+ ...ITERATING... AT [   11, 3] --- DELTEX = 0.204800E+10  MAX. RES. = 0.624976E-03 AT ELEMENT avm14  EQUATION   1
+ aqw25(   11, 4) ST = 0.353280E+11 DT = 0.204800E+10
+ ...ITERATING... AT [   12, 1] --- DELTEX = 0.409600E+10  MAX. RES. = 0.210939E+00 AT ELEMENT atx11  EQUATION   2
+ ...ITERATING... AT [   12, 2] --- DELTEX = 0.409600E+10  MAX. RES. = 0.890661E+03 AT ELEMENT asw11  EQUATION   1
+ TEMPERATURE = -.565040E+02  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *asw12*      XX(M) =  0.89052E+06 -0.56504E+02
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   12, 2) ++++++++ ++++++++   NEW DELT =0.819200E+09
+ ...ITERATING... AT [   12, 1] --- DELTEX = 0.819200E+09  MAX. RES. = 0.421878E-01 AT ELEMENT atx11  EQUATION   2
+ ...ITERATING... AT [   12, 2] --- DELTEX = 0.819200E+09  MAX. RES. = 0.290337E+02 AT ELEMENT asw11  EQUATION   1
+ ...ITERATING... AT [   12, 3] --- DELTEX = 0.819200E+09  MAX. RES. = 0.980902E+00 AT ELEMENT asw11  EQUATION   1
+ ...ITERATING... AT [   12, 4] --- DELTEX = 0.819200E+09  MAX. RES. = 0.128714E-01 AT ELEMENT asw11  EQUATION   1
+ asw11(   12, 5) ST = 0.361472E+11 DT = 0.819200E+09
+ ...ITERATING... AT [   13, 1] --- DELTEX = 0.163840E+10  MAX. RES. = 0.885556E-01 AT ELEMENT atx11  EQUATION   2
+ ...ITERATING... AT [   13, 2] --- DELTEX = 0.163840E+10  MAX. RES. = 0.942136E+02 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   13, 3] --- DELTEX = 0.163840E+10  MAX. RES. = 0.722192E+01 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   13, 4] --- DELTEX = 0.163840E+10  MAX. RES. = 0.567864E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   13, 5] --- DELTEX = 0.163840E+10  MAX. RES. = 0.369425E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   13, 6] --- DELTEX = 0.163840E+10  MAX. RES. = 0.338357E-02 AT ELEMENT axo11  EQUATION   1
+ awo11(   13, 7) ST = 0.377856E+11 DT = 0.163840E+10
+ ...ITERATING... AT [   14, 1] --- DELTEX = 0.163840E+10  MAX. RES. = 0.870247E-01 AT ELEMENT atx11  EQUATION   2
+ ...ITERATING... AT [   14, 2] --- DELTEX = 0.163840E+10  MAX. RES. = 0.395037E+02 AT ELEMENT ayo10  EQUATION   1
+ ...ITERATING... AT [   14, 3] --- DELTEX = 0.163840E+10  MAX. RES. = 0.162932E+02 AT ELEMENT axo10  EQUATION   1
+ ...ITERATING... AT [   14, 4] --- DELTEX = 0.163840E+10  MAX. RES. = 0.172040E+02 AT ELEMENT axo10  EQUATION   1
+ ...ITERATING... AT [   14, 5] --- DELTEX = 0.163840E+10  MAX. RES. = 0.267869E+00 AT ELEMENT axo10  EQUATION   1
+ ...ITERATING... AT [   14, 6] --- DELTEX = 0.163840E+10  MAX. RES. = 0.434311E-03 AT ELEMENT axo10  EQUATION   1
+ awo10(   14, 7) ST = 0.394240E+11 DT = 0.163840E+10
+ ...ITERATING... AT [   15, 1] --- DELTEX = 0.163840E+10  MAX. RES. = 0.994771E-01 AT ELEMENT atx12  EQUATION   2
+ ...ITERATING... AT [   15, 2] --- DELTEX = 0.163840E+10  MAX. RES. = 0.498837E+02 AT ELEMENT asw12  EQUATION   1
+ ...ITERATING... AT [   15, 3] --- DELTEX = 0.163840E+10  MAX. RES. = 0.516972E+00 AT ELEMENT awo10  EQUATION   1
+ ...ITERATING... AT [   15, 4] --- DELTEX = 0.163840E+10  MAX. RES. = 0.171893E-02 AT ELEMENT asw12  EQUATION   1
+ asw12(   15, 5) ST = 0.410624E+11 DT = 0.163840E+10
+ ...ITERATING... AT [   16, 1] --- DELTEX = 0.327680E+10  MAX. RES. = 0.259398E+00 AT ELEMENT ayo 9  EQUATION   2
+ ...ITERATING... AT [   16, 2] --- DELTEX = 0.327680E+10  MAX. RES. = 0.311409E+02 AT ELEMENT awo10  EQUATION   1
+ ...ITERATING... AT [   16, 3] --- DELTEX = 0.327680E+10  MAX. RES. = 0.602439E+00 AT ELEMENT awo10  EQUATION   1
+ ...ITERATING... AT [   16, 4] --- DELTEX = 0.327680E+10  MAX. RES. = 0.986702E-03 AT ELEMENT aym13  EQUATION   1
+ aym13(   16, 5) ST = 0.443392E+11 DT = 0.327680E+10
+ ...ITERATING... AT [   17, 1] --- DELTEX = 0.655360E+10  MAX. RES. = 0.399802E+00 AT ELEMENT ayo 9  EQUATION   2
+ ...ITERATING... AT [   17, 2] --- DELTEX = 0.655360E+10  MAX. RES. = 0.232358E+04 AT ELEMENT ayo 9  EQUATION   1
+ ...ITERATING... AT [   17, 3] --- DELTEX = 0.655360E+10  MAX. RES. = 0.515349E+03 AT ELEMENT ayo 9  EQUATION   1
+ TEMPERATURE = -.961168E+02  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *auw11*      XX(M) =  0.34415E+06 -0.96117E+02
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   17, 3) ++++++++ ++++++++   NEW DELT =0.131072E+10
+ ...ITERATING... AT [   17, 1] --- DELTEX = 0.131072E+10  MAX. RES. = 0.799603E-01 AT ELEMENT ayo 9  EQUATION   2
+ ...ITERATING... AT [   17, 2] --- DELTEX = 0.131072E+10  MAX. RES. = 0.150643E+01 AT ELEMENT atw12  EQUATION   1
+ ...ITERATING... AT [   17, 3] --- DELTEX = 0.131072E+10  MAX. RES. = 0.200483E-02 AT ELEMENT avl15  EQUATION   1
+ avl14(   17, 4) ST = 0.456499E+11 DT = 0.131072E+10
+ ...ITERATING... AT [   18, 1] --- DELTEX = 0.262144E+10  MAX. RES. = 0.127937E+00 AT ELEMENT atx13  EQUATION   2
+ ...ITERATING... AT [   18, 2] --- DELTEX = 0.262144E+10  MAX. RES. = 0.303057E+03 AT ELEMENT ayo 9  EQUATION   1
+ ...ITERATING... AT [   18, 3] --- DELTEX = 0.262144E+10  MAX. RES. = 0.339351E+02 AT ELEMENT ayo 9  EQUATION   1
+ ...ITERATING... AT [   18, 4] --- DELTEX = 0.262144E+10  MAX. RES. = 0.195689E+01 AT ELEMENT ayo 9  EQUATION   1
+ ...ITERATING... AT [   18, 5] --- DELTEX = 0.262144E+10  MAX. RES. = 0.645128E-01 AT ELEMENT azo 9  EQUATION   2
+ ...ITERATING... AT [   18, 6] --- DELTEX = 0.262144E+10  MAX. RES. = 0.437689E-03 AT ELEMENT azo 9  EQUATION   2
+ azo10(   18, 7) ST = 0.482714E+11 DT = 0.262144E+10
+ ...ITERATING... AT [   19, 1] --- DELTEX = 0.262144E+10  MAX. RES. = 0.108796E+00 AT ELEMENT axl16  EQUATION   2
+ ...ITERATING... AT [   19, 2] --- DELTEX = 0.262144E+10  MAX. RES. = 0.217623E+02 AT ELEMENT asw13  EQUATION   1
+ ...ITERATING... AT [   19, 3] --- DELTEX = 0.262144E+10  MAX. RES. = 0.451091E-01 AT ELEMENT axl12  EQUATION   1
+ ...ITERATING... AT [   19, 4] --- DELTEX = 0.262144E+10  MAX. RES. = 0.529542E-04 AT ELEMENT axl12  EQUATION   1
+ axl12(   19, 5) ST = 0.508928E+11 DT = 0.262144E+10
+ ...ITERATING... AT [   20, 1] --- DELTEX = 0.524288E+10  MAX. RES. = 0.200050E+00 AT ELEMENT auv11  EQUATION   2
+ ...ITERATING... AT [   20, 2] --- DELTEX = 0.524288E+10  MAX. RES. = 0.100390E+02 AT ELEMENT axo15  EQUATION   1
+ ...ITERATING... AT [   20, 3] --- DELTEX = 0.524288E+10  MAX. RES. = 0.138942E+00 AT ELEMENT ayl13  EQUATION   1
+ ...ITERATING... AT [   20, 4] --- DELTEX = 0.524288E+10  MAX. RES. = 0.189918E-02 AT ELEMENT ayl12  EQUATION   1
+ ayl13(   20, 5) ST = 0.561357E+11 DT = 0.524288E+10
+ ...ITERATING... AT [   21, 1] --- DELTEX = 0.104858E+11  MAX. RES. = 0.363121E+00 AT ELEMENT auv11  EQUATION   2
+ ...ITERATING... AT [   21, 2] --- DELTEX = 0.104858E+11  MAX. RES. = 0.240537E+04 AT ELEMENT ayo13  EQUATION   1
+ TEMPERATURE = -.200771E+03  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *ayo14*      XX(M) =  0.32785E+07 -0.20077E+03
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   21, 2) ++++++++ ++++++++   NEW DELT =0.209715E+10
+ ...ITERATING... AT [   21, 1] --- DELTEX = 0.209715E+10  MAX. RES. = 0.726242E-01 AT ELEMENT auv11  EQUATION   2
+ ...ITERATING... AT [   21, 2] --- DELTEX = 0.209715E+10  MAX. RES. = 0.679004E+00 AT ELEMENT axo15  EQUATION   1
+ ...ITERATING... AT [   21, 3] --- DELTEX = 0.209715E+10  MAX. RES. = 0.102945E-03 AT ELEMENT avm21  EQUATION   1
+ axo19(   21, 4) ST = 0.582328E+11 DT = 0.209715E+10
+ ...ITERATING... AT [   22, 1] --- DELTEX = 0.419430E+10  MAX. RES. = 0.138255E+00 AT ELEMENT auv11  EQUATION   2
+ ...ITERATING... AT [   22, 2] --- DELTEX = 0.419430E+10  MAX. RES. = 0.429464E+03 AT ELEMENT ayo13  EQUATION   1
+ ...ITERATING... AT [   22, 3] --- DELTEX = 0.419430E+10  MAX. RES. = 0.124566E+02 AT ELEMENT ayo14  EQUATION   1
+ ...ITERATING... AT [   22, 4] --- DELTEX = 0.419430E+10  MAX. RES. = 0.683245E+01 AT ELEMENT ayo15  EQUATION   1
+ ...ITERATING... AT [   22, 5] --- DELTEX = 0.419430E+10  MAX. RES. = 0.127821E+00 AT ELEMENT ayo13  EQUATION   1
+ ...ITERATING... AT [   22, 6] --- DELTEX = 0.419430E+10  MAX. RES. = 0.254311E-02 AT ELEMENT ayo14  EQUATION   1
+ ayo13(   22, 7) ST = 0.624271E+11 DT = 0.419430E+10
+ ...ITERATING... AT [   23, 1] --- DELTEX = 0.419430E+10  MAX. RES. = 0.118576E+00 AT ELEMENT apu14  EQUATION   2
+ ...ITERATING... AT [   23, 2] --- DELTEX = 0.419430E+10  MAX. RES. = 0.396706E+01 AT ELEMENT avm21  EQUATION   1
+ ...ITERATING... AT [   23, 3] --- DELTEX = 0.419430E+10  MAX. RES. = 0.183180E-01 AT ELEMENT avm21  EQUATION   1
+ ...ITERATING... AT [   23, 4] --- DELTEX = 0.419430E+10  MAX. RES. = 0.137704E-04 AT ELEMENT avm17  EQUATION   1
+ axn19(   23, 5) ST = 0.666214E+11 DT = 0.419430E+10
+ ...ITERATING... AT [   24, 1] --- DELTEX = 0.838861E+10  MAX. RES. = 0.236361E+00 AT ELEMENT apu13  EQUATION   2
+ ...ITERATING... AT [   24, 2] --- DELTEX = 0.838861E+10  MAX. RES. = 0.196036E+03 AT ELEMENT atw13  EQUATION   1
+ ...ITERATING... AT [   24, 3] --- DELTEX = 0.838861E+10  MAX. RES. = 0.775143E+00 AT ELEMENT atw13  EQUATION   1
+ ...ITERATING... AT [   24, 4] --- DELTEX = 0.838861E+10  MAX. RES. = 0.117985E-01 AT ELEMENT aym19  EQUATION   1
+ aym21(   24, 5) ST = 0.750100E+11 DT = 0.838861E+10
+ ...ITERATING... AT [   25, 1] --- DELTEX = 0.167772E+11  MAX. RES. = 0.443501E+00 AT ELEMENT apu12  EQUATION   2
+ ...ITERATING... AT [   25, 2] --- DELTEX = 0.167772E+11  MAX. RES. = 0.824209E+04 AT ELEMENT ayo14  EQUATION   1
+ TEMPERATURE = -.510634E+03  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *ayo15*      XX(M) =  0.37485E+07 -0.51063E+03
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   25, 2) ++++++++ ++++++++   NEW DELT =0.335544E+10
+ ...ITERATING... AT [   25, 1] --- DELTEX = 0.335544E+10  MAX. RES. = 0.887002E-01 AT ELEMENT apu12  EQUATION   2
+ ...ITERATING... AT [   25, 2] --- DELTEX = 0.335544E+10  MAX. RES. = 0.139937E+03 AT ELEMENT ayo14  EQUATION   1
+ ...ITERATING... AT [   25, 3] --- DELTEX = 0.335544E+10  MAX. RES. = 0.427875E+04 AT ELEMENT ayo15  EQUATION   1
+ TEMPERATURE = -.151506E+04  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *ayo16*      XX(M) =  0.45466E+07 -0.15151E+04
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   25, 3) ++++++++ ++++++++   NEW DELT =0.671089E+09
+ ...ITERATING... AT [   25, 1] --- DELTEX = 0.671089E+09  MAX. RES. = 0.177400E-01 AT ELEMENT apu12  EQUATION   2
+ ...ITERATING... AT [   25, 2] --- DELTEX = 0.671089E+09  MAX. RES. = 0.928497E-02 AT ELEMENT avk15  EQUATION   1
+ avm21(   25, 3) ST = 0.756811E+11 DT = 0.671089E+09
+ ...ITERATING... AT [   26, 1] --- DELTEX = 0.134218E+10  MAX. RES. = 0.355170E-01 AT ELEMENT apu12  EQUATION   2
+ ...ITERATING... AT [   26, 2] --- DELTEX = 0.134218E+10  MAX. RES. = 0.712791E-01 AT ELEMENT avk17  EQUATION   1
+ axm20(   26, 3) ST = 0.770233E+11 DT = 0.134218E+10
+ ...ITERATING... AT [   27, 1] --- DELTEX = 0.268435E+10  MAX. RES. = 0.708469E-01 AT ELEMENT apu12  EQUATION   2
+ ...ITERATING... AT [   27, 2] --- DELTEX = 0.268435E+10  MAX. RES. = 0.295654E+03 AT ELEMENT ayo14  EQUATION   1
+ ...ITERATING... AT [   27, 3] --- DELTEX = 0.268435E+10  MAX. RES. = 0.490350E+00 AT ELEMENT ayo14  EQUATION   1
+ ...ITERATING... AT [   27, 4] --- DELTEX = 0.268435E+10  MAX. RES. = 0.235271E-02 AT ELEMENT ayo14  EQUATION   1
+ ayo14(   27, 5) ST = 0.797077E+11 DT = 0.268435E+10
+ ...ITERATING... AT [   28, 1] --- DELTEX = 0.536871E+10  MAX. RES. = 0.137621E+00 AT ELEMENT azn20  EQUATION   2
+ ...ITERATING... AT [   28, 2] --- DELTEX = 0.536871E+10  MAX. RES. = 0.285656E+01 AT ELEMENT avk17  EQUATION   1
+ ...ITERATING... AT [   28, 3] --- DELTEX = 0.536871E+10  MAX. RES. = 0.183162E-01 AT ELEMENT avl20  EQUATION   1
+ ...ITERATING... AT [   28, 4] --- DELTEX = 0.536871E+10  MAX. RES. = 0.240884E-04 AT ELEMENT avl20  EQUATION   1
+ avl19(   28, 5) ST = 0.850764E+11 DT = 0.536871E+10
+ ...ITERATING... AT [   29, 1] --- DELTEX = 0.107374E+11  MAX. RES. = 0.264551E+00 AT ELEMENT azn19  EQUATION   2
+ ...ITERATING... AT [   29, 2] --- DELTEX = 0.107374E+11  MAX. RES. = 0.440120E+03 AT ELEMENT asw14  EQUATION   1
+ ...ITERATING... AT [   29, 3] --- DELTEX = 0.107374E+11  MAX. RES. = 0.182263E+01 AT ELEMENT asw14  EQUATION   1
+ ...ITERATING... AT [   29, 4] --- DELTEX = 0.107374E+11  MAX. RES. = 0.313112E-02 AT ELEMENT asw14  EQUATION   1
+ atw13(   29, 5) ST = 0.958138E+11 DT = 0.107374E+11
+ ...ITERATING... AT [   30, 1] --- DELTEX = 0.214748E+11  MAX. RES. = 0.496326E+00 AT ELEMENT akm24  EQUATION   2
+ ...ITERATING... AT [   30, 2] --- DELTEX = 0.214748E+11  MAX. RES. = 0.327613E+04 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   30, 3] --- DELTEX = 0.214748E+11  MAX. RES. = 0.634103E+03 AT ELEMENT ayn14  EQUATION   1
+ ...ITERATING... AT [   30, 4] --- DELTEX = 0.214748E+11  MAX. RES. = 0.142805E+05 AT ELEMENT ayn14  EQUATION   1
+ TEMPERATURE = -.571033E+02  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *ayn15*      XX(M) =  0.37004E+07 -0.57103E+02
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   30, 4) ++++++++ ++++++++   NEW DELT =0.429497E+10
+ ...ITERATING... AT [   30, 1] --- DELTEX = 0.429497E+10  MAX. RES. = 0.992652E-01 AT ELEMENT akm24  EQUATION   2
+ ...ITERATING... AT [   30, 2] --- DELTEX = 0.429497E+10  MAX. RES. = 0.738335E+00 AT ELEMENT axo11  EQUATION   1
+ ...ITERATING... AT [   30, 3] --- DELTEX = 0.429497E+10  MAX. RES. = 0.920519E-02 AT ELEMENT axo11  EQUATION   1
+ avm21(   30, 4) ST = 0.100109E+12 DT = 0.429497E+10
+ ...ITERATING... AT [   31, 1] --- DELTEX = 0.858993E+10  MAX. RES. = 0.214445E+00 AT ELEMENT akm23  EQUATION   2
+ ...ITERATING... AT [   31, 2] --- DELTEX = 0.858993E+10  MAX. RES. = 0.647061E+03 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   31, 3] --- DELTEX = 0.858993E+10  MAX. RES. = 0.443923E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   31, 4] --- DELTEX = 0.858993E+10  MAX. RES. = 0.657793E+04 AT ELEMENT ayn14  EQUATION   1
+ TEMPERATURE = 0.710147E+03  OUT OF RANGE IN SAT 
+ ++++++++++ EOS CANNOT FIND PARAMETERS AT ELEMENT *ayn10*      XX(M) =  0.14760E+07  0.10000E-05
+ TOUGH STATUS: Failed in EOS. IGOOD=           2
+ +++++++++ REDUCE TIME STEP AT (   31, 4) ++++++++ ++++++++   NEW DELT =0.171799E+10
+ ...ITERATING... AT [   31, 1] --- DELTEX = 0.171799E+10  MAX. RES. = 0.428891E-01 AT ELEMENT akm23  EQUATION   2
+ ...ITERATING... AT [   31, 2] --- DELTEX = 0.171799E+10  MAX. RES. = 0.326654E-01 AT ELEMENT avk17  EQUATION   1
+ avm14(   31, 3) ST = 0.101827E+12 DT = 0.171799E+10
+ ...ITERATING... AT [   32, 1] --- DELTEX = 0.343597E+10  MAX. RES. = 0.885943E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   32, 2] --- DELTEX = 0.343597E+10  MAX. RES. = 0.105925E+03 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 3] --- DELTEX = 0.343597E+10  MAX. RES. = 0.103917E+03 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 4] --- DELTEX = 0.343597E+10  MAX. RES. = 0.107558E+00 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 5] --- DELTEX = 0.343597E+10  MAX. RES. = 0.105658E+03 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 6] --- DELTEX = 0.343597E+10  MAX. RES. = 0.103765E+03 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 7] --- DELTEX = 0.343597E+10  MAX. RES. = 0.107825E+00 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 8] --- DELTEX = 0.343597E+10  MAX. RES. = 0.105660E+03 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   32, 9] --- DELTEX = 0.343597E+10  MAX. RES. = 0.103766E+03 AT ELEMENT ayn13  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (   32, 9) ++++++++ ++++++++   NEW DELT =0.687195E+09
+ ...ITERATING... AT [   32, 1] --- DELTEX = 0.687195E+09  MAX. RES. = 0.177189E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   32, 2] --- DELTEX = 0.687195E+09  MAX. RES. = 0.200980E-02 AT ELEMENT avk17  EQUATION   1
+ axl25(   32, 3) ST = 0.102514E+12 DT = 0.687195E+09
+ ...ITERATING... AT [   33, 1] --- DELTEX = 0.137439E+10  MAX. RES. = 0.361154E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   33, 2] --- DELTEX = 0.137439E+10  MAX. RES. = 0.121239E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 3] --- DELTEX = 0.137439E+10  MAX. RES. = 0.134468E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 4] --- DELTEX = 0.137439E+10  MAX. RES. = 0.956710E-01 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 5] --- DELTEX = 0.137439E+10  MAX. RES. = 0.114487E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 6] --- DELTEX = 0.137439E+10  MAX. RES. = 0.128357E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 7] --- DELTEX = 0.137439E+10  MAX. RES. = 0.987640E-01 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 8] --- DELTEX = 0.137439E+10  MAX. RES. = 0.114116E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   33, 9] --- DELTEX = 0.137439E+10  MAX. RES. = 0.128006E+02 AT ELEMENT ayn13  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (   33, 9) ++++++++ ++++++++   NEW DELT =0.274878E+09
+ ...ITERATING... AT [   33, 1] --- DELTEX = 0.274878E+09  MAX. RES. = 0.722308E-02 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   33, 2] --- DELTEX = 0.274878E+09  MAX. RES. = 0.127586E-03 AT ELEMENT avk17  EQUATION   1
+ avm17(   33, 3) ST = 0.102789E+12 DT = 0.274878E+09
+ ...ITERATING... AT [   34, 1] --- DELTEX = 0.549756E+09  MAX. RES. = 0.145537E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   34, 2] --- DELTEX = 0.549756E+09  MAX. RES. = 0.970748E-03 AT ELEMENT avk17  EQUATION   1
+ avm16(   34, 3) ST = 0.103339E+12 DT = 0.549756E+09
+ ...ITERATING... AT [   35, 1] --- DELTEX = 0.109951E+10  MAX. RES. = 0.295191E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   35, 2] --- DELTEX = 0.109951E+10  MAX. RES. = 0.206777E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 3] --- DELTEX = 0.109951E+10  MAX. RES. = 0.213585E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 4] --- DELTEX = 0.109951E+10  MAX. RES. = 0.463279E-01 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 5] --- DELTEX = 0.109951E+10  MAX. RES. = 0.204483E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 6] --- DELTEX = 0.109951E+10  MAX. RES. = 0.211634E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 7] --- DELTEX = 0.109951E+10  MAX. RES. = 0.467456E-01 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 8] --- DELTEX = 0.109951E+10  MAX. RES. = 0.204476E+02 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 9] --- DELTEX = 0.109951E+10  MAX. RES. = 0.211629E+02 AT ELEMENT ayn13  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (   35, 9) ++++++++ ++++++++   NEW DELT =0.219902E+09
+ ...ITERATING... AT [   35, 1] --- DELTEX = 0.219902E+09  MAX. RES. = 0.590383E-02 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   35, 2] --- DELTEX = 0.219902E+09  MAX. RES. = 0.694330E+00 AT ELEMENT ayn13  EQUATION   1
+ ...ITERATING... AT [   35, 3] --- DELTEX = 0.219902E+09  MAX. RES. = 0.490826E-04 AT ELEMENT ayn13  EQUATION   1
+ ayn14(   35, 4) ST = 0.103558E+12 DT = 0.219902E+09
+ ...ITERATING... AT [   36, 1] --- DELTEX = 0.439805E+09  MAX. RES. = 0.118720E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   36, 2] --- DELTEX = 0.439805E+09  MAX. RES. = 0.476197E-03 AT ELEMENT avk17  EQUATION   1
+ ayl36(   36, 3) ST = 0.103998E+12 DT = 0.439805E+09
+ ...ITERATING... AT [   37, 1] --- DELTEX = 0.879609E+09  MAX. RES. = 0.239908E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   37, 2] --- DELTEX = 0.879609E+09  MAX. RES. = 0.355069E-02 AT ELEMENT avk17  EQUATION   1
+ avm16(   37, 3) ST = 0.104878E+12 DT = 0.879609E+09
+ ...ITERATING... AT [   38, 1] --- DELTEX = 0.175922E+10  MAX. RES. = 0.488452E-01 AT ELEMENT akm22  EQUATION   2
+ ...ITERATING... AT [   38, 2] --- DELTEX = 0.175922E+10  MAX. RES. = 0.250142E-01 AT ELEMENT avk17  EQUATION   1
+ ...ITERATING... AT [   38, 3] --- DELTEX = 0.175922E+10  MAX. RES. = 0.118552E-04 AT ELEMENT akm27  EQUATION   1
+ akm27(   38, 4) ST = 0.106637E+12 DT = 0.175922E+10
+ ...ITERATING... AT [   39, 1] --- DELTEX = 0.351844E+10  MAX. RES. = 0.101758E+00 AT ELEMENT akm21  EQUATION   2
+ ...ITERATING... AT [   39, 2] --- DELTEX = 0.351844E+10  MAX. RES. = 0.461319E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   39, 3] --- DELTEX = 0.351844E+10  MAX. RES. = 0.417863E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   39, 4] --- DELTEX = 0.351844E+10  MAX. RES. = 0.809725E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   39, 5] --- DELTEX = 0.351844E+10  MAX. RES. = 0.494516E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   39, 6] --- DELTEX = 0.351844E+10  MAX. RES. = 0.452018E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   39, 7] --- DELTEX = 0.351844E+10  MAX. RES. = 0.810170E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   39, 8] --- DELTEX = 0.351844E+10  MAX. RES. = 0.494591E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   39, 9] --- DELTEX = 0.351844E+10  MAX. RES. = 0.452096E+01 AT ELEMENT azo11  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (   39, 9) ++++++++ ++++++++   NEW DELT =0.703687E+09
+ ...ITERATING... AT [   39, 1] --- DELTEX = 0.703687E+09  MAX. RES. = 0.203515E-01 AT ELEMENT akm21  EQUATION   2
+ ...ITERATING... AT [   39, 2] --- DELTEX = 0.703687E+09  MAX. RES. = 0.154133E-02 AT ELEMENT avk17  EQUATION   1
+ avl20(   39, 3) ST = 0.107341E+12 DT = 0.703687E+09
+ ...ITERATING... AT [   40, 1] --- DELTEX = 0.140737E+10  MAX. RES. = 0.413808E-01 AT ELEMENT akm21  EQUATION   2
+ ...ITERATING... AT [   40, 2] --- DELTEX = 0.140737E+10  MAX. RES. = 0.111281E-01 AT ELEMENT avk17  EQUATION   1
+ avm14(   40, 3) ST = 0.108748E+12 DT = 0.140737E+10
+ ...ITERATING... AT [   41, 1] --- DELTEX = 0.281475E+10  MAX. RES. = 0.852492E-01 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   41, 2] --- DELTEX = 0.281475E+10  MAX. RES. = 0.115539E+02 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   41, 3] --- DELTEX = 0.281475E+10  MAX. RES. = 0.111743E+02 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   41, 4] --- DELTEX = 0.281475E+10  MAX. RES. = 0.649741E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   41, 5] --- DELTEX = 0.281475E+10  MAX. RES. = 0.117084E+02 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   41, 6] --- DELTEX = 0.281475E+10  MAX. RES. = 0.113345E+02 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   41, 7] --- DELTEX = 0.281475E+10  MAX. RES. = 0.649925E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   41, 8] --- DELTEX = 0.281475E+10  MAX. RES. = 0.117077E+02 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   41, 9] --- DELTEX = 0.281475E+10  MAX. RES. = 0.113338E+02 AT ELEMENT azo11  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (   41, 9) ++++++++ ++++++++   NEW DELT =0.562950E+09
+ ...ITERATING... AT [   41, 1] --- DELTEX = 0.562950E+09  MAX. RES. = 0.170498E-01 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   41, 2] --- DELTEX = 0.562950E+09  MAX. RES. = 0.692036E-03 AT ELEMENT avk17  EQUATION   1
+ ayn25(   41, 3) ST = 0.109311E+12 DT = 0.562950E+09
+ ...ITERATING... AT [   42, 1] --- DELTEX = 0.112590E+10  MAX. RES. = 0.346625E-01 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   42, 2] --- DELTEX = 0.112590E+10  MAX. RES. = 0.199539E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   42, 3] --- DELTEX = 0.112590E+10  MAX. RES. = 0.185778E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   42, 4] --- DELTEX = 0.112590E+10  MAX. RES. = 0.261085E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   42, 5] --- DELTEX = 0.112590E+10  MAX. RES. = 0.201052E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   42, 6] --- DELTEX = 0.112590E+10  MAX. RES. = 0.187352E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   42, 7] --- DELTEX = 0.112590E+10  MAX. RES. = 0.261100E+00 AT ELEMENT ayo11  EQUATION   1
+ ...ITERATING... AT [   42, 8] --- DELTEX = 0.112590E+10  MAX. RES. = 0.201082E+01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   42, 9] --- DELTEX = 0.112590E+10  MAX. RES. = 0.187382E+01 AT ELEMENT azo11  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (   42, 9) ++++++++ ++++++++   NEW DELT =0.225180E+09
+ ...ITERATING... AT [   42, 1] --- DELTEX = 0.225180E+09  MAX. RES. = 0.693250E-02 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   42, 2] --- DELTEX = 0.225180E+09  MAX. RES. = 0.509517E-01 AT ELEMENT azo11  EQUATION   1
+ ...ITERATING... AT [   42, 3] --- DELTEX = 0.225180E+09  MAX. RES. = 0.142163E-04 AT ELEMENT azo10  EQUATION   1
+ azo 9(   42, 4) ST = 0.109536E+12 DT = 0.225180E+09
+ ...ITERATING... AT [   43, 1] --- DELTEX = 0.450360E+09  MAX. RES. = 0.139541E-01 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   43, 2] --- DELTEX = 0.450360E+09  MAX. RES. = 0.340333E-03 AT ELEMENT avk17  EQUATION   1
+ avm15(   43, 3) ST = 0.109987E+12 DT = 0.450360E+09
+ ...ITERATING... AT [   44, 1] --- DELTEX = 0.900720E+09  MAX. RES. = 0.282467E-01 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   44, 2] --- DELTEX = 0.900720E+09  MAX. RES. = 0.253981E-02 AT ELEMENT avk17  EQUATION   1
+ avm14(   44, 3) ST = 0.110887E+12 DT = 0.900720E+09
+ ...ITERATING... AT [   45, 1] --- DELTEX = 0.180144E+10  MAX. RES. = 0.576628E-01 AT ELEMENT akm20  EQUATION   2
+ ...ITERATING... AT [   45, 2] --- DELTEX = 0.180144E+10  MAX. RES. = 0.113996E+02 AT ELEMENT auv11  EQUATION   1
+ ...ITERATING... AT [   45, 3] --- DELTEX = 0.180144E+10  MAX. RES. = 0.191770E-01 AT ELEMENT auv11  EQUATION   1
+ auv11(   45, 4) ST = 0.112689E+12 DT = 0.180144E+10
+ ...ITERATING... AT [   46, 1] --- DELTEX = 0.360288E+10  MAX. RES. = 0.120412E+00 AT ELEMENT akm19  EQUATION   2
+ ...ITERATING... AT [   46, 2] --- DELTEX = 0.360288E+10  MAX. RES. = 0.654064E+02 AT ELEMENT auv12  EQUATION   1
+ ...ITERATING... AT [   46, 3] --- DELTEX = 0.360288E+10  MAX. RES. = 0.537830E+00 AT ELEMENT auv12  EQUATION   1
+ ...ITERATING... AT [   46, 4] --- DELTEX = 0.360288E+10  MAX. RES. = 0.198640E-01 AT ELEMENT auw12  EQUATION   1
+ ...ITERATING... AT [   46, 5] --- DELTEX = 0.360288E+10  MAX. RES. = 0.162689E-04 AT ELEMENT auw11  EQUATION   2
+ auw12(   46, 6) ST = 0.116292E+12 DT = 0.360288E+10
+ ...ITERATING... AT [   47, 1] --- DELTEX = 0.360288E+10  MAX. RES. = 0.128312E+00 AT ELEMENT akm18  EQUATION   2
+ ...ITERATING... AT [   47, 2] --- DELTEX = 0.360288E+10  MAX. RES. = 0.938555E-01 AT ELEMENT avk17  EQUATION   1
+ ...ITERATING... AT [   47, 3] --- DELTEX = 0.360288E+10  MAX. RES. = 0.285011E-03 AT ELEMENT axn23  EQUATION   1
+ axn23(   47, 4) ST = 0.119895E+12 DT = 0.360288E+10
+ ...ITERATING... AT [   48, 1] --- DELTEX = 0.720576E+10  MAX. RES. = 0.275096E+00 AT ELEMENT akm17  EQUATION   2
+ ...ITERATING... AT [   48, 2] --- DELTEX = 0.720576E+10  MAX. RES. = 0.354807E+02 AT ELEMENT aul11  EQUATION   1
+ ...ITERATING... AT [   48, 3] --- DELTEX = 0.720576E+10  MAX. RES. = 0.423150E+00 AT ELEMENT aul10  EQUATION   1
+ ...ITERATING... AT [   48, 4] --- DELTEX = 0.720576E+10  MAX. RES. = 0.559265E-04 AT ELEMENT aul10  EQUATION   1
+ aul11(   48, 5) ST = 0.127100E+12 DT = 0.720576E+10
+ ...ITERATING... AT [   49, 1] --- DELTEX = 0.144115E+11  MAX. RES. = 0.594799E+00 AT ELEMENT akm15  EQUATION   2
+ ...ITERATING... AT [   49, 2] --- DELTEX = 0.144115E+11  MAX. RES. = 0.545943E+03 AT ELEMENT axn12  EQUATION   1
+ ...ITERATING... AT [   49, 3] --- DELTEX = 0.144115E+11  MAX. RES. = 0.547983E+02 AT ELEMENT axn13  EQUATION   1
+ ...ITERATING... AT [   49, 4] --- DELTEX = 0.144115E+11  MAX. RES. = 0.595603E+02 AT ELEMENT axn13  EQUATION   1
+ ...ITERATING... AT [   49, 5] --- DELTEX = 0.144115E+11  MAX. RES. = 0.100701E-01 AT ELEMENT axn13  EQUATION   1
+ ...ITERATING... AT [   49, 6] --- DELTEX = 0.144115E+11  MAX. RES. = 0.270680E-03 AT ELEMENT axn13  EQUATION   1
+ axn13(   49, 7) ST = 0.141512E+12 DT = 0.144115E+11
+ ...ITERATING... AT [  309, 1] --- DELTEX = 0.699920E+10  MAX. RES. = 0.215236E-01 AT ELEMENT aot24  EQUATION   2
+ ...ITERATING... AT [  309, 2] --- DELTEX = 0.699920E+10  MAX. RES. = 0.247283E-01 AT ELEMENT aot25  EQUATION   1
+ ...ITERATING... AT [  309, 3] --- DELTEX = 0.699920E+10  MAX. RES. = 0.298781E-04 AT ELEMENT apt24  EQUATION   1
+ apt24(  309, 4) ST = 0.495447E+13 DT = 0.699920E+10
+ ...ITERATING... AT [  310, 1] --- DELTEX = 0.139984E+11  MAX. RES. = 0.490559E-01 AT ELEMENT aot25  EQUATION   2
+ ...ITERATING... AT [  310, 2] --- DELTEX = 0.139984E+11  MAX. RES. = 0.465688E+00 AT ELEMENT axn30  EQUATION   1
+ ...ITERATING... AT [  310, 3] --- DELTEX = 0.139984E+11  MAX. RES. = 0.881024E-02 AT ELEMENT axn30  EQUATION   1
+ ...ITERATING... AT [  310, 4] --- DELTEX = 0.139984E+11  MAX. RES. = 0.300120E-02 AT ELEMENT axn30  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  310, 5] --- DELTEX = 0.139984E+11  MAX. RES. = 0.280499E-02 AT ELEMENT axn30  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  310, 6] --- DELTEX = 0.139984E+11  MAX. RES. = 0.281808E-02 AT ELEMENT axn30  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  310, 7] --- DELTEX = 0.139984E+11  MAX. RES. = 0.284284E-02 AT ELEMENT axn30  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  310, 8] --- DELTEX = 0.139984E+11  MAX. RES. = 0.283768E-02 AT ELEMENT axn30  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  310, 9] --- DELTEX = 0.139984E+11  MAX. RES. = 0.281682E-02 AT ELEMENT axn30  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (  310, 9) ++++++++ ++++++++   NEW DELT =0.279968E+10
+ ...ITERATING... AT [  310, 1] --- DELTEX = 0.279968E+10  MAX. RES. = 0.981118E-02 AT ELEMENT aot25  EQUATION   2
+ ...ITERATING... AT [  310, 2] --- DELTEX = 0.279968E+10  MAX. RES. = 0.177569E-02 AT ELEMENT aot25  EQUATION   1
+ apt24(  310, 3) ST = 0.495727E+13 DT = 0.279968E+10
+ ...ITERATING... AT [  311, 1] --- DELTEX = 0.559936E+10  MAX. RES. = 0.205971E-01 AT ELEMENT aot25  EQUATION   2
+ ...ITERATING... AT [  311, 2] --- DELTEX = 0.559936E+10  MAX. RES. = 0.180261E-01 AT ELEMENT aot25  EQUATION   1
+ apt24(  311, 3) ST = 0.496287E+13 DT = 0.559936E+10
+ ...ITERATING... AT [  312, 1] --- DELTEX = 0.111987E+11  MAX. RES. = 0.447804E-01 AT ELEMENT aot25  EQUATION   2
+ ...ITERATING... AT [  312, 2] --- DELTEX = 0.111987E+11  MAX. RES. = 0.202672E+00 AT ELEMENT aot25  EQUATION   1
+ ...ITERATING... AT [  312, 3] --- DELTEX = 0.111987E+11  MAX. RES. = 0.590158E-03 AT ELEMENT aot24  EQUATION   1
+ aot27(  312, 4) ST = 0.497406E+13 DT = 0.111987E+11
+ ...ITERATING... AT [  313, 1] --- DELTEX = 0.223974E+11  MAX. RES. = 0.103428E+00 AT ELEMENT aot26  EQUATION   2
+ ...ITERATING... AT [  313, 2] --- DELTEX = 0.223974E+11  MAX. RES. = 0.608017E+03 AT ELEMENT apt16  EQUATION   1
+ ...ITERATING... AT [  313, 3] --- DELTEX = 0.223974E+11  MAX. RES. = 0.475550E+01 AT ELEMENT apt16  EQUATION   1
+ ...ITERATING... AT [  313, 4] --- DELTEX = 0.223974E+11  MAX. RES. = 0.108474E+00 AT ELEMENT apt16  EQUATION   1
+ ...ITERATING... AT [  313, 5] --- DELTEX = 0.223974E+11  MAX. RES. = 0.718912E-03 AT ELEMENT apt16  EQUATION   1
+ apt16(  313, 6) ST = 0.499646E+13 DT = 0.223974E+11
+ ...ITERATING... AT [  314, 1] --- DELTEX = 0.223974E+11  MAX. RES. = 0.108580E+00 AT ELEMENT aot27  EQUATION   2
+ ...ITERATING... AT [  314, 2] --- DELTEX = 0.223974E+11  MAX. RES. = 0.465522E+00 AT ELEMENT aot27  EQUATION   1
+ ...ITERATING... AT [  314, 3] --- DELTEX = 0.223974E+11  MAX. RES. = 0.120930E-01 AT ELEMENT aot25  EQUATION   1
+ ...ITERATING... AT [  314, 4] --- DELTEX = 0.223974E+11  MAX. RES. = 0.833509E-04 AT ELEMENT axn29  EQUATION   1
+ axn29(  314, 5) ST = 0.501886E+13 DT = 0.223974E+11
+ ...ITERATING... AT [  315, 1] --- DELTEX = 0.447949E+11  MAX. RES. = 0.171049E+00 AT ELEMENT aot28  EQUATION   2
+ ...ITERATING... AT [  315, 2] --- DELTEX = 0.447949E+11  MAX. RES. = 0.898973E+01 AT ELEMENT aqu16  EQUATION   1
+ ...ITERATING... AT [  315, 3] --- DELTEX = 0.447949E+11  MAX. RES. = 0.119536E-01 AT ELEMENT ans25  EQUATION   1
+ ...ITERATING... AT [  315, 4] --- DELTEX = 0.447949E+11  MAX. RES. = 0.124958E-03 AT ELEMENT aot30  EQUATION   1
+ apt16(  315, 5) ST = 0.506365E+13 DT = 0.447949E+11
+ ...ITERATING... AT [  316, 1] --- DELTEX = 0.895898E+11  MAX. RES. = 0.196807E+00 AT ELEMENT aot30  EQUATION   2
+ ...ITERATING... AT [  316, 2] --- DELTEX = 0.895898E+11  MAX. RES. = 0.215245E+03 AT ELEMENT aou23  EQUATION   1
+ ...ITERATING... AT [  316, 3] --- DELTEX = 0.895898E+11  MAX. RES. = 0.173861E+00 AT ELEMENT aru22  EQUATION   1
+ ...ITERATING... AT [  316, 4] --- DELTEX = 0.895898E+11  MAX. RES. = 0.874759E-02 AT ELEMENT aou23  EQUATION   1
+ aou23(  316, 5) ST = 0.515324E+13 DT = 0.895898E+11
+ ...ITERATING... AT [  317, 1] --- DELTEX = 0.179180E+12  MAX. RES. = 0.299252E+00 AT ELEMENT atx26  EQUATION   2
+ ...ITERATING... AT [  317, 2] --- DELTEX = 0.179180E+12  MAX. RES. = 0.482520E+04 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  317, 3] --- DELTEX = 0.179180E+12  MAX. RES. = 0.111338E+01 AT ELEMENT app17  EQUATION   1
+ ...ITERATING... AT [  317, 4] --- DELTEX = 0.179180E+12  MAX. RES. = 0.769267E-01 AT ELEMENT app17  EQUATION   1
+ ...ITERATING... AT [  317, 5] --- DELTEX = 0.179180E+12  MAX. RES. = 0.140459E-03 AT ELEMENT apn24  EQUATION   1
+ asw19(  317, 6) ST = 0.533242E+13 DT = 0.179180E+12
+ ...ITERATING... AT [  318, 1] --- DELTEX = 0.179180E+12  MAX. RES. = 0.153092E+00 AT ELEMENT atx26  EQUATION   2
+ ...ITERATING... AT [  318, 2] --- DELTEX = 0.179180E+12  MAX. RES. = 0.233846E+03 AT ELEMENT amm18  EQUATION   1
+ ...ITERATING... AT [  318, 3] --- DELTEX = 0.179180E+12  MAX. RES. = 0.156751E+00 AT ELEMENT ans25  EQUATION   1
+ ...ITERATING... AT [  318, 4] --- DELTEX = 0.179180E+12  MAX. RES. = 0.862545E-03 AT ELEMENT apt16  EQUATION   1
+ ...ITERATING... AT [  318, 5] --- DELTEX = 0.179180E+12  MAX. RES. = 0.172482E-04 AT ELEMENT aor27  EQUATION   1
+ apu37(  318, 6) ST = 0.551160E+13 DT = 0.179180E+12
+ ...ITERATING... AT [  319, 1] --- DELTEX = 0.179180E+12  MAX. RES. = 0.103438E+00 AT ELEMENT ans27  EQUATION   2
+ ...ITERATING... AT [  319, 2] --- DELTEX = 0.179180E+12  MAX. RES. = 0.653778E+03 AT ELEMENT amm14  EQUATION   1
+ ...ITERATING... AT [  319, 3] --- DELTEX = 0.179180E+12  MAX. RES. = 0.223822E+03 AT ELEMENT apt14  EQUATION   1
+ ...ITERATING... AT [  319, 4] --- DELTEX = 0.179180E+12  MAX. RES. = 0.148389E+02 AT ELEMENT apt14  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  319, 5] --- DELTEX = 0.179180E+12  MAX. RES. = 0.135988E+00 AT ELEMENT apo17  EQUATION   1
+ ...ITERATING... AT [  319, 6] --- DELTEX = 0.179180E+12  MAX. RES. = 0.621136E-02 AT ELEMENT anr36  EQUATION   1
+ ...ITERATING... AT [  319, 7] --- DELTEX = 0.179180E+12  MAX. RES. = 0.103375E-04 AT ELEMENT ans33  EQUATION   1
+ anr37(  319, 8) ST = 0.569078E+13 DT = 0.179180E+12
+ ...ITERATING... AT [  320, 1] --- DELTEX = 0.179180E+12  MAX. RES. = 0.145148E+00 AT ELEMENT ans28  EQUATION   2
+ ...ITERATING... AT [  320, 2] --- DELTEX = 0.179180E+12  MAX. RES. = 0.268775E+02 AT ELEMENT anh13  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  320, 3] --- DELTEX = 0.179180E+12  MAX. RES. = 0.794758E+01 AT ELEMENT axn30  EQUATION   1
+ ...ITERATING... AT [  320, 4] --- DELTEX = 0.179180E+12  MAX. RES. = 0.123543E+00 AT ELEMENT ans38  EQUATION   1
+ ...ITERATING... AT [  320, 5] --- DELTEX = 0.179180E+12  MAX. RES. = 0.278092E-03 AT ELEMENT ano24  EQUATION   1
+ anr38(  320, 6) ST = 0.586996E+13 DT = 0.179180E+12
+ ...ITERATING... AT [  321, 1] --- DELTEX = 0.179180E+12  MAX. RES. = 0.104396E+00 AT ELEMENT ans35  EQUATION   2
+ ...ITERATING... AT [  321, 2] --- DELTEX = 0.179180E+12  MAX. RES. = 0.861313E+01 AT ELEMENT aru17  EQUATION   1
+ ...ITERATING... AT [  321, 3] --- DELTEX = 0.179180E+12  MAX. RES. = 0.170216E-01 AT ELEMENT aot38  EQUATION   1
+ ...ITERATING... AT [  321, 4] --- DELTEX = 0.179180E+12  MAX. RES. = 0.900632E-03 AT ELEMENT ans38  EQUATION   1
+ ans38(  321, 5) ST = 0.604914E+13 DT = 0.179180E+12
+ ...ITERATING... AT [  322, 1] --- DELTEX = 0.358359E+12  MAX. RES. = 0.135816E+00 AT ELEMENT ans36  EQUATION   2
+ ...ITERATING... AT [  322, 2] --- DELTEX = 0.358359E+12  MAX. RES. = 0.247730E+02 AT ELEMENT apu24  EQUATION   1
+ ...ITERATING... AT [  322, 3] --- DELTEX = 0.358359E+12  MAX. RES. = 0.438267E+00 AT ELEMENT anr27  EQUATION   1
+ ...ITERATING... AT [  322, 4] --- DELTEX = 0.358359E+12  MAX. RES. = 0.239792E-02 AT ELEMENT anr26  EQUATION   1
+ ...ITERATING... AT [  322, 5] --- DELTEX = 0.358359E+12  MAX. RES. = 0.176095E-04 AT ELEMENT amn23  EQUATION   1
+ alm19(  322, 6) ST = 0.640750E+13 DT = 0.358359E+12
+ ...ITERATING... AT [  323, 1] --- DELTEX = 0.358359E+12  MAX. RES. = 0.118939E+00 AT ELEMENT anr27  EQUATION   2
+ ...ITERATING... AT [  323, 2] --- DELTEX = 0.358359E+12  MAX. RES. = 0.180774E+04 AT ELEMENT awn13  EQUATION   1
+ ...ITERATING... AT [  323, 3] --- DELTEX = 0.358359E+12  MAX. RES. = 0.816659E+01 AT ELEMENT awn14  EQUATION   1
+ ...ITERATING... AT [  323, 4] --- DELTEX = 0.358359E+12  MAX. RES. = 0.117559E-01 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  323, 5] --- DELTEX = 0.358359E+12  MAX. RES. = 0.150606E-04 AT ELEMENT anr31  EQUATION   1
+ anr31(  323, 6) ST = 0.676586E+13 DT = 0.358359E+12
+ ...ITERATING... AT [  324, 1] --- DELTEX = 0.358359E+12  MAX. RES. = 0.115331E+00 AT ELEMENT anr28  EQUATION   2
+ ...ITERATING... AT [  324, 2] --- DELTEX = 0.358359E+12  MAX. RES. = 0.176133E+01 AT ELEMENT anr30  EQUATION   1
+ ...ITERATING... AT [  324, 3] --- DELTEX = 0.358359E+12  MAX. RES. = 0.125535E+00 AT ELEMENT anr30  EQUATION   1
+ ...ITERATING... AT [  324, 4] --- DELTEX = 0.358359E+12  MAX. RES. = 0.113662E-02 AT ELEMENT anq24  EQUATION   1
+ anr32(  324, 5) ST = 0.712422E+13 DT = 0.358359E+12
+ ...ITERATING... AT [  325, 1] --- DELTEX = 0.716718E+12  MAX. RES. = 0.224353E+00 AT ELEMENT anr30  EQUATION   2
+ ...ITERATING... AT [  325, 2] --- DELTEX = 0.716718E+12  MAX. RES. = 0.226837E+01 AT ELEMENT anq24  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  325, 3] --- DELTEX = 0.716718E+12  MAX. RES. = 0.656813E+02 AT ELEMENT aun23  EQUATION   1
+ ...ITERATING... AT [  325, 4] --- DELTEX = 0.716718E+12  MAX. RES. = 0.331261E+00 AT ELEMENT ark14  EQUATION   1
+ ...ITERATING... AT [  325, 5] --- DELTEX = 0.716718E+12  MAX. RES. = 0.139154E+01 AT ELEMENT aun23  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  325, 6] --- DELTEX = 0.716718E+12  MAX. RES. = 0.617325E+00 AT ELEMENT avm22  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  325, 7] --- DELTEX = 0.716718E+12  MAX. RES. = 0.177774E+01 AT ELEMENT aun23  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  325, 8] --- DELTEX = 0.716718E+12  MAX. RES. = 0.137825E+01 AT ELEMENT aun23  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  325, 9] --- DELTEX = 0.716718E+12  MAX. RES. = 0.118375E+01 AT ELEMENT aun23  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (  325, 9) ++++++++ ++++++++   NEW DELT =0.143344E+12
+ ...ITERATING... AT [  325, 1] --- DELTEX = 0.143344E+12  MAX. RES. = 0.448705E-01 AT ELEMENT anr30  EQUATION   2
+ ...ITERATING... AT [  325, 2] --- DELTEX = 0.143344E+12  MAX. RES. = 0.153498E+00 AT ELEMENT anq24  EQUATION   1
+ ...ITERATING... AT [  325, 3] --- DELTEX = 0.143344E+12  MAX. RES. = 0.164855E-02 AT ELEMENT anr23  EQUATION   1
+ anq24(  325, 4) ST = 0.726756E+13 DT = 0.143344E+12
+ ...ITERATING... AT [  326, 1] --- DELTEX = 0.286687E+12  MAX. RES. = 0.533365E-01 AT ELEMENT anr30  EQUATION   2
+ ...ITERATING... AT [  326, 2] --- DELTEX = 0.286687E+12  MAX. RES. = 0.232327E+00 AT ELEMENT ans38  EQUATION   1
+ ...ITERATING... AT [  326, 3] --- DELTEX = 0.286687E+12  MAX. RES. = 0.369214E-02 AT ELEMENT ans38  EQUATION   1
+ anr36(  326, 4) ST = 0.755425E+13 DT = 0.286687E+12
+ ...ITERATING... AT [  327, 1] --- DELTEX = 0.573375E+12  MAX. RES. = 0.515256E-01 AT ELEMENT aye22  EQUATION   2
+ ...ITERATING... AT [  327, 2] --- DELTEX = 0.573375E+12  MAX. RES. = 0.424664E+00 AT ELEMENT awm24  EQUATION   1
+ ...ITERATING... AT [  327, 3] --- DELTEX = 0.573375E+12  MAX. RES. = 0.301444E-01 AT ELEMENT awm23  EQUATION   1
+ ...ITERATING... AT [  327, 4] --- DELTEX = 0.573375E+12  MAX. RES. = 0.356340E-03 AT ELEMENT avm21  EQUATION   1
+ avm21(  327, 5) ST = 0.812762E+13 DT = 0.573375E+12
+ ...ITERATING... AT [  328, 1] --- DELTEX = 0.114675E+13  MAX. RES. = 0.929941E-01 AT ELEMENT aye21  EQUATION   2
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  328, 2] --- DELTEX = 0.114675E+13  MAX. RES. = 0.405239E+02 AT ELEMENT aty20  EQUATION   1
+ ...ITERATING... AT [  328, 3] --- DELTEX = 0.114675E+13  MAX. RES. = 0.217484E+01 AT ELEMENT aty20  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  328, 4] --- DELTEX = 0.114675E+13  MAX. RES. = 0.118283E+01 AT ELEMENT aun23  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  328, 5] --- DELTEX = 0.114675E+13  MAX. RES. = 0.150964E+00 AT ELEMENT avm22  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  328, 6] --- DELTEX = 0.114675E+13  MAX. RES. = 0.618240E+00 AT ELEMENT aun23  EQUATION   1
+ ...ITERATING... AT [  328, 7] --- DELTEX = 0.114675E+13  MAX. RES. = 0.238278E-03 AT ELEMENT aul13  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  328, 8] --- DELTEX = 0.114675E+13  MAX. RES. = 0.888942E-03 AT ELEMENT aun23  EQUATION   1
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  328, 9] --- DELTEX = 0.114675E+13  MAX. RES. = 0.881479E-03 AT ELEMENT aun23  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (  328, 9) ++++++++ ++++++++   NEW DELT =0.229350E+12
+ ...ITERATING... AT [  328, 1] --- DELTEX = 0.229350E+12  MAX. RES. = 0.185988E-01 AT ELEMENT aye21  EQUATION   2
+ ...ITERATING... AT [  328, 2] --- DELTEX = 0.229350E+12  MAX. RES. = 0.343486E-01 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  328, 3] --- DELTEX = 0.229350E+12  MAX. RES. = 0.441351E-04 AT ELEMENT alm19  EQUATION   1
+ avm14(  328, 4) ST = 0.835697E+13 DT = 0.229350E+12
+ ...ITERATING... AT [  329, 1] --- DELTEX = 0.458700E+12  MAX. RES. = 0.358871E-01 AT ELEMENT aye21  EQUATION   2
+ ...ITERATING... AT [  329, 2] --- DELTEX = 0.458700E+12  MAX. RES. = 0.108216E+00 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  329, 3] --- DELTEX = 0.458700E+12  MAX. RES. = 0.441319E-03 AT ELEMENT avm14  EQUATION   1
+ amm18(  329, 4) ST = 0.881567E+13 DT = 0.458700E+12
+ ...ITERATING... AT [  330, 1] --- DELTEX = 0.917399E+12  MAX. RES. = 0.662312E-01 AT ELEMENT axe21  EQUATION   2
+ ...ITERATING... AT [  330, 2] --- DELTEX = 0.917399E+12  MAX. RES. = 0.875155E+02 AT ELEMENT aun23  EQUATION   1
+ ...ITERATING... AT [  330, 3] --- DELTEX = 0.917399E+12  MAX. RES. = 0.761065E+00 AT ELEMENT ark15  EQUATION   1
+ ...ITERATING... AT [  330, 4] --- DELTEX = 0.917399E+12  MAX. RES. = 0.371923E-02 AT ELEMENT aqn25  EQUATION   1
+ ...ITERATING... AT [  330, 5] --- DELTEX = 0.917399E+12  MAX. RES. = 0.215966E-04 AT ELEMENT aqn24  EQUATION   1
+ aun23(  330, 6) ST = 0.973307E+13 DT = 0.917399E+12
+ ...ITERATING... AT [  331, 1] --- DELTEX = 0.917399E+12  MAX. RES. = 0.561376E-01 AT ELEMENT axe21  EQUATION   2
+ ...ITERATING... AT [  331, 2] --- DELTEX = 0.917399E+12  MAX. RES. = 0.391028E+00 AT ELEMENT amm12  EQUATION   1
+ ...ITERATING... AT [  331, 3] --- DELTEX = 0.917399E+12  MAX. RES. = 0.174720E-02 AT ELEMENT amm18  EQUATION   1
+ ...ITERATING... AT [  331, 4] --- DELTEX = 0.917399E+12  MAX. RES. = 0.204960E-04 AT ELEMENT alm19  EQUATION   1
+ alm19(  331, 5) ST = 0.106505E+14 DT = 0.917399E+12
+ ...ITERATING... AT [  332, 1] --- DELTEX = 0.183480E+13  MAX. RES. = 0.953409E-01 AT ELEMENT axe20  EQUATION   2
+ ...ITERATING... AT [  332, 2] --- DELTEX = 0.183480E+13  MAX. RES. = 0.197648E+01 AT ELEMENT amm12  EQUATION   1
+ ...ITERATING... AT [  332, 3] --- DELTEX = 0.183480E+13  MAX. RES. = 0.182237E-01 AT ELEMENT alm19  EQUATION   1
+ ...ITERATING... AT [  332, 4] --- DELTEX = 0.183480E+13  MAX. RES. = 0.204497E-03 AT ELEMENT alm19  EQUATION   1
+ alm19(  332, 5) ST = 0.124853E+14 DT = 0.183480E+13
+ ...ITERATING... AT [  333, 1] --- DELTEX = 0.366960E+13  MAX. RES. = 0.138473E+00 AT ELEMENT awe20  EQUATION   2
+ *** PETSC Solver failed to converged ***
+ ...ITERATING... AT [  333, 2] --- DELTEX = 0.366960E+13  MAX. RES. = 0.130455E+03 AT ELEMENT bub28  EQUATION   1
+ ...ITERATING... AT [  333, 3] --- DELTEX = 0.366960E+13  MAX. RES. = 0.241677E+02 AT ELEMENT aty20  EQUATION   1
+ ...ITERATING... AT [  333, 4] --- DELTEX = 0.366960E+13  MAX. RES. = 0.916901E-01 AT ELEMENT aty19  EQUATION   1
+ ...ITERATING... AT [  333, 5] --- DELTEX = 0.366960E+13  MAX. RES. = 0.121176E-03 AT ELEMENT aty20  EQUATION   1
+ atu14(  333, 6) ST = 0.161549E+14 DT = 0.366960E+13
+ ...ITERATING... AT [  334, 1] --- DELTEX = 0.366960E+13  MAX. RES. = 0.811710E-01 AT ELEMENT axd22  EQUATION   2
+ ...ITERATING... AT [  334, 2] --- DELTEX = 0.366960E+13  MAX. RES. = 0.237765E+01 AT ELEMENT bwb23  EQUATION   1
+ ...ITERATING... AT [  334, 3] --- DELTEX = 0.366960E+13  MAX. RES. = 0.276531E-01 AT ELEMENT amm14  EQUATION   1
+ ...ITERATING... AT [  334, 4] --- DELTEX = 0.366960E+13  MAX. RES. = 0.196189E-03 AT ELEMENT alm19  EQUATION   1
+ amp38(  334, 5) ST = 0.198245E+14 DT = 0.366960E+13
+ ...ITERATING... AT [  335, 1] --- DELTEX = 0.733920E+13  MAX. RES. = 0.977406E-01 AT ELEMENT axd22  EQUATION   2
+ ...ITERATING... AT [  335, 2] --- DELTEX = 0.733920E+13  MAX. RES. = 0.404133E+01 AT ELEMENT bwb23  EQUATION   1
+ ...ITERATING... AT [  335, 3] --- DELTEX = 0.733920E+13  MAX. RES. = 0.409473E+00 AT ELEMENT awm23  EQUATION   1
+ ...ITERATING... AT [  335, 4] --- DELTEX = 0.733920E+13  MAX. RES. = 0.146920E-02 AT ELEMENT avn14  EQUATION   1
+ amp38(  335, 5) ST = 0.271637E+14 DT = 0.733920E+13
+ ...ITERATING... AT [  336, 1] --- DELTEX = 0.146784E+14  MAX. RES. = 0.105569E+00 AT ELEMENT deg27  EQUATION   2
+ ...ITERATING... AT [  336, 2] --- DELTEX = 0.146784E+14  MAX. RES. = 0.199776E+01 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  336, 3] --- DELTEX = 0.146784E+14  MAX. RES. = 0.159723E-01 AT ELEMENT avn14  EQUATION   1
+ ...ITERATING... AT [  336, 4] --- DELTEX = 0.146784E+14  MAX. RES. = 0.189770E-03 AT ELEMENT amp38  EQUATION   1
+ amp38(  336, 5) ST = 0.418421E+14 DT = 0.146784E+14
+ ...ITERATING... AT [  337, 1] --- DELTEX = 0.293568E+14  MAX. RES. = 0.747115E-01 AT ELEMENT def27  EQUATION   2
+ ...ITERATING... AT [  337, 2] --- DELTEX = 0.293568E+14  MAX. RES. = 0.364597E+01 AT ELEMENT axl20  EQUATION   1
+ ...ITERATING... AT [  337, 3] --- DELTEX = 0.293568E+14  MAX. RES. = 0.419876E-01 AT ELEMENT axl20  EQUATION   1
+ ...ITERATING... AT [  337, 4] --- DELTEX = 0.293568E+14  MAX. RES. = 0.101904E-03 AT ELEMENT amp38  EQUATION   1
+ amp38(  337, 5) ST = 0.711988E+14 DT = 0.293568E+14
+ ...ITERATING... AT [  338, 1] --- DELTEX = 0.587136E+14  MAX. RES. = 0.289384E-01 AT ELEMENT ded26  EQUATION   2
+ ...ITERATING... AT [  338, 2] --- DELTEX = 0.587136E+14  MAX. RES. = 0.355889E+00 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  338, 3] --- DELTEX = 0.587136E+14  MAX. RES. = 0.143053E-02 AT ELEMENT akl32  EQUATION   1
+ ...ITERATING... AT [  338, 4] --- DELTEX = 0.587136E+14  MAX. RES. = 0.263823E-04 AT ELEMENT amp38  EQUATION   1
+ avn18(  338, 5) ST = 0.129912E+15 DT = 0.587136E+14
+ ...ITERATING... AT [  339, 1] --- DELTEX = 0.117427E+15  MAX. RES. = 0.797952E-02 AT ELEMENT dda27  EQUATION   2
+ ...ITERATING... AT [  339, 2] --- DELTEX = 0.117427E+15  MAX. RES. = 0.524402E-01 AT ELEMENT axn16  EQUATION   1
+ ...ITERATING... AT [  339, 3] --- DELTEX = 0.117427E+15  MAX. RES. = 0.583583E-03 AT ELEMENT ayl34  EQUATION   1
+ aym34(  339, 4) ST = 0.247340E+15 DT = 0.117427E+15
+ ...ITERATING... AT [  340, 1] --- DELTEX = 0.234854E+15  MAX. RES. = 0.124287E-02 AT ELEMENT dba27  EQUATION   2
+ ...ITERATING... AT [  340, 2] --- DELTEX = 0.234854E+15  MAX. RES. = 0.149433E-01 AT ELEMENT avm14  EQUATION   1
+ ...ITERATING... AT [  340, 3] --- DELTEX = 0.234854E+15  MAX. RES. = 0.146577E-03 AT ELEMENT aym34  EQUATION   1
+ avl21(  340, 4) ST = 0.482194E+15 DT = 0.234854E+15
+ ...ITERATING... AT [  341, 1] --- DELTEX = 0.469709E+15  MAX. RES. = 0.946446E-04 AT ELEMENT def27  EQUATION   2
+ ...ITERATING... AT [  341, 2] --- DELTEX = 0.469709E+15  MAX. RES. = 0.524081E-02 AT ELEMENT atw17  EQUATION   1
+ ...ITERATING... AT [  341, 3] --- DELTEX = 0.469709E+15  MAX. RES. = 0.149159E-04 AT ELEMENT avn19  EQUATION   1
+ ...ITERATING... AT [  341, 4] --- DELTEX = 0.469709E+15  MAX. RES. = 0.103907E-04 AT ELEMENT avn15  EQUATION   1
+ ...ITERATING... AT [  341, 5] --- DELTEX = 0.469709E+15  MAX. RES. = 0.143254E-04 AT ELEMENT avl19  EQUATION   1
+ ...ITERATING... AT [  341, 6] --- DELTEX = 0.469709E+15  MAX. RES. = 0.168348E-04 AT ELEMENT avm19  EQUATION   1
+ ...ITERATING... AT [  341, 7] --- DELTEX = 0.469709E+15  MAX. RES. = 0.199138E-04 AT ELEMENT avl20  EQUATION   1
+ ...ITERATING... AT [  341, 8] --- DELTEX = 0.469709E+15  MAX. RES. = 0.127016E-04 AT ELEMENT avl19  EQUATION   1
+ ...ITERATING... AT [  341, 9] --- DELTEX = 0.469709E+15  MAX. RES. = 0.129131E-04 AT ELEMENT avl20  EQUATION   1
+ +++++++++ REDUCE TIME STEP AT (  341, 9) ++++++++ ++++++++   NEW DELT =0.939417E+14
+ ...ITERATING... AT [  341, 1] --- DELTEX = 0.939417E+14  MAX. RES. = 0.189289E-04 AT ELEMENT def27  EQUATION   2
+ ...ITERATING... AT [  341, 2] --- DELTEX = 0.939417E+14  MAX. RES. = 0.326271E-03 AT ELEMENT avm14  EQUATION   1
+ avn19(  341, 3) ST = 0.576135E+15 DT = 0.939417E+14
+ avn19(  342, 1) ST = 0.764019E+15 DT = 0.187883E+15
+ ...ITERATING... AT [  343, 1] --- DELTEX = 0.375767E+15  MAX. RES. = 0.166427E-04 AT ELEMENT avn19  EQUATION   1
+ ...ITERATING... AT [  343, 2] --- DELTEX = 0.375767E+15  MAX. RES. = 0.337012E-02 AT ELEMENT atw17  EQUATION   1
+ ...ITERATING... AT [  343, 3] --- DELTEX = 0.375767E+15  MAX. RES. = 0.116312E-04 AT ELEMENT avm19  EQUATION   1
+ ...ITERATING... AT [  343, 4] --- DELTEX = 0.375767E+15  MAX. RES. = 0.120979E-04 AT ELEMENT avl18  EQUATION   1
+ ...ITERATING... AT [  343, 5] --- DELTEX = 0.375767E+15  MAX. RES. = 0.103850E-04 AT ELEMENT avm18  EQUATION   1
+ ...ITERATING... AT [  343, 6] --- DELTEX = 0.375767E+15  MAX. RES. = 0.110007E-04 AT ELEMENT avl20  EQUATION   1
+ ...ITERATING... AT [  343, 7] --- DELTEX = 0.375767E+15  MAX. RES. = 0.108662E-04 AT ELEMENT avn19  EQUATION   1
+ avm21(  343, 8) ST = 0.113979E+16 DT = 0.375767E+15
+ avm21(  344, 1) ST = 0.151555E+16 DT = 0.375767E+15
+ ...ITERATING... AT [  345, 1] --- DELTEX = 0.484447E+15  MAX. RES. = 0.110857E-04 AT ELEMENT avm21  EQUATION   1
+ ...ITERATING... AT [  345, 2] --- DELTEX = 0.484447E+15  MAX. RES. = 0.560465E-02 AT ELEMENT atw17  EQUATION   1
+ avl16(  345, 3) ST = 0.200000E+16 DT = 0.484447E+15
+
+ TOUGH3 version                                                                  
+
+          OUTPUT DATA AFTER (  345, 3)-2-TIME STEPS                                                    THE TIME IS 0.231481E+11 DAYS
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+  TOTAL TIME     KCYC   ITER  ITERC   KON        DX1M         DX2M         DX3M          MAX. RES.      NER    KER        DELTEX
+ 0.200000E+16    345      3   2282     2       0.15770E+00  0.17689E-03  0.00000E+00    0.83332E-05    8468     1       0.48445E+15
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ELEM.  INDEX  PRES        TEMP        SAT_G       SAT_L       X_WATER_G   X_WATER_L   REL_G       REL_L       PCAP_GL     DEN_G       DEN_L       POR       
+                (PA)        (DEC-C)     (-)         (-)         (-)         (-)         (-)         (-)         (PA)        (KG/M**3)   (KG/M**3)   (-)       
+
+ dia38      1 0.34847E+08  0.2479E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1926E+02  0.8330E+03  0.9837E-01
+ dib38      2 0.34944E+08  0.2335E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1493E+02  0.8507E+03  0.9837E-01
+ dic38      3 0.35080E+08  0.2181E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1122E+02  0.8686E+03  0.9837E-01
+ did38      4 0.35215E+08  0.2063E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8919E+01  0.8816E+03  0.9837E-01
+ die38      5 0.35333E+08  0.1983E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.7601E+01  0.8901E+03  0.9837E-01
+ dif38      6 0.35431E+08  0.1930E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6806E+01  0.8956E+03  0.9837E-01
+ dig38      7 0.35506E+08  0.1892E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6295E+01  0.8994E+03  0.9837E-01
+ dih38      8 0.35558E+08  0.1867E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5971E+01  0.9019E+03  0.9837E-01
+ dii38      9 0.35585E+08  0.1856E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5821E+01  0.9031E+03  0.9837E-01
+ dij38     10 0.35584E+08  0.1860E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5872E+01  0.9027E+03  0.9837E-01
+ dik38     11 0.35556E+08  0.1878E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6107E+01  0.9009E+03  0.9837E-01
+ dil38     12 0.35505E+08  0.1907E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6497E+01  0.8979E+03  0.9837E-01
+ dim38     13 0.35433E+08  0.1948E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.7072E+01  0.8938E+03  0.9837E-01
+ din38     14 0.35346E+08  0.2004E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.7928E+01  0.8879E+03  0.9837E-01
+ dio38     15 0.35252E+08  0.2078E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.9180E+01  0.8801E+03  0.9837E-01
+ dip38     16 0.35162E+08  0.2160E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1077E+02  0.8710E+03  0.9837E-01
+ diq38     17 0.35095E+08  0.2221E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1209E+02  0.8641E+03  0.9837E-01
+ dir38     18 0.35063E+08  0.2233E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1237E+02  0.8627E+03  0.9837E-01
+ dis38     19 0.35065E+08  0.2189E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1139E+02  0.8677E+03  0.9837E-01
+ dit38     20 0.35084E+08  0.2121E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.9994E+01  0.8753E+03  0.9837E-01
+ diu38     21 0.35101E+08  0.2058E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8829E+01  0.8821E+03  0.9837E-01
+ div38     22 0.35102E+08  0.2017E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8138E+01  0.8864E+03  0.9837E-01
+ diw38     23 0.35077E+08  0.2008E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.7993E+01  0.8873E+03  0.9837E-01
+ dix38     24 0.35022E+08  0.2034E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8428E+01  0.8845E+03  0.9837E-01
+ diy38     25 0.34937E+08  0.2102E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.9625E+01  0.8773E+03  0.9837E-01
+ diz38     26 0.34828E+08  0.2213E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1192E+02  0.8648E+03  0.9837E-01
+ eia38     27 0.34713E+08  0.2354E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1544E+02  0.8482E+03  0.9837E-01
+ eib38     28 0.34631E+08  0.2479E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1928E+02  0.8327E+03  0.9837E-01
+ dja38     29 0.34868E+08  0.2472E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1904E+02  0.8338E+03  0.9837E-01
+ djb38     30 0.34968E+08  0.2323E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1460E+02  0.8522E+03  0.9837E-01
+ djc38     31 0.35109E+08  0.2164E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1085E+02  0.8706E+03  0.9837E-01
+ djd38     32 0.35249E+08  0.2042E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8560E+01  0.8839E+03  0.9837E-01
+ dje38     33 0.35372E+08  0.1961E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.7263E+01  0.8924E+03  0.9837E-01
+ 
+ ELEM.  INDEX  PRES        TEMP        SAT_G       SAT_L       X_WATER_G   X_WATER_L   REL_G       REL_L       PCAP_GL     DEN_G       DEN_L       POR       
+                (PA)        (DEC-C)     (-)         (-)         (-)         (-)         (-)         (-)         (PA)        (KG/M**3)   (KG/M**3)   (-)       
+
+ djf38     34 0.35472E+08  0.1907E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6496E+01  0.8979E+03  0.9837E-01
+ djg38     35 0.35549E+08  0.1871E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6011E+01  0.9016E+03  0.9837E-01
+ djh38     36 0.35603E+08  0.1846E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5708E+01  0.9040E+03  0.9837E-01
+ dji38     37 0.35631E+08  0.1834E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5563E+01  0.9052E+03  0.9837E-01
+ djj38     38 0.35633E+08  0.1837E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5591E+01  0.9050E+03  0.9837E-01
+ djk38     39 0.35608E+08  0.1853E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.5785E+01  0.9034E+03  0.9837E-01
+ djl38     40 0.35559E+08  0.1880E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6128E+01  0.9007E+03  0.9837E-01
+ djm38     41 0.35490E+08  0.1919E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.6652E+01  0.8968E+03  0.9837E-01
+ djn38     42 0.35404E+08  0.1973E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.7447E+01  0.8912E+03  0.9837E-01
+ djo38     43 0.35308E+08  0.2046E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8622E+01  0.8835E+03  0.9837E-01
+ djp38     44 0.35214E+08  0.2129E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1016E+02  0.8744E+03  0.9837E-01
+ djq38     45 0.35138E+08  0.2197E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1156E+02  0.8669E+03  0.9837E-01
+ djr38     46 0.35094E+08  0.2223E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1213E+02  0.8639E+03  0.9837E-01
+ djs38     47 0.35083E+08  0.2195E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1151E+02  0.8671E+03  0.9837E-01
+ djt38     48 0.35092E+08  0.2135E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1026E+02  0.8738E+03  0.9837E-01
+ dju38     49 0.35101E+08  0.2074E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.9110E+01  0.8804E+03  0.9837E-01
+ djv38     50 0.35096E+08  0.2032E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8394E+01  0.8848E+03  0.9837E-01
+ djw38     51 0.35068E+08  0.2022E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8216E+01  0.8859E+03  0.9837E-01
+ djx38     52 0.35009E+08  0.2047E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.8636E+01  0.8832E+03  0.9837E-01
+ djy38     53 0.34919E+08  0.2114E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.9860E+01  0.8759E+03  0.9837E-01
+ djz38     54 0.34803E+08  0.2229E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1228E+02  0.8630E+03  0.9837E-01
+ eja38     55 0.34680E+08  0.2377E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.1609E+02  0.8455E+03  0.9837E-01
+ ejb38     56 0.34592E+08  0.2511E+03  0.0000E+00  0.1000E+01  0.1000E+01  0.1000E+01  0.0000E+00  0.1000E+01  0.0000E+00  0.2038E+02  0.8286E+03  0.9837E-01
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          TOUGH3 version                                                                  
+
+                                                                                KCYC =  345  -  ITER =    3  -  TIME =0.200000E+16
+ 
+     ELEM1  ELEM2  INDEX  HEAT        FLOW        FLOW_G      FLOW_L    
+                          (W)         (KG/S)      (KG/S)      (KG/S)    
+ 
+     aan 4  aan 0      1  0.3458E+07  0.5481E+02  0.0000E+00  0.5481E+02
+     abn 4  abn 0      2  0.3830E+07  0.6071E+02  0.0000E+00  0.6071E+02
+     aan 4  abn 4      3 -0.2388E+04 -0.3789E-01  0.0000E+00 -0.3789E-01
+     aal 5  aal 0      4  0.1236E+07  0.1958E+02  0.0000E+00  0.1958E+02
+     aam 5  aam 0      5 -0.1131E+07 -0.1771E+02  0.0000E+00 -0.1771E+02
+     aan 5  aan 4      6  0.3456E+07  0.5478E+02  0.0000E+00  0.5478E+02
+     aao 5  aao 0      7 -0.4732E+05 -0.7752E+00  0.0000E+00 -0.7752E+00
+     abl 5  abl 0      8  0.1281E+07  0.2030E+02  0.0000E+00  0.2030E+02
+     abm 5  abm 0      9 -0.9927E+06 -0.1557E+02  0.0000E+00 -0.1557E+02
+     abn 5  abn 4     10  0.3832E+07  0.6075E+02  0.0000E+00  0.6075E+02
+     abo 5  abo 0     11  0.8519E+05  0.1321E+01  0.0000E+00  0.1321E+01
+     acl 5  acl 0     12  0.1830E+07  0.2898E+02  0.0000E+00  0.2898E+02
+     acm 5  acm 0     13  0.7358E+06  0.1166E+02  0.0000E+00  0.1166E+02
+     acn 5  acn 0     14  0.3624E+06  0.5734E+01  0.0000E+00  0.5734E+01
+     aco 5  aco 0     15  0.1799E+07  0.2849E+02  0.0000E+00  0.2849E+02
+     aal 5  aam 5     16  0.4524E+05  0.7110E+00  0.0000E+00  0.7110E+00
+     aam 5  aan 5     17  0.5928E+06  0.9402E+01  0.0000E+00  0.9402E+01
+     aan 5  aao 5     18 -0.6130E+06 -0.9723E+01  0.0000E+00 -0.9723E+01
+     abl 5  abm 5     19  0.4345E+05  0.6838E+00  0.0000E+00  0.6838E+00
+     abm 5  abn 5     20  0.5740E+06  0.9104E+01  0.0000E+00  0.9104E+01
+     abn 5  abo 5     21 -0.5941E+06 -0.9424E+01  0.0000E+00 -0.9424E+01
+     acl 5  acm 5     22  0.2085E+05  0.3299E+00  0.0000E+00  0.3299E+00
+     acm 5  acn 5     23  0.7132E+04  0.1129E+00  0.0000E+00  0.1129E+00
+     acn 5  aco 5     24 -0.2739E+05 -0.4333E+00  0.0000E+00 -0.4333E+00
+     aal 5  abl 5     25 -0.2898E+03 -0.4586E-02  0.0000E+00 -0.4586E-02
+     aam 5  abm 5     26 -0.8711E+03 -0.1367E-01  0.0000E+00 -0.1367E-01
+     aan 5  abn 5     27 -0.7218E+04 -0.1145E+00  0.0000E+00 -0.1145E+00
+     aao 5  abo 5     28 -0.8518E+03 -0.1348E-01  0.0000E+00 -0.1348E-01
+     abl 5  acl 5     29 -0.3526E+04 -0.5584E-01  0.0000E+00 -0.5584E-01
+     abm 5  acm 5     30 -0.1114E+05 -0.1753E+00  0.0000E+00 -0.1753E+00
+     abn 5  acn 5     31 -0.2025E+06 -0.3212E+01  0.0000E+00 -0.3212E+01
+     abo 5  aco 5     32 -0.1103E+05 -0.1747E+00  0.0000E+00 -0.1747E+00
+     aai 6  aai 0     33  0.8957E+06  0.1423E+02  0.0000E+00  0.1423E+02
+     aaj 6  aaj 0     34  0.6551E+05  0.1320E+01  0.0000E+00  0.1320E+01
+     aak 6  aak 0     35 -0.1358E+07 -0.2067E+02  0.0000E+00 -0.2067E+02
+     aal 6  aal 5     36  0.1281E+07  0.2029E+02  0.0000E+00  0.2029E+02
+     aam 6  aam 5     37 -0.5844E+06 -0.9028E+01  0.0000E+00 -0.9028E+01
+     aan 6  aan 5     38  0.2243E+07  0.3554E+02  0.0000E+00  0.3554E+02
+     aao 6  aao 5     39  0.5648E+06  0.8934E+01  0.0000E+00  0.8934E+01
+     aap 6  aap 0     40 -0.1413E+07 -0.2159E+02  0.0000E+00 -0.2159E+02
+     aaq 6  aaq 0     41  0.7706E+06  0.1228E+02  0.0000E+00  0.1228E+02
+     abi 6  abi 0     42  0.1144E+07  0.1815E+02  0.0000E+00  0.1815E+02
+     abj 6  abj 0     43  0.1232E+06  0.2183E+01  0.0000E+00  0.2183E+01
+     abk 6  abk 0     44 -0.1331E+07 -0.2031E+02  0.0000E+00 -0.2031E+02
+     abl 6  abl 5     45  0.1322E+07  0.2093E+02  0.0000E+00  0.2093E+02
+     abm 6  abm 5     46 -0.4725E+06 -0.7313E+01  0.0000E+00 -0.7313E+01
+     abn 6  abn 5     47  0.2469E+07  0.3912E+02  0.0000E+00  0.3912E+02
+     abo 6  abo 5     48  0.6692E+06  0.1058E+02  0.0000E+00  0.1058E+02
+     abp 6  abp 0     49 -0.1338E+07 -0.2052E+02  0.0000E+00 -0.2052E+02
+     abq 6  abq 0     50  0.1017E+07  0.1616E+02  0.0000E+00  0.1616E+02
+     acj 6  acj 0     51  0.1054E+07  0.1674E+02  0.0000E+00  0.1674E+02
+     ack 6  ack 0     52 -0.1094E+07 -0.1687E+02  0.0000E+00 -0.1687E+02
+     acl 6  acl 5     53  0.1854E+07  0.2937E+02  0.0000E+00  0.2937E+02
+ 
+     ELEM1  ELEM2  INDEX  HEAT        FLOW        FLOW_G      FLOW_L    
+                          (W)         (KG/S)      (KG/S)      (KG/S)    
+ 
+     acm 6  acm 5     54  0.7333E+06  0.1162E+02  0.0000E+00  0.1162E+02
+     acn 6  acn 5     55  0.5303E+06  0.8400E+01  0.0000E+00  0.8400E+01
+     aco 6  aco 5     56  0.1837E+07  0.2910E+02  0.0000E+00  0.2910E+02
+     acp 6  acp 0     57 -0.2499E+06 -0.3865E+01  0.0000E+00 -0.3865E+01
+     adk 6  adk 0     58  0.9903E+06  0.1574E+02  0.0000E+00  0.1574E+02
+     adl 6  adl 0     59 -0.3305E+06 -0.4894E+01  0.0000E+00 -0.4894E+01
+     adm 6  adm 0     60 -0.4885E+06 -0.7210E+01  0.0000E+00 -0.7210E+01
+     adn 6  adn 0     61 -0.4880E+06 -0.7206E+01  0.0000E+00 -0.7206E+01
+     ado 6  ado 0     62  0.3093E+06  0.4987E+01  0.0000E+00  0.4987E+01
+     ael 6  ael 0     63  0.1041E+07  0.1654E+02  0.0000E+00  0.1654E+02
+     aem 6  aem 0     64  0.3689E+06  0.5997E+01  0.0000E+00  0.5997E+01
+     aen 6  aen 0     65  0.1384E+06  0.2447E+01  0.0000E+00  0.2447E+01
+     aeo 6  aeo 0     66  0.8306E+06  0.1322E+02  0.0000E+00  0.1322E+02
+     afn 6  afn 0     67  0.1128E+07  0.1790E+02  0.0000E+00  0.1790E+02
+     afo 6  afo 0     68  0.1176E+07  0.1865E+02  0.0000E+00  0.1865E+02
+     azc 6  azc 0     69  0.6366E+06  0.1016E+02  0.0000E+00  0.1016E+02
+     azd 6  azd 0     70  0.1368E+07  0.2174E+02  0.0000E+00  0.2174E+02
+     dfi 6  dfi 0     71  0.1936E+07  0.3068E+02  0.0000E+00  0.3068E+02
+     dgi 6  dgi 0     72  0.1935E+07  0.3067E+02  0.0000E+00  0.3067E+02
+     aai 6  aaj 6     73  0.1599E+05  0.2476E+00  0.0000E+00  0.2476E+00
+     aaj 6  aak 6     74  0.2712E+05  0.4191E+00  0.0000E+00  0.4191E+00
+     aak 6  aal 6     75  0.7225E+06  0.1136E+02  0.0000E+00  0.1136E+02
+     aal 6  aam 6     76  0.1182E+06  0.1834E+01  0.0000E+00  0.1834E+01
+     aam 6  aan 6     77  0.4862E+06  0.7698E+01  0.0000E+00  0.7698E+01
+     aan 6  aao 6     78 -0.5493E+06 -0.8697E+01  0.0000E+00 -0.8697E+01
+     aao 6  aap 6     79 -0.7725E+06 -0.1216E+02  0.0000E+00 -0.1216E+02
+     aap 6  aaq 6     80 -0.4179E+05 -0.6469E+00  0.0000E+00 -0.6469E+00
+     abi 6  abj 6     81  0.1968E+05  0.3059E+00  0.0000E+00  0.3059E+00
+     abj 6  abk 6     82  0.2770E+05  0.4287E+00  0.0000E+00  0.4287E+00
+     abk 6  abl 6     83  0.7196E+06  0.1133E+02  0.0000E+00  0.1133E+02
+     abl 6  abm 6     84  0.1135E+06  0.1765E+01  0.0000E+00  0.1765E+01
+     abm 6  abn 6     85  0.4626E+06  0.7327E+01  0.0000E+00  0.7327E+01
+     abn 6  abo 6     86 -0.5256E+06 -0.8325E+01  0.0000E+00 -0.8325E+01
+     abo 6  abp 6     87 -0.7661E+06 -0.1207E+02  0.0000E+00 -0.1207E+02
+     abp 6  abq 6     88 -0.4515E+05 -0.7006E+00  0.0000E+00 -0.7006E+00
+     acj 6  ack 6     89  0.4115E+05  0.6417E+00  0.0000E+00  0.6417E+00
+     ack 6  acl 6     90  0.6889E+06  0.1089E+02  0.0000E+00  0.1089E+02
+     acl 6  acm 6     91  0.6435E+05  0.1008E+01  0.0000E+00  0.1008E+01
+     acm 6  acn 6     92  0.1502E+05  0.2357E+00  0.0000E+00  0.2357E+00
+     acn 6  aco 6     93 -0.7800E+05 -0.1224E+01  0.0000E+00 -0.1224E+01
+     aco 6  acp 6     94 -0.7059E+06 -0.1115E+02  0.0000E+00 -0.1115E+02
+     adk 6  adl 6     95  0.2544E+05  0.3950E+00  0.0000E+00  0.3950E+00
+     adl 6  adm 6     96  0.2846E+04  0.4383E-01  0.0000E+00  0.4383E-01
+     adm 6  adn 6     97 -0.5039E+01 -0.7472E-04  0.0000E+00 -0.7472E-04
+     adn 6  ado 6     98 -0.1511E+05 -0.2330E+00  0.0000E+00 -0.2330E+00
+     ael 6  aem 6     99  0.1289E+05  0.2016E+00  0.0000E+00  0.2016E+00
+     aem 6  aen 6    100  0.4388E+04  0.6804E-01  0.0000E+00  0.6804E-01
+     aen 6  aeo 6    101 -0.1331E+05 -0.2064E+00  0.0000E+00 -0.2064E+00
+     afn 6  afo 6    102 -0.9044E+03 -0.1427E-01  0.0000E+00 -0.1427E-01
+     azc 6  azd 6    103 -0.1404E+05 -0.2209E+00  0.0000E+00 -0.2209E+00
+     aai 6  abi 6    104 -0.1601E+04 -0.2525E-01  0.0000E+00 -0.2525E-01
+     aaj 6  abj 6    105 -0.3646E+03 -0.5590E-02  0.0000E+00 -0.5590E-02
+     aak 6  abk 6    106 -0.1468E+03 -0.2237E-02  0.0000E+00 -0.2237E-02
+     aal 6  abl 6    107 -0.8171E+03 -0.1283E-01  0.0000E+00 -0.1283E-01
+     aam 6  abm 6    108 -0.2301E+04 -0.3567E-01  0.0000E+00 -0.3567E-01
+     aan 6  abn 6    109 -0.1013E+05 -0.1604E+00  0.0000E+00 -0.1604E+00
+     aao 6  abo 6    110 -0.2207E+04 -0.3472E-01  0.0000E+00 -0.3472E-01
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+          TOUGH3 version                                                                  
+
+                                                                                KCYC =  345  -  ITER =    3  -  TIME =0.200000E+16
+ 
+ ELEM.  SOURCE  INDEX  GEN         ENTG      
+                       (KG/S)      (J/KG)    
+ 
+ ayl38   ayl98      1  0.8928E+01  0.1150E+07
+ ayn38   ayn98      2  0.1648E+02  0.1150E+07
+ axo38   axo98      3  0.9740E+01  0.1150E+07
+ ayp38   ayp98      4  0.4931E+02  0.1150E+07
+ azn38   azn98      5  0.7000E+02  0.1150E+07
+ axk38   axk98      6  0.2833E+01  0.1150E+07
+ ayo38   ayo98      7  0.2927E+02  0.1150E+07
+ axp38   axp98      8  0.1736E+02  0.1150E+07
+ axl38   axl98      9  0.5072E+01  0.1150E+07
+ aym38   aym98     10  0.3140E+02  0.1150E+07
+ axn38   axn98     11  0.4670E+01  0.1150E+07
+ azm38   azm98     12  0.4888E+02  0.1150E+07
+ awq38   awq98     13  0.9427E+00  0.1150E+07
+ awo38   awo98     14  0.2142E+02  0.1150E+07
+ avm38   avm98     15  0.4614E+01  0.1150E+07
+ avo38   avo98     16  0.2056E+02  0.1150E+07
+ avn38   avn98     17  0.1037E+02  0.1150E+07
+ avk38   avk98     18  0.2203E+01  0.1150E+07
+ awn38   awn98     19  0.3786E+01  0.1150E+07
+ avl38   avl98     20  0.4707E+01  0.1150E+07
+ awl38   awl98     21  0.2180E+02  0.1150E+07
+ awp38   awp98     22  0.1156E+01  0.1150E+07
+ avj38   avj98     23  0.2687E+01  0.1150E+07
+ awm38   awm98     24  0.6262E+01  0.1150E+07
+ auk38   auk98     25  0.1440E+02  0.1150E+07
+ auj38   auj98     26  0.2712E+02  0.1150E+07
+ asp38   asp98     27  0.3465E+01  0.1150E+07
+ atq38   atq98     28  0.2087E+01  0.1150E+07
+ aso38   aso98     29  0.5203E+01  0.1150E+07
+ atp38   atp98     30  0.1748E+01  0.1150E+07
+ arm38   arm98     31  0.1404E+01  0.1350E+07
+ asn38   asn98     32  0.7450E+01  0.1350E+07
+ arn38   arn98     33  0.1214E+02  0.1350E+07
+ asm38   asm98     34  0.3595E+00  0.1350E+07
+ arl38   arl98     35  0.2619E+01  0.1350E+07
+ aoi38   aoi98     36  0.4318E+00  0.1350E+07
+ app38   app98     37  0.2383E+01  0.1350E+07
+ aop38   aop98     38  0.4087E+01  0.1350E+07
+ aqk38   aqk98     39  0.3108E+01  0.1350E+07
+ aqm38   aqm98     40  0.2097E+01  0.1350E+07
+ apn38   apn98     41  0.1585E+01  0.1350E+07
+ ann38   ann98     42  0.1574E+01  0.1350E+07
+ apo38   apo98     43  0.2371E+01  0.1350E+07
+ ani38   ani98     44  0.1474E+01  0.1350E+07
+ aol38   aol98     45  0.8428E+00  0.1350E+07
+ aom38   aom98     46  0.1273E+01  0.1350E+07
+ aql38   aql98     47  0.2444E+01  0.1350E+07
+ aqn38   aqn98     48  0.3201E+01  0.1350E+07
+ apm38   apm98     49  0.1505E+01  0.1350E+07
+ aqo38   aqo98     50  0.5905E+01  0.1350E+07
+ apl38   apl98     51  0.1348E+01  0.1350E+07
+ apj38   apj98     52  0.1003E+01  0.1350E+07
+ aok38   aok98     53  0.5980E+00  0.1350E+07
+ 
+ ELEM.  SOURCE  INDEX  GEN         ENTG      
+                       (KG/S)      (J/KG)    
+ 
+ apk38   apk98     54  0.1163E+01  0.1350E+07
+ aoj38   aoj98     55  0.4534E+00  0.1350E+07
+ ano38   ano98     56  0.1386E+01  0.1350E+07
+ amn38   amn98     57  0.4254E+01  0.1500E+07
+ alo38   alo98     58  0.1530E+01  0.1500E+07
+ amo38   amo98     59  0.1540E+01  0.1500E+07
+ amp38   amp98     60  0.2038E+01  0.1500E+07
+ anq38   anq98     61  0.1467E+02  0.1500E+07
+ ans38   ans98     62  0.1217E+01  0.1500E+07
+ anr38   anr98     63  0.2883E+01  0.1500E+07
+ aln38   aln98     64  0.6878E+01  0.1500E+07
+ amq38   amq98     65  0.2606E+01  0.1500E+07
+ anp38   anp98     66  0.3764E+01  0.1500E+07
+ amk38   amk98     67  0.3910E+01  0.1500E+07
+ alj38   alj98     68  0.5677E+01  0.1500E+07
+ akl38   akl98     69  0.3016E+02  0.1500E+07
+ aml38   aml98     70  0.4088E+01  0.1500E+07
+ akm38   akm98     71  0.1226E+02  0.1500E+07
+ alm38   alm98     72  0.5042E+01  0.1500E+07
+ amm38   amm98     73  0.4459E+01  0.1500E+07
+ alk38   alk98     74  0.9648E+01  0.1500E+07
+ aqv38   aqv98     75  0.7000E+02  0.1600E+07
+ aqw38   aqw98     76  0.7000E+02  0.1600E+07
+ apu38   apu98     77  0.5732E+02  0.1600E+07
+ auz38   auz98     78  0.7327E+01  0.1300E+07
+ bwa38   bwa98     79  0.3004E+02  0.1300E+07
+ bua38   bua98     80  0.3994E+01  0.1300E+07
+ bub38   bub98     81  0.4653E+00  0.1300E+07
+ bwb38   bwb98     82  0.1583E+01  0.1300E+07
+ aaa38   aaa99     83  0.8000E+05  0.0000E+00
+ aab38   aab99     84  0.8000E+05  0.0000E+00
+ aac38   aac99     85  0.8000E+05  0.0000E+00
+ aad38   aad99     86  0.8000E+05  0.0000E+00
+ aae38   aae99     87  0.8000E+05  0.0000E+00
+ aaf38   aaf99     88  0.8000E+05  0.0000E+00
+ aag38   aag99     89  0.8000E+05  0.0000E+00
+ aah38   aah99     90  0.8000E+05  0.0000E+00
+ aai38   aai99     91  0.8000E+05  0.0000E+00
+ aaj38   aaj99     92  0.1000E+06  0.0000E+00
+ aak38   aak99     93  0.1000E+06  0.0000E+00
+ aal38   aal99     94  0.1000E+06  0.0000E+00
+ aam38   aam99     95  0.1000E+06  0.0000E+00
+ aan38   aan99     96  0.1000E+06  0.0000E+00
+ aao38   aao99     97  0.1000E+06  0.0000E+00
+ aap38   aap99     98  0.1000E+06  0.0000E+00
+ aaq38   aaq99     99  0.1000E+06  0.0000E+00
+ aar38   aar99    100  0.1000E+06  0.0000E+00
+ aas38   aas99    101  0.1000E+06  0.0000E+00
+ aat38   aat99    102  0.1000E+06  0.0000E+00
+ aau38   aau99    103  0.8000E+05  0.0000E+00
+ aav38   aav99    104  0.8000E+05  0.0000E+00
+ aaw38   aaw99    105  0.8000E+05  0.0000E+00
+ aax38   aax99    106  0.8000E+05  0.0000E+00
+ aay38   aay99    107  0.8000E+05  0.0000E+00
+ aaz38   aaz99    108  0.8000E+05  0.0000E+00
+ baa38   baa99    109  0.8000E+05  0.0000E+00
+ bab38   bab99    110  0.8000E+05  0.0000E+00
+ aba38   aba99    111  0.8000E+05  0.0000E+00
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ********** VOLUME- AND MASS-BALANCES ********************************************************************************************
+
+ ********** [KCYC,ITER] = [ 345,  3] *****                                  THE TIME IS  0.20000E+16 SECONDS, OR  0.23148E+11 DAYS
+
+
+ PHASE VOLUMES IN PLACE
+ GAS 0.95291E+08 M**3;  AQUEOUS 0.44877E+12 M**3
+
+ MASS IN PLACE
+ GAS 0.11274E+10 KG;    AQUEOUS 0.41506E+15 KG;  TOTAL H2O 0.41506E+15 KG;  H2O(2) 0.00000E+00 KG;  INT. ENERGY 0.12686E+22 J
+
+ *********************************************************************************************************************************
+
+
+ TOUGH STATUS: Write SAVE file for time =    2000000000000000.0     
+ EEE  
+ EEE  Number of processors =            1
+ EEE Time perform model computation  =    15350.937269384041     
+ EEE   of which spent in lin. solv. =    11521.870096799918     
+ EEE   and spent on other           =    3829.0671725841239     
+ EEE  
+ EEE Total number of time steps =          345
+ EEE Average time in solver per time step =    33.396724918260631     
+ EEE Average time spent on other per time step =    11.098745427780070     
+ EEE  
+ EEE Total number Newton steps =         1883
+ EEE Average number of Newton steps per time step   5.4579710144927533     
+ EEE Average time per Newton step =    6.1188901204460526     
+ EEE Average time spent on other per Newton st =    2.0334929222432945     
+ EEE  
+ EEE Total number of iter =      2026925
+ EEE Average number of iter per call    1076.4338821030271     
+ EEE Average time per iter =    5.6844086963256744E-003
+ EEE  
+ EEE  =============================================
+ EEE  
+ EEE  
+
+
+END OF TOUGH3 SIMULATION RUN
+ELAPSED TIME =  15351.834 SEC
+DISTRIBUTION + CALCULATION TIME =  15351.178 SEC
+DATA INPUT TIME =    0.656 SEC
+ 
