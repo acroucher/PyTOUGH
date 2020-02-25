@@ -206,6 +206,27 @@ python setup.py install
 
 You should now be able to import the PyTOUGH libraries into the Python interactive environment or your Python scripts, from any directory on your computer.  For example, you can import the MULgraph geometry library using \texttt{from mulgrids import *} (see chapter \ref{mulgrids}).
 
+\section{Testing PyTOUGH}
+\label{unittests}
+\index{PyTOUGH!testing}
+\index{unit tests}
+
+PyTOUGH includes a suite of ``unit tests'' which can be used to verify that it is working correctly. These are located in the \texttt{tests/} directory, which includes a number of Python scripts for testing individual PyTOUGH modules.
+
+These unit test modules may be run individually, the same way as any other Python script would be run. If the tests in the script all pass, the last message printed out to the console will read \texttt{OK}. If not, details will be output regarding which tests did not pass.
+
+It is also possible to run the unit tests for all modules by running the following command in the \texttt{tests/} directory:
+
+\begin{verbatim}
+python -m unittest discover
+\end{verbatim}
+
+or with the \texttt{-v} (verbose) flag to output more detail on which tests are being run:
+
+\begin{verbatim}
+python -m unittest discover -v
+\end{verbatim}
+
 \section{Licensing}
 \index{PyTOUGH!license}
 
