@@ -737,6 +737,71 @@ class t2listingTestCase(unittest.TestCase):
         self.listing.close()
 
 #--------------------------------------------------------------------------------
+# TOUGH3 tests
+
+    def test_TOUGH3_1(self):
+        """TOUGH3 case 1 (r1q)"""
+
+        self.base = os.path.join('listing', 'TOUGH3', '1', 'OUTPUT')
+        self.listing = t2listing(self.base)
+
+        self.assertEqual(self.listing.simulator, 'TOUGH3')
+        self.assertEqual(self.listing.num_fulltimes, 1)
+
+        self.table_test(31, ['element'])
+
+        self.table_spot_test(1, 'element', 'A1 55', 'SAT_G', 0.2133)
+
+        self.listing.close()
+
+    def test_TOUGH3_2(self):
+        """TOUGH3 case 2 (rfp)"""
+
+        self.base = os.path.join('listing', 'TOUGH3', '2', 'OUTPUT')
+        self.listing = t2listing(self.base)
+
+        self.assertEqual(self.listing.simulator, 'TOUGH3')
+        self.assertEqual(self.listing.num_fulltimes, 2)
+
+        self.table_test(20, ['element'])
+
+        self.table_spot_test(55, 'element', '2CB 1', 'X_CO2_G', 0.6434)
+
+        self.listing.close()
+
+    def test_TOUGH3_3(self):
+        """TOUGH3 case 3 (rvf)"""
+
+        self.base = os.path.join('listing', 'TOUGH3', '3', 'OUTPUT')
+        self.listing = t2listing(self.base)
+
+        self.assertEqual(self.listing.simulator, 'TOUGH3')
+        self.assertEqual(self.listing.num_fulltimes, 1)
+
+        self.table_test(46, ['element', 'connection'])
+
+        self.table_spot_test(46, 'element', 'A1311', 'TEMP', 190.5)
+        self.table_spot_test(46, 'connection', ('A1803', 'A1804'), 'FLOW_L', -0.6251)
+
+        self.listing.close()
+
+    def test_TOUGH3_4(self):
+        """TOUGH3 case 4"""
+
+        self.base = os.path.join('listing', 'TOUGH3', '4', 'OUTPUT')
+        self.listing = t2listing(self.base)
+
+        self.assertEqual(self.listing.simulator, 'TOUGH3')
+        self.assertEqual(self.listing.num_fulltimes, 1)
+
+        self.table_test(345, ['element', 'connection', 'generation'])
+
+        # self.table_spot_test(46, 'element', 'A1311', 'TEMP', 190.5)
+        # self.table_spot_test(46, 'connection', ('A1803', 'A1804'), 'FLOW_L', -0.6251)
+
+        self.listing.close()
+
+#--------------------------------------------------------------------------------
 
 if __name__ == '__main__':
 

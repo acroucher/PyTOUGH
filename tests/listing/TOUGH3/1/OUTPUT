@@ -1,0 +1,543 @@
+ 
+       @@@@@   @@   @  @   @@@  @  @   @@       @@@  @  @   @  @  @  @      @@   @@@@@  @   @@   @   @     @@@   @  @  @   @
+         @    @  @  @  @  @     @  @  @  @     @     @  @@ @@  @  @  @     @  @    @    @  @  @  @@  @     @  @  @  @  @@  @
+         @    @  @  @  @  @ @@  @@@@    @       @@   @  @ @ @  @  @  @     @@@@    @    @  @  @  @ @ @     @@@   @  @  @ @ @
+         @    @  @  @  @  @  @  @  @  @  @        @  @  @   @  @  @  @     @  @    @    @  @  @  @  @@     @ @   @  @  @  @@
+         @     @@    @@    @@@  @  @   @@      @@@   @  @   @   @@   @@@@  @  @    @    @   @@   @   @     @  @   @@   @   @
+
+
+                    TOUGH3 IS A PROGRAM FOR MULTIPHASE MULTICOMPONENT FLOW IN PERMEABLE MEDIA, INCLUDING HEAT FLOW.
+              IT IS A MEMBER OF THE MULKOM FAMILY OF CODES, DEVELOPED  AT LAWRENCE BERKELEY LABORATORY BY KARSTEN PRUESS ET AL.
+
+                          ********************************************************************************
+                          **********************   TOUGH3 VER. 1.0.0 (January 2018)  *********************
+                          ********************************************************************************
+
+
+ SUMMARY OF DISK FILES
+
+ FILE *MESH*  EXISTS --- OPEN AS AN OLD FILE
+ FILE *INCON* EXISTS --- OPEN AS AN OLD FILE
+ FILE *GENER* EXISTS --- OPEN AS AN OLD FILE
+ FILE *SAVE*  EXISTS --- OPEN AS AN OLD FILE
+ FILE *TABLE* EXISTS --- OPEN AS AN OLD FILE
+
+ ===================================================================================================================================
+
+     PROBLEM TITLE:  *r1q* --- 1-D radial test problem for flowing wellbore pressure                 
+
+
+(Reading ROCKS block)
+
+ DOMAIN NO.  1     MATERIAL NAME -- POMED
+(Reading START block)
+ HAVE READ UNKNOWN BLOCK LABEL "----*" --- IGNORE THIS, AND CONTINUE READING INPUT DATA
+(Reading PARAM block)
+(Reading RPCAP block)
+(Reading FOFT  block)
+(Reading GOFT  block)
+(Reading INCON block)
+     
+ WRITE FILE *INCON* FROM INPUT DATA
+(Reading GENER block)
+     
+ WRITE FILE *GENER* FROM INPUT DATA
+(Reading ENDCY block)
+
+                        ************************************************************************************
+                        *                       EVALUATE FLOATING POINT ARITHMETIC                         *
+                        ************************************************************************************
+                        *                                                                                  *
+                        * FLOATING POINT PROCESSOR HAS APPROXIMATELY 15 SIGNIFICANT DIGITS                 *
+                        *                                                                                  *
+                        * DEFAULT VALUE OF INCREMENT FACTOR FOR NUMERICAL DERIVATIVES IS DFAC = 0.1490E-07 *
+                        * USER-SPECIFIED VALUE DFAC = 0.1000E-06 WILL BE USED                              *
+                        *                                                                                  *
+                        ************************************************************************************
+
+ 
+
+ *****  WARNING  *****
+ ELEMENT A1 82 HAS A ZERO OR NEGATIVE VOLUME.
+ TOUGH3 NO LONGER SUPPORTS INACTIVE ELEMENTS.
+ AN ARBITRARY LARGE VOLUME IS ASSIGNED INSTEAD.
+ *********************
+
+
+ ALL NCON =     81 CONNECTIONS READ FROM FILE *MESH* REFERENCE KNOWN ELEMENTS
+
+
+
+ PARAMETERS FOR FLEXIBLE DIMENSIONING OF MAJOR ARRAYS (MAIN PROGRAM) ARE AS FOLLOWS
+
+ MNEL =     82  MNCON =      81  MNEQ =  2  MNK =  1   MNPH =  2   MNB =  6   MNOGN =    1   MGTAB =    0
+ ===================================================================================================================================
+
+ MAXIMUM NUMBER OF VOLUME ELEMENTS (GRID BLOCKS):            MNEL  =      82
+ MAXIMUM NUMBER OF CONNECTIONS (INTERFACES):                 MNCON =      81
+ MAXIMUM LENGTH OF PRIMARY VARIABLE ARRAYS:                  MPRIM =     164
+ MAXIMUM NUMBER OF GENERATION ITEMS (SINKS/SOURCES):         MNOGN =      1
+ MAXIMUM NUMBER OF TABULAR (TIME-DEPENDENT) GENERATION DATA: MGTAB =      0
+ LENGTH OF SECONDARY PARAMETER ARRAY:                        MNSEC  =        3936
+
+ MESH HAS       82 ELEMENTS AND       81 CONNECTIONS (INTERFACES) BETWEEN THEM
+ GENER HAS     1 SINKS/SOURCES
+
+
+END OF PART 1 INPUT JOB --- ELAPSED TIME =   0.0059 SECONDS
+
+ 
+ ***********************************************************************************************************************************
+ *          ARRAY *MOP* ALLOWS TO GENERATE MORE PRINTOUT IN VARIOUS SUBROUTINES, AND TO MAKE SOME CALCULATIONAL CHOICES.           *
+ ***********************************************************************************************************************************
+
+   MOP(1)  = 1 *** ALLOWS TO GENERATE A SHORT PRINTOUT FOR EACH NEWTON-RAPHSON ITERATION
+           = 0, 1, OR 2: GENERATE 0, 1, OR 2 LINES OF PRINTOUT
+
+            MORE PRINTOUT IS GENERATED FOR MOP(I) > 0 IN THE FOLLOWING SUBROUTINES (THE LARGER MOP IS, THE MORE WILL BE PRINTED).
+
+   MOP(2)  = 0 *** CYCIT       MOP(3) = 0 *** MULTI       MOP(4) = 0 *** QU       MOP(5) = 0 *** EOS       MOP(6) = 0 *** LINEQ    
+
+   MOP(7)  = 0 *** IF UNEQUAL ZERO, WILL GENERATE A PRINTOUT OF INPUT DATA
+
+            CALCULATIONAL CHOICES OFFERED BY MOP ARE AS FOLLOWS:
+
+   MOP(8)  = 0 *** IF ISOT IS NEGATIVE, CHOOSES OPTION FOR REDUCING FRACTURE-MATRIX INTERFACE AREA.
+
+   MOP(9)  = 0 *** CHOOSES FLUID COMPOSITION ON WITHDRAWAL (PRODUCTION).
+           = 0: ACCORDING TO RELATIVE MOBILITIES.
+           = 1: ACCORDING TO COMPOSITION IN PRODUCING ELEMENT.
+
+   MOP(10) = 0 *** CHOOSES INTERPOLATION FORMULA FOR DEPENDENCE OF THERMAL CONDUCTIVITY ON LIQUID SATURATION (SL).
+           = 0: K = KDRY + SQRT(SL)*(KWET-KDRY)
+           = 1: K = KDRY + SL*(KWET-KDRY)
+           = 2: K = C0+C1*T+C2*Sw+C3*POR
+
+   MOP(11) = 0 *** CHOOSES EVALUATION OF MOBILITY AND ABSOLUTE PERMEABILITY AT INTERFACES.
+           = 0: MOBILITIES ARE UPSTREAM WEIGHTED WITH WUP. (DEFAULT IS WUP = 1.0). PERMEABILITY IS UPSTREAM WEIGHTED.
+           = 1: MOBILITIES ARE AVERAGED BETWEEN ADJACENT ELEMENTS. PERMEABILITY IS UPSTREAM WEIGHTED.
+           = 2: MOBILITIES ARE UPSTREAM WEIGHTED WITH WUP. (DEFAULT IS WUP = 1.0). PERMEABILITY IS HARMONIC WEIGHTED.
+           = 3: MOBILITIES ARE AVERAGED BETWEEN ADJACENT ELEMENTS. PERMEABILITY IS HARMONIC WEIGHTED.
+           = 4: MOBILITY * PERMEABILITY PRODUCT IS HARMONIC WEIGHTED.
+
+   MOP(12) = 0 *** CHOOSES PROCEDURE FOR INTERPOLATING GENERATION RATES FROM A TIME TABLE.
+           = 0: TRIPLE LINEAR INTERPOLATION.
+           = 1: "STEP FUNCTION" OPTION.
+           = 2: RIGOROUS STEP RATE OPTION.
+
+   MOP(13) = 0 *** DEFINES CONTENT OF INCON AND SAVE FILE.
+           = 0: STANDARD CONTENT.
+           = 2: READS PARAMETERS OF HYSTERESIS MODEL FROM FILE INCON.
+
+   MOP(15) = 0 *** ALLOWS TO SELECT A SEMI-ANALYTICAL HEAT EXCHANGE CALCULATION WITH CONFINING BEDS.
+           = 0: NO SEMI-ANALYTICAL HEAT EXCHANGE.
+           = 1: SEMI-ANALYTICAL LINEAR HEAT EXCHANGE ENGAGED. INITIAL TEMPERATURE OF CONFINING BEDS IS UNIFORM.
+           = 2: SEMI-ANALYTICAL LINEAR HEAT EXCHANGE ENGAGED. INITIAL TEMPERATURE OF CONFINING LAYERS IS NOT UNIFORM.
+           = 5: SEMI-ANALYTICAL RADIAL HEAT EXCHANGE WITH PROPERTIES GIVEN IN MATERIAL QLOSS
+           = 6: SEMI-ANALYTICAL RADIAL HEAT EXCHANGE WITH DEPTH-DEPENDENT PROPERTIES (DEPTH, RADIUS, TEMPERATURE,
+                CONDUCTIVITY, DENSITY, CAPACITY) PROVIDED ON FILE radqloss.dat
+
+   MOP(16) = 3 *** PERMITS TO CHOOSE TIME STEP SELECTION OPTION
+           = 0: AUTOMATIC TIME STEPPING BASED ON MAXIMUM CHANGE IN SATURATION.
+           = 1: AUTOMATIC TIME STEPPING BASED ON NUMBER OF ITERATIONS NEEDED FOR CONVERGENCE.
+           > 1: INCREASE TIME STEP BY AT LEAST A FACTOR 2, IF CONVERGENCE OCCURS IN .LE. MOP(16) ITERATIONS.
+
+   MOP(17) = 0 *** HANDLES TIME STEPPING AFTER LINEAR EQUATION SOLVER FAILURE.
+           = 0: NO TIME STEP REDUCTION DESPITE LINEAR EQUATION SOLUTION FAILURE.
+           = 9: REDUCE TIME STEP AFTER LINEAR EQUATION SOLUTION FAILURE.
+
+   MOP(18) = 0 *** ALLOWS TO SELECT HANDLING OF INTERFACE DENSITY.
+           = 0: PERFORM UPSTREAM WEIGHTING FOR INTERFACE DENSITY.
+           > 0: COMPUTE INTERFACE DENSITY AS AVERAGE OF THE TWO GRID BLOCK DENSITIES.
+                HOWEVER, WHEN ONE OF THE TWO PHASE SATURATIONS IS ZERO, DO UPSTREAM WEIGHTING.
+
+   MOP(21) = 3 *** PERMITS TO SELECT LINEAR EQUATION SOLVER FROM PACKAGE 
+           < 2: DEFAULTS TO MOP(21) = 3
+           = 2: DSLUBC: BI-CONJUGATE GRADIENT SOLVER; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 3: DSLUCS: BI-CONJUGATE GRADIENT SOLVER - LANCZOS TYPE; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 4: DSLUGM: GENERALIZED MINIMUM RESIDUAL CONJUGATE GRADIENTS; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 5: DLUSTB: STABILIZED BI-CONJUGATE GRADIENT SOLVER; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 6: LUBAND: DIRECT SOLVER USING LU DECOMPOSITION
+           = 7: AZTEC: PARALLEL ITERATIVE SOLVER
+           = 8: PETSc: PARALLEL ITERATIVE SOLVER
+
+   MOP(24) = 0 *** PERMITS TO SELECT HANDLING OF MULTIPHASE DIFFUSIVE FLUXES AT INTERFACES
+           = 0: HARMONIC WEIGHTING OF FULLY-COUPLED EFFECTIVE MULTIPHASE DIFFUSIVITY
+           = 1: SEPARATE HARMONIC WEIGHTING  FOR EACH PHASE FLUX 
+
+ ***********************************************************************************************************************************
+
+ ***********************************************************************************************************************************
+
+
+ 
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   Summary of capabilities for random permeability modification   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ Modification of absolute permeability on a grid block-by-grid block basis will be made when a domain "SEED " is present in data
+ block "ROCKS", as follows.
+                                    k    --->    k' = k*m
+
+ Here, k is the absolute permeability specified for the reservoir domain to which the grid block belongs. Parameter m is a
+ "permeability modifier" which can be internally generated or externally prescribed by the user on a block-by-block basis.
+
+ When permeability modification is in effect, the strength of capillary pressure will, following Leverett (1941), automatically be
+ scaled as   Pcap ---> Pcap' = Pcap/SQRT(m).
+
+ User-supplied permeability modifiers have to be entered as parameter "PMX" in columns 41-50 of an ELEMEnt record.
+ Permeability modification options are selected through parameters in data block "ROCKS".
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ Summary of available permeability modification options
+          (with s - random number between 0 and 1; PMX - user-supplied modifiers in data block "ELEME"):
+      (1) externally supplied:        m = PMX - PER(2)
+      (2) "linear"      (DROK.ne.0):  m = PER(1) * s - PER(2)
+      (3) "logarithmic" (DROK.eq.0):  m = exp(- PER(1) * s) - PER(2)
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+            &&&& if a domain "SEED " is present, permeability modification will be made
+            &&&& if no domain "SEED " is present, no permeability modification will be made
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>  domain = "SEED " is not present, no permeability modification will be made  <<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ Data provided in domain "SEED " are used to select the following options.
+
+ DROK   = *** random number seed for internal generation of "linear" permeability modifiers.
+        = 0: (default) no internal generation of "linear" permeability modifiers.
+        > 0: perform "linear" permeability modification; random modifiers are generated internally with DROK as seed.
+
+ POR    = *** random number seed for internal generation of "logarithmic" permeability modifiers,
+        = 0: (default) no internal generation of "logarithmic" permeability modifiers.
+        > 0: perform "logarithmic" permeability modification; random modifiers are generated internally with POR as seed.
+
+            &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            &&&&& note: if both DROK and POR are specified as non-zero, DROK takes precedence                                  &&&&&
+            &&&&&       if both DROK and POR are zero, permeability modifiers as supplied through "ELEME" data will be used    &&&&&
+            &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ PER(1) = *** scale factor (optional) for internally generated  permeability modifiers.
+        = 0: (defaults to PER(1) = 1): permeability modifiers are generated as random numbers in the interval (0, 1).
+        > 0: permeability modifiers are generated as random numbers in the interval (0, PER(1)).
+
+ PER(2) = *** shift (optional) for internal or external permeability modifiers.
+        = 0: (default) no shift is applied to permeability modifiers.
+        > 0: permeability modifiers are shifted according to m' = m - PER(2). All m' < 0 are set equal to zero.
+
+ 
+ ***********************************************************************************************************************************
+ *                    EOS1: EQUATION OF STATE FOR WATER (OPTIONAL: TWO-WATER MIXTURES)                                             *
+ ***********************************************************************************************************************************
+
+
+    OPTIONS SELECTED ARE: (NK,NEQ,NPH,NB) = (1,2,2,6)
+
+                           NK  =  1   - NUMBER OF FLUID COMPONENTS
+                           NEQ =  2   - NUMBER OF EQUATIONS PER GRID BLOCK
+                           NPH =  2   - NUMBER OF PHASES THAT CAN BE PRESENT
+                           NB  =  6   - NUMBER OF SECONDARY PARAMETERS (OTHER THAN COMPONENT MASS FRACTIONS)
+
+                   For NK = 1 or NB = 6, diffusion is "off", for NK = 2 and NB = 8, diffusion is "on"
+
+
+    AVAILABLE OPTIONS ARE: (NK,NEQ,NPH,NB) = (1,2,2,6 or 8) - ONE WATER COMPONENT, NON-ISOTHERMAL
+                                             (1,1,2,6 or 8) - ONLY LIQUID, OR ONLY VAPOR, ISOTHERMAL
+                                             (2,3,2,6 or 8) - TWO WATERS, NON-ISOTHERMAL
+
+    Default options are (1,2,2,6) - "one" water, diffusion "off"
+
+ ***********************************************************************************************************************************
+
+
+ THE PRIMARY VARIABLES ARE
+  P - PRESSURE         T - TEMPERATURE         X2 - MASS FRACTION OF WATER "2"         S - GAS PHASE SATURATION
+
+ _______________________________________________________
+
+     PHASE CONDITION               PRIMARY VARIABLES
+ _______________________________________________________
+
+     SINGLE-PHASE GAS                P, T, [X2]
+
+     SINGLE-PHASE LIQUID             P, T, [X2]
+
+     TWO-PHASE                       P, S, [X2]
+
+ _______________________________________________________
+
+
+ ..... NEGLECT VAPOR PRESSURE LOWERING .....
+
+ ***********************************************************************************************************************************
+ 
+ ********** VOLUME- AND MASS-BALANCES ********************************************************************************************
+
+ ********** [KCYC,ITER] = [   0,  0] *****                                  THE TIME IS  0.00000E+00 SECONDS, OR  0.00000E+00 DAYS
+
+
+ PHASE VOLUMES IN PLACE
+ GAS 0.15707E+10 M**3;  AQUEOUS 0.14136E+11 M**3
+
+ MASS IN PLACE
+ GAS 0.48423E+11 KG;    AQUEOUS 0.10720E+14 KG;  TOTAL H2O 0.10769E+14 KG;  H2O(2) 0.00000E+00 KG;  INT. ENERGY 0.11433E+21 J
+
+ *********************************************************************************************************************************
+
+
+ ...ITERATING... AT [    1, 1] --- DELTEX = 0.100000E+06  MAX. RES. = 0.618714E-02 AT ELEMENT A1  1  EQUATION   1
+ A1  2(    1, 2) ST = 0.100000E+06 DT = 0.100000E+06
+ ...ITERATING... AT [    2, 1] --- DELTEX = 0.200000E+06  MAX. RES. = 0.119322E-01 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    2, 2] --- DELTEX = 0.200000E+06  MAX. RES. = 0.344147E-04 AT ELEMENT A1  2  EQUATION   1
+ A1  2(    2, 3) ST = 0.300000E+06 DT = 0.200000E+06
+ ...ITERATING... AT [    3, 1] --- DELTEX = 0.400000E+06  MAX. RES. = 0.224392E-01 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    3, 2] --- DELTEX = 0.400000E+06  MAX. RES. = 0.186409E-03 AT ELEMENT A1  2  EQUATION   1
+ A1  2(    3, 3) ST = 0.700000E+06 DT = 0.400000E+06
+ ...ITERATING... AT [    4, 1] --- DELTEX = 0.800000E+06  MAX. RES. = 0.406358E-01 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    4, 2] --- DELTEX = 0.800000E+06  MAX. RES. = 0.794570E-03 AT ELEMENT A1  2  EQUATION   1
+ A1  2(    4, 3) ST = 0.150000E+07 DT = 0.800000E+06
+ ...ITERATING... AT [    5, 1] --- DELTEX = 0.160000E+07  MAX. RES. = 0.694869E-01 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    5, 2] --- DELTEX = 0.160000E+07  MAX. RES. = 0.441781E-02 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    5, 3] --- DELTEX = 0.160000E+07  MAX. RES. = 0.128010E-04 AT ELEMENT A1  3  EQUATION   1
+ A1  2(    5, 4) ST = 0.310000E+07 DT = 0.160000E+07
+ ...ITERATING... AT [    6, 1] --- DELTEX = 0.160000E+07  MAX. RES. = 0.516680E-01 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    6, 2] --- DELTEX = 0.160000E+07  MAX. RES. = 0.433285E-02 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    6, 3] --- DELTEX = 0.160000E+07  MAX. RES. = 0.206964E-04 AT ELEMENT A1  3  EQUATION   1
+ A1  3(    6, 4) ST = 0.470000E+07 DT = 0.160000E+07
+ ...ITERATING... AT [    7, 1] --- DELTEX = 0.160000E+07  MAX. RES. = 0.357921E-01 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    7, 2] --- DELTEX = 0.160000E+07  MAX. RES. = 0.351129E-02 AT ELEMENT A1  1  EQUATION   1
+ ...ITERATING... AT [    7, 3] --- DELTEX = 0.160000E+07  MAX. RES. = 0.197353E-04 AT ELEMENT A1  2  EQUATION   1
+ A1  3(    7, 4) ST = 0.630000E+07 DT = 0.160000E+07
+ ...ITERATING... AT [    8, 1] --- DELTEX = 0.160000E+07  MAX. RES. = 0.244513E-01 AT ELEMENT A1  3  EQUATION   1
+ ...ITERATING... AT [    8, 2] --- DELTEX = 0.160000E+07  MAX. RES. = 0.209779E-02 AT ELEMENT A1  1  EQUATION   1
+ A1  2(    8, 3) ST = 0.790000E+07 DT = 0.160000E+07
+ ...ITERATING... AT [    9, 1] --- DELTEX = 0.320000E+07  MAX. RES. = 0.413289E-01 AT ELEMENT A1  5  EQUATION   1
+ ...ITERATING... AT [    9, 2] --- DELTEX = 0.320000E+07  MAX. RES. = 0.737419E-02 AT ELEMENT A1  3  EQUATION   1
+ ...ITERATING... AT [    9, 3] --- DELTEX = 0.320000E+07  MAX. RES. = 0.820676E-04 AT ELEMENT A1  5  EQUATION   1
+ A1  3(    9, 4) ST = 0.111000E+08 DT = 0.320000E+07
+ ...ITERATING... AT [   10, 1] --- DELTEX = 0.320000E+07  MAX. RES. = 0.301974E-01 AT ELEMENT A1  8  EQUATION   1
+ ...ITERATING... AT [   10, 2] --- DELTEX = 0.320000E+07  MAX. RES. = 0.316910E-02 AT ELEMENT A1  5  EQUATION   1
+ ...ITERATING... AT [   10, 3] --- DELTEX = 0.320000E+07  MAX. RES. = 0.829542E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   10, 4) ST = 0.143000E+08 DT = 0.320000E+07
+ ...ITERATING... AT [   11, 1] --- DELTEX = 0.320000E+07  MAX. RES. = 0.231192E-01 AT ELEMENT A1 10  EQUATION   1
+ ...ITERATING... AT [   11, 2] --- DELTEX = 0.320000E+07  MAX. RES. = 0.154504E-02 AT ELEMENT A1  8  EQUATION   1
+ A1  2(   11, 3) ST = 0.175000E+08 DT = 0.320000E+07
+ ...ITERATING... AT [   12, 1] --- DELTEX = 0.640000E+07  MAX. RES. = 0.368634E-01 AT ELEMENT A1 13  EQUATION   1
+ ...ITERATING... AT [   12, 2] --- DELTEX = 0.640000E+07  MAX. RES. = 0.464430E-02 AT ELEMENT A1 11  EQUATION   1
+ ...ITERATING... AT [   12, 3] --- DELTEX = 0.640000E+07  MAX. RES. = 0.542096E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   12, 4) ST = 0.239000E+08 DT = 0.640000E+07
+ ...ITERATING... AT [   13, 1] --- DELTEX = 0.640000E+07  MAX. RES. = 0.260609E-01 AT ELEMENT A1 17  EQUATION   1
+ ...ITERATING... AT [   13, 2] --- DELTEX = 0.640000E+07  MAX. RES. = 0.200063E-02 AT ELEMENT A1 14  EQUATION   1
+ ...ITERATING... AT [   13, 3] --- DELTEX = 0.640000E+07  MAX. RES. = 0.115235E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   13, 4) ST = 0.303000E+08 DT = 0.640000E+07
+ ...ITERATING... AT [   14, 1] --- DELTEX = 0.640000E+07  MAX. RES. = 0.199690E-01 AT ELEMENT A1 20  EQUATION   1
+ ...ITERATING... AT [   14, 2] --- DELTEX = 0.640000E+07  MAX. RES. = 0.102191E-02 AT ELEMENT A1 16  EQUATION   1
+ A1  1(   14, 3) ST = 0.367000E+08 DT = 0.640000E+07
+ ...ITERATING... AT [   15, 1] --- DELTEX = 0.128000E+08  MAX. RES. = 0.324038E-01 AT ELEMENT A1 23  EQUATION   1
+ ...ITERATING... AT [   15, 2] --- DELTEX = 0.128000E+08  MAX. RES. = 0.343672E-02 AT ELEMENT A1 20  EQUATION   1
+ ...ITERATING... AT [   15, 3] --- DELTEX = 0.128000E+08  MAX. RES. = 0.904638E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   15, 4) ST = 0.495000E+08 DT = 0.128000E+08
+ ...ITERATING... AT [   16, 1] --- DELTEX = 0.128000E+08  MAX. RES. = 0.238683E-01 AT ELEMENT A1 27  EQUATION   1
+ ...ITERATING... AT [   16, 2] --- DELTEX = 0.128000E+08  MAX. RES. = 0.163339E-02 AT ELEMENT A1 23  EQUATION   1
+ ...ITERATING... AT [   16, 3] --- DELTEX = 0.128000E+08  MAX. RES. = 0.258121E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   16, 4) ST = 0.623000E+08 DT = 0.128000E+08
+ ...ITERATING... AT [   17, 1] --- DELTEX = 0.128000E+08  MAX. RES. = 0.188543E-01 AT ELEMENT A1 31  EQUATION   1
+ ...ITERATING... AT [   17, 2] --- DELTEX = 0.128000E+08  MAX. RES. = 0.894326E-03 AT ELEMENT A1 26  EQUATION   1
+ A1  1(   17, 3) ST = 0.751000E+08 DT = 0.128000E+08
+ ...ITERATING... AT [   18, 1] --- DELTEX = 0.256000E+08  MAX. RES. = 0.311609E-01 AT ELEMENT A1 33  EQUATION   1
+ ...ITERATING... AT [   18, 2] --- DELTEX = 0.256000E+08  MAX. RES. = 0.316787E-02 AT ELEMENT A1 30  EQUATION   1
+ ...ITERATING... AT [   18, 3] --- DELTEX = 0.256000E+08  MAX. RES. = 0.195363E-03 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   18, 4) ST = 0.100700E+09 DT = 0.256000E+08
+ ...ITERATING... AT [   19, 1] --- DELTEX = 0.256000E+08  MAX. RES. = 0.232253E-01 AT ELEMENT A1 37  EQUATION   1
+ ...ITERATING... AT [   19, 2] --- DELTEX = 0.256000E+08  MAX. RES. = 0.154170E-02 AT ELEMENT A1 33  EQUATION   1
+ ...ITERATING... AT [   19, 3] --- DELTEX = 0.256000E+08  MAX. RES. = 0.571359E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   19, 4) ST = 0.126300E+09 DT = 0.256000E+08
+ ...ITERATING... AT [   20, 1] --- DELTEX = 0.256000E+08  MAX. RES. = 0.184844E-01 AT ELEMENT A1 39  EQUATION   1
+ ...ITERATING... AT [   20, 2] --- DELTEX = 0.256000E+08  MAX. RES. = 0.851579E-03 AT ELEMENT A1 35  EQUATION   1
+ ...ITERATING... AT [   20, 3] --- DELTEX = 0.256000E+08  MAX. RES. = 0.188115E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   20, 4) ST = 0.151900E+09 DT = 0.256000E+08
+ ...ITERATING... AT [   21, 1] --- DELTEX = 0.256000E+08  MAX. RES. = 0.153025E-01 AT ELEMENT A1 42  EQUATION   1
+ ...ITERATING... AT [   21, 2] --- DELTEX = 0.256000E+08  MAX. RES. = 0.517468E-03 AT ELEMENT A1 37  EQUATION   1
+ A1  1(   21, 3) ST = 0.177500E+09 DT = 0.256000E+08
+ ...ITERATING... AT [   22, 1] --- DELTEX = 0.512000E+08  MAX. RES. = 0.261100E-01 AT ELEMENT A1 44  EQUATION   1
+ ...ITERATING... AT [   22, 2] --- DELTEX = 0.512000E+08  MAX. RES. = 0.207267E-02 AT ELEMENT A1 40  EQUATION   1
+ ...ITERATING... AT [   22, 3] --- DELTEX = 0.512000E+08  MAX. RES. = 0.211559E-03 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   22, 4) ST = 0.228700E+09 DT = 0.512000E+08
+ ...ITERATING... AT [   23, 1] --- DELTEX = 0.512000E+08  MAX. RES. = 0.203062E-01 AT ELEMENT A1 46  EQUATION   1
+ ...ITERATING... AT [   23, 2] --- DELTEX = 0.512000E+08  MAX. RES. = 0.110521E-02 AT ELEMENT A1 43  EQUATION   1
+ ...ITERATING... AT [   23, 3] --- DELTEX = 0.512000E+08  MAX. RES. = 0.664781E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   23, 4) ST = 0.279900E+09 DT = 0.512000E+08
+ ...ITERATING... AT [   24, 1] --- DELTEX = 0.512000E+08  MAX. RES. = 0.165831E-01 AT ELEMENT A1 49  EQUATION   1
+ ...ITERATING... AT [   24, 2] --- DELTEX = 0.512000E+08  MAX. RES. = 0.648796E-03 AT ELEMENT A1 45  EQUATION   1
+ ...ITERATING... AT [   24, 3] --- DELTEX = 0.512000E+08  MAX. RES. = 0.229449E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   24, 4) ST = 0.331100E+09 DT = 0.512000E+08
+ ...ITERATING... AT [   25, 1] --- DELTEX = 0.512000E+08  MAX. RES. = 0.139328E-01 AT ELEMENT A1 51  EQUATION   1
+ ...ITERATING... AT [   25, 2] --- DELTEX = 0.512000E+08  MAX. RES. = 0.409318E-03 AT ELEMENT A1 47  EQUATION   1
+ A1  1(   25, 3) ST = 0.382300E+09 DT = 0.512000E+08
+ ...ITERATING... AT [   26, 1] --- DELTEX = 0.102400E+09  MAX. RES. = 0.240793E-01 AT ELEMENT A1 52  EQUATION   1
+ ...ITERATING... AT [   26, 2] --- DELTEX = 0.102400E+09  MAX. RES. = 0.171767E-02 AT ELEMENT A1 49  EQUATION   1
+ ...ITERATING... AT [   26, 3] --- DELTEX = 0.102400E+09  MAX. RES. = 0.298720E-03 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   26, 4) ST = 0.484700E+09 DT = 0.102400E+09
+ ...ITERATING... AT [   27, 1] --- DELTEX = 0.102400E+09  MAX. RES. = 0.190725E-01 AT ELEMENT A1 55  EQUATION   1
+ ...ITERATING... AT [   27, 2] --- DELTEX = 0.102400E+09  MAX. RES. = 0.950171E-03 AT ELEMENT A1 52  EQUATION   1
+ ...ITERATING... AT [   27, 3] --- DELTEX = 0.102400E+09  MAX. RES. = 0.955732E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   27, 4) ST = 0.587100E+09 DT = 0.102400E+09
+ ...ITERATING... AT [   28, 1] --- DELTEX = 0.102400E+09  MAX. RES. = 0.157358E-01 AT ELEMENT A1 56  EQUATION   1
+ ...ITERATING... AT [   28, 2] --- DELTEX = 0.102400E+09  MAX. RES. = 0.575620E-03 AT ELEMENT A1 53  EQUATION   1
+ ...ITERATING... AT [   28, 3] --- DELTEX = 0.102400E+09  MAX. RES. = 0.334776E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   28, 4) ST = 0.689500E+09 DT = 0.102400E+09
+ ...ITERATING... AT [   29, 1] --- DELTEX = 0.102400E+09  MAX. RES. = 0.133878E-01 AT ELEMENT A1 58  EQUATION   1
+ ...ITERATING... AT [   29, 2] --- DELTEX = 0.102400E+09  MAX. RES. = 0.371481E-03 AT ELEMENT A1 55  EQUATION   1
+ ...ITERATING... AT [   29, 3] --- DELTEX = 0.102400E+09  MAX. RES. = 0.127847E-04 AT ELEMENT A1  1  EQUATION   1
+ A1  1(   29, 4) ST = 0.791900E+09 DT = 0.102400E+09
+ ...ITERATING... AT [   30, 1] --- DELTEX = 0.102400E+09  MAX. RES. = 0.116429E-01 AT ELEMENT A1 59  EQUATION   1
+ ...ITERATING... AT [   30, 2] --- DELTEX = 0.102400E+09  MAX. RES. = 0.254814E-03 AT ELEMENT A1 56  EQUATION   1
+ A1  1(   30, 3) ST = 0.894300E+09 DT = 0.102400E+09
+ ...ITERATING... AT [   31, 1] --- DELTEX = 0.105700E+09  MAX. RES. = 0.106251E-01 AT ELEMENT A1 60  EQUATION   1
+ ...ITERATING... AT [   31, 2] --- DELTEX = 0.105700E+09  MAX. RES. = 0.198801E-03 AT ELEMENT A1 57  EQUATION   1
+ A1  1(   31, 3) ST = 0.100000E+10 DT = 0.105700E+09
+
+ *r1q* --- 1-D radial test problem for flowing wellbore pressure                 
+
+          OUTPUT DATA AFTER (   31, 3)-2-TIME STEPS                                                    THE TIME IS 0.115741E+05 DAYS
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+  TOTAL TIME     KCYC   ITER  ITERC   KON        DX1M         DX2M         DX3M          MAX. RES.      NER    KER        DELTEX
+ 0.100000E+10     31      3    111     2       0.64575E+04  0.83220E-02  0.00000E+00    0.30182E-05       1     1       0.10570E+09
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ELEM.  INDEX  PRES        TEMP        SAT_G       SAT_L       X_WATER_G   X_WATER_L   REL_G       REL_L       PCAP_GL     DEN_G       DEN_L       POR       
+                (PA)        (DEC-C)     (-)         (-)         (-)         (-)         (-)         (-)         (PA)        (KG/M**3)   (KG/M**3)   (-)       
+ 
+ A1  1      1 0.56436E+07  0.2716E+03  0.2638E+00  0.7362E+00  0.1000E+01  0.1000E+01  0.5946E-01  0.2028E+00 -0.0000E+00  0.2885E+02  0.7651E+03  0.1000E+00
+ A1  2      2 0.57081E+07  0.2723E+03  0.2612E+00  0.7388E+00  0.1000E+01  0.1000E+01  0.5742E-01  0.2078E+00 -0.0000E+00  0.2921E+02  0.7639E+03  0.1000E+00
+ A1  3      3 0.57187E+07  0.2724E+03  0.2607E+00  0.7393E+00  0.1000E+01  0.1000E+01  0.5709E-01  0.2086E+00 -0.0000E+00  0.2927E+02  0.7637E+03  0.1000E+00
+ A1  4      4 0.57284E+07  0.2725E+03  0.2603E+00  0.7397E+00  0.1000E+01  0.1000E+01  0.5678E-01  0.2094E+00 -0.0000E+00  0.2932E+02  0.7635E+03  0.1000E+00
+ A1  5      5 0.57373E+07  0.2726E+03  0.2599E+00  0.7401E+00  0.1000E+01  0.1000E+01  0.5648E-01  0.2101E+00 -0.0000E+00  0.2937E+02  0.7633E+03  0.1000E+00
+ A1  6      6 0.57456E+07  0.2727E+03  0.2595E+00  0.7405E+00  0.1000E+01  0.1000E+01  0.5620E-01  0.2109E+00 -0.0000E+00  0.2942E+02  0.7631E+03  0.1000E+00
+ A1  7      7 0.57533E+07  0.2728E+03  0.2592E+00  0.7408E+00  0.1000E+01  0.1000E+01  0.5593E-01  0.2115E+00 -0.0000E+00  0.2946E+02  0.7630E+03  0.1000E+00
+ A1  8      8 0.57604E+07  0.2729E+03  0.2588E+00  0.7412E+00  0.1000E+01  0.1000E+01  0.5567E-01  0.2122E+00 -0.0000E+00  0.2950E+02  0.7629E+03  0.1000E+00
+ A1  9      9 0.57672E+07  0.2730E+03  0.2585E+00  0.7415E+00  0.1000E+01  0.1000E+01  0.5542E-01  0.2129E+00 -0.0000E+00  0.2954E+02  0.7627E+03  0.1000E+00
+ A1 10     10 0.57735E+07  0.2731E+03  0.2582E+00  0.7418E+00  0.1000E+01  0.1000E+01  0.5518E-01  0.2135E+00 -0.0000E+00  0.2957E+02  0.7626E+03  0.1000E+00
+ A1 11     11 0.57795E+07  0.2731E+03  0.2579E+00  0.7421E+00  0.1000E+01  0.1000E+01  0.5494E-01  0.2141E+00 -0.0000E+00  0.2960E+02  0.7625E+03  0.1000E+00
+ A1 12     12 0.57852E+07  0.2732E+03  0.2575E+00  0.7425E+00  0.1000E+01  0.1000E+01  0.5471E-01  0.2147E+00 -0.0000E+00  0.2964E+02  0.7624E+03  0.1000E+00
+ A1 13     13 0.57906E+07  0.2732E+03  0.2572E+00  0.7428E+00  0.1000E+01  0.1000E+01  0.5448E-01  0.2153E+00 -0.0000E+00  0.2967E+02  0.7623E+03  0.1000E+00
+ A1 14     14 0.57958E+07  0.2733E+03  0.2569E+00  0.7431E+00  0.1000E+01  0.1000E+01  0.5425E-01  0.2159E+00 -0.0000E+00  0.2969E+02  0.7622E+03  0.1000E+00
+ A1 15     15 0.58007E+07  0.2734E+03  0.2566E+00  0.7434E+00  0.1000E+01  0.1000E+01  0.5403E-01  0.2165E+00 -0.0000E+00  0.2972E+02  0.7621E+03  0.1000E+00
+ A1 16     16 0.58054E+07  0.2734E+03  0.2563E+00  0.7437E+00  0.1000E+01  0.1000E+01  0.5381E-01  0.2171E+00 -0.0000E+00  0.2975E+02  0.7620E+03  0.1000E+00
+ A1 17     17 0.58099E+07  0.2735E+03  0.2560E+00  0.7440E+00  0.1000E+01  0.1000E+01  0.5360E-01  0.2177E+00 -0.0000E+00  0.2977E+02  0.7619E+03  0.1000E+00
+ A1 18     18 0.58142E+07  0.2735E+03  0.2557E+00  0.7443E+00  0.1000E+01  0.1000E+01  0.5338E-01  0.2182E+00 -0.0000E+00  0.2980E+02  0.7618E+03  0.1000E+00
+ A1 19     19 0.58183E+07  0.2736E+03  0.2554E+00  0.7446E+00  0.1000E+01  0.1000E+01  0.5316E-01  0.2188E+00 -0.0000E+00  0.2982E+02  0.7618E+03  0.1000E+00
+ A1 20     20 0.58223E+07  0.2736E+03  0.2551E+00  0.7449E+00  0.1000E+01  0.1000E+01  0.5295E-01  0.2194E+00 -0.0000E+00  0.2984E+02  0.7617E+03  0.1000E+00
+ A1 21     21 0.58261E+07  0.2736E+03  0.2548E+00  0.7452E+00  0.1000E+01  0.1000E+01  0.5274E-01  0.2200E+00 -0.0000E+00  0.2986E+02  0.7616E+03  0.1000E+00
+ A1 22     22 0.58299E+07  0.2737E+03  0.2545E+00  0.7455E+00  0.1000E+01  0.1000E+01  0.5252E-01  0.2206E+00 -0.0000E+00  0.2988E+02  0.7615E+03  0.1000E+00
+ A1 23     23 0.58338E+07  0.2737E+03  0.2542E+00  0.7458E+00  0.1000E+01  0.1000E+01  0.5229E-01  0.2212E+00 -0.0000E+00  0.2990E+02  0.7615E+03  0.1000E+00
+ A1 24     24 0.58377E+07  0.2738E+03  0.2539E+00  0.7461E+00  0.1000E+01  0.1000E+01  0.5205E-01  0.2219E+00 -0.0000E+00  0.2993E+02  0.7614E+03  0.1000E+00
+ A1 25     25 0.58416E+07  0.2738E+03  0.2536E+00  0.7464E+00  0.1000E+01  0.1000E+01  0.5180E-01  0.2226E+00 -0.0000E+00  0.2995E+02  0.7613E+03  0.1000E+00
+ A1 26     26 0.58455E+07  0.2739E+03  0.2532E+00  0.7468E+00  0.1000E+01  0.1000E+01  0.5154E-01  0.2233E+00 -0.0000E+00  0.2997E+02  0.7612E+03  0.1000E+00
+ A1 27     27 0.58495E+07  0.2739E+03  0.2528E+00  0.7472E+00  0.1000E+01  0.1000E+01  0.5126E-01  0.2241E+00 -0.0000E+00  0.2999E+02  0.7612E+03  0.1000E+00
+ A1 28     28 0.58536E+07  0.2739E+03  0.2524E+00  0.7476E+00  0.1000E+01  0.1000E+01  0.5097E-01  0.2249E+00 -0.0000E+00  0.3001E+02  0.7611E+03  0.1000E+00
+ A1 29     29 0.58576E+07  0.2740E+03  0.2519E+00  0.7481E+00  0.1000E+01  0.1000E+01  0.5065E-01  0.2258E+00 -0.0000E+00  0.3004E+02  0.7610E+03  0.1000E+00
+ A1 30     30 0.58617E+07  0.2740E+03  0.2515E+00  0.7485E+00  0.1000E+01  0.1000E+01  0.5032E-01  0.2267E+00 -0.0000E+00  0.3006E+02  0.7609E+03  0.1000E+00
+ A1 31     31 0.58659E+07  0.2741E+03  0.2510E+00  0.7490E+00  0.1000E+01  0.1000E+01  0.4998E-01  0.2277E+00 -0.0000E+00  0.3008E+02  0.7609E+03  0.1000E+00
+ A1 32     32 0.58700E+07  0.2741E+03  0.2504E+00  0.7496E+00  0.1000E+01  0.1000E+01  0.4960E-01  0.2288E+00 -0.0000E+00  0.3010E+02  0.7608E+03  0.1000E+00
+ A1 33     33 0.58742E+07  0.2742E+03  0.2499E+00  0.7501E+00  0.1000E+01  0.1000E+01  0.4921E-01  0.2300E+00 -0.0000E+00  0.3013E+02  0.7607E+03  0.1000E+00
+ A1 34     34 0.58784E+07  0.2742E+03  0.2493E+00  0.7507E+00  0.1000E+01  0.1000E+01  0.4879E-01  0.2312E+00 -0.0000E+00  0.3015E+02  0.7606E+03  0.1000E+00
+ A1 35     35 0.58826E+07  0.2743E+03  0.2486E+00  0.7514E+00  0.1000E+01  0.1000E+01  0.4834E-01  0.2326E+00 -0.0000E+00  0.3017E+02  0.7605E+03  0.1000E+00
+ A1 36     36 0.58868E+07  0.2743E+03  0.2479E+00  0.7521E+00  0.1000E+01  0.1000E+01  0.4787E-01  0.2340E+00 -0.0000E+00  0.3020E+02  0.7605E+03  0.1000E+00
+ A1 37     37 0.58910E+07  0.2744E+03  0.2472E+00  0.7528E+00  0.1000E+01  0.1000E+01  0.4736E-01  0.2356E+00 -0.0000E+00  0.3022E+02  0.7604E+03  0.1000E+00
+ A1 38     38 0.58953E+07  0.2744E+03  0.2464E+00  0.7536E+00  0.1000E+01  0.1000E+01  0.4681E-01  0.2372E+00 -0.0000E+00  0.3025E+02  0.7603E+03  0.1000E+00
+ A1 39     39 0.58995E+07  0.2745E+03  0.2455E+00  0.7545E+00  0.1000E+01  0.1000E+01  0.4623E-01  0.2391E+00 -0.0000E+00  0.3027E+02  0.7602E+03  0.1000E+00
+ A1 40     40 0.59037E+07  0.2745E+03  0.2446E+00  0.7554E+00  0.1000E+01  0.1000E+01  0.4560E-01  0.2410E+00 -0.0000E+00  0.3029E+02  0.7601E+03  0.1000E+00
+ A1 41     41 0.59080E+07  0.2745E+03  0.2435E+00  0.7565E+00  0.1000E+01  0.1000E+01  0.4493E-01  0.2432E+00 -0.0000E+00  0.3032E+02  0.7601E+03  0.1000E+00
+ A1 42     42 0.59122E+07  0.2746E+03  0.2424E+00  0.7576E+00  0.1000E+01  0.1000E+01  0.4421E-01  0.2456E+00 -0.0000E+00  0.3034E+02  0.7600E+03  0.1000E+00
+ A1 43     43 0.59164E+07  0.2746E+03  0.2412E+00  0.7588E+00  0.1000E+01  0.1000E+01  0.4344E-01  0.2481E+00 -0.0000E+00  0.3036E+02  0.7599E+03  0.1000E+00
+ A1 44     44 0.59206E+07  0.2747E+03  0.2399E+00  0.7601E+00  0.1000E+01  0.1000E+01  0.4261E-01  0.2510E+00 -0.0000E+00  0.3039E+02  0.7598E+03  0.1000E+00
+ A1 45     45 0.59247E+07  0.2747E+03  0.2385E+00  0.7615E+00  0.1000E+01  0.1000E+01  0.4172E-01  0.2541E+00 -0.0000E+00  0.3041E+02  0.7598E+03  0.1000E+00
+ 
+ ELEM.  INDEX  PRES        TEMP        SAT_G       SAT_L       X_WATER_G   X_WATER_L   REL_G       REL_L       PCAP_GL     DEN_G       DEN_L       POR       
+                (PA)        (DEC-C)     (-)         (-)         (-)         (-)         (-)         (-)         (PA)        (KG/M**3)   (KG/M**3)   (-)                   
+ 
+ A1 46     46 0.59289E+07  0.2748E+03  0.2370E+00  0.7630E+00  0.1000E+01  0.1000E+01  0.4076E-01  0.2575E+00 -0.0000E+00  0.3043E+02  0.7597E+03  0.1000E+00
+ A1 47     47 0.59329E+07  0.2748E+03  0.2353E+00  0.7647E+00  0.1000E+01  0.1000E+01  0.3973E-01  0.2612E+00 -0.0000E+00  0.3045E+02  0.7596E+03  0.1000E+00
+ A1 48     48 0.59370E+07  0.2749E+03  0.2335E+00  0.7665E+00  0.1000E+01  0.1000E+01  0.3863E-01  0.2654E+00 -0.0000E+00  0.3048E+02  0.7595E+03  0.1000E+00
+ A1 49     49 0.59410E+07  0.2749E+03  0.2315E+00  0.7685E+00  0.1000E+01  0.1000E+01  0.3744E-01  0.2700E+00 -0.0000E+00  0.3050E+02  0.7594E+03  0.1000E+00
+ A1 50     50 0.59449E+07  0.2749E+03  0.2293E+00  0.7707E+00  0.1000E+01  0.1000E+01  0.3616E-01  0.2751E+00 -0.0000E+00  0.3052E+02  0.7594E+03  0.1000E+00
+ A1 51     51 0.59487E+07  0.2750E+03  0.2268E+00  0.7732E+00  0.1000E+01  0.1000E+01  0.3479E-01  0.2808E+00 -0.0000E+00  0.3054E+02  0.7593E+03  0.1000E+00
+ A1 52     52 0.59526E+07  0.2750E+03  0.2242E+00  0.7758E+00  0.1000E+01  0.1000E+01  0.3332E-01  0.2872E+00 -0.0000E+00  0.3056E+02  0.7592E+03  0.1000E+00
+ A1 53     53 0.59565E+07  0.2751E+03  0.2211E+00  0.7789E+00  0.1000E+01  0.1000E+01  0.3167E-01  0.2947E+00 -0.0000E+00  0.3059E+02  0.7592E+03  0.1000E+00
+ A1 54     54 0.59606E+07  0.2751E+03  0.2175E+00  0.7825E+00  0.1000E+01  0.1000E+01  0.2981E-01  0.3037E+00 -0.0000E+00  0.3061E+02  0.7591E+03  0.1000E+00
+ A1 55     55 0.59646E+07  0.2752E+03  0.2133E+00  0.7867E+00  0.1000E+01  0.1000E+01  0.2772E-01  0.3144E+00 -0.0000E+00  0.3063E+02  0.7590E+03  0.1000E+00
+ A1 56     56 0.59686E+07  0.2752E+03  0.2084E+00  0.7916E+00  0.1000E+01  0.1000E+01  0.2540E-01  0.3273E+00 -0.0000E+00  0.3065E+02  0.7589E+03  0.1000E+00
+ A1 57     57 0.59726E+07  0.2753E+03  0.2026E+00  0.7974E+00  0.1000E+01  0.1000E+01  0.2285E-01  0.3429E+00 -0.0000E+00  0.3068E+02  0.7588E+03  0.1000E+00
+ A1 58     58 0.59764E+07  0.2753E+03  0.1959E+00  0.8041E+00  0.1000E+01  0.1000E+01  0.2007E-01  0.3618E+00 -0.0000E+00  0.3070E+02  0.7588E+03  0.1000E+00
+ A1 59     59 0.59800E+07  0.2753E+03  0.1881E+00  0.8119E+00  0.1000E+01  0.1000E+01  0.1714E-01  0.3847E+00 -0.0000E+00  0.3072E+02  0.7587E+03  0.1000E+00
+ A1 60     60 0.59833E+07  0.2754E+03  0.1792E+00  0.8208E+00  0.1000E+01  0.1000E+01  0.1414E-01  0.4122E+00 -0.0000E+00  0.3074E+02  0.7586E+03  0.1000E+00
+ A1 61     61 0.59863E+07  0.2754E+03  0.1693E+00  0.8307E+00  0.1000E+01  0.1000E+01  0.1124E-01  0.4443E+00 -0.0000E+00  0.3075E+02  0.7586E+03  0.1000E+00
+ A1 62     62 0.59890E+07  0.2754E+03  0.1589E+00  0.8411E+00  0.1000E+01  0.1000E+01  0.8614E-02  0.4803E+00 -0.0000E+00  0.3077E+02  0.7585E+03  0.1000E+00
+ A1 63     63 0.59913E+07  0.2755E+03  0.1484E+00  0.8516E+00  0.1000E+01  0.1000E+01  0.6418E-02  0.5185E+00 -0.0000E+00  0.3078E+02  0.7585E+03  0.1000E+00
+ A1 64     64 0.59933E+07  0.2755E+03  0.1386E+00  0.8614E+00  0.1000E+01  0.1000E+01  0.4715E-02  0.5566E+00 -0.0000E+00  0.3079E+02  0.7585E+03  0.1000E+00
+ A1 65     65 0.59949E+07  0.2755E+03  0.1298E+00  0.8702E+00  0.1000E+01  0.1000E+01  0.3469E-02  0.5923E+00 -0.0000E+00  0.3080E+02  0.7584E+03  0.1000E+00
+ A1 66     66 0.59962E+07  0.2755E+03  0.1222E+00  0.8778E+00  0.1000E+01  0.1000E+01  0.2594E-02  0.6242E+00 -0.0000E+00  0.3081E+02  0.7584E+03  0.1000E+00
+ A1 67     67 0.59973E+07  0.2755E+03  0.1161E+00  0.8839E+00  0.1000E+01  0.1000E+01  0.1994E-02  0.6513E+00 -0.0000E+00  0.3081E+02  0.7584E+03  0.1000E+00
+ A1 68     68 0.59981E+07  0.2755E+03  0.1112E+00  0.8888E+00  0.1000E+01  0.1000E+01  0.1589E-02  0.6734E+00 -0.0000E+00  0.3082E+02  0.7584E+03  0.1000E+00
+ A1 69     69 0.59988E+07  0.2755E+03  0.1074E+00  0.8926E+00  0.1000E+01  0.1000E+01  0.1319E-02  0.6907E+00 -0.0000E+00  0.3082E+02  0.7584E+03  0.1000E+00
+ A1 70     70 0.59992E+07  0.2755E+03  0.1047E+00  0.8953E+00  0.1000E+01  0.1000E+01  0.1142E-02  0.7035E+00 -0.0000E+00  0.3082E+02  0.7583E+03  0.1000E+00
+ A1 71     71 0.59995E+07  0.2755E+03  0.1028E+00  0.8972E+00  0.1000E+01  0.1000E+01  0.1029E-02  0.7125E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 72     72 0.59997E+07  0.2755E+03  0.1016E+00  0.8984E+00  0.1000E+01  0.1000E+01  0.9589E-03  0.7185E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 73     73 0.59999E+07  0.2755E+03  0.1008E+00  0.8992E+00  0.1000E+01  0.1000E+01  0.9177E-03  0.7221E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 74     74 0.59999E+07  0.2755E+03  0.1004E+00  0.8996E+00  0.1000E+01  0.1000E+01  0.8952E-03  0.7242E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 75     75 0.60000E+07  0.2755E+03  0.1002E+00  0.8998E+00  0.1000E+01  0.1000E+01  0.8837E-03  0.7252E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 76     76 0.60000E+07  0.2755E+03  0.1001E+00  0.8999E+00  0.1000E+01  0.1000E+01  0.8785E-03  0.7257E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 77     77 0.60000E+07  0.2755E+03  0.1000E+00  0.9000E+00  0.1000E+01  0.1000E+01  0.8764E-03  0.7259E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 78     78 0.60000E+07  0.2755E+03  0.1000E+00  0.9000E+00  0.1000E+01  0.1000E+01  0.8756E-03  0.7260E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 79     79 0.60000E+07  0.2755E+03  0.1000E+00  0.9000E+00  0.1000E+01  0.1000E+01  0.8754E-03  0.7260E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 80     80 0.60000E+07  0.2755E+03  0.1000E+00  0.9000E+00  0.1000E+01  0.1000E+01  0.8753E-03  0.7260E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 81     81 0.60000E+07  0.2755E+03  0.1000E+00  0.9000E+00  0.1000E+01  0.1000E+01  0.8753E-03  0.7260E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+ A1 82     82 0.60000E+07  0.2755E+03  0.1000E+00  0.9000E+00  0.1000E+01  0.1000E+01  0.8753E-03  0.7260E+00 -0.0000E+00  0.3083E+02  0.7583E+03  0.1000E+00
+0@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ********** VOLUME- AND MASS-BALANCES ********************************************************************************************
+
+ ********** [KCYC,ITER] = [  31,  3] *****                                  THE TIME IS  0.10000E+10 SECONDS, OR  0.11574E+05 DAYS
+
+
+ PHASE VOLUMES IN PLACE
+ GAS 0.16581E+10 M**3;  AQUEOUS 0.14049E+11 M**3
+
+ MASS IN PLACE
+ GAS 0.51082E+11 KG;    AQUEOUS 0.10654E+14 KG;  TOTAL H2O 0.10705E+14 KG;  H2O(2) 0.00000E+00 KG;  INT. ENERGY 0.11425E+21 J
+
+ *********************************************************************************************************************************
+
+
+ TOUGH STATUS: Write SAVE file for time =    1000000000.0000000     
+ EEE  
+ EEE  Number of processors =            1
+ EEE Time perform model computation  =   0.33907497767359018     
+ EEE   of which spent in lin. solv. =    2.0449512638151646E-002
+ EEE   and spent on other           =   0.31862546503543854     
+ EEE  
+ EEE Total number of time steps =           31
+ EEE Average time in solver per time step =    6.5966169800489181E-004
+ EEE Average time spent on other per time step =    1.0278240807594792E-002
+ EEE  
+ EEE Total number Newton steps =           80
+ EEE Average number of Newton steps per time step   2.5806451612903225     
+ EEE Average time per Newton step =    2.5561890797689559E-004
+ EEE Average time spent on other per Newton st =    3.9828183129429814E-003
+ EEE  
+ EEE Total number of iter =           80
+ EEE Average number of iter per call    1.0000000000000000     
+ EEE Average time per iter =    2.5561890797689559E-004
+ EEE  
+ EEE  =============================================
+ EEE  
+ EEE  
+
+
+END OF TOUGH3 SIMULATION RUN
+ELAPSED TIME =      0.425 SEC
+DISTRIBUTION + CALCULATION TIME =      0.419 SEC
+DATA INPUT TIME =    0.006 SEC
+ 
