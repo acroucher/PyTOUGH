@@ -340,11 +340,10 @@ class t2listing(object):
         if headers[0:2] in [('ELEM.','INDEX'),('ELEM.','IND.')]:
             if headers[2] == 'P': return 'element'
             elif headers[2] == 'X1': return 'primary'
-        else:
-            keytable = {('ELEM1','ELEM2','INDEX'): 'connection',
-                        ('ELEMENT','SOURCE','INDEX'): 'generation'}
-            if headers in keytable: return keytable[headers]
-        return None
+        elif headers[0:3] == ('ELEM1','ELEM2','INDEX'): return 'connection'
+        elif headers[0:3] in [('ELEMENT','SOURCE','INDEX'), ('ELEM.','SOURCE','INDEX')]:
+            return 'generation'
+        else: return None
 
     def table_type_TOUGHplus(self, headers):
         """Returns TOUGH+ table name based on a tuple of the first three column headings."""
