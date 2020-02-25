@@ -18,14 +18,11 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.5.2, which has:
+The latest stable version is 1.5.3, which has:
 
-* fixes to accommodate more TOUGH2 and TOUGHREACT variants
 * further Python 3 compatibility fixes
-* new mulgrid snap\_columns\_to\_nearest_layers() method
-* new coordinate optional parameter in mulgrid line_plot() method
-* new t2data json() method
-* new t2data effective_incons() method
+* a suite of unit tests for verifying that PyTOUGH is working correctly
+* continuous integration, which automatically runs the unit tests on various versions of Python 2 and 3, whenever changes are pushed to PyTOUGH on its Github repository
 
 as well as various bug fixes and other minor enhancements.
 

@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name = 'PyTOUGH',
-      version = '1.5.2',
+      version = '1.5.3',
       description = 'Python scripting library for TOUGH2 simulation',
       author = 'Adrian Croucher',
       author_email = 'a.croucher@auckland.ac.nz',
