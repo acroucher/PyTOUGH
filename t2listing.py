@@ -705,8 +705,8 @@ class t2listing(object):
     def parse_table_header_TOUGH2(self):
         """Parses table header line for TOUGH2, returning the number of keys and the column names."""
         cols = []
-        if self.simulator in ['TOUGH2','TOUGH2_MP']: flow_headers = ['RATE']
-        else: flow_headers = ['Flow','Veloc']
+        if self.simulator == 'TOUGH+': flow_headers = ['Flow', 'Veloc']
+        else: flow_headers = ['RATE']
         headline = self.readline().strip()
         headstrs = headline.split()
         indexstrs = ['INDEX','IND.'] # for EWASG
@@ -1284,7 +1284,9 @@ class t2listing(object):
         keyword = {'AUTOUGH2':{'P': 'Pressure', 'T': 'Temperature'},
                    'TOUGH2': {'P': 'P', 'T': 'T'},
                    'TOUGH2_MP': {'P': 'P', 'T': 'T'},
-                   'TOUGH+' : {'P': 'Pressure', 'T': 'Temperature'}}
+                   'TOUGH+' : {'P': 'Pressure', 'T': 'Temperature'},
+                   'TOUGHREACT': {'P': 'P', 'T': 'T'},
+                   'TOUGH3': {'P': 'P', 'T': 'T'}}
         self.last()
         bdy_nodes = geo.boundary_nodes
         for blk in dat.grid.blocklist[geo.num_atmosphere_blocks:]:
