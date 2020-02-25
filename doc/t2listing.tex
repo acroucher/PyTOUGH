@@ -14,7 +14,7 @@ The \texttt{t2listing} library in PyTOUGH contains classes and routines for read
 \index{TOUGH2!TOUGH+}
 \index{TOUGH2!TOUGHREACT}
 
-Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP and TOUGH+ have different formats but are all supported.  The main listing files produced by TOUGHREACT are also supported. (There is also a separate \hyperref[toughreact_tecplot]{\texttt{toughreact\_tecplot}} class for handling the additional Tecplot output files produced by TOUGHREACT.)
+Listing files produced by AUTOUGH2, TOUGH2, TOUGH2\_MP, TOUGH+ and TOUGH3 have different formats but are all supported.  The main listing files produced by TOUGHREACT are also supported. (There is also a separate \hyperref[toughreact_tecplot]{\texttt{toughreact\_tecplot}} class for handling the additional Tecplot output files produced by TOUGHREACT.)
 
 \section{\texttt{t2listing} objects}
 \index{PyTOUGH!classes!\texttt{t2listing}}
@@ -77,7 +77,7 @@ It is possible to specify the file encoding for the listing file using the optio
 
 AUTOUGH2 allows the use of `short' output, in which a specified selection of block, connection or generator properties are printed at time steps between normal full output.  A \texttt{t2listing} object will read short output results, if they are present, when producing time histories using the \hyperref[sec:t2listing:history]{\texttt{history()}} method.  However it is not possible to navigate to short output results or access them via the \texttt{t2listing} table properties above.
 
-TOUGH2, TOUGH2\_MP and TOUGH+ do not support short output.
+TOUGH2, TOUGH2\_MP, TOUGHREACT, TOUGH+ and TOUGH3 do not support short output.
 
 \subsubsection{Navigating in time using \texttt{time}, \texttt{index} and \texttt{step}}
 \index{TOUGH2 listing files!navigating in time}
