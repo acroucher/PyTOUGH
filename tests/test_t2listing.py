@@ -796,8 +796,9 @@ class t2listingTestCase(unittest.TestCase):
 
         self.table_test(345, ['element', 'connection', 'generation'])
 
-        # self.table_spot_test(46, 'element', 'A1311', 'TEMP', 190.5)
-        # self.table_spot_test(46, 'connection', ('A1803', 'A1804'), 'FLOW_L', -0.6251)
+        self.table_spot_test(345, 'element', 'djg38', 'TEMP', 187.1)
+        self.table_spot_test(345, 'connection', ('dgi 6', 'dgi 0'), 'FLOW', 0.3067E+02)
+        self.table_spot_test(345, 'generation', ('apo38', 'apo98'), 'GEN', 2.371)
 
         self.listing.close()
 
