@@ -723,7 +723,7 @@ class t2listingTestCase(unittest.TestCase):
         self.base = os.path.join('listing', 'TOUGHREACT', '1', 'case1')
         self.listing = t2listing(self.base + '.out')
 
-        self.assertEqual(self.listing.simulator, 'TOUGH2')
+        self.assertEqual(self.listing.simulator, 'TOUGHREACT')
         self.assertEqual(self.listing.num_fulltimes, 2)
 
         self.table_test(186, ['element', 'connection', 'generation'])
