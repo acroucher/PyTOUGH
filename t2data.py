@@ -33,6 +33,7 @@ def primary_to_region_wge(primary):
 
 primary_to_region_funcs = {'w': primary_to_region_we, 'we': primary_to_region_we,
                            'wce': primary_to_region_wge, 'wae': primary_to_region_wge}
+waiwera_eos_num_primary = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
 
 def trim_trailing_nones(vals):
     """Trim trailing None values from a list."""
@@ -2267,7 +2268,8 @@ class t2data(object):
         if isinstance(incons, str):
             jsondata['initial'] = {'filename': incons}
         elif isinstance(incons, list):
-            jsondata['initial'] = {'primary': incons}
+            num_primary = waiwera_eos_num_primary[eos]
+            jsondata['initial'] = {'primary': incons[:num_primary]}
             if incons:
                 if eos in primary_to_region_funcs:
                     primary_to_region = primary_to_region_funcs[eos]
@@ -2275,12 +2277,13 @@ class t2data(object):
                 else:
                     raise Exception("Finding thermodynamic region from primary variables not yet supported for EOS:" + eos)
         elif isinstance(incons, t2incon):
+            num_primary = waiwera_eos_num_primary[eos]
             if eos in primary_to_region_funcs:
                 jsondata['initial'] = {'primary': [], 'region': []}
                 primary_to_region = primary_to_region_funcs[eos]
                 for blkname in geo.block_name_list[geo.num_atmosphere_blocks:]:
                     primary = incons[blkname].variable
-                    jsondata['initial']['primary'].append(primary)
+                    jsondata['initial']['primary'].append(primary[:num_primary])
                     jsondata['initial']['region'].append(primary_to_region(primary))
                 if np.isclose(jsondata['initial']['primary'],
                               jsondata['initial']['primary'][0], rtol = 1.e-8).all():
@@ -2390,6 +2393,7 @@ class t2data(object):
         vertical_tolerance = 1.e-6
         if eos in primary_to_region_funcs:
             primary_to_region = primary_to_region_funcs[eos]
+            num_primary = waiwera_eos_num_primary[eos]
             jsondata['boundaries'] = []
             for blk in self.grid.blocklist:
                 if not (0. < blk.volume < atmos_volume):
@@ -2398,7 +2402,7 @@ class t2data(object):
                     else:
                         pv = bdy_incons
                     reg = primary_to_region(pv)
-                    bc = {'primary': pv, 'region': reg, 'faces': []}
+                    bc = {'primary': pv[:num_primary], 'region': reg, 'faces': []}
                     for conname in blk.connection_name:
                         nz = -self.grid.connection[conname].dircos
                         vertical_connection = abs(nz) > vertical_tolerance
