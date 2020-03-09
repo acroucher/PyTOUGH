@@ -871,7 +871,40 @@ class t2dataTestCase(unittest.TestCase):
 
         def initial_test():
 
-            incons = None
+            nblks = nx * ny * nz
+
+            eos = 'w'
+
+            incons = [50.e5, 20.]
+            j = dat.initial_json(geo, incons, eos)
+            self.assertEqual(j['initial']['primary'], incons[:1])
+            self.assertEqual(j['initial']['region'], 1)
+            json.dumps(j)
+
+            primary1 = [2.e5, 15.]
+            primary = [primary1 for i in range(nblks)]
+            incons = dat.grid.incons(primary)
+            j = dat.initial_json(geo, incons, eos)
+            self.assertEqual(j['initial']['primary'], primary1[:1])
+            self.assertEqual(j['initial']['region'], 1)
+            json.dumps(j)
+
+            primary = np.zeros((nblks, 2))
+            primary1 = [0.1e5, 200.]
+            primary2 = [0.2e5, 200.]
+            n2 = nblks // 2
+            primary[:n2] = primary1
+            primary[n2:] = primary2
+            incons = dat.grid.incons(primary)
+            j = dat.initial_json(geo, incons, eos)
+            self.assertEqual(len(j['initial']['primary']), nblks)
+            self.assertEqual(j['initial']['region'], 2)
+            self.assertTrue(all([j['initial']['primary'][i] == primary1[:1]
+                                 for i in range(n2)]))
+            self.assertTrue(all([j['initial']['primary'][i] == primary2[:1]
+                                 for i in range(n2, nblks)]))
+            json.dumps(j)
+
             eos = 'we'
 
             incons = 'model_ns.h5'
@@ -898,7 +931,6 @@ class t2dataTestCase(unittest.TestCase):
             json.dumps(j)
             
             eos = 'we'
-            nblks = nx * ny * nz
             primary = [2.e5, 15.]
             incons = dat.grid.incons(primary)
             j = dat.initial_json(geo, incons, eos)
@@ -1364,6 +1396,18 @@ class t2dataTestCase(unittest.TestCase):
             dat.grid = t2grid().fromgeo(geo)
             atmos_volume = 1.e25
             mesh_coords = 'xyz'
+
+            # isothermal water, liquid top BCs
+            eos = 'w'
+            P0, T0 = 1.e5, 15.
+            bdy_incons = dat.grid.incons((P0, T0))
+            j = dat.boundaries_json(geo, bdy_incons, atmos_volume, eos, mesh_coords)
+            self.assertEqual(len(j['boundaries']), 1)
+            self.assertEqual(j['boundaries'][0]['primary'], [P0])
+            self.assertEqual(j['boundaries'][0]['region'], 1)
+            self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
+            self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
+            json.dumps(j)
 
             # pure water, liquid top BCs
             eos = 'we'
