@@ -260,40 +260,43 @@ class mulgridTestCase(unittest.TestCase):
 
     def test_grid3d(self):
         """3D grid"""
-        geo = mulgrid().rectangular([1000.] * 6, [1000.]*6, [10., 20., 30.],
-                                    block_order = 'dmplex')
-        snap = 0.1
-        nodes, elts = geo.grid3d(surface_snap = snap)
-        self.assertEqual(108, len(elts))
-        self.assertEqual(196, len(nodes))
+        for atmos_type in range(3):
 
-        cols = [col.name for col in geo.columnlist if col.centre[0] > 3000]
-        geo.refine(cols)
-        nodes, elts = geo.grid3d(surface_snap = snap)
-        self.assertEqual(306, len(elts))
-        self.assertEqual(448, len(nodes))
-        self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+            geo = mulgrid().rectangular([1000.] * 6, [1000.]*6, [10., 20., 30.],
+                                        atmos_type = atmos_type,
+                                        block_order = 'dmplex')
+            snap = 0.1
+            nodes, elts = geo.grid3d(surface_snap = snap)
+            self.assertEqual(108, len(elts))
+            self.assertEqual(196, len(nodes))
 
-        cols = [col for col in geo.columnlist if col.centre[0] < 1000]
-        for col in cols:
-            col.surface = 5.
-            geo.set_column_num_layers(col)
-        geo.setup_block_name_index()
-        geo.setup_block_connection_name_index()
-        nodes, elts = geo.grid3d(surface_snap = snap)
-        self.assertEqual(306, len(elts))
-        self.assertEqual(455, len(nodes))
-        self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+            cols = [col.name for col in geo.columnlist if col.centre[0] > 3000]
+            geo.refine(cols)
+            nodes, elts = geo.grid3d(surface_snap = snap)
+            self.assertEqual(306, len(elts))
+            self.assertEqual(448, len(nodes))
+            self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
 
-        for col in cols:
-            col.surface = -12.
-            geo.set_column_num_layers(col)
-        geo.setup_block_name_index()
-        geo.setup_block_connection_name_index()
-        nodes, elts = geo.grid3d(surface_snap = snap)
-        self.assertEqual(300, len(elts))
-        self.assertEqual(448, len(nodes))
-        self.assertEqual([8]*246 + [6]*54, [len(elt) for elt in elts])
+            cols = [col for col in geo.columnlist if col.centre[0] < 1000]
+            for col in cols:
+                col.surface = 5.
+                geo.set_column_num_layers(col)
+            geo.setup_block_name_index()
+            geo.setup_block_connection_name_index()
+            nodes, elts = geo.grid3d(surface_snap = snap)
+            self.assertEqual(306, len(elts))
+            self.assertEqual(455, len(nodes))
+            self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+
+            for col in cols:
+                col.surface = -12.
+                geo.set_column_num_layers(col)
+            geo.setup_block_name_index()
+            geo.setup_block_connection_name_index()
+            nodes, elts = geo.grid3d(surface_snap = snap)
+            self.assertEqual(300, len(elts))
+            self.assertEqual(448, len(nodes))
+            self.assertEqual([8]*246 + [6]*54, [len(elt) for elt in elts])
 
     def test_write_mesh(self):
         """mesh writer"""
