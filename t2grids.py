@@ -371,12 +371,14 @@ class t2grid(object):
 
     def add_underground_blocks(self, geo, blockmap = {}):
         """Add underground blocks from geometry"""
-        for lay in geo.layerlist[1:]:
-            for col in [col for col in geo.columnlist if col.surface > lay.bottom]:
-                name = geo.block_name(lay.name, col.name, blockmap)
-                centre = geo.block_centre(lay, col)
-                self.add_block(t2block(name, geo.block_volume(lay, col),
-                                       self.rocktypelist[0], centre = centre))
+        for blkname in geo.block_name_list[geo.num_atmosphere_blocks:]:
+            lay = geo.layer[geo.layer_name(blkname)]
+            col = geo.column[geo.column_name(blkname)]
+            centre = geo.block_centre(lay, col)
+            vol = geo.block_volume(lay, col)
+            name = blockmap[blkname] if blkname in blockmap else blkname
+            blk = t2block(name, vol, self.rocktypelist[0], centre = centre)
+            self.add_block(blk)
 
     def add_connections(self, geo, blockmap = {}):
         """Add connections from geometry"""
