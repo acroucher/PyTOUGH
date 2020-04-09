@@ -258,8 +258,46 @@ class mulgridTestCase(unittest.TestCase):
         except: err = True
         self.assertFalse(err)
 
+    def test_grid3d(self):
+        """3D grid"""
+        geo = mulgrid().rectangular([1000.] * 6, [1000.]*6, [10., 20., 30.],
+                                    block_order = 'dmplex')
+        snap = 0.1
+        nodes, elts = geo.grid3d(surface_snap = snap)
+        self.assertEqual(108, len(elts))
+        self.assertEqual(196, len(nodes))
+
+        cols = [col.name for col in geo.columnlist if col.centre[0] > 3000]
+        geo.refine(cols)
+        nodes, elts = geo.grid3d(surface_snap = snap)
+        self.assertEqual(306, len(elts))
+        self.assertEqual(448, len(nodes))
+        self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+
+        cols = [col for col in geo.columnlist if col.centre[0] < 1000]
+        for col in cols:
+            col.surface = 5.
+            geo.set_column_num_layers(col)
+        geo.setup_block_name_index()
+        geo.setup_block_connection_name_index()
+        nodes, elts = geo.grid3d(surface_snap = snap)
+        self.assertEqual(306, len(elts))
+        self.assertEqual(455, len(nodes))
+        self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+
+        for col in cols:
+            col.surface = -12.
+            geo.set_column_num_layers(col)
+        geo.setup_block_name_index()
+        geo.setup_block_connection_name_index()
+        nodes, elts = geo.grid3d(surface_snap = snap)
+        self.assertEqual(300, len(elts))
+        self.assertEqual(448, len(nodes))
+        self.assertEqual([8]*246 + [6]*54, [len(elt) for elt in elts])
+
     def test_write_mesh(self):
         """mesh writer"""
+        import meshio
         filename = os.path.join('mulgrid', 'g5')
         geofilename = filename + '.dat'
         exofilename = filename + '.exo'
@@ -268,6 +306,9 @@ class mulgridTestCase(unittest.TestCase):
         geo.write_mesh(exofilename)
         ok = os.path.exists(exofilename)
         self.assertTrue(ok)
+        m = meshio.read(exofilename)
+        self.assertEqual(7647, len(m.cells['hexahedron']))
+        self.assertEqual(9808, len(m.points))
         if ok: os.remove(exofilename)
 
     def test_block_name_containing_point(self):
@@ -313,7 +354,14 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(656, geo.num_columns)
         self.assertEqual(9184, geo.num_blocks)
         self.assertEqual(15, geo.num_layers)
-        
+
+    def test_block_order(self):
+        geo = mulgrid().rectangular([100.]*3, [100.], [10.]*2, block_order = 'dmplex')
+        geo.refine([geo.columnlist[-1]])
+        block_nodes = [2 * geo.column[geo.column_name(blkname)].num_nodes
+                       for blkname in geo.block_name_list]
+        self.assertEqual([8]*10 + [6]*6, block_nodes)
+
 if __name__ == '__main__':
 
     suite = unittest.TestLoader().loadTestsFromTestCase(mulgridTestCase)
