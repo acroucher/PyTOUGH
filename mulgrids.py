@@ -557,7 +557,8 @@ class mulgrid(object):
     def __init__(self, filename = '', type = 'GENER', convention = 0,
                  atmos_type = 0, atmos_volume = 1.e25,
                  atmos_connection = 1.e-6, unit_type = '', permeability_angle = 0.0,
-                 read_function = default_read_function):
+                 read_function = default_read_function,
+                 block_order = 'layer_column'):
         self.filename = filename
         self.type = type  # geometry type- only GENER supported
         self._convention = convention  # naming convention:
@@ -576,6 +577,7 @@ class mulgrid(object):
         self.cntype = None # not supported
         self.permeability_angle = permeability_angle
         self.read_function = read_function
+        self.block_order = block_order.lower()
         self.empty()
         if self.filename: self.read(filename)
 
@@ -772,10 +774,39 @@ class mulgrid(object):
                 for col in self.columnlist:
                     self.block_name_list.append(
                         self.block_name(self.layerlist[0].name, col.name))
-            for lay in self.layerlist[1:]:
-                for col in [col for col in self.columnlist if col.surface > lay.bottom]:
-                    self.block_name_list.append(self.block_name(lay.name, col.name))
+            if self.block_order == 'layer_column':
+                self.block_name_list += self.block_name_list_layer_column()
+            elif self.block_order == 'dmplex':
+                self.block_name_list += self.block_name_list_dmplex()
         self.block_name_index = dict([(blk, i) for i, blk in enumerate(self.block_name_list)])
+
+    def block_name_list_layer_column(self):
+        """Returns list of underground (i.e. non-atmosphere) block names,
+        sorted by layers and then columns."""
+        names = []
+        for lay in self.layerlist[1:]:
+            for col in [col for col in self.columnlist if col.surface > lay.bottom]:
+                blkname = self.block_name(lay.name, col.name)
+                names.append(blkname)
+        return names
+
+    def block_name_list_dmplex(self):
+        """Returns list of underground (i.e. non-atmosphere) block names, in
+        PETSc DMPlex order. These are sorted first by cell type
+        (hexahedrons followed by wedges), then by layers and
+        columns. It may be used e.g. for exporting a model to
+        Waiwera."""
+        blocknames = {6: [], 8: []}
+        for lay in self.layerlist[1:]:
+            for col in [col for col in self.columnlist if col.surface > lay.bottom]:
+                blkname = self.block_name(lay.name, col.name)
+                num_block_nodes = 2 * col.num_nodes
+                try:
+                    blocknames[num_block_nodes].append(blkname)
+                except KeyError:
+                    raise Exception('Blocks with %d nodes not supported by DMPlex ordering' %
+                                    num_block_nodes)
+        return blocknames[8] + blocknames[6]
 
     def setup_block_connection_name_index(self):
         """Sets up list and dictionary of connection names and indices for
@@ -1462,7 +1493,7 @@ class mulgrid(object):
     def rectangular(self, xblocks, yblocks, zblocks,
                     convention = 0, atmos_type = 2, origin = None,
                     justify = 'r', case = None,  chars = ascii_lowercase,
-                    spaces = True):
+                    spaces = True, block_order = 'layer_column'):
         """Returns a rectangular MULgraph grid with specified block sizes.
         The arguments are arrays of the block sizes in each dimension
         (x,y,z).  Naming convention, atmosphere type and origin can
@@ -1476,7 +1507,8 @@ class mulgrid(object):
         if isinstance(yblocks, (list, tuple)): yblocks = np.array(yblocks)
         if isinstance(zblocks, (list, tuple)): zblocks = np.array(zblocks)
         if isinstance(origin, (list, tuple)): origin = np.array(origin)
-        grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
+        grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type,
+                       block_order = block_order)
         grid.empty()
         xverts = np.array([0.] + np.cumsum(xblocks).tolist()) + origin[0]
         yverts = np.array([0.] + np.cumsum(yblocks).tolist()) + origin[1]
@@ -1554,10 +1586,12 @@ class mulgrid(object):
         self.identify_layer_tops()
 
     def from_gmsh(self, filename, layers, convention = 0, atmos_type = 2,
-                  top_elevation = 0, chars = ascii_lowercase, spaces = True):
+                  top_elevation = 0, chars = ascii_lowercase, spaces = True,
+                  block_order = 'layer_column'):
         """Returns a MULgraph grid constructed from a 2D gmsh grid and the
         specified layer structure."""
-        grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type)
+        grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type,
+                       block_order = block_order)
         grid.empty()
         mode = 'r' if sys.version_info > (3,) else 'rU'
         gmsh = open(filename, mode)
@@ -4001,7 +4035,8 @@ class mulgrid(object):
 
     def from_amesh(self, input_filename = 'in', segment_filename = 'segmt',
               convention = 0, node_tolerance = None,
-              justify = 'r', chars = ascii_lowercase, spaces = True):
+                   justify = 'r', chars = ascii_lowercase, spaces = True,
+                   block_order = 'layer_column'):
         """Reads in AMESH input and segment files for a Voronoi mesh and
         returns a corresponding mulgrid object and block mapping. The
         block mapping dictionary maps block names in the geometry to
@@ -4075,7 +4110,7 @@ class mulgrid(object):
         segment_data, min_segment_length = parse_segments(segment_filename, bottom_layer)
 
         justfn = [str.rjust, str.ljust][justify == 'l']
-        geo = mulgrid(convention = convention, atmos_type = 2)
+        geo = mulgrid(convention = convention, atmos_type = 2, block_order = block_order)
 
         # Add nodes:
         nodeindex = 1
