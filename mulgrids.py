@@ -3155,21 +3155,23 @@ class mulgrid(object):
                         surface_node_index[col_names[i], node.name] = sindex
         # Create elements:
         elt3d = []
-        atmlayer = self.layerlist[0]
-        for ilayer, lay in enumerate(self.layerlist[1:]):
-            for col in [c for c in self.columnlist if
-                        surf(c) > lay.bottom]:
-                elt = []
+        layer_index = self.layer_index
+        for blkname in self.block_name_list[self.num_atmosphere_blocks:]:
+            layname = self.layer_name(blkname)
+            ilayer = layer_index[layname]
+            colname = self.column_name(blkname)
+            col = self.column[colname]
+            elt = []
+            for node in col.node:
+                elt.append(node_index[layname, node.name])
+            if ilayer == self.column_surface_layer_index(col) - 1: # top block
                 for node in col.node:
-                    elt.append(node_index[lay.name, node.name])
-                if ilayer == self.column_surface_layer_index(col) - 1: # top block
-                    for node in col.node:
-                        elt.append(surface_node_index[col.name, node.name])
-                else:
-                    above_layer = self.layerlist[ilayer]
-                    for node in col.node:
-                        elt.append(node_index[above_layer.name, node.name])
-                elt3d.append(elt)
+                    elt.append(surface_node_index[col.name, node.name])
+            else:
+                above_layer = self.layerlist[ilayer]
+                for node in col.node:
+                    elt.append(node_index[above_layer.name, node.name])
+            elt3d.append(elt)
         return node3d, elt3d
 
     def meshio_grid(self, surface_snap = 0.1, dimension = 3, slice = None):
