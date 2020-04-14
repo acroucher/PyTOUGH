@@ -260,6 +260,17 @@ class mulgridTestCase(unittest.TestCase):
 
     def test_grid3d(self):
         """3D grid"""
+
+        def get_bounding_box(nodes):
+            large = 1.e99
+            box = []
+            for i in range(3): box.append([large, -large])
+            for n in nodes:
+                for i in range(3):
+                    box[i][0] = min(box[i][0], n[i])
+                    box[i][1] = max(box[i][1], n[i])
+            return np.array(box)
+
         for atmos_type in range(3):
 
             geo = mulgrid().rectangular([1000.] * 6, [1000.]*6, [10., 20., 30.],
@@ -269,6 +280,9 @@ class mulgridTestCase(unittest.TestCase):
             nodes, elts = geo.grid3d(surface_snap = snap)
             self.assertEqual(108, len(elts))
             self.assertEqual(196, len(nodes))
+            bounds = get_bounding_box(nodes)
+            expected_bounds = np.array([[0, 6000], [0, 6000], [-60, 0]])
+            self.assertTrue(np.allclose(bounds, expected_bounds))
 
             cols = [col.name for col in geo.columnlist if col.centre[0] > 3000]
             geo.refine(cols)
@@ -276,6 +290,8 @@ class mulgridTestCase(unittest.TestCase):
             self.assertEqual(306, len(elts))
             self.assertEqual(448, len(nodes))
             self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+            bounds = get_bounding_box(nodes)
+            self.assertTrue(np.allclose(bounds, expected_bounds))
 
             cols = [col for col in geo.columnlist if col.centre[0] < 1000]
             for col in cols:
@@ -287,6 +303,9 @@ class mulgridTestCase(unittest.TestCase):
             self.assertEqual(306, len(elts))
             self.assertEqual(455, len(nodes))
             self.assertEqual([8]*252 + [6]*54, [len(elt) for elt in elts])
+            expected_bounds[2] = [-60, 5]
+            bounds = get_bounding_box(nodes)
+            self.assertTrue(np.allclose(bounds, expected_bounds))
 
             for col in cols:
                 col.surface = -12.
@@ -297,6 +316,9 @@ class mulgridTestCase(unittest.TestCase):
             self.assertEqual(300, len(elts))
             self.assertEqual(448, len(nodes))
             self.assertEqual([8]*246 + [6]*54, [len(elt) for elt in elts])
+            bounds = get_bounding_box(nodes)
+            expected_bounds[2] = [-60, 0]
+            self.assertTrue(np.allclose(bounds, expected_bounds))
 
     def test_write_mesh(self):
         """mesh writer"""
