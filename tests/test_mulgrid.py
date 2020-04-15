@@ -332,12 +332,14 @@ class mulgridTestCase(unittest.TestCase):
         ok = os.path.exists(exofilename)
         self.assertTrue(ok)
         m = meshio.read(exofilename)
-        if isinstance(m, tuple):
-            self.assertEqual(7647, len(m[1]['hexahedron']))
-            self.assertEqual(9808, len(m[0]))
+        if isinstance(m, (tuple, list)):
+            cells = m[1]['hexahedron']
+            points = m[0]
         else:
-            self.assertEqual(7647, len(m.cells['hexahedron']))
-            self.assertEqual(9808, len(m.points))
+            cells = m.cells['hexahedron']
+            points = m.points
+        self.assertEqual(7647, len(cells))
+        self.assertEqual(9808, len(points))
         if ok: os.remove(exofilename)
 
     def test_block_name_containing_point(self):
