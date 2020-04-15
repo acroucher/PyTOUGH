@@ -3198,11 +3198,11 @@ class mulgrid(object):
             elt = []
             for node in col.node:
                 elt.append(node_index[layname, node.name])
-            if ilayer == self.column_surface_layer_index(col) - 1: # top block
+            if ilayer == self.column_surface_layer_index(col): # top block
                 for node in col.node:
                     elt.append(surface_node_index[col.name, node.name])
             else:
-                above_layer = self.layerlist[ilayer]
+                above_layer = self.layerlist[ilayer - 1]
                 for node in col.node:
                     elt.append(node_index[above_layer.name, node.name])
             elt3d.append(elt)
