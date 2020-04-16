@@ -577,7 +577,7 @@ class mulgrid(object):
         self.cntype = None # not supported
         self.permeability_angle = permeability_angle
         self.read_function = read_function
-        self.block_order = block_order.lower()
+        self._block_order = block_order.lower()
         self.empty()
         if self.filename: self.read(filename)
 
@@ -618,6 +618,15 @@ class mulgrid(object):
         self._unit_type = unit_type
         self.unit_scale = {'': 1.0, 'FEET ': 0.3048}[unit_type]
     unit_type = property(get_unit_type, set_unit_type)
+
+    def get_block_order(self):
+        """Get block ordering scheme"""
+        return self._block_order
+    def set_block_order(self, block_order):
+        """Set block ordering scheme"""
+        self._block_order = block_order
+        self.setup_block_name_index()
+    block_order = property(get_block_order, set_block_order)
 
     def get_area(self):
         """Grid area- sum of column areas"""

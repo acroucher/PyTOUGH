@@ -379,10 +379,21 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(15, geo.num_layers)
 
     def test_block_order(self):
+
+        def get_block_nodes(geo):
+            return [2 * geo.column[geo.column_name(blkname)].num_nodes
+                    for blkname in geo.block_name_list]
+
         geo = mulgrid().rectangular([100.]*3, [100.], [10.]*2, block_order = 'dmplex')
         geo.refine([geo.columnlist[-1]])
-        block_nodes = [2 * geo.column[geo.column_name(blkname)].num_nodes
-                       for blkname in geo.block_name_list]
+        block_nodes = get_block_nodes(geo)
+        self.assertEqual([8]*10 + [6]*6, block_nodes)
+
+        # test re-setting block_order property
+        geo = mulgrid().rectangular([100.]*3, [100.], [10.]*2)
+        geo.refine([geo.columnlist[-1]])
+        geo.block_order = 'dmplex'
+        block_nodes = get_block_nodes(geo)
         self.assertEqual([8]*10 + [6]*6, block_nodes)
 
 if __name__ == '__main__':
