@@ -2205,7 +2205,7 @@ class mulgrid(object):
             default_title = 'layer ' + layer.name
         else: raise Exception("Unknown layer in layer_plot()")
         if variable is not None:
-            if len(variable) == self.num_columns:
+            if len(variable) == self.num_columns < self.num_blocks:
                 variable = self.column_values_to_block(variable)
         if variable_name: varname = variable_name
         else: varname = 'Value'
@@ -2509,7 +2509,7 @@ class mulgrid(object):
                                         'figure.figsize':(12, 9)})
             ax = plt.subplot(subplot, aspect = aspect)
             if variable is not None:
-                if len(variable) == self.num_columns:
+                if len(variable) == self.num_columns < self.num_blocks:
                     variable = self.column_values_to_block(variable)
             if variable_name: varname = variable_name
             else: varname = 'Value'
@@ -2801,7 +2801,7 @@ class mulgrid(object):
                                     'figure.figsize':(12, 9)})
         plt.subplot(subplot)
         if variable is not None:
-            if len(variable) == self.num_columns:
+            if len(variable) == self.num_columns < self.num_blocks:
                 variable = self.column_values_to_block(variable)
         if variable_name: varname = variable_name
         else: varname = 'Value'
