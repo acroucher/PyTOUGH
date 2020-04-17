@@ -70,6 +70,25 @@ The reading functions for a \texttt{mulgrid} object can be specified when the ob
 geo = mulgrid('geom.dat', read_function = fortran_read_function)
 \end{lstlisting}
 
+\subsubsection{Block ordering schemes}
+\index{MULgraph geometry!block ordering}
+
+By default, the blocks in a TOUGH2 grid created from a \texttt{mulgrid} geometry are ordered
+by layer, from the atmosphere down to the bottom of the model, with the blocks within
+each layer ordered by column (following the ordering of the \texttt{columnlist} property, which
+is the same as the column order specified in the geometry file).
+
+It is also possible to sort the blocks according to their geometrical type (8-node hexahedrons
+and 6-node wedges, corresponding to 4-node or 3-node columns respectively). This is useful for
+exporting the model to Waiwera, which uses the PETSc DMPlex mesh representation, which sorts
+cells by cell type in this way.
+
+This can be done by setting the \texttt{block\_order} property of the geometry. This can be set
+when the \texttt{mulgrid} object is created or read from file, as an optional parameter.
+It can also be specified after creation. The \texttt{block\_order} property is a string which can
+take the value `layer\_column' for the default layer/column block ordering, or `dmplex' if
+the blocks are to be sorted by geometrical type.
+
 \subsubsection{Tilted geometries}
 \index{MULgraph geometry!tilting}
 
@@ -96,6 +115,7 @@ It is possible to rotate the permeability principal directions of a \texttt{mulg
     \texttt{block\_connection\_name\_list} & list & names of block connections (by index)\\
     \texttt{block\_name\_index} & dictionary & indices of blocks (by name)\\
     \texttt{block\_name\_list} & list & names of blocks (by index)\\
+    \texttt{block\_order} & string & block ordering scheme\\
     \texttt{boundary\_columns} & set & set of columns on the outer boundary of the grid \\
     \texttt{boundary\_nodes} & list & ordered list of nodes on the outer boundary of the grid \\
     \texttt{boundary\_polygon} & list & list of points representing grid boundary (extra colinear points removed) \\
@@ -760,7 +780,8 @@ Fits column surface elevations from data, using bilinear least-squares finite el
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{from\_amesh(\emph{input\_filename}='in', \emph{segment\_filename}='segmt', \emph{convention}=0, \\
-      \emph{node\_tolerance}=None, \emph{justify}='r', \emph{chars}=ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
+      \emph{node\_tolerance}=None, \emph{justify}='r', \emph{chars}=ascii\_lowercase, \emph{spaces}=\texttt{True},\\
+      \emph{block\_order}=`layer\_column')}}\end{snugshade}
 \label{sec:mulgrid:from_amesh}
 \index{MULgraph geometry!creating!Voronoi}
 
@@ -788,10 +809,13 @@ The \texttt{from\_amesh()} method assumes the original AMESH grid has layers of 
   Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \item \textbf{spaces}: Boolean\\
   Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
+\item \textbf{block\_order}: string\\
+  Specify `layer\_column' for default block ordering by layer and column, starting from the atmosphere. Specify `dmplex' to order blocks by geometrical type (8-node hexahedrons first followed by 6-node wedges) as in PETSc DMPlex meshes.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
-    \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True})}}\end{snugshade}
+      \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True},\\
+      \emph{block\_order}=`layer\_column')}}\end{snugshade}
 \label{sec:mulgrid:from_gmsh}
 \index{MULgraph geometry!importing from \texttt{gmsh}}
 
@@ -813,6 +837,8 @@ Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is a gri
   Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
 \item \textbf{spaces}: Boolean\\
   Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
+\item \textbf{block\_order}: string\\
+  Specify `layer\_column' for default block ordering by layer and column, starting from the atmosphere. Specify `dmplex' to order blocks by geometrical type (8-node hexahedrons first followed by 6-node wedges) as in PETSc DMPlex meshes.
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{layer\_containing\_elevation(\emph{elevation})}}\end{snugshade}
@@ -1204,8 +1230,8 @@ geo = mulgrid(filename)
 
 \begin{snugshade}
 \subsubsection{\texttt{rectangular(\emph{xblocks}, \emph{yblocks}, \emph{zblocks}, \emph{convention}=0, \emph{atmos\_type}=2,\\
-    \emph{origin}=[0,0,0], \emph{justify}='r', \emph{case}=None, \emph{chars}=ascii\_lowercase),\\
-    \emph{spaces}=\texttt{True}}}\end{snugshade}
+    \emph{origin}=[0,0,0], \emph{justify}='r', \emph{case}=None, \emph{chars}=ascii\_lowercase,\\
+    \emph{spaces}=\texttt{True}, \emph{block\_order}=`layer\_column'})}\end{snugshade}
 \label{sec:mulgrid:rectangular}
 \index{MULgraph geometry!creating!rectangular}
 
@@ -1231,6 +1257,8 @@ Note that it is also possible to reverse-engineer a rectangular geometry from an
   Specify a string of characters to be used to form the character part of block names.  For example, to use both lowercase and uppercase characters, set \texttt{chars} to \texttt{ascii\_lowercase + ascii\_uppercase}, or to use uppercase letters only, specify \texttt{ascii\_uppercase}.
 \item \textbf{spaces}: Boolean\\
   Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
+\item \textbf{block\_order}: string\\
+  Specify `layer\_column' for default block ordering by layer and column, starting from the atmosphere. Specify `dmplex' to order blocks by geometrical type (8-node hexahedrons first followed by 6-node wedges) as in PETSc DMPlex meshes.
 \end{itemize}
 
 \textbf{Example:}
