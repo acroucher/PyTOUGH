@@ -1,3 +1,15 @@
 *.pyc
 *~
 PyTOUGH.egg-info
+doc/*.aux
+doc/*.bbl
+doc/*.blg
+doc/*.dvi
+doc/*.idx
+doc/*.ilg
+doc/*.ind
+doc/*.log
+doc/*.lot
+doc/*.out
+doc/*.toc
+
