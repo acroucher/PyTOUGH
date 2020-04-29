@@ -787,6 +787,8 @@ class mulgrid(object):
                 self.block_name_list += self.block_name_list_layer_column()
             elif self.block_order == 'dmplex':
                 self.block_name_list += self.block_name_list_dmplex()
+            else:
+                raise Exception('Unrecognised mulgrid block order: %s' % self.block_order)
         self.block_name_index = dict([(blk, i) for i, blk in enumerate(self.block_name_list)])
 
     def block_name_list_layer_column(self):
