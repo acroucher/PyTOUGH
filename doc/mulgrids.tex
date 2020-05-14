@@ -85,10 +85,27 @@ exporting the model to Waiwera, which uses the PETSc DMPlex mesh representation,
 cells by cell type in this way.
 
 This can be done by setting the \texttt{block\_order} property of the geometry. This can be set
-when the \texttt{mulgrid} object is created or read from file, as an optional parameter.
+when the \texttt{mulgrid} object is created or read from file, as an optional parameter, e.g.:
+
+\begin{lstlisting}
+geo = mulgrid('geom.dat', block_order = 'dmplex')
+\end{lstlisting}
+
 It can also be specified after creation. The \texttt{block\_order} property is a string which can
-take the value `layer\_column' for the default layer/column block ordering, or `dmplex' if
-the blocks are to be sorted by geometrical type.
+take the value \textbf{`layer\_column'} for the default layer/column block ordering, or
+\textbf{`dmplex'} if the blocks are to be sorted by geometrical type.
+
+\begin{lstlisting}
+geo.block_order = 'layer_column'
+\end{lstlisting}
+
+The block ordering scheme can be stored in the MULgraph geometry file, via an integer flag in
+the header (see Appendix \ref{geometry_file_format}). This flag is an extension to the original
+MULgraph geometry file format. If a \texttt{mulgrid} object is created by reading a file in
+which this flag is not present, its \texttt{block\_order} property will be \texttt{None}, in
+which case the default layer/column ordering will be used. When a geometry file is read in,
+and a block ordering is specified via the \texttt{block\_order} parameter, this will override
+any block ordering stored in the file.
 
 \subsubsection{Tilted geometries}
 \index{MULgraph geometry!tilting}
