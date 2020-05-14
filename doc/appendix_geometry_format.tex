@@ -89,6 +89,8 @@ If you use PyTOUGH scripts to create and manipulate your grid geometries, you do
 
 This is a single line containing a number of global parameters of the geometry. Its format is given in table \ref{tb:mulgraph_format_header}.
 
+Note that the block ordering parameter is an extension to the original MULgraph file format.
+
 \begin{table}
   \begin{center}
     \begin{tabular}{|p{20mm}|l|l|l|p{50mm}|}
@@ -114,6 +116,8 @@ This is a single line containing a number of global parameters of the geometry. 
       \textbf{Connection type} & integer & 1 & 53 & Method of calculating connection parameters (default zero)- not supported by PyTOUGH\\
       \hline
       \textbf{Permeability angle} & float & 10 & 54--63 & Horizontal angle (degrees anti-clockwise) between first permeability direction and x-axis\\
+      \hline
+      \textbf{Block ordering} & integer & 2 & 64--65 & Block ordering scheme: 0 for original MULgraph layer/column ordering; 1 for PETSc DMPlex ordering (sorted by block type)\\
       \hline
     \end{tabular}
     \caption{MULgraph geometry file header line format}
