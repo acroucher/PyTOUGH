@@ -164,10 +164,11 @@ class quadtree(object):
 mulgrid_format_specification = {
     'header': [['type', '_convention', '_atmosphere_type',
                 'atmosphere_volume', 'atmosphere_connection', 
-                'unit_type', 'gdcx', 'gdcy', 'cntype', 'permeability_angle'], 
+                'unit_type', 'gdcx', 'gdcy', 'cntype',
+                'permeability_angle', '_block_order_int'],
                ['5s', '1d', '1d',
                 '10.2e', '10.2e',
-                '5s', '10.2f', '10.2f', '1d', '10.2f']], 
+                '5s', '10.2f', '10.2f', '1d', '10.2f', '2d']],
     'node': [['name', 'x', 'y'],  ['3s'] + ['10.2f'] * 2], 
     'column': [['name', 'centre_specified', 'num_nodes', 'xcentre', 'ycentre'],
                ['3s', '1d', '2d'] + ['10.2f'] * 2],
@@ -558,7 +559,7 @@ class mulgrid(object):
                  atmos_type = 0, atmos_volume = 1.e25,
                  atmos_connection = 1.e-6, unit_type = '', permeability_angle = 0.0,
                  read_function = default_read_function,
-                 block_order = 'layer_column'):
+                 block_order = None):
         self.filename = filename
         self.type = type  # geometry type- only GENER supported
         self._convention = convention  # naming convention:
@@ -576,10 +577,12 @@ class mulgrid(object):
         self.gdcx, self.gdcy = None, None
         self.cntype = None # not supported
         self.permeability_angle = permeability_angle
+        self._block_order = None
+        self._block_order_int = None
         self.read_function = read_function
-        self._block_order = block_order.lower()
         self.empty()
         if self.filename: self.read(filename)
+        if block_order is not None: self.block_order = block_order.lower()
 
     def set_secondary_variables(self):
         """Sets variables dependent on naming convention and atmosphere type"""
@@ -619,12 +622,23 @@ class mulgrid(object):
         self.unit_scale = {'': 1.0, 'FEET ': 0.3048}[unit_type]
     unit_type = property(get_unit_type, set_unit_type)
 
+    def set_block_order_int(self):
+        """Sets block order integer flag, for input/output."""
+        block_order_ints = {'layer_column': 0, 'dmplex': 1}
+        if self.block_order in block_order_ints:
+            self._block_order_int = block_order_ints[self.block_order]
+        elif self.block_order is None:
+            self._block_order_int = None
+        else:
+            raise Exception('Unrecognised block ordering: %s' % self.block_order)
+
     def get_block_order(self):
         """Get block ordering scheme"""
         return self._block_order
     def set_block_order(self, block_order):
         """Set block ordering scheme"""
         self._block_order = block_order
+        self.set_block_order_int()
         self.setup_block_name_index()
     block_order = property(get_block_order, set_block_order)
 
@@ -783,7 +797,7 @@ class mulgrid(object):
                 for col in self.columnlist:
                     self.block_name_list.append(
                         self.block_name(self.layerlist[0].name, col.name))
-            if self.block_order == 'layer_column':
+            if self.block_order is None or self.block_order == 'layer_column':
                 self.block_name_list += self.block_name_list_layer_column()
             elif self.block_order == 'dmplex':
                 self.block_name_list += self.block_name_list_dmplex()
@@ -1239,6 +1253,11 @@ class mulgrid(object):
         self.unit_type = self._unit_type
         if self.cntype is not None and self.cntype != 0:
             print('CNTYPE option = %d not supported.' % (self.cntype))
+        block_orders = {0: 'layer_column', 1: 'dmplex'}
+        if self._block_order_int in block_orders:
+            self._block_order = block_orders[self._block_order_int]
+        elif self._block_order_int is not None:
+            raise Exception('Unrecognised mulgrid block order: %d')
 
     def read_nodes(self, geo):
         """Reads grid nodes from file geo"""
