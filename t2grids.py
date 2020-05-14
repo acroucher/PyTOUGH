@@ -749,7 +749,7 @@ class t2grid(object):
     def rectgeo(self, origin_block = None, atmos_volume = 1.e25, remove_inactive = False,
                 convention = 0, atmos_type = 2, justify = 'r',
                 chars = ascii_lowercase, spaces = True,
-                layer_snap = 0.1, block_order = 'layer_column'):
+                layer_snap = 0.1, block_order = None):
         """For a rectangular grid, returns a mulgrid object representing the
         geometry. The 'origin block' (the block on the bottom layer of
         the grid, at the origin of the permeability direction 1 & 2

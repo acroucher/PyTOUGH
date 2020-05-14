@@ -1523,7 +1523,7 @@ class mulgrid(object):
     def rectangular(self, xblocks, yblocks, zblocks,
                     convention = 0, atmos_type = 2, origin = None,
                     justify = 'r', case = None,  chars = ascii_lowercase,
-                    spaces = True, block_order = 'layer_column'):
+                    spaces = True, block_order = None):
         """Returns a rectangular MULgraph grid with specified block sizes.
         The arguments are arrays of the block sizes in each dimension
         (x,y,z).  Naming convention, atmosphere type and origin can
@@ -1617,7 +1617,7 @@ class mulgrid(object):
 
     def from_gmsh(self, filename, layers, convention = 0, atmos_type = 2,
                   top_elevation = 0, chars = ascii_lowercase, spaces = True,
-                  block_order = 'layer_column'):
+                  block_order = None):
         """Returns a MULgraph grid constructed from a 2D gmsh grid and the
         specified layer structure."""
         grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type,
@@ -4066,7 +4066,7 @@ class mulgrid(object):
     def from_amesh(self, input_filename = 'in', segment_filename = 'segmt',
               convention = 0, node_tolerance = None,
                    justify = 'r', chars = ascii_lowercase, spaces = True,
-                   block_order = 'layer_column'):
+                   block_order = None):
         """Reads in AMESH input and segment files for a Voronoi mesh and
         returns a corresponding mulgrid object and block mapping. The
         block mapping dictionary maps block names in the geometry to
