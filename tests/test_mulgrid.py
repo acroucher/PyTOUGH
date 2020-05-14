@@ -396,6 +396,29 @@ class mulgridTestCase(unittest.TestCase):
         block_nodes = get_block_nodes(geo)
         self.assertEqual([8]*10 + [6]*6, block_nodes)
 
+        # reading block order:
+        geo = mulgrid(os.path.join('mulgrid', 'g7.dat'))
+        self.assertIsNone(geo.block_order)
+        self.assertIsNone(geo._block_order_int)
+
+        # overriding block order in file:
+        for block_order in [None, 'layer_column', 'dmplex']:
+            geo = mulgrid(os.path.join('mulgrid', 'g7.dat'), block_order = block_order)
+            self.assertEqual(geo.block_order, block_order)
+
+        # writing/reading block order:
+        geo.block_order = 'dmplex'
+        filename = os.path.join('mulgrid', 'g7_dmplex.dat')
+        geo.write(filename)
+        geo = mulgrid(filename)
+        self.assertEqual(geo.block_order, 'dmplex')
+        self.assertEqual(geo._block_order_int, 1)
+        # override block order in file:
+        geo = mulgrid(filename, block_order = 'layer_column')
+        self.assertEqual(geo.block_order, 'layer_column')
+        self.assertEqual(geo._block_order_int, 0)
+        os.remove(filename)
+
 if __name__ == '__main__':
 
     suite = unittest.TestLoader().loadTestsFromTestCase(mulgridTestCase)
