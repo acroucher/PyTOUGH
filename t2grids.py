@@ -1203,7 +1203,7 @@ class t2grid(object):
                         self.connection[names] = con
                         connectionlist.append(con)
                     else:
-                        raise Exception("Unknown connection name: " + names)
+                        raise Exception("Unknown connection name: " + str(names))
             self.connectionlist = connectionlist
 
     def rename_blocks(self, blockmap = {}, fix_blocknames = True):
