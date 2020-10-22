@@ -660,7 +660,7 @@ class t2dataTestCase(unittest.TestCase):
             j = dat.output_json()
             self.assertEqual(j['output']['filename'], filename_base + '.h5')
             self.assertEqual(j['output']['frequency'], dat.parameter['print_interval'])
-            self.assertFalse('initial' in j['output'])
+            self.assertFalse(j['output']['initial'])
             self.assertTrue(j['output']['final'])
             json.dumps(j)
 
@@ -668,7 +668,7 @@ class t2dataTestCase(unittest.TestCase):
             j = dat.output_json()
             self.assertEqual(j['output']['filename'], filename_base + '.h5')
             self.assertEqual(j['output']['frequency'], 0)
-            self.assertFalse('initial' in j['output'])
+            self.assertFalse(j['output']['initial'])
             self.assertTrue(j['output']['final'])
             json.dumps(j)
 

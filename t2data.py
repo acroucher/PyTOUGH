@@ -2516,8 +2516,8 @@ class t2data(object):
         jsondata['output'] = {
             'filename': datbase + '.h5',
             'frequency': print_interval,
-            'final': True}
-        if self.parameter['option'][24] > 0: jsondata['output']['initial'] = True
+            'final': True,
+            'initial': int(self.parameter['option'][24]) > 0}
         if self.output_times:
             time_tol = 1.e-8
             checkpoint = {'repeat': False}
