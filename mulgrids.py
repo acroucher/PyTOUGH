@@ -13,8 +13,8 @@ You should have received a copy of the GNU Lesser General Public License along w
 from __future__ import print_function
 import sys
 from string import ascii_lowercase, ascii_uppercase
-from geometry import *
-from fixed_format_file import *
+from .geometry import *
+from .fixed_format_file import *
 
 def padstring(s, length = 80): return s.ljust(length)
 
@@ -2278,7 +2278,7 @@ class mulgrid(object):
             if flow_variable_name is None: flow_variable_name = 'Flow'
             if flow_unit is None: flow_unit = 'units'
             if grid is None:
-                from t2grids import t2grid
+                from .t2grids import t2grid
                 grid = t2grid().fromgeo(self)
             if not grid.connection_centres_defined:
                 grid.calculate_connection_centres(self)
@@ -2567,7 +2567,7 @@ class mulgrid(object):
                     if flow_variable_name is None: flow_variable_name = 'Flow'
                     if flow_unit is None: flow_unit = 'units'
                     if grid is None:
-                        from t2grids import t2grid
+                        from .t2grids import t2grid
                         grid = t2grid().fromgeo(self)
                     if not grid.connection_centres_defined:
                         grid.calculate_connection_centres(self)
@@ -2928,7 +2928,7 @@ class mulgrid(object):
             def write_pest_model_file():
                 mod = open('pestmesh_model.py', 'w')
                 mod.write('\n'.join([
-                        "from mulgrids import *",
+                        "from .mulgrids import *",
                         "geo = mulgrid('" + gridfilename.strip() + "')",
                         "nodenames = np.load('pestmesh_nodes.npy')",
                         "nnodes = len(nodenames)",

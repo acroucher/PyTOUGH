@@ -10,8 +10,8 @@ PyTOUGH is distributed in the hope that it will be useful, but WITHOUT ANY WARRA
 
 You should have received a copy of the GNU Lesser General Public License along with PyTOUGH.  If not, see <http://www.gnu.org/licenses/>."""
 
-from mulgrids import *
-from fixed_format_file import *
+from .mulgrids import *
+from .fixed_format_file import *
 
 t2incon_format_specification = {
     'header_short': [['title'], ['5s']],

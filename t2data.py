@@ -12,16 +12,16 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 from __future__ import print_function
 import sys
-from fixed_format_file import *
-from t2grids import *
-from t2incons import *
+from .fixed_format_file import *
+from .t2grids import *
+from .t2incons import *
 from math import ceil
 import struct
 from os.path import splitext
 
 def primary_to_region_we(primary):
     """Returns thermodynamic region deduced from primary variables for EOS we."""
-    from t2thermo import region
+    from .t2thermo import region
     if primary[1] < 1.: return 4
     else: return region(primary[1], primary[0])
 
