@@ -16,8 +16,8 @@ try:
 except ImportError: # try importing Numeric on old installs
     import Numeric as np
     from Numeric import Float64 as float64
-from mulgrids import fix_blockname, valid_blockname
-from fixed_format_file import fortran_float, fortran_int
+from .mulgrids import fix_blockname, valid_blockname
+from .fixed_format_file import fortran_float, fortran_int
 import io
 import sys
 
@@ -1276,9 +1276,9 @@ class t2listing(object):
         inflows due to pressure changes in the blocks on the model's horizontal boundaries.
         Recharge generators are given the names of their blocks- any existing generators with the same
         names will be overwritten."""
-        from IAPWS97 import cowat,visc
-        from geometry import line_projection
-        from t2data import t2generator
+        from .IAPWS97 import cowat,visc
+        from .geometry import line_projection
+        from .t2data import t2generator
         initial_index = self.index
         keyword = {'AUTOUGH2':{'P': 'Pressure', 'T': 'Temperature'},
                    'TOUGH2': {'P': 'P', 'T': 'T'},
