@@ -373,7 +373,10 @@ class t2grid(object):
         """Add underground blocks from geometry"""
         for blkname in geo.block_name_list[geo.num_atmosphere_blocks:]:
             lay = geo.layer[geo.layer_name(blkname)]
-            col = geo.column[geo.column_name(blkname)]
+            try:
+                col = geo.column[geo.column_name(blkname)]
+            except KeyError:
+                continue
             centre = geo.block_centre(lay, col)
             vol = geo.block_volume(lay, col)
             name = blockmap[blkname] if blkname in blockmap else blkname
