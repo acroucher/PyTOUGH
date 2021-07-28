@@ -2100,7 +2100,7 @@ class t2data(object):
         a second dictionary with tracer data."""
         jsondata = {}
         supported_eos = {'W': 'w', 'EW': 'we', 'EWC': 'wce', 'EWAV': 'wae',
-                         'EWT': 'we'}
+                         'EWT': 'we', 'EWTD': 'we'}
         aut2eosname = ''
         if eos is None:
             if self.multi:
@@ -2124,8 +2124,15 @@ class t2data(object):
                 raise Exception ('EOS not supported:' + aut2eosname)
         else:
             raise Exception ('EOS not detected.')
-        if aut2eosname == 'EWT':
+        if aut2eosname in ['EWT', 'EWTD']:
             tracerdata = {'tracer': {'name': 'tracer', 'phase': 'liquid'}}
+            if aut2eosname == 'EWTD':
+                diffusion = np.array(self.diffusion)
+                if np.all(diffusion < 0) and np.allclose(diffusion, diffusion[0][0]):
+                    D = -diffusion[0][0]
+                    tracerdata['tracer']['diffusion'] = D
+                else:
+                    raise Exception ('Unhandled diffusion type: %s' % str(self.diffusion))
         else:
             tracerdata = None
         return jsondata, tracerdata

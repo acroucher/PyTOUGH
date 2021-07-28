@@ -551,6 +551,7 @@ class t2dataTestCase(unittest.TestCase):
         dat.filename = filename_base + '.dat'
         dat.parameter['gravity'] = gravity
         dat.multi = {'eos': 'EW'}
+        dat.diffusion = [[-1e-6, -1e-6], [-1e-6, -1e-6]]
 
         def basic_test():
             j = dat.json(geo, mesh_filename)
@@ -633,19 +634,34 @@ class t2dataTestCase(unittest.TestCase):
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'we'})
             self.assertIsNone(tracer_data)
+
             eos = 2
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'wce'})
             self.assertIsNone(tracer_data)
+
             eos = 'EWAV'
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'wae'})
             self.assertIsNone(tracer_data)
+
             eos = 'EWT'
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'we'})
             self.assertEqual(tracer_data['tracer'],
                              {'name': 'tracer', 'phase': 'liquid'})
+
+            eos = 'EWTD'
+            dat.diffusion = [[-1e-6, -1e-6], [-1e-6, -1e-6]]
+            eos_data, tracer_data = dat.eos_json(eos)
+            self.assertEqual(eos_data['eos'], {'name': 'we'})
+            self.assertEqual(tracer_data['tracer'],
+                             {'name': 'tracer', 'phase': 'liquid', 'diffusion': 1e-6})
+
+            dat.diffusion = [[1e-5, 1e-6], [1e-6, 1e-5]]
+            with self.assertRaises(Exception):
+                eos_data, tracer_data = dat.eos_json(eos)
+
             eos = 3
             with self.assertRaises(Exception):
                 dat.eos_json(eos)
