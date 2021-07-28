@@ -4129,10 +4129,11 @@ class mulgrid(object):
                     blocknames = (line[65: 70], line[70: 75])
                     if all([blkname in bottom_layer['block_name'] or blkname.startswith('*')
                             for blkname in blocknames]):
+                        seg_length = np.linalg.norm(points[0] - points[1])
                         segment_data.append({'points': points,
                                              'index': idx, 'blocknames': blocknames})
-                        min_segment_length = min(min_segment_length,
-                                                 np.linalg.norm(points[0] - points[1]))
+                        if seg_length > 0:
+                            min_segment_length = min(min_segment_length, seg_length)
             return segment_data, min_segment_length
 
         layers = parse_layers(input_filename)
@@ -4177,7 +4178,8 @@ class mulgrid(object):
                 colnodes = segs[0]
                 done = False
                 while not done:
-                    nextsegs = [seg for seg in segs if seg[0] == colnodes[-1]]
+                    nextsegs = [seg for seg in segs if seg[0] == colnodes[-1] and
+                                seg[0] != seg[1]]
                     try:
                         nextseg = nextsegs[0]
                         if nextseg[-1] == colnodes[0]: done = True
