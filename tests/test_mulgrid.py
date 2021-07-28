@@ -320,19 +320,14 @@ class mulgridTestCase(unittest.TestCase):
             expected_bounds[2] = [-60, 0]
             self.assertTrue(np.allclose(bounds, expected_bounds))
 
-    def test_write_mesh(self):
-        """mesh writer"""
-        import meshio
+    def test_meshio(self):
+        """meshio grid"""
         filename = os.path.join('mulgrid', 'g5')
         geofilename = filename + '.dat'
-        exofilename = filename + '.exo'
-        if os.path.exists(exofilename): os.remove(exofilename)
         geo = mulgrid(geofilename)
-        geo.write_mesh(exofilename)
-        ok = os.path.exists(exofilename)
-        self.assertTrue(ok)
-        m = meshio.read(exofilename)
-        if ok: os.remove(exofilename)
+        points, cells = geo.meshio_grid()
+        self.assertEqual(len(points), 9808)
+        self.assertEqual(len(cells['hexahedron']), 7647)
 
     def test_block_name_containing_point(self):
         geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*3)

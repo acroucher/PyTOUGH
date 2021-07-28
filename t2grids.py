@@ -760,7 +760,7 @@ class t2grid(object):
         remove_inactive parameter is True, the mulgrid surface
         property will be determined by the positions of inactive
         blocks in the grid. The atmos_volume parameter specifies the
-        maximum block volume considered to be part of the geometrical
+        block volume below which blocks are considered part of the geometrical
         grid. The layer_snap parameter can be used to eliminate blocks
         with very small volumes at the ground surface.  The method
         also returns a block mapping dictionary, mapping geometry
@@ -772,7 +772,7 @@ class t2grid(object):
             def elev(blk, max_volume = None):
                 if blk.centre is None: return np.nan
                 elif max_volume is None: return blk.centre[2]
-                elif 0. < blk.volume <= max_volume: return blk.centre[2]
+                elif 0. < blk.volume < max_volume: return blk.centre[2]
                 else: return np.nan
             return np.array([elev(blk, max_volume) for blk in grid.blocklist])
 
@@ -1206,7 +1206,7 @@ class t2grid(object):
                         self.connection[names] = con
                         connectionlist.append(con)
                     else:
-                        raise Exception("Unknown connection name: " + names)
+                        raise Exception("Unknown connection name: " + str(names))
             self.connectionlist = connectionlist
 
     def rename_blocks(self, blockmap = {}, fix_blocknames = True):
