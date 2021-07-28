@@ -18,12 +18,9 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.5.4, which has:
+The latest stable version is 1.5.5, which has:
 
-* support for TOUGH3 listing files
-* support for alternative `mulgrid` block ordering schemes
-
-as well as various bug fixes and other minor enhancements.
+* various bug fixes and other minor enhancements.
 
 # Where's the user guide?
 
