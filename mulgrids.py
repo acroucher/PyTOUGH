@@ -3542,6 +3542,41 @@ class mulgrid(object):
         elif hasattr(meshio, 'write'):
             meshio.write(filename, points, cells, file_format = file_format)
 
+    def get_layermesh(self):
+        """Returns a layermesh mesh object representing the
+        geometry. Layermesh (https://github.com/acroucher/layermesh)
+        is a Python library for manipulating layer/column meshes. It
+        must be installed before this method will work.
+        """
+        import layermesh.mesh as lm
+
+        if self.block_order == 'dmplex': cell_type_sort = -1
+        else: cell_type_sort = 0
+
+        m = lm.mesh(cell_type_sort = cell_type_sort)
+
+        start_layer = 0 if self.atmosphere_type == 2 else 1
+        elevations = [self.layerlist[0].top] + \
+                     [lay.bottom for lay in self.layerlist[start_layer:]]
+        m.set_layers(elevations)
+
+        node_dict = {}
+        for i, mul_node in enumerate(self.nodelist):
+            lm_node = lm.node(pos = mul_node.pos, index = i)
+            m.add_node(lm_node)
+            node_dict[mul_node.name] = lm_node
+
+        for i, mul_col in enumerate(self.columnlist):
+            nodes = [node_dict[mul_node.name] for mul_node in mul_col.node]
+            lm_col = lm.column(node = nodes, index = i)
+            m.add_column(lm_col)
+            lm_col.set_surface(m.layer, mul_col.surface)
+
+        m.setup()
+        return m
+
+    layermesh = property(get_layermesh)
+
     def snap_columns_to_layers(self, min_thickness = 1.0, columns = []):
         """Snaps column surfaces to the bottom of their layers, if the surface
         block thickness is smaller than a given value.  This can be

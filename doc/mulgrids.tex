@@ -118,6 +118,19 @@ Non-horizontal (i.e. tilted) geometries can be constructed by setting the \textt
 
 It is possible to rotate the permeability principal directions of a \texttt{mulgrid} object with respect to the coordinate axes- for example, to align permeabilities with a dominant fault direction- by specifying the \texttt{permeability\_angle} property. When a \texttt{t2grid} object is created, e.g. using the \texttt{t2grid} \hyperref[sec:t2grid:fromgeo]{fromgeo()} method, this can change the \texttt{direction} property of each connection.
 
+\subsubsection{Conversion to Layermesh}
+\index{MULgraph geometry!Layermesh conversion}
+
+A \texttt{mulgrid} geometry may be converted to a Layermesh (\url{https://github.com/acroucher/layermesh}) mesh simply by accessing its \texttt{layermesh} property. Layermesh is a dedicated library for general layer/column meshes. Its mesh objects have capabilities similar to those of a \texttt{mulgrid} object, but it has advantages such as higher efficiency and a simpler interface. The Layermesh library must be installed before this property can be used.
+
+Example:
+
+\begin{lstlisting}
+  geo = mulgrid('gmymesh.dat')
+  m = geo.layermesh # m is a Layermesh mesh object
+\end{lstlisting}
+
+
 \index{MULgraph geometry!properties}
 \begin{center}
   \begin{longtable}{|l|l|p{75mm}|}
@@ -153,6 +166,7 @@ It is possible to rotate the permeability principal directions of a \texttt{mulg
     \texttt{gdcx}, \texttt{gdcy} & float  & cosines of angles x- and y-axes make with gravity vector\\
     \texttt{node\_kdtree} & \texttt{cKDTree} & tree structure for fast searching for nodes \\
     \texttt{layerlist} & list & layers (by index)\\
+    \texttt{layermesh} & \texttt{layermesh} mesh & Layermesh library mesh object\\
     \texttt{layer} & dictionary & layers (by name)\\
     \texttt{min\_surface\_block\_thickness} & (float, string) & thickness of thinnest surface block (and associated column name)\\
     \texttt{missing\_connections} & set & missing connections between columns\\
