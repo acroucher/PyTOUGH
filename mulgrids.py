@@ -2348,15 +2348,16 @@ class mulgrid(object):
             plt.ylim(plot_limits[1])
         else: ax.autoscale_view()
         if contours is not False:
-            from matplotlib.mlab import griddata
+            from scipy.interpolate import griddata
             valc = np.array(vals)
             bds = self.bounds
             xgrid = np.linspace(bds[0][0], bds[1][0], contour_grid_divisions[0])
             ygrid = np.linspace(bds[0][1], bds[1][1], contour_grid_divisions[1])
-            valgrid = griddata(xc, yc, valc, xgrid, ygrid, interp = 'linear')
+            Xgrid, Ygrid = np.meshgrid(xgrid,ygrid)
+            valgrid = griddata((xc, yc), valc, (Xgrid, Ygrid), method = 'linear')
             if isinstance(contours, list): cvals = contours
             else: cvals = False
-            CS = plt.contour(xgrid, ygrid, valgrid, cvals, colors = 'k')
+            CS = plt.contour(Xgrid, Ygrid, valgrid, cvals, colors = 'k')
             if contour_label_format is not None:
                 plt.clabel(CS, inline = 1, fmt = contour_label_format)
         plt.xlabel(xlabel)
@@ -2644,15 +2645,16 @@ class mulgrid(object):
                     col.norm.vmin, col.norm.vmax = tuple(colourbar_limits)
                 ax.add_collection(col)
                 if contours != False:
-                    from matplotlib.mlab import griddata
+                    from scipy.interpolate import griddata
                     valc = np.array(vals)
                     bds = ((np.min(xc), np.min(yc)), (np.max(xc), np.max(yc)))
                     xgrid = np.linspace(bds[0][0], bds[1][0], contour_grid_divisions[0])
                     ygrid = np.linspace(bds[0][1], bds[1][1], contour_grid_divisions[1])
-                    valgrid = griddata(xc, yc, valc, xgrid, ygrid, interp = 'linear')
+                    Xgrid, Ygrid = np.meshgrid(xgrid,ygrid)
+                    valgrid = griddata((xc, yc), valc, (Xgrid, Ygrid), method = 'linear')
                     if isinstance(contours, list): cvals = contours
                     else: cvals = False
-                    CS = plt.contour(xgrid, ygrid, valgrid, cvals, colors = 'k')
+                    CS = plt.contour(Xgrid, Ygrid, valgrid, cvals, colors = 'k')
                     if contour_label_format is not None:
                         plt.clabel(CS,  inline = 1, fmt = contour_label_format)
                 ax.set_ylabel(ylabel)
