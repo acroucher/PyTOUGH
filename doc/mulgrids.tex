@@ -847,7 +847,7 @@ The \texttt{from\_amesh()} method assumes the original AMESH grid has layers of 
 \end{itemize}
 
 \begin{snugshade}\subsubsection{\texttt{from\_gmsh(\emph{filename}, \emph{layers}, \emph{convention}=0, \emph{atmosphere\_type}=2,\\
-      \emph{top\_elevation}=0, \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True},\\
+      \emph{top\_elevation}=0, \emph{justify} = 'r', \emph{chars} = ascii\_lowercase, \emph{spaces}=\texttt{True},\\
       \emph{block\_order}=None)}}\end{snugshade}
 \label{sec:mulgrid:from_gmsh}
 \index{MULgraph geometry!importing from \texttt{gmsh}}
@@ -866,6 +866,8 @@ Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is a gri
   Type of atmosphere.
 \item \textbf{top\_elevation}: float\\
   Elevation of the top surface of the model (default is zero).
+\item \textbf{justify}: string\\
+  Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{chars}: string\\
   Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
 \item \textbf{spaces}: Boolean\\

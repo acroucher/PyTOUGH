@@ -1616,10 +1616,11 @@ class mulgrid(object):
         self.identify_layer_tops()
 
     def from_gmsh(self, filename, layers, convention = 0, atmos_type = 2,
-                  top_elevation = 0, chars = ascii_lowercase, spaces = True,
-                  block_order = None):
+                  top_elevation = 0, justify = 'r', chars = ascii_lowercase,
+                  spaces = True, block_order = None):
         """Returns a MULgraph grid constructed from a 2D gmsh grid and the
         specified layer structure."""
+        justfn = [str.rjust, str.ljust][justify == 'l']
         grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type,
                        block_order = block_order)
         grid.empty()
@@ -1632,7 +1633,7 @@ class mulgrid(object):
         for i in range(num_nodes):
             items = gmsh.readline().strip().split(' ')
             name, x, y = items[0], float(items[1]), float(items[2])
-            name = self.node_name_from_number(int(name), chars = chars, spaces = spaces)
+            name = self.node_name_from_number(int(name), justfn, chars, spaces)
             grid.add_node(node(name, np.array([x, y])))
         while not '$Elements' in line: line = gmsh.readline()
         num_elements = int(gmsh.readline().strip())
@@ -1641,20 +1642,17 @@ class mulgrid(object):
             element_type = int(items[1])
             if element_type in [2, 3]: # triangle or quadrilateral
                 name = items[0]
-                name = self.column_name_from_number(int(name), chars = chars,
-                                                    spaces = True)
+                name = self.column_name_from_number(int(name), justfn, chars, spaces)
                 ntags = int(items[2])
                 colnodenumbers = [int(item) for item in items[3 + ntags:]]
-                colnodenames = [[self.node_name_from_number(nodeno,
-                                                            chars = chars,
-                                                            spaces = spaces),
+                colnodenames = [[self.node_name_from_number(nodeno, justfn, chars, spaces),
                                  nodeno][convention > 0] for nodeno in colnodenumbers]
                 colnodes = [grid.node[v] for v in colnodenames]
                 grid.add_column(column(name, colnodes))
         gmsh.close()
         for con in grid.missing_connections: grid.add_connection(con)
         grid.delete_orphans()
-        grid.add_layers(layers, top_elevation, chars, spaces)
+        grid.add_layers(layers, top_elevation, justify, chars, spaces)
         grid.set_default_surface()
         grid.identify_neighbours()
         grid.setup_block_name_index()
