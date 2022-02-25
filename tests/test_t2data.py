@@ -630,11 +630,22 @@ class t2dataTestCase(unittest.TestCase):
 
         def eos_test():
             eos = None
-            self.assertEqual(dat.eos_json(eos)['eos'], {'name': 'we'})
+            eos_data, tracer_data = dat.eos_json(eos)
+            self.assertEqual(eos_data['eos'], {'name': 'we'})
+            self.assertIsNone(tracer_data)
             eos = 2
-            self.assertEqual(dat.eos_json(eos)['eos'], {'name': 'wce'})
+            eos_data, tracer_data = dat.eos_json(eos)
+            self.assertEqual(eos_data['eos'], {'name': 'wce'})
+            self.assertIsNone(tracer_data)
             eos = 'EWAV'
-            self.assertEqual(dat.eos_json(eos)['eos'], {'name': 'wae'})
+            eos_data, tracer_data = dat.eos_json(eos)
+            self.assertEqual(eos_data['eos'], {'name': 'wae'})
+            self.assertIsNone(tracer_data)
+            eos = 'EWT'
+            eos_data, tracer_data = dat.eos_json(eos)
+            self.assertEqual(eos_data['eos'], {'name': 'we'})
+            self.assertEqual(tracer_data['tracer'],
+                             {'name': 'tracer', 'phase': 'liquid'})
             eos = 3
             with self.assertRaises(Exception):
                 dat.eos_json(eos)
@@ -963,6 +974,15 @@ class t2dataTestCase(unittest.TestCase):
                                  for i in range(n2, nblks)]))
             self.assertTrue(all([j['initial']['region'][i] == 2
                                  for i in range(n2, nblks)]))
+            json.dumps(j)
+
+            dat.multi['eos'] = 'EWT'
+            primary = [2.e5, 15., 1e-6]
+            incons = dat.grid.incons(primary)
+            j = dat.initial_json(geo, incons, 'we', {'name': 'tracer'})
+            self.assertEqual(j['initial']['primary'], primary[:2])
+            self.assertEqual(j['initial']['region'], 1)
+            self.assertEqual(j['initial']['tracer'], 1e-6)
             json.dumps(j)
 
         def generators_test():
@@ -1405,6 +1425,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(len(j['boundaries']), 1)
             self.assertEqual(j['boundaries'][0]['primary'], [P0])
             self.assertEqual(j['boundaries'][0]['region'], 1)
+            self.assertFalse('tracer' in j['boundaries'][0])
             self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
             self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
             json.dumps(j)
@@ -1417,9 +1438,26 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(len(j['boundaries']), 1)
             self.assertEqual(j['boundaries'][0]['primary'], [P0, T0])
             self.assertEqual(j['boundaries'][0]['region'], 1)
+            self.assertFalse('tracer' in j['boundaries'][0])
             self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
             self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
             json.dumps(j)
+
+            # pure water + tracer, liquid top BCs
+            dat.multi['eos'] = 'EWT'
+            eos = 'we'
+            P0, T0, X0 = 1.e5, 15., 1.e-6
+            bdy_incons = dat.grid.incons((P0, T0, X0))
+            j = dat.boundaries_json(geo, bdy_incons, atmos_volume, eos, mesh_coords,
+                                    {'name': 'tracer'})
+            self.assertEqual(len(j['boundaries']), 1)
+            self.assertEqual(j['boundaries'][0]['primary'], [P0, T0])
+            self.assertEqual(j['boundaries'][0]['region'], 1)
+            self.assertEqual(j['boundaries'][0]['tracer'], X0)
+            self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
+            self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
+            json.dumps(j)
+            dat.multi['eos'] = 'EW'
 
             # pure water, dry steam top BCs
             eos = 'we'
@@ -1429,6 +1467,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(len(j['boundaries']), 1)
             self.assertEqual(j['boundaries'][0]['primary'], [P0, T0])
             self.assertEqual(j['boundaries'][0]['region'], 2)
+            self.assertFalse('tracer' in j['boundaries'][0])
             self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
             self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
             json.dumps(j)
@@ -1441,6 +1480,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(len(j['boundaries']), 1)
             self.assertEqual(j['boundaries'][0]['primary'], [P0, Sv0])
             self.assertEqual(j['boundaries'][0]['region'], 4)
+            self.assertFalse('tracer' in j['boundaries'][0])
             self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
             self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
             json.dumps(j)
@@ -1453,6 +1493,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(len(j['boundaries']), 1)
             self.assertEqual(j['boundaries'][0]['primary'], [P0, T0, Pa0])
             self.assertEqual(j['boundaries'][0]['region'], 1)
+            self.assertFalse('tracer' in j['boundaries'][0])
             self.assertEqual(j['boundaries'][0]['faces']['normal'], [0, 0, 1])
             self.assertEqual(j['boundaries'][0]['faces']['cells'], [0, 1, 2, 3])
             json.dumps(j)
@@ -1589,6 +1630,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(len(j['boundaries']), 1)
             self.assertEqual(j['boundaries'][0]['primary'], [Ps, Ts])
             self.assertEqual(j['boundaries'][0]['region'], 1)
+            self.assertFalse('tracer' in j['boundaries'][0])
             self.assertEqual(j['boundaries'][0]['faces']['normal'], [1, 0])
             self.assertEqual(j['boundaries'][0]['faces']['cells'], cell_indices)
             json.dumps(j)
