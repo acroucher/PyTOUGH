@@ -2361,9 +2361,9 @@ class t2data(object):
                                 if gen.type != 'DELT':
                                     if gen.fg is not None:
                                         if gen.fg > 0.:
-                                            g['limiter']['separator_pressure'] = gen.fg
+                                            g['separator'] = {'pressure': gen.fg}
                                         elif gen.fg < 0.:
-                                            raise Exception('Two-stage flash separator not supported.')
+                                            g['separator'] = {'pressure': [1.45e6, 0.55e6]}
                             elif gen.hg < 0. and gen.type == 'DELG':
                                 g['rate'] = gen.hg # initial rate for computing productivity index
                                 del g['deliverability']['productivity']

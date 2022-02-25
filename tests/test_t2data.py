@@ -1126,8 +1126,21 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
+            self.assertEqual(g['limiter'], {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['separator'], {'pressure': psep})
+            json.dumps(g)
+
+            # DELG with steam limiter and 2-stage separator
+            qmax = 5.
+            gen = t2generator(name = name, block = blkname,
+                              type = 'DELG', gx = PI, ex = Pwb, fg = -1, hg = qmax)
+            g = generator_json(gen)
+            self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
+            self.assertEqual(g['direction'], 'production')
+            self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'],
-                             {'type': 'steam', 'limit': qmax, 'separator_pressure': psep})
+                             {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['separator'], {'pressure': [1.45e6, 0.55e6]})
             json.dumps(g)
 
             # DELG with table of PI vs time
@@ -1198,8 +1211,8 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'],
-                             {'type': 'steam', 'limit': qmax, 'separator_pressure': psep})
+            self.assertEqual(g['limiter'], {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['separator'], {'pressure': psep})
             json.dumps(g)
 
             # DELT with total flow limiter
