@@ -12,6 +12,9 @@ def column_nan_to_num(x):
             if dt[0].name.startswith('float'): x[key] = np.nan_to_num(x[key])
         return x
 
+default_separator_pressure = 0.55e6
+default_2_stage_separator_pressure = [1.45e6, 0.55e6]
+
 class t2data_stats(t2data):
     """Variant of t2data class with extra properties for vital statistics
     of a t2data object- for comparisons between t2data objects that
@@ -1083,6 +1086,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELG
@@ -1093,6 +1097,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELG with initial rate
@@ -1104,6 +1109,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertEqual(g['rate'], q0)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELG with steam limiter
@@ -1115,6 +1121,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'], {'steam': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELG with steam limiter and separator pressure
@@ -1139,7 +1146,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'], {'steam': qmax})
-            self.assertEqual(g['separator'], {'pressure': [1.45e6, 0.55e6]})
+            self.assertEqual(g['separator'], {'pressure': default_2_stage_separator_pressure})
             json.dumps(g)
 
             # DELG with table of PI vs time
@@ -1155,6 +1162,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELG with table of cutoff pressure vs enthalpy
@@ -1171,6 +1179,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELG with table of cutoff pressure vs enthalpy and steam limiter
@@ -1185,6 +1194,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'], {'steam': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELS
@@ -1226,6 +1236,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'], {'total': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELT with negative limit specified
@@ -1240,6 +1251,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELT with table of PI vs time
@@ -1255,6 +1267,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELT with table of cutoff pressure vs enthalpy and total flow limiter
@@ -1272,6 +1285,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'], {'total': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELW with liquid flow limiter
@@ -1300,6 +1314,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELW with table of PI vs time
@@ -1315,6 +1330,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertFalse('limiter' in g)
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # DELW with table of cutoff pressure vs enthalpy and liquid flow limiter
@@ -1332,6 +1348,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
             self.assertEqual(g['limiter'], {'water': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
             json.dumps(g)
 
             # RECH with specified mass flow (effectively same as MASS)
@@ -1400,6 +1417,7 @@ class t2dataTestCase(unittest.TestCase):
                              {'pressure': Pwb, 'productivity': PI, 'threshold': Pthreshold})
             self.assertEqual(g['direction'], 'production')
             self.assertEqual(g['limiter'], {'total': abs(q)})
+            self.assertEqual(g['separator'], {'pressure': Pwb})
             json.dumps(g)
 
             # MASD with mass table
@@ -1418,6 +1436,32 @@ class t2dataTestCase(unittest.TestCase):
                              {'pressure': Pwb, 'productivity': PI, 'threshold': Pthreshold})
             self.assertEqual(g['direction'], 'production')
             self.assertEqual(g['limiter'], {'total': gx})
+            self.assertEqual(g['separator'], {'pressure': Pwb})
+            json.dumps(g)
+
+            # DMAK
+            PI = 1.e-12
+            Pwb = 2.e5
+            qmax = 10.
+            gen = t2generator(name = name, block = blkname,
+                              type = 'DMAK', gx = PI, ex = Pwb, hg = qmax)
+            g = generator_json(gen)
+            self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
+            self.assertEqual(g['direction'], 'production')
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['limiter'], {'steam': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_separator_pressure})
+            json.dumps(g)
+
+            # DMAK with 2-stage separator
+            gen = t2generator(name = name, block = blkname,
+                              type = 'DMAK', gx = PI, ex = Pwb, fg = -1, hg = qmax)
+            g = generator_json(gen)
+            self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
+            self.assertEqual(g['direction'], 'production')
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['limiter'], {'steam': qmax})
+            self.assertEqual(g['separator'], {'pressure': default_2_stage_separator_pressure})
             json.dumps(g)
 
         def boundaries_test():
