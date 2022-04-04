@@ -2316,13 +2316,21 @@ class t2data(object):
         jsondata = {}
         eos_num_equations = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
         num_eqns = eos_num_equations[eosname]
-        unsupported_types = ['CO2 ', 'DMAK', 'FEED', 'FINJ', 'HLOS', 'IMAK', 'MAKE',
+        unsupported_types = ['CO2 ', 'FEED', 'FINJ', 'HLOS', 'IMAK', 'MAKE',
                              'PINJ', 'POWR', 'RINJ', 'TMAK', 'TOST', 'VOL.',
                              'WBRE', 'WFLO', 'XINJ', 'XIN2']
         mass_component = {'MASS': 1, 'MASD': 1, 'HEAT': num_eqns,
                           'COM1': 1, 'COM2': 2, 'COM3': 3, 'COM4': 4,
                           'COM5': 5, 'WATE': 1, 'AIR ': 2, 'TRAC': 2, 'NACL': 3}
-        limit_type = {'DELG': 'steam', 'DELS': 'steam', 'DELT': 'total', 'DELW': 'water'}
+        limit_type = {'DELG': 'steam', 'DMAK': 'steam', 'DELS': 'steam',
+                      'DELT': 'total', 'DELW': 'water'}
+        def separator(P):
+            if P is None: Psep = 0.55e6
+            else:
+                if P > 0.: Psep = P
+                elif P < 0: Psep = [1.45e6, 0.55e6]
+                else: Psep = 0.55e6
+            return {'pressure': Psep}
         if self.parameter['option'][12] == 0:
             interp_type, averaging_type = "linear", "endpoint"
         elif self.parameter['option'][12] == 1:
@@ -2342,37 +2350,46 @@ class t2data(object):
                             g['tracer'] = gen.gx
                         else:
                             g['rate'] = gen.gx
-                            if gen.gx > 0. or (gen.time and any([r > 0. for r in gen.rate])):
+                            if gen.type == 'MASD': injection = False
+                            else:
+                                injection = gen.gx > 0. or \
+                                            (gen.time and any([r > 0. for r in gen.rate]))
+                            if injection:
                                 g['component'] = mass_component[gen.type]
                                 if gen.type != 'HEAT': g['enthalpy'] = gen.ex
+                            else:
+                                if gen.type == 'MASS':
+                                    g['separator'] = separator(gen.hg)
+                                elif gen.type == 'MASD':
+                                    g['deliverability'] = {'productivity': gen.ex,
+                                                           'pressure': gen.fg,
+                                                           'threshold': gen.hg}
+                                    g['limiter'] = {'total': abs(gen.gx)}
+                                    g['separator'] = separator(gen.fg)
+                                    g['direction'] = 'production'
                     if gen.type == 'DELV':
                         if gen.ltab > 1:
                             raise Exception('DELV generator with multiple layers not supported.')
                         else:
                             g['deliverability'] = {'productivity': gen.gx,
                                                    'pressure': gen.ex}
-                        g['direction'] = 'production'
-                    elif gen.type in ['DELG', 'DELS', 'DELT', 'DELW']:
+                            if gen.gx >= 0.:
+                                g['direction'] = 'production'
+                                g['separator'] = separator(gen.fg)
+                            else:
+                                g['direction'] = 'injection'
+                                g['enthalpy'] = gen.fg
+                    elif gen.type in ['DELG', 'DELS', 'DELT', 'DELW', 'DMAK']:
                         g['deliverability'] = {'productivity': gen.gx,
                                                'pressure': gen.ex}
+                        g['separator'] = separator(gen.fg)
                         if gen.hg is not None:
                             if gen.hg > 0.:
-                                g['limiter'] = {'type': limit_type[gen.type], 'limit': gen.hg}
-                                if gen.type != 'DELT':
-                                    if gen.fg is not None:
-                                        if gen.fg > 0.:
-                                            g['separator'] = {'pressure': gen.fg}
-                                        elif gen.fg < 0.:
-                                            g['separator'] = {'pressure': [1.45e6, 0.55e6]}
-                            elif gen.hg < 0. and gen.type == 'DELG':
+                                g['limiter'] = {limit_type[gen.type]: gen.hg}
+                            elif gen.hg < 0. and gen.type in ['DELG', 'DMAK']:
                                 g['rate'] = gen.hg # initial rate for computing productivity index
                                 del g['deliverability']['productivity']
                         if gen.type == 'DELS': g['production_component'] = 2
-                        g['direction'] = 'production'
-                    elif gen.type == 'MASD':
-                        g['deliverability'] = {'productivity': gen.ex,
-                                               'pressure': gen.fg,
-                                               'threshold': gen.hg}
                         g['direction'] = 'production'
                     elif gen.type == 'RECH':
                         g['enthalpy'] = gen.ex
@@ -2392,7 +2409,7 @@ class t2data(object):
                         g['interpolation'] = interp_type
                         g['averaging'] = averaging_type
                         data_table = [list(r) for r in zip(gen.time, gen.rate)]
-                        if gen.type in ['DELG', 'DELT', 'DELW']:
+                        if gen.type in ['DELG', 'DMAK', 'DELT', 'DELW']:
                             if gen.ltab > 0:
                                 g['deliverability']['productivity'] = {'time': data_table}
                             else:

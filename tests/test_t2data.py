@@ -1114,7 +1114,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'steam': qmax})
             json.dumps(g)
 
             # DELG with steam limiter and separator pressure
@@ -1126,7 +1126,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'steam': qmax})
             self.assertEqual(g['separator'], {'pressure': psep})
             json.dumps(g)
 
@@ -1138,8 +1138,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'],
-                             {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'steam': qmax})
             self.assertEqual(g['separator'], {'pressure': [1.45e6, 0.55e6]})
             json.dumps(g)
 
@@ -1185,7 +1184,7 @@ class t2dataTestCase(unittest.TestCase):
                               'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'steam': qmax})
             json.dumps(g)
 
             # DELS
@@ -1211,7 +1210,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'steam', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'steam': qmax})
             self.assertEqual(g['separator'], {'pressure': psep})
             json.dumps(g)
 
@@ -1226,7 +1225,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'total', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'total': qmax})
             json.dumps(g)
 
             # DELT with negative limit specified
@@ -1272,7 +1271,7 @@ class t2dataTestCase(unittest.TestCase):
                               'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'total', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'total': qmax})
             json.dumps(g)
 
             # DELW with liquid flow limiter
@@ -1286,7 +1285,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'water', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'water': qmax})
             json.dumps(g)
 
             # DELW with negative limit specified
@@ -1332,7 +1331,7 @@ class t2dataTestCase(unittest.TestCase):
                               'productivity': PI})
             self.assertEqual(g['direction'], 'production')
             self.assertFalse('rate' in g)
-            self.assertEqual(g['limiter'], {'type': 'water', 'limit': qmax})
+            self.assertEqual(g['limiter'], {'water': qmax})
             json.dumps(g)
 
             # RECH with specified mass flow (effectively same as MASS)
@@ -1400,24 +1399,25 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['deliverability'],
                              {'pressure': Pwb, 'productivity': PI, 'threshold': Pthreshold})
             self.assertEqual(g['direction'], 'production')
-            self.assertFalse('limiter' in g)
+            self.assertEqual(g['limiter'], {'total': abs(q)})
             json.dumps(g)
 
             # MASD with mass table
             t = [0., 10., 240., 350., 750.]
             q = [-10., -12., -14., -13., -16.]
+            gx = 16
             PI = 1.e-12
             Pwb = 2.5e5
             Pthreshold = 3.e5
             gen = t2generator(name = name, block = blkname,
                               type = 'MASD', ex = PI, fg = Pwb, hg = Pthreshold,
-                              time = t, rate = q)
+                              time = t, rate = q, gx = gx)
             g = generator_json(gen)
             self.assertEqual(g['rate'], [list(r) for r in zip(t, q)])
             self.assertEqual(g['deliverability'],
                              {'pressure': Pwb, 'productivity': PI, 'threshold': Pthreshold})
             self.assertEqual(g['direction'], 'production')
-            self.assertFalse('limiter' in g)
+            self.assertEqual(g['limiter'], {'total': gx})
             json.dumps(g)
 
         def boundaries_test():
