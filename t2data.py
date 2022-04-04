@@ -2317,7 +2317,7 @@ class t2data(object):
         eos_num_equations = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
         num_eqns = eos_num_equations[eosname]
         unsupported_types = ['CO2 ', 'FEED', 'FINJ', 'HLOS', 'IMAK', 'MAKE',
-                             'PINJ', 'POWR', 'RINJ', 'TMAK', 'TOST', 'VOL.',
+                             'PINJ', 'POWR', 'RINJ', 'TOST', 'VOL.',
                              'WBRE', 'WFLO', 'XINJ', 'XIN2']
         mass_component = {'MASS': 1, 'MASD': 1, 'HEAT': num_eqns,
                           'COM1': 1, 'COM2': 2, 'COM3': 3, 'COM4': 4,
@@ -2420,7 +2420,35 @@ class t2data(object):
                             if gen.rate: g['rate'] = data_table
                             if gen.enthalpy:
                                 g['enthalpy'] = [list(r) for r in zip(gen.time, gen.enthalpy)]
-                    jsondata['source'].append(g)
+                    if gen.type != 'TMAK': jsondata['source'].append(g)
+        return jsondata
+
+    def source_network_json(self):
+        """Converts TOUGH2 source network data in GENER to Waiwera JSON dictionary."""
+        jsondata = {}
+        if self.generatorlist:
+            group_json = []
+            dmak = []
+            itmak = 1
+            for gen in self.generatorlist:
+                if gen.type == 'DMAK': dmak.append(gen.name)
+                elif gen.type == 'TMAK':
+                    if gen.name.strip(): name = gen.name
+                    else: name = 'makeup %d' % itmak
+                    group = {'name': name}
+                    limiter = {}
+                    if gen.gx: limiter['total'] = abs(gen.gx)
+                    if gen.ex: limiter['steam'] = abs(gen.ex)
+                    if limiter: group['limiter'] = limiter
+                    if gen.hg >= 0:
+                        raise Exception('Unscaled TMAK not supported.')
+                    elif gen.hg == -1: group['scaling'] = 'uniform'
+                    else: group['scaling'] = 'progressive'
+                    group['in'] = dmak
+                    group_json.append(group)
+                    dmak = []
+                    itmak += 1
+            if group_json: jsondata['network'] = {'group': group_json}
         return jsondata
 
     def boundaries_json(self, geo, bdy_incons, atmos_volume, eos, mesh_coords, tracer = None):
@@ -2600,4 +2628,5 @@ class t2data(object):
                                              mesh_coords, tracer_data))
         jsondata.update(self.generators_json(geo, jsondata['eos']['name'],
                                              tracer_data))
+        jsondata.update(self.source_network_json())
         return jsondata
