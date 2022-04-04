@@ -1464,6 +1464,58 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['separator'], {'pressure': default_2_stage_separator_pressure})
             json.dumps(g)
 
+        def network_test():
+
+            dat.clear_generators()
+            gen = t2generator(name = 'foo 1', block = '  a 1', type = 'DELG')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 2', block = '  a 2', type = 'DELG')
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            j.update(dat.source_network_json())
+            self.assertFalse('network' in j)
+
+            dat.clear_generators()
+            gen = t2generator(name = 'foo 1', block = '  a 1', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 2', block = '  a 2', type = 'DMAK')
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            j.update(dat.source_network_json())
+            self.assertFalse('network' in j)
+
+            gen = t2generator(block = '  a 1', type = 'TMAK',
+                              gx = 100., hg = -1)
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            j.update(dat.source_network_json())
+            self.assertEqual(len(j['network']['group']), 1)
+            grp = j['network']['group'][0]
+            self.assertEqual(grp['name'], 'makeup 1')
+            self.assertEqual(grp['in'], ['foo 1', 'foo 2'])
+            self.assertEqual(grp['scaling'], 'uniform')
+            self.assertEqual(grp['limiter'], {'total': 100})
+
+            gen = t2generator(name = 'foo 3', block = '  a 3', type = 'DELG')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 4', block = '  a 4', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 5', block = '  a 5', type = 'DELG')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 6', block = '  a 6', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'tmk 2', block = '  a 1', type = 'TMAK',
+                              gx = 50., ex = 20, hg = -2)
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            j.update(dat.source_network_json())
+            self.assertEqual(len(j['network']['group']), 2)
+            grp = j['network']['group'][1]
+            self.assertEqual(grp['name'], 'tmk 2')
+            self.assertEqual(grp['in'], ['foo 4', 'foo 6'])
+            self.assertEqual(grp['scaling'], 'progressive')
+            self.assertEqual(grp['limiter'], {'total': 50, 'steam': 20})
+
         def boundaries_test():
 
             nx, ny, nz = 2, 2, 3
@@ -1702,6 +1754,7 @@ class t2dataTestCase(unittest.TestCase):
         primary_to_region_test()
         initial_test()
         generators_test()
+        network_test()
         boundaries_test()
 
 if __name__ == '__main__':
