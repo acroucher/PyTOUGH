@@ -1624,31 +1624,80 @@ class mulgrid(object):
         grid = mulgrid(type = 'GENER', convention = convention, atmos_type = atmos_type,
                        block_order = block_order)
         grid.empty()
+        chars = uniqstring(chars)
         mode = 'r' if sys.version_info > (3,) else 'rU'
         gmsh = open(filename, mode)
         line = ''
-        chars = uniqstring(chars)
-        while not '$Nodes' in line: line = gmsh.readline()
-        num_nodes = int(gmsh.readline().strip())
-        for i in range(num_nodes):
+        while not '$MeshFormat' in line: line = gmsh.readline()
+        line = gmsh.readline()
+        filetype = line.split(' ')[0]
+        gmsh.seek(0)
+
+        def read_msh_2_2():
+            line = ''
+            while not '$Nodes' in line: line = gmsh.readline()
+            num_nodes = int(gmsh.readline().strip())
+            for i in range(num_nodes):
+                items = gmsh.readline().strip().split(' ')
+                name, x, y = items[0], float(items[1]), float(items[2])
+                name = self.node_name_from_number(int(name), justfn, chars, spaces)
+                grid.add_node(node(name, np.array([x, y])))
+            while not '$Elements' in line: line = gmsh.readline()
+            num_elements = int(gmsh.readline().strip())
+            for i in range(num_elements):
+                items = gmsh.readline().strip().split(' ')
+                element_type = int(items[1])
+                if element_type in [2, 3]: # triangle or quadrilateral
+                    name = items[0]
+                    name = self.column_name_from_number(int(name), justfn, chars, spaces)
+                    ntags = int(items[2])
+                    colnodenumbers = [int(item) for item in items[3 + ntags:]]
+                    colnodenames = [[self.node_name_from_number(nodeno, justfn, chars, spaces),
+                                     nodeno][convention > 0] for nodeno in colnodenumbers]
+                    colnodes = [grid.node[v] for v in colnodenames]
+                    grid.add_column(column(name, colnodes))
+
+        def read_msh_4_1():
+            line = ''
+            while not '$Nodes' in line: line = gmsh.readline()
             items = gmsh.readline().strip().split(' ')
-            name, x, y = items[0], float(items[1]), float(items[2])
-            name = self.node_name_from_number(int(name), justfn, chars, spaces)
-            grid.add_node(node(name, np.array([x, y])))
-        while not '$Elements' in line: line = gmsh.readline()
-        num_elements = int(gmsh.readline().strip())
-        for i in range(num_elements):
+            num_entity_blocks, num_nodes = int(items[0]), int(items[1])
+            for i in range(num_entity_blocks):
+                items = gmsh.readline().strip().split(' ')
+                num_block_nodes = int(items[-1])
+                node_tags = []
+                for inode in range(num_block_nodes):
+                    node_tags.append(int(gmsh.readline()))
+                node_coords = []
+                for inode in range(num_block_nodes):
+                    items = gmsh.readline().strip().split(' ')
+                    pos = [float(item) for item in items[:2]]
+                    node_coords.append(pos)
+                for tag, pos in zip(node_tags, node_coords):
+                    name = self.node_name_from_number(tag, justfn, chars, spaces)
+                    grid.add_node(node(name, np.array(pos)))
+            while not '$Elements' in line: line = gmsh.readline()
             items = gmsh.readline().strip().split(' ')
-            element_type = int(items[1])
-            if element_type in [2, 3]: # triangle or quadrilateral
-                name = items[0]
-                name = self.column_name_from_number(int(name), justfn, chars, spaces)
-                ntags = int(items[2])
-                colnodenumbers = [int(item) for item in items[3 + ntags:]]
-                colnodenames = [[self.node_name_from_number(nodeno, justfn, chars, spaces),
-                                 nodeno][convention > 0] for nodeno in colnodenumbers]
-                colnodes = [grid.node[v] for v in colnodenames]
-                grid.add_column(column(name, colnodes))
+            num_entity_blocks, num_elements = int(items[0]), int(items[1])
+            for i in range(num_entity_blocks):
+                items = gmsh.readline().strip().split(' ')
+                element_type, num_block_elements = int(items[2]), int(items[3])
+                if element_type in [2, 3]: # triangle or quadrilateral
+                    for ielt in range(num_block_elements):
+                        items = gmsh.readline().strip().split(' ')
+                        tag = items[0]
+                        name = self.column_name_from_number(int(tag), justfn, chars, spaces)
+                        colnodenumbers = [int(item) for item in items[1:]]
+                        colnodenames = [[self.node_name_from_number(nodeno, justfn, chars, spaces),
+                                         nodeno][convention > 0] for nodeno in colnodenumbers]
+                        colnodes = [grid.node[v] for v in colnodenames]
+                        grid.add_column(column(name, colnodes))
+                else:
+                    for ielt in range(num_block_elements): gmsh.readline()
+
+        if filetype == '2.2': read_msh_2_2()
+        elif filetype == '4.1': read_msh_4_1()
+        else: raise Exception('GMSH version %s not supported.' % filetype)
         gmsh.close()
         for con in grid.missing_connections: grid.add_connection(con)
         grid.delete_orphans()

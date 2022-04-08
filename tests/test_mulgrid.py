@@ -374,12 +374,20 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(15, geo.num_layers)
 
     def test_gmsh(self):
-        infile = os.path.join('mulgrid', 'gmsh.msh')
+        infile = os.path.join('mulgrid', 'gmsh2_2.msh')
         layers = [1, 2, 3]
         geo = mulgrid().from_gmsh(infile, layers)
         self.assertEqual(117, geo.num_nodes)
         self.assertEqual(96, geo.num_columns)
         self.assertEqual(96 * len(layers), geo.num_blocks)
+        self.assertEqual(len(layers) + 1, geo.num_layers)
+
+        infile = os.path.join('mulgrid', 'gmsh4_1.msh')
+        layers = [1, 2, 3]
+        geo = mulgrid().from_gmsh(infile, layers)
+        self.assertEqual(48, geo.num_nodes)
+        self.assertEqual(35, geo.num_columns)
+        self.assertEqual(35 * len(layers), geo.num_blocks)
         self.assertEqual(len(layers) + 1, geo.num_layers)
 
     def test_block_order(self):
