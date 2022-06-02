@@ -2330,7 +2330,7 @@ class t2data(object):
                           'COM1': 1, 'COM2': 2, 'COM3': 3, 'COM4': 4,
                           'COM5': 5, 'WATE': 1, 'AIR ': 2, 'TRAC': 2, 'NACL': 3}
         limit_type = {'DELG': 'steam', 'DMAK': 'steam', 'DELS': 'steam',
-                      'DELT': 'total', 'DELW': 'water'}
+                      'DELT': 'total', 'DELW': 'water', 'DMAT': 'total'}
         def separator(P):
             if P is None: Psep = 0.55e6
             else:
@@ -2386,14 +2386,14 @@ class t2data(object):
                             else:
                                 g['direction'] = 'injection'
                                 g['enthalpy'] = gen.fg
-                    elif gen.type in ['DELG', 'DELS', 'DELT', 'DELW', 'DMAK']:
+                    elif gen.type in ['DELG', 'DELS', 'DELT', 'DELW', 'DMAK', 'DMAT']:
                         g['deliverability'] = {'productivity': gen.gx,
                                                'pressure': gen.ex}
                         g['separator'] = separator(gen.fg)
                         if gen.hg is not None:
                             if gen.hg > 0.:
                                 g['limiter'] = {limit_type[gen.type]: gen.hg}
-                            elif gen.hg < 0. and gen.type in ['DELG', 'DMAK']:
+                            elif gen.hg < 0. and gen.type in ['DELG', 'DMAK', 'DMAT']:
                                 g['rate'] = gen.hg # initial rate for computing productivity index
                                 del g['deliverability']['productivity']
                         if gen.type == 'DELS': g['production_component'] = 2

@@ -1510,6 +1510,21 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['separator'], {'pressure': default_2_stage_separator_pressure})
             json.dumps(g)
 
+            # DMAT
+            PI = 1.e-12
+            Pwb = 2.e5
+            qmax = 20.
+            psep = 65.e5
+            gen = t2generator(name = name, block = blkname,
+                              type = 'DMAT', gx = PI, ex = Pwb, hg = qmax, fg = psep)
+            g = generator_json(gen)
+            self.assertEqual(g['deliverability'], {'pressure': Pwb, 'productivity': PI})
+            self.assertEqual(g['direction'], 'production')
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['limiter'], {'total': qmax})
+            self.assertEqual(g['separator'], {'pressure': psep})
+            json.dumps(g)
+
             # IMAK
             inj = 1.e-4
             P0 = 45.e5
