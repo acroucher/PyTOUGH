@@ -2323,9 +2323,9 @@ class t2data(object):
         jsondata = {}
         eos_num_equations = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
         num_eqns = eos_num_equations[eosname]
-        unsupported_types = ['CO2 ', 'FEED', 'FINJ', 'HLOS', 'IMAK', 'MAKE',
+        unsupported_types = ['CO2 ', 'FEED', 'FINJ', 'HLOS', 'MAKE',
                              'PINJ', 'POWR', 'RINJ', 'TOST', 'VOL.',
-                             'WBRE', 'WFLO', 'XINJ', 'XIN2']
+                             'WBRE', 'WFLO', 'XIN2']
         mass_component = {'MASS': 1, 'MASD': 1, 'HEAT': num_eqns,
                           'COM1': 1, 'COM2': 2, 'COM3': 3, 'COM4': 4,
                           'COM5': 5, 'WATE': 1, 'AIR ': 2, 'TRAC': 2, 'NACL': 3}
@@ -2412,6 +2412,12 @@ class t2data(object):
                             g['recharge'] = rech
                         else:
                             g['rate'] = gen.gx
+                    elif gen.type in ['IMAK', 'XINJ']:
+                        g['direction'] = 'injection'
+                        g['enthalpy'] = gen.ex
+                        g['injectivity'] = {'pressure': gen.hg, 'coefficient': abs(gen.fg)}
+                        if gen.gx > 0:
+                            g['limiter'] = {'total': gen.gx}
                     if gen.time:
                         g['interpolation'] = interp_type
                         g['averaging'] = averaging_type

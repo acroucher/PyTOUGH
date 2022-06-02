@@ -1510,6 +1510,35 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(g['separator'], {'pressure': default_2_stage_separator_pressure})
             json.dumps(g)
 
+            # IMAK
+            inj = 1.e-4
+            P0 = 45.e5
+            qmax = 20.
+            h = 4.4e5
+            gen = t2generator(name = name, block = blkname,
+                              type = 'IMAK', gx = qmax, ex = h, hg = P0, fg = inj)
+            g = generator_json(gen)
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['injectivity'], {'coefficient': inj, 'pressure': P0})
+            self.assertEqual(g['enthalpy'], h)
+            self.assertEqual(g['direction'], 'injection')
+            self.assertEqual(g['limiter'], {'total': qmax})
+            json.dumps(g)
+
+            # XINJ (with no limiter)
+            inj = 1.e-4
+            P0 = 45.e5
+            h = 4.4e5
+            gen = t2generator(name = name, block = blkname,
+                              type = 'XINJ', ex = h, hg = P0, fg = inj)
+            g = generator_json(gen)
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['injectivity'], {'coefficient': inj, 'pressure': P0})
+            self.assertEqual(g['enthalpy'], h)
+            self.assertEqual(g['direction'], 'injection')
+            self.assertFalse('limiter' in g)
+            json.dumps(g)
+
         def network_test():
 
             dat.clear_generators()
