@@ -551,6 +551,7 @@ class t2dataTestCase(unittest.TestCase):
         dat.filename = filename_base + '.dat'
         dat.parameter['gravity'] = gravity
         dat.multi = {'eos': 'EW'}
+        dat.diffusion = [[-1e-6, -1e-6], [-1e-6, -1e-6]]
 
         def basic_test():
             j = dat.json(geo, mesh_filename)
@@ -633,19 +634,34 @@ class t2dataTestCase(unittest.TestCase):
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'we'})
             self.assertIsNone(tracer_data)
+
             eos = 2
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'wce'})
             self.assertIsNone(tracer_data)
+
             eos = 'EWAV'
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'wae'})
             self.assertIsNone(tracer_data)
+
             eos = 'EWT'
             eos_data, tracer_data = dat.eos_json(eos)
             self.assertEqual(eos_data['eos'], {'name': 'we'})
             self.assertEqual(tracer_data['tracer'],
                              {'name': 'tracer', 'phase': 'liquid'})
+
+            eos = 'EWTD'
+            dat.diffusion = [[-1e-6, -1e-6], [-1e-6, -1e-6]]
+            eos_data, tracer_data = dat.eos_json(eos)
+            self.assertEqual(eos_data['eos'], {'name': 'we'})
+            self.assertEqual(tracer_data['tracer'],
+                             {'name': 'tracer', 'phase': 'liquid', 'diffusion': 1e-6})
+
+            dat.diffusion = [[1e-5, 1e-6], [1e-6, 1e-5]]
+            with self.assertRaises(Exception):
+                eos_data, tracer_data = dat.eos_json(eos)
+
             eos = 3
             with self.assertRaises(Exception):
                 dat.eos_json(eos)
@@ -989,10 +1005,10 @@ class t2dataTestCase(unittest.TestCase):
 
             dat.parameter['option'][12] = 0
 
-            def generator_json(gen, eos = 'we'):
+            def generator_json(gen, eos = 'we', tracer = None):
                 dat.clear_generators()
                 dat.add_generator(gen)
-                j = dat.generators_json(geo, eos)
+                j = dat.generators_json(geo, eos, tracer)
                 self.assertEqual(len(j['source']), 1)
                 return j['source'][0]
 
@@ -1025,6 +1041,36 @@ class t2dataTestCase(unittest.TestCase):
             g = generator_json(gen)
             self.assertEqual(g['rate'], q)
             self.assertEqual(g['component'], 2)
+            json.dumps(g)
+
+            # COM2 tracer
+            gen = t2generator(name = name, block = blkname,
+                              type = 'COM2', gx = q)
+            g = generator_json(gen, eos = 'we', tracer = {'name': 'foo'})
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['tracer'], q)
+            self.assertFalse('component' in g)
+            json.dumps(g)
+
+            # TRAC
+            gen = t2generator(name = name, block = blkname,
+                              type = 'TRAC', gx = q)
+            g = generator_json(gen, eos = 'we', tracer = {'name': 'foo'})
+            self.assertFalse('rate' in g)
+            self.assertEqual(g['tracer'], q)
+            self.assertFalse('component' in g)
+            json.dumps(g)
+
+            # TRAC table
+            t = [0., 10., 240., 350.]
+            q = [2.e-6, 2.5e-6, 2.9e-6, 3.1e-6]
+            gen = t2generator(name = name, block = blkname,
+                              type = 'TRAC', time = t, rate = q)
+            g = generator_json(gen, eos = 'we', tracer = {'name': 'foo'})
+            self.assertEqual(g['tracer'], [list(r) for r in zip(t, q)])
+            self.assertFalse('rate' in g)
+            self.assertFalse('component' in g)
+            self.assertFalse('enthalpy' in g)
             json.dumps(g)
 
             # heat
