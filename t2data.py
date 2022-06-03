@@ -2320,17 +2320,16 @@ class t2data(object):
 
     def generators_json(self, geo, eosname, tracer = None):
         """Converts TOUGH2 generator data to Waiwera JSON dictionary."""
+
         jsondata = {}
         eos_num_equations = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
         num_eqns = eos_num_equations[eosname]
         unsupported_types = ['CO2 ', 'FEED', 'FINJ', 'HLOS', 'MAKE',
                              'PINJ', 'POWR', 'RINJ', 'TOST', 'VOL.',
                              'WBRE', 'WFLO', 'XIN2']
-        mass_component = {'MASS': 1, 'MASD': 1, 'HEAT': num_eqns,
-                          'COM1': 1, 'COM2': 2, 'COM3': 3, 'COM4': 4,
-                          'COM5': 5, 'WATE': 1, 'AIR ': 2, 'TRAC': 2, 'NACL': 3}
         limit_type = {'DELG': 'steam', 'DMAK': 'steam', 'DELS': 'steam',
                       'DELT': 'total', 'DELW': 'water', 'DMAT': 'total'}
+
         def separator(P):
             if P is None: Psep = 0.55e6
             else:
@@ -2338,102 +2337,148 @@ class t2data(object):
                 elif P < 0: Psep = [1.45e6, 0.55e6]
                 else: Psep = 0.55e6
             return {'pressure': Psep}
+
         if self.parameter['option'][12] == 0:
             interp_type, averaging_type = "linear", "endpoint"
         elif self.parameter['option'][12] == 1:
             interp_type, averaging_type = "step", "endpoint"
         else:
             interp_type, averaging_type = "linear", "integrate"
+
+        def generator_json(gen):
+            """Converts a single TOUGH2 generator to Waiwera JSON dictionary."""
+
+            mass_component = {'MASS': 1, 'MASD': 1, 'HEAT': num_eqns,
+                              'COM1': 1, 'COM2': 2, 'COM3': 3, 'COM4': 4,
+                              'COM5': 5, 'WATE': 1, 'AIR ': 2, 'TRAC': 2, 'NACL': 3}
+
+            def specified_injection_generator_json(g, gen):
+                """Generators which inject at a specified rate."""
+                if tracer and gen.type in ['COM2', 'TRAC']:
+                    g['tracer'] = gen.gx
+                else:
+                    g['rate'] = gen.gx
+                    if gen.type == 'MASD': injection = False
+                    else:
+                        injection = gen.gx > 0. or \
+                                    (gen.time and any([r > 0. for r in gen.rate]))
+                    if injection:
+                        g['component'] = mass_component[gen.type]
+                        if gen.type != 'HEAT': g['enthalpy'] = gen.ex
+                    else:
+                        if gen.type == 'MASS':
+                            g['separator'] = separator(gen.hg)
+                        elif gen.type == 'MASD':
+                            g['deliverability'] = {'productivity': gen.ex,
+                                                   'pressure': gen.fg,
+                                                   'threshold': gen.hg}
+                            g['limiter'] = {'total': abs(gen.gx)}
+                            g['separator'] = separator(gen.fg)
+                            g['direction'] = 'production'
+                return g
+
+            def delv_generator_json(g, gen):
+                """DELV generator type."""
+                if gen.ltab > 1:
+                    raise Exception('DELV generator with multiple layers not supported.')
+                else:
+                    g['deliverability'] = {'productivity': gen.gx,
+                                           'pressure': gen.ex}
+                    if gen.gx >= 0.:
+                        g['direction'] = 'production'
+                        g['separator'] = separator(gen.fg)
+                    else:
+                        g['direction'] = 'injection'
+                        g['enthalpy'] = gen.fg
+                return g
+
+            def geothermal_deliverability_generator_json(g, gen):
+                """Geothermal deliverability generator types - DELG etc."""
+                g['deliverability'] = {'productivity': gen.gx,
+                                       'pressure': gen.ex}
+                g['separator'] = separator(gen.fg)
+                if gen.hg is not None:
+                    if gen.hg > 0.:
+                        g['limiter'] = {limit_type[gen.type]: gen.hg}
+                    elif gen.hg < 0. and gen.type in ['DELG', 'DMAK', 'DMAT']:
+                        g['rate'] = gen.hg # initial rate for computing productivity index
+                        del g['deliverability']['productivity']
+                if gen.type == 'DELS': g['production_component'] = 2
+                g['direction'] = 'production'
+                return g
+
+            def recharge_generator_json(g, gen):
+                """Recharge generator type."""
+                g['enthalpy'] = gen.ex
+                if (gen.hg is not None) and gen.hg != 0.:
+                    rech = {}
+                    g['direction'] = "both"
+                    if gen.fg is not None:
+                        if gen.fg < 0.: g['direction'] = "out"
+                        elif gen.fg > 0.: g['direction'] = "in"
+                    if gen.hg > 0.: rech['pressure'] = gen.hg
+                    else: rech['pressure'] = 'initial'
+                    rech['coefficient'] = gen.gx
+                    g['recharge'] = rech
+                else:
+                    g['rate'] = gen.gx
+                return g
+
+            def injectivity_generator_json(g, gen):
+                """Generator types which inject against a pressure."""
+                g['direction'] = 'injection'
+                g['enthalpy'] = gen.ex
+                g['injectivity'] = {'pressure': gen.hg,
+                                    'coefficient': abs(gen.fg)}
+                if gen.gx > 0:
+                    g['limiter'] = {'total': gen.gx}
+                return g
+
+            def table_generator_json(g, gen):
+                """Generators with tables of values vs. time."""
+                g['interpolation'] = interp_type
+                g['averaging'] = averaging_type
+                data_table = [list(r) for r in zip(gen.time, gen.rate)]
+                if gen.type in ['DELG', 'DMAK', 'DELT', 'DELW']:
+                    if gen.ltab > 0:
+                        g['deliverability']['productivity'] = {'time': data_table}
+                    else:
+                        g['deliverability']['pressure'] = {'enthalpy': data_table}
+                elif tracer and gen.type in ['COM2', 'TRAC']:
+                    g['tracer'] = data_table
+                else:
+                    if gen.rate: g['rate'] = data_table
+                    if gen.enthalpy:
+                        g['enthalpy'] = [list(r) for r in zip(gen.time, gen.enthalpy)]
+                return g
+
+            cell_index = geo.block_name_index[gen.block] - geo.num_atmosphere_blocks
+            g = {'name': gen.name, 'cell': cell_index}
+
+            if gen.type in mass_component:
+                g = specified_injection_generator_json(g, gen)
+            elif gen.type == 'DELV':
+                g = delv_generator_json(g, gen)
+            elif gen.type in ['DELG', 'DELS', 'DELT', 'DELW', 'DMAK', 'DMAT']:
+                g = geothermal_deliverability_generator_json(g, gen)
+            elif gen.type == 'RECH':
+                g = recharge_generator_json(g, gen)
+            elif gen.type in ['IMAK', 'XINJ']:
+                g = injectivity_generator_json(g, gen)
+
+            if gen.time:
+                g = table_generator_json(g, gen)
+            return g
+
         if self.generatorlist:
             jsondata['source'] = []
             for gen in self.generatorlist:
                 if gen.type in unsupported_types:
                     raise Exception('Generator type ' + gen.type + ' not supported.')
                 else:
-                    cell_index = geo.block_name_index[gen.block] - geo.num_atmosphere_blocks
-                    g = {'name': gen.name, 'cell': cell_index}
-                    if gen.type in mass_component:
-                        if tracer and gen.type in ['COM2', 'TRAC']:
-                            g['tracer'] = gen.gx
-                        else:
-                            g['rate'] = gen.gx
-                            if gen.type == 'MASD': injection = False
-                            else:
-                                injection = gen.gx > 0. or \
-                                            (gen.time and any([r > 0. for r in gen.rate]))
-                            if injection:
-                                g['component'] = mass_component[gen.type]
-                                if gen.type != 'HEAT': g['enthalpy'] = gen.ex
-                            else:
-                                if gen.type == 'MASS':
-                                    g['separator'] = separator(gen.hg)
-                                elif gen.type == 'MASD':
-                                    g['deliverability'] = {'productivity': gen.ex,
-                                                           'pressure': gen.fg,
-                                                           'threshold': gen.hg}
-                                    g['limiter'] = {'total': abs(gen.gx)}
-                                    g['separator'] = separator(gen.fg)
-                                    g['direction'] = 'production'
-                    if gen.type == 'DELV':
-                        if gen.ltab > 1:
-                            raise Exception('DELV generator with multiple layers not supported.')
-                        else:
-                            g['deliverability'] = {'productivity': gen.gx,
-                                                   'pressure': gen.ex}
-                            if gen.gx >= 0.:
-                                g['direction'] = 'production'
-                                g['separator'] = separator(gen.fg)
-                            else:
-                                g['direction'] = 'injection'
-                                g['enthalpy'] = gen.fg
-                    elif gen.type in ['DELG', 'DELS', 'DELT', 'DELW', 'DMAK', 'DMAT']:
-                        g['deliverability'] = {'productivity': gen.gx,
-                                               'pressure': gen.ex}
-                        g['separator'] = separator(gen.fg)
-                        if gen.hg is not None:
-                            if gen.hg > 0.:
-                                g['limiter'] = {limit_type[gen.type]: gen.hg}
-                            elif gen.hg < 0. and gen.type in ['DELG', 'DMAK', 'DMAT']:
-                                g['rate'] = gen.hg # initial rate for computing productivity index
-                                del g['deliverability']['productivity']
-                        if gen.type == 'DELS': g['production_component'] = 2
-                        g['direction'] = 'production'
-                    elif gen.type == 'RECH':
-                        g['enthalpy'] = gen.ex
-                        if (gen.hg is not None) and gen.hg != 0.:
-                            rech = {}
-                            g['direction'] = "both"
-                            if gen.fg is not None:
-                                if gen.fg < 0.: g['direction'] = "out"
-                                elif gen.fg > 0.: g['direction'] = "in"
-                            if gen.hg > 0.: rech['pressure'] = gen.hg
-                            else: rech['pressure'] = 'initial'
-                            rech['coefficient'] = gen.gx
-                            g['recharge'] = rech
-                        else:
-                            g['rate'] = gen.gx
-                    elif gen.type in ['IMAK', 'XINJ']:
-                        g['direction'] = 'injection'
-                        g['enthalpy'] = gen.ex
-                        g['injectivity'] = {'pressure': gen.hg, 'coefficient': abs(gen.fg)}
-                        if gen.gx > 0:
-                            g['limiter'] = {'total': gen.gx}
-                    if gen.time:
-                        g['interpolation'] = interp_type
-                        g['averaging'] = averaging_type
-                        data_table = [list(r) for r in zip(gen.time, gen.rate)]
-                        if gen.type in ['DELG', 'DMAK', 'DELT', 'DELW']:
-                            if gen.ltab > 0:
-                                g['deliverability']['productivity'] = {'time': data_table}
-                            else:
-                                g['deliverability']['pressure'] = {'enthalpy': data_table}
-                        elif tracer and gen.type in ['COM2', 'TRAC']:
-                            g['tracer'] = data_table
-                        else:
-                            if gen.rate: g['rate'] = data_table
-                            if gen.enthalpy:
-                                g['enthalpy'] = [list(r) for r in zip(gen.time, gen.enthalpy)]
+                    g = generator_json(gen)
                     if gen.type != 'TMAK': jsondata['source'].append(g)
+
         return jsondata
 
     def source_network_json(self):
