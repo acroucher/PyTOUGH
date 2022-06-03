@@ -2324,9 +2324,8 @@ class t2data(object):
         jsondata = {}
         eos_num_equations = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
         num_eqns = eos_num_equations[eosname]
-        unsupported_types = ['CO2 ', 'FEED', 'FINJ', 'HLOS', 'MAKE',
-                             'PINJ', 'POWR', 'RINJ', 'TOST', 'VOL.',
-                             'WBRE', 'WFLO', 'XIN2']
+        unsupported_types = ['CO2 ', 'FEED', 'HLOS', 'MAKE', 'POWR',
+                             'TOST', 'VOL.', 'WBRE', 'WFLO', 'XIN2']
         limit_type = {'DELG': 'steam', 'DMAK': 'steam', 'DELS': 'steam',
                       'DELT': 'total', 'DELW': 'water', 'DMAT': 'total'}
 
