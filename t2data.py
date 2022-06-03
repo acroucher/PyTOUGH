@@ -2476,7 +2476,8 @@ class t2data(object):
                     raise Exception('Generator type ' + gen.type + ' not supported.')
                 else:
                     g = generator_json(gen)
-                    if gen.type != 'TMAK': jsondata['source'].append(g)
+                    if g['cell'] >= 0 and gen.type != 'TMAK':
+                        jsondata['source'].append(g)
 
         return jsondata
 
