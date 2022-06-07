@@ -2331,6 +2331,17 @@ class t2data(object):
                       'DELT': 'total', 'DELW': 'water', 'DMAT': 'total'}
         reinjection_contributors = {'DELG', 'DELS', 'DELT', 'DELW', 'DELV',
                                     'DMAK', 'DMAT'}
+        used_names = {}
+
+        def unique_name(gen):
+            """Generates a unique generator name not already in used_names."""
+            if gen.name in used_names:
+                new_name = '%s_%d' % (gen.name, used_names[gen.name])
+                used_names[gen.name] += 1
+            else:
+                new_name = gen.name
+                used_names[gen.name] = 1
+            return new_name
 
         def separator(P):
             if P is None: Psep = 0.55e6
@@ -2455,7 +2466,7 @@ class t2data(object):
                 return g
 
             cell_index = geo.block_name_index[gen.block] - geo.num_atmosphere_blocks
-            g = {'name': gen.name, 'cell': cell_index}
+            g = {'name': unique_name(gen), 'cell': cell_index}
 
             if gen.type in mass_component:
                 g = specified_injection_generator_json(g, gen)
@@ -2474,7 +2485,7 @@ class t2data(object):
 
         def tmak_json(gen, itmak, makeup_inputs):
             """TMAK (total makeup) group with limiter."""
-            if gen.name.strip(): name = gen.name
+            if gen.name.strip(): name = unique_name(gen)
             else:
                 name = 'makeup %d' % itmak
             g = {'name': name}
