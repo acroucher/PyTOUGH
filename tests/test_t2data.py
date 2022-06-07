@@ -1562,7 +1562,6 @@ class t2dataTestCase(unittest.TestCase):
             gen = t2generator(name = 'foo 2', block = '  a 2', type = 'DELG')
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            j.update(dat.source_network_json())
             self.assertFalse('network' in j)
 
             dat.clear_generators()
@@ -1571,14 +1570,12 @@ class t2dataTestCase(unittest.TestCase):
             gen = t2generator(name = 'foo 2', block = '  a 2', type = 'DMAK')
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            j.update(dat.source_network_json())
             self.assertFalse('network' in j)
 
             gen = t2generator(block = '  a 1', type = 'TMAK',
                               gx = 100., hg = -1)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            j.update(dat.source_network_json())
             self.assertEqual(len(j['network']['group']), 1)
             grp = j['network']['group'][0]
             self.assertEqual(grp['name'], 'makeup 1')
@@ -1598,7 +1595,6 @@ class t2dataTestCase(unittest.TestCase):
                               gx = 50., ex = 20, hg = -2)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            j.update(dat.source_network_json())
             self.assertEqual(len(j['network']['group']), 2)
             grp = j['network']['group'][1]
             self.assertEqual(grp['name'], 'tmk 2')

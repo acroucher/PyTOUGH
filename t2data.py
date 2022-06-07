@@ -2319,15 +2319,18 @@ class t2data(object):
         return jsondata
 
     def generators_json(self, geo, eosname, tracer = None):
-        """Converts TOUGH2 generator data to Waiwera JSON dictionary."""
+        """Converts TOUGH2 generator data to Waiwera JSON dictionary, containing
+        data for sources and the source network."""
 
         jsondata = {}
         eos_num_equations = {'w': 1, 'we': 2, 'wce': 3, 'wae': 3}
         num_eqns = eos_num_equations[eosname]
-        unsupported_types = ['CO2 ', 'FEED', 'HLOS', 'MAKE', 'POWR',
-                             'TOST', 'VOL.', 'WBRE', 'WFLO', 'XIN2']
+        unsupported_types = {'CO2 ', 'FEED', 'HLOS', 'MAKE', 'POWR',
+                             'TOST', 'VOL.', 'WBRE', 'WFLO', 'XIN2'}
         limit_type = {'DELG': 'steam', 'DMAK': 'steam', 'DELS': 'steam',
                       'DELT': 'total', 'DELW': 'water', 'DMAT': 'total'}
+        reinjection_contributors = {'DELG', 'DELS', 'DELT', 'DELW', 'DELV',
+                                    'DMAK', 'DMAT'}
 
         def separator(P):
             if P is None: Psep = 0.55e6
@@ -2469,44 +2472,113 @@ class t2data(object):
                 g = table_generator_json(g, gen)
             return g
 
+        def tmak_json(gen, itmak, makeup_inputs):
+            """TMAK (total makeup) group with limiter."""
+            if gen.name.strip(): name = gen.name
+            else:
+                name = 'makeup %d' % itmak
+            g = {'name': name}
+            if gen.hg >= 0:
+                raise Exception('Unscaled TMAK not supported.')
+            elif gen.hg == -1: g['scaling'] = 'uniform'
+            else: g['scaling'] = 'progressive'
+            limiter = {}
+            if gen.gx: limiter['total'] = abs(gen.gx)
+            if gen.ex: limiter['steam'] = abs(gen.ex)
+            if limiter: g['limiter'] = limiter
+            g['in'] = makeup_inputs
+            return g
+
+        def reinjector_output_type(gen):
+            """For FINJ, PINJ, RINJ and IMAK generators, returns water or steam
+            output type."""
+            if gen.type in ['FINJ', 'PINJ', 'RINJ']:
+                output_type = 'water' if gen.hg > 0 else 'steam'
+            elif gen.type == 'IMAK':
+                output_type = 'water' if gen.fg > 0 else 'steam'
+            else:
+                raise Exception('Unrecognised reinjection generator type: %s' % gen.type)
+            return output_type
+
+        def reinjector_output_json(g, gen):
+            output = {'out': g['name']}
+            if gen.type == 'FINJ':
+                output['rate'] = gen.gx
+                output['enthalpy'] = gen.ex
+            elif gen.type in ['PINJ', 'RINJ']:
+                output['proportion'] = gen.hg
+                output['enthalpy'] = gen.ex
+            # (enthalpy set in source rather than reinjector for IMAK)
+            return output
+
+        sources, groups, reinjectors = [], [], []
+        makeup_inputs, group_inputs = [], []
+        itmak, ireinjector = 1, 1
+        reinjection = False
+
         if self.generatorlist:
-            jsondata['source'] = []
             for gen in self.generatorlist:
+
                 if gen.type in unsupported_types:
                     raise Exception('Generator type ' + gen.type + ' not supported.')
                 else:
+
                     g = generator_json(gen)
                     if g['cell'] >= 0 and gen.type != 'TMAK':
-                        jsondata['source'].append(g)
+                        sources.append(g)
 
-        return jsondata
+                    if gen.type == 'DMAK':
+                        makeup_inputs.append(g['name'])
+                    elif gen.type in reinjection_contributors:
+                        group_inputs.append(g['name'])
+                    elif gen.type == 'TMAK':
+                        tmak_subgroup = tmak_json(gen, itmak, makeup_inputs)
+                        itmak += 1
+                        makeup_inputs = []
+                        groups.append(tmak_subgroup)
+                        group_inputs.append(tmak_subgroup['name'])
+                    elif gen.type in ['FINJ', 'PINJ', 'RINJ', 'IMAK']:
+                        if not reinjection:
+                            reinjection = True
+                            if len(makeup_inputs) == 0 and len(group_inputs) == 1 and \
+                               group_inputs[0].startswith('makeup'):
+                                group_name = group_inputs[0]
+                            else:
+                                group_name = 'reinjector_group %d' % ireinjector
+                                reinjector_input_group = {'name': group_name,
+                                                          'in': group_inputs + makeup_inputs}
+                                groups.append(reinjector_input_group)
+                            name = 'reinjector %d' % ireinjector
+                            reinjector = {'name': name, 'in': group_name,
+                                          'water': [], 'steam': []}
+                            ireinjector += 1
+                            overflow_outputs = {'water': [], 'steam': []}
+                        if reinjection:
+                            output_json = reinjector_output_json(g, gen)
+                            output_type = reinjector_output_type(gen)
+                            if gen.type == 'RINJ':
+                                overflow_outputs[output_type].append(output_json)
+                            else:
+                                reinjector[output_type].append(output_json)
+                            if gen.type in ['FINJ', 'PINJ', 'RINJ'] and gen.fg != 0:
+                                if overflow_outputs['water'] or overflow_outputs['steam']:
+                                    name = 'reinjector %d' % ireinjector
+                                    overflow_reinjector = {'name': name,
+                                                           'in': reinjector['name'],
+                                                           'water': overflow_outputs['water'],
+                                                           'steam': overflow_outputs['steam']}
+                                    ireinjector += 1
+                                    reinjectors.append(overflow_reinjector)
+                                    reinjector['overflow'] = overflow_reinjector['name']
+                                reinjectors.append(reinjector)
+                                reinjection = False
 
-    def source_network_json(self):
-        """Converts TOUGH2 source network data in GENER to Waiwera JSON dictionary."""
-        jsondata = {}
-        if self.generatorlist:
-            group_json = []
-            dmak = []
-            itmak = 1
-            for gen in self.generatorlist:
-                if gen.type == 'DMAK': dmak.append(gen.name)
-                elif gen.type == 'TMAK':
-                    if gen.name.strip(): name = gen.name
-                    else: name = 'makeup %d' % itmak
-                    group = {'name': name}
-                    limiter = {}
-                    if gen.gx: limiter['total'] = abs(gen.gx)
-                    if gen.ex: limiter['steam'] = abs(gen.ex)
-                    if limiter: group['limiter'] = limiter
-                    if gen.hg >= 0:
-                        raise Exception('Unscaled TMAK not supported.')
-                    elif gen.hg == -1: group['scaling'] = 'uniform'
-                    else: group['scaling'] = 'progressive'
-                    group['in'] = dmak
-                    group_json.append(group)
-                    dmak = []
-                    itmak += 1
-            if group_json: jsondata['network'] = {'group': group_json}
+        if sources: jsondata['source'] = sources
+        network = {}
+        if groups: network['group'] = groups
+        if reinjectors: network['reinject'] = reinjectors
+        if 'group' in network or 'reinject' in network:
+            jsondata['network'] = network
         return jsondata
 
     def boundaries_json(self, geo, bdy_incons, atmos_volume, eos, mesh_coords, tracer = None):
@@ -2686,5 +2758,4 @@ class t2data(object):
                                              mesh_coords, tracer_data))
         jsondata.update(self.generators_json(geo, jsondata['eos']['name'],
                                              tracer_data))
-        jsondata.update(self.source_network_json())
         return jsondata
