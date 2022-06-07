@@ -2556,10 +2556,11 @@ class t2data(object):
                         if reinjection:
                             output_json = reinjector_output_json(g, gen)
                             output_type = reinjector_output_type(gen)
-                            if gen.type == 'RINJ':
-                                overflow_outputs[output_type].append(output_json)
-                            else:
-                                reinjector[output_type].append(output_json)
+                            if g['cell'] >= 0:
+                                if gen.type == 'RINJ':
+                                    overflow_outputs[output_type].append(output_json)
+                                else:
+                                    reinjector[output_type].append(output_json)
                             if gen.type in ['FINJ', 'PINJ', 'RINJ'] and gen.fg != 0:
                                 if overflow_outputs['water'] or overflow_outputs['steam']:
                                     name = 'reinjector %d' % ireinjector
