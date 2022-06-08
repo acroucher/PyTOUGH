@@ -2560,7 +2560,7 @@ class t2data(object):
                                group_inputs[0].startswith('makeup'):
                                 group_name = group_inputs[0]
                             else:
-                                group_name = 'reinjector_group %d' % ireinjector
+                                group_name = 'reinjector group %d' % ireinjector
                                 reinjector_input_group = {'name': group_name,
                                                           'in': group_inputs + makeup_inputs}
                                 groups.append(reinjector_input_group)
