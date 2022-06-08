@@ -1614,7 +1614,7 @@ class t2dataTestCase(unittest.TestCase):
             dat.add_generator(gen)
             h4, f4 = 77.e3, 0.35
             gen = t2generator(name = 'inj 4', block = '  b 4', type = 'RINJ',
-                              ex = h4, hg = f4)
+                              ex = h4, hg = f4, fg = 1.)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
             self.assertEqual(len(j['source']), 6)
@@ -1630,6 +1630,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(r['water'][0], {'out': 'inj 3', 'proportion': f3, 'enthalpy': h3})
             self.assertEqual(r['water'][1], {'out': 'inj 4', 'proportion': f4, 'enthalpy': h4})
 
+            # add more production wells and a second TMAK
             gen = t2generator(name = 'foo 3', block = '  a 3', type = 'DELG')
             dat.add_generator(gen)
             gen = t2generator(name = 'foo 4', block = '  a 4', type = 'DMAK')
