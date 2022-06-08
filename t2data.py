@@ -2588,6 +2588,7 @@ class t2data(object):
                                     reinjectors.append(overflow_reinjector)
                                     reinjector['overflow'] = overflow_reinjector['name']
                                 reinjection = False
+                                makeup_inputs, group_inputs = [], []
 
             if reinjection:
                 # end of generator list without a reinjection reset:
