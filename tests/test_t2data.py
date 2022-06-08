@@ -1572,16 +1572,63 @@ class t2dataTestCase(unittest.TestCase):
             j = dat.generators_json(geo, 'we')
             self.assertFalse('network' in j)
 
+            # add TMAK
             gen = t2generator(block = '  a 1', type = 'TMAK',
                               gx = 100., hg = -1)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
+            self.assertEqual(len(j['source']), 2)
             self.assertEqual(len(j['network']['group']), 1)
             grp = j['network']['group'][0]
             self.assertEqual(grp['name'], 'makeup 1')
             self.assertEqual(grp['in'], ['foo 1', 'foo 2'])
             self.assertEqual(grp['scaling'], 'uniform')
             self.assertEqual(grp['limiter'], {'total': 100})
+
+            # add two water reinjection wells
+            q1, h1 = 1.1, 85.e3
+            gen = t2generator(name = 'inj 1', block = '  b 1', type = 'FINJ',
+                              gx = q1, ex = h1, hg = 1.)
+            dat.add_generator(gen)
+            f2, h2 = 0.3, 90.e3
+            gen = t2generator(name = 'inj 2', block = '  b 2', type = 'PINJ',
+                              ex = h2, hg = f2)
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            self.assertEqual(len(j['source']), 4)
+            self.assertEqual(len(j['network']['group']), 1)
+            self.assertEqual(len(j['network']['reinject']), 1)
+            r = j['network']['reinject'][0]
+            self.assertEqual(r['name'], 'reinjector 1')
+            self.assertEqual(r['in'], 'makeup 1')
+            self.assertEqual(len(r['water']), 2)
+            self.assertEqual(len(r['steam']), 0)
+            self.assertEqual(r['water'][0], {'out': 'inj 1', 'rate': q1, 'enthalpy': h1})
+            self.assertEqual(r['water'][1], {'out': 'inj 2', 'proportion': f2, 'enthalpy': h2})
+            self.assertFalse('overflow' in r)
+
+            # add two RINJ reinjection wells
+            h3, f3 = 82e3, 0.2
+            gen = t2generator(name = 'inj 3', block = '  b 3', type = 'RINJ',
+                              ex = h3, hg = f3)
+            dat.add_generator(gen)
+            h4, f4 = 77.e3, 0.35
+            gen = t2generator(name = 'inj 4', block = '  b 4', type = 'RINJ',
+                              ex = h4, hg = f4)
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            self.assertEqual(len(j['source']), 6)
+            self.assertEqual(len(j['network']['group']), 1)
+            self.assertEqual(len(j['network']['reinject']), 2)
+            r = j['network']['reinject'][0]
+            self.assertEqual(r['overflow'], 'reinjector 2')
+            r = j['network']['reinject'][1]
+            self.assertEqual(r['name'], 'reinjector 2')
+            self.assertFalse('in' in r)
+            self.assertEqual(len(r['water']), 2)
+            self.assertEqual(len(r['steam']), 0)
+            self.assertEqual(r['water'][0], {'out': 'inj 3', 'proportion': f3, 'enthalpy': h3})
+            self.assertEqual(r['water'][1], {'out': 'inj 4', 'proportion': f4, 'enthalpy': h4})
 
             gen = t2generator(name = 'foo 3', block = '  a 3', type = 'DELG')
             dat.add_generator(gen)
