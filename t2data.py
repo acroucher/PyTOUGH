@@ -2589,6 +2589,17 @@ class t2data(object):
                                     reinjector['overflow'] = overflow_reinjector['name']
                                 reinjection = False
 
+            if reinjection:
+                # end of generator list without a reinjection reset:
+                reinjectors.append(reinjector)
+                if overflow_outputs['water'] or overflow_outputs['steam']:
+                    name = 'reinjector %d' % ireinjector
+                    overflow_reinjector = {'name': name,
+                                           'water': overflow_outputs['water'],
+                                           'steam': overflow_outputs['steam']}
+                    reinjectors.append(overflow_reinjector)
+                    reinjector['overflow'] = overflow_reinjector['name']
+
         if sources: jsondata['source'] = sources
         network = {}
         if groups: network['group'] = groups
