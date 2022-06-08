@@ -1650,6 +1650,43 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(grp['scaling'], 'progressive')
             self.assertEqual(grp['limiter'], {'total': 50, 'steam': 20})
 
+            # add three more reinjection wells including one IMAK
+            h5, q5 = 87e3, 1.5
+            gen = t2generator(name = 'inj 5', block = '  b 5', type = 'FINJ',
+                              gx = q5, ex = h5, hg = 1.)
+            dat.add_generator(gen)
+            q6, h6, P6, finj6 = 10., 1200.e3, 5e5, 1e-7
+            gen = t2generator(name = 'inj 6', block = '  b 6', type = 'IMAK',
+                              gx = q6, ex = h6, hg = P6, fg = -finj6)
+            dat.add_generator(gen)
+            f7, h7 = 0.1, 1400.e3
+            gen = t2generator(name = 'inj 7', block = '  c 1', type = 'PINJ',
+                              ex = h7, hg = -f7, fg = 1.)
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            q = j['source'][-2]
+            self.assertEqual(q['direction'], 'injection')
+            self.assertEqual(q['enthalpy'], h6)
+            self.assertEqual(q['limiter'], {'total': q6})
+            self.assertEqual(q['injectivity'], {'pressure': P6, 'coefficient': finj6})
+            self.assertEqual(len(j['network']['group']), 3)
+            grp = j['network']['group'][2]
+            self.assertEqual(grp['name'], 'reinjector group 3')
+            self.assertEqual(grp['in'], ['foo 3', 'foo 5', 'tmk 2'])
+            self.assertFalse('scaling' in grp)
+            self.assertFalse('limiter' in grp)
+            self.assertEqual(len(j['source']), 13)
+            self.assertEqual(len(j['network']['reinject']), 3)
+            r = j['network']['reinject'][2]
+            self.assertEqual(r['name'], 'reinjector 3')
+            self.assertEqual(r['in'], 'reinjector group 3')
+            self.assertEqual(len(r['water']), 1)
+            self.assertEqual(len(r['steam']), 2)
+            self.assertEqual(r['water'][0], {'out': 'inj 5', 'rate': q5, 'enthalpy': h5})
+            self.assertEqual(r['steam'][0], {'out': 'inj 6'})
+            self.assertEqual(r['steam'][1], {'out': 'inj 7', 'proportion': f7, 'enthalpy': h7})
+            self.assertFalse('overflow' in r)
+
         def boundaries_test():
 
             nx, ny, nz = 2, 2, 3
