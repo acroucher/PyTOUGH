@@ -2578,6 +2578,7 @@ class t2data(object):
                                 else:
                                     reinjector[output_type].append(output_json)
                             if gen.type in ['FINJ', 'PINJ', 'RINJ'] and gen.fg != 0:
+                                reinjectors.append(reinjector)
                                 if overflow_outputs['water'] or overflow_outputs['steam']:
                                     name = 'reinjector %d' % ireinjector
                                     overflow_reinjector = {'name': name,
@@ -2586,7 +2587,6 @@ class t2data(object):
                                     ireinjector += 1
                                     reinjectors.append(overflow_reinjector)
                                     reinjector['overflow'] = overflow_reinjector['name']
-                                reinjectors.append(reinjector)
                                 reinjection = False
 
         if sources: jsondata['source'] = sources
