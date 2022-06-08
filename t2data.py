@@ -2332,16 +2332,23 @@ class t2data(object):
         reinjection_contributors = {'DELG', 'DELS', 'DELT', 'DELW', 'DELV',
                                     'DMAK', 'DMAT'}
         used_names = {}
+        # prepend block names to generator names if generator names are not unique:
+        use_block_names = len(self.generator) < self.num_generators
 
         def unique_name(gen):
             """Generates a unique generator name not already in used_names."""
-            if gen.name in used_names:
-                new_name = '%s_%d' % (gen.name, used_names[gen.name])
-                used_names[gen.name] += 1
+            if gen.name == '': return gen.name
             else:
-                new_name = gen.name
-                used_names[gen.name] = 1
-            return new_name
+                if use_block_names:
+                    new_name = '%5s%5s' % (gen.block, gen.name)
+                else:
+                    new_name = gen.name
+                if new_name in used_names:
+                    new_name = '%s_%d' % (new_name, used_names[new_name])
+                    used_names[new_name] += 1
+                else:
+                    used_names[new_name] = 1
+                return new_name
 
         def separator(P):
             if P is None: Psep = 0.55e6
@@ -2483,12 +2490,10 @@ class t2data(object):
                 g = table_generator_json(g, gen)
             return g
 
-        def tmak_json(gen, itmak, makeup_inputs):
+        def tmak_json(g, gen, itmak, makeup_inputs):
             """TMAK (total makeup) group with limiter."""
-            if gen.name.strip(): name = unique_name(gen)
-            else:
-                name = 'makeup %d' % itmak
-            g = {'name': name}
+            if g['name'].strip() == '':
+                g['name'] = 'makeup %d' % itmak
             if gen.hg >= 0:
                 raise Exception('Unscaled TMAK not supported.')
             elif gen.hg == -1: g['scaling'] = 'uniform'
@@ -2543,7 +2548,7 @@ class t2data(object):
                     elif gen.type in reinjection_contributors:
                         group_inputs.append(g['name'])
                     elif gen.type == 'TMAK':
-                        tmak_subgroup = tmak_json(gen, itmak, makeup_inputs)
+                        tmak_subgroup = tmak_json(g, gen, itmak, makeup_inputs)
                         itmak += 1
                         makeup_inputs = []
                         groups.append(tmak_subgroup)
