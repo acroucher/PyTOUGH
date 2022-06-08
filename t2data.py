@@ -2522,7 +2522,7 @@ class t2data(object):
                 output['rate'] = gen.gx
                 output['enthalpy'] = gen.ex
             elif gen.type in ['PINJ', 'RINJ']:
-                output['proportion'] = gen.hg
+                output['proportion'] = abs(gen.hg)
                 output['enthalpy'] = gen.ex
             # (enthalpy set in source rather than reinjector for IMAK)
             return output
