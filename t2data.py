@@ -2581,7 +2581,6 @@ class t2data(object):
                                 if overflow_outputs['water'] or overflow_outputs['steam']:
                                     name = 'reinjector %d' % ireinjector
                                     overflow_reinjector = {'name': name,
-                                                           'in': reinjector['name'],
                                                            'water': overflow_outputs['water'],
                                                            'steam': overflow_outputs['steam']}
                                     ireinjector += 1
