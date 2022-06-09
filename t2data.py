@@ -2497,7 +2497,7 @@ class t2data(object):
 
         def tmak_json(g, gen, itmak, makeup_inputs):
             """TMAK (total makeup) group with limiter."""
-            if g['name'].strip() == '':
+            if gen.name.strip() == '':
                 g['name'] = 'makeup %d' % itmak
             del g['cell']
             if gen.hg >= 0:
