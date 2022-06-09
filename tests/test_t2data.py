@@ -1691,6 +1691,55 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(r['steam'][1], {'out': 'inj 7', 'proportion': f7, 'enthalpy': h7})
             self.assertFalse('overflow' in r)
 
+            # two TMAKs contributing to a single reinjector
+            dat.clear_generators()
+            gen = t2generator(name = 'foo 1', block = '  a 4', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 2', block = '  a 5', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'tmk 1', block = '  a 1', type = 'TMAK',
+                              gx = 50, ex = 20, hg = -2)
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 3', block = '  a 6', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'foo 4', block = '  a 3', type = 'DMAK')
+            dat.add_generator(gen)
+            gen = t2generator(name = 'tmk 2', block = '  a 2', type = 'TMAK',
+                              gx = 60, ex = 30, hg = -2)
+            dat.add_generator(gen)
+            h1, q1 = 87e3, 1.5
+            gen = t2generator(name = 'inj 1', block = '  b 1', type = 'FINJ',
+                              gx = q1, ex = h1, hg = 1.)
+            dat.add_generator(gen)
+            f2, h2 = 0.3, 90.e3
+            gen = t2generator(name = 'inj 2', block = '  c 1', type = 'PINJ',
+                              ex = h2, hg = f2, fg = 1.)
+            dat.add_generator(gen)
+            j = dat.generators_json(geo, 'we')
+            self.assertEqual(len(j['source']), 6)
+            self.assertEqual(len(j['network']['group']), 3)
+            self.assertEqual(len(j['network']['reinject']), 1)
+            grp = j['network']['group'][0]
+            self.assertEqual(grp['name'], 'tmk 1')
+            self.assertEqual(grp['in'], ['foo 1', 'foo 2'])
+            self.assertEqual(grp['scaling'], 'progressive')
+            self.assertEqual(grp['limiter'], {'total': 50, 'steam': 20})
+            grp = j['network']['group'][1]
+            self.assertEqual(grp['name'], 'tmk 2')
+            self.assertEqual(grp['in'], ['foo 3', 'foo 4'])
+            self.assertEqual(grp['scaling'], 'progressive')
+            self.assertEqual(grp['limiter'], {'total': 60, 'steam': 30})
+            grp = j['network']['group'][2]
+            self.assertEqual(grp['name'], 'reinjector group 1')
+            self.assertEqual(grp['in'], ['tmk 1', 'tmk 2'])
+            self.assertFalse('scaling' in grp)
+            r = j['network']['reinject'][0]
+            self.assertEqual(r['name'], 'reinjector 1')
+            self.assertEqual(r['in'], 'reinjector group 1')
+            self.assertEqual(len(r['water']), 2)
+            self.assertFalse('steam' in r)
+            self.assertFalse('overflow' in r)
+
         def boundaries_test():
 
             nx, ny, nz = 2, 2, 3
