@@ -2584,7 +2584,6 @@ class t2data(object):
                             name = 'reinjector %d' % ireinjector
                             reinjector = {'name': name, 'in': group_name,
                                           'water': [], 'steam': []}
-                            ireinjector += 1
                             overflow_outputs = {'water': [], 'steam': []}
                         if reinjection:
                             output_json = reinjector_output_json(g, gen)
@@ -2601,13 +2600,14 @@ class t2data(object):
                                     if reinjector_input_group: groups.append(reinjector_input_group)
                                     reinjector = prune_reinjector(reinjector)
                                     reinjectors.append(reinjector)
+                                    ireinjector += 1
                                 if overflow:
                                     name = 'reinjector %d' % ireinjector
                                     overflow_reinjector = {'name': name,
                                                            'water': overflow_outputs['water'],
                                                            'steam': overflow_outputs['steam']}
-                                    ireinjector += 1
                                     reinjectors.append(overflow_reinjector)
+                                    ireinjector += 1
                                     reinjector['overflow'] = overflow_reinjector['name']
                                 reinjection = False
                                 makeup_inputs, group_inputs = [], []
