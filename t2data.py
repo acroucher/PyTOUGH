@@ -2499,6 +2499,7 @@ class t2data(object):
             """TMAK (total makeup) group with limiter."""
             if g['name'].strip() == '':
                 g['name'] = 'makeup %d' % itmak
+            del g['cell']
             if gen.hg >= 0:
                 raise Exception('Unscaled TMAK not supported.')
             elif gen.hg == -1: g['scaling'] = 'uniform'
