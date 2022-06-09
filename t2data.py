@@ -2570,11 +2570,11 @@ class t2data(object):
                             if len(makeup_inputs) == 0 and len(group_inputs) == 1 and \
                                group_inputs[0].startswith('makeup'):
                                 group_name = group_inputs[0]
+                                reinjector_input_group = None
                             else:
                                 group_name = 'reinjector group %d' % ireinjector
                                 reinjector_input_group = {'name': group_name,
                                                           'in': group_inputs + makeup_inputs}
-                                groups.append(reinjector_input_group)
                             name = 'reinjector %d' % ireinjector
                             reinjector = {'name': name, 'in': group_name,
                                           'water': [], 'steam': []}
@@ -2589,10 +2589,10 @@ class t2data(object):
                                 else:
                                     reinjector[output_type].append(output_json)
                             if gen.type in ['FINJ', 'PINJ', 'RINJ'] and gen.fg != 0:
-                                reinjectors.append(reinjector)
                                 outputs = has_outputs(reinjector)
                                 overflow = has_outputs(overflow_outputs)
                                 if outputs or overflow:
+                                    if reinjector_input_group: groups.append(reinjector_input_group)
                                     reinjectors.append(reinjector)
                                 if overflow:
                                     name = 'reinjector %d' % ireinjector
@@ -2607,10 +2607,10 @@ class t2data(object):
 
             if reinjection:
                 # end of generator list without a reinjection reset:
-                reinjectors.append(reinjector)
                 outputs = has_outputs(reinjector)
                 overflow = has_outputs(overflow_outputs)
                 if outputs or overflow:
+                    if reinjector_input_group: groups.append(reinjector_input_group)
                     reinjectors.append(reinjector)
                 if overflow:
                     name = 'reinjector %d' % ireinjector
