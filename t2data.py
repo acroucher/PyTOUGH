@@ -2523,6 +2523,7 @@ class t2data(object):
             return output_type
 
         def reinjector_output_json(g, gen):
+            """Returns JSON for reinjector output."""
             output = {'out': g['name']}
             if gen.type == 'FINJ':
                 output['rate'] = gen.gx
@@ -2532,6 +2533,10 @@ class t2data(object):
                 output['enthalpy'] = gen.ex
             # (enthalpy set in source rather than reinjector for IMAK)
             return output
+
+        def has_outputs(j):
+            """Returns true if JSON has non-empty 'water' or 'steam' properties."""
+            return j['water'] or j['steam']
 
         sources, groups, reinjectors = [], [], []
         makeup_inputs, group_inputs = [], []
@@ -2585,7 +2590,11 @@ class t2data(object):
                                     reinjector[output_type].append(output_json)
                             if gen.type in ['FINJ', 'PINJ', 'RINJ'] and gen.fg != 0:
                                 reinjectors.append(reinjector)
-                                if overflow_outputs['water'] or overflow_outputs['steam']:
+                                outputs = has_outputs(reinjector)
+                                overflow = has_outputs(overflow_outputs)
+                                if outputs or overflow:
+                                    reinjectors.append(reinjector)
+                                if overflow:
                                     name = 'reinjector %d' % ireinjector
                                     overflow_reinjector = {'name': name,
                                                            'water': overflow_outputs['water'],
@@ -2599,7 +2608,11 @@ class t2data(object):
             if reinjection:
                 # end of generator list without a reinjection reset:
                 reinjectors.append(reinjector)
-                if overflow_outputs['water'] or overflow_outputs['steam']:
+                outputs = has_outputs(reinjector)
+                overflow = has_outputs(overflow_outputs)
+                if outputs or overflow:
+                    reinjectors.append(reinjector)
+                if overflow:
                     name = 'reinjector %d' % ireinjector
                     overflow_reinjector = {'name': name,
                                            'water': overflow_outputs['water'],
