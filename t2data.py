@@ -2534,9 +2534,15 @@ class t2data(object):
             # (enthalpy set in source rather than reinjector for IMAK)
             return output
 
-        def has_outputs(j):
+        def has_outputs(reinjector):
             """Returns true if JSON has non-empty 'water' or 'steam' properties."""
-            return j['water'] or j['steam']
+            return reinjector['water'] or reinjector['steam']
+
+        def prune_reinjector(reinjector):
+            """Deletes empty keys from reinjector."""
+            for key in ['water', 'steam']:
+                if reinjector[key] == []: del reinjector[key]
+            return reinjector
 
         sources, groups, reinjectors = [], [], []
         makeup_inputs, group_inputs = [], []
@@ -2593,6 +2599,7 @@ class t2data(object):
                                 overflow = has_outputs(overflow_outputs)
                                 if outputs or overflow:
                                     if reinjector_input_group: groups.append(reinjector_input_group)
+                                    reinjector = prune_reinjector(reinjector)
                                     reinjectors.append(reinjector)
                                 if overflow:
                                     name = 'reinjector %d' % ireinjector
@@ -2617,6 +2624,7 @@ class t2data(object):
                     overflow_reinjector = {'name': name,
                                            'water': overflow_outputs['water'],
                                            'steam': overflow_outputs['steam']}
+                    reinjector = prune_reinjector(reinjector)
                     reinjectors.append(overflow_reinjector)
                     reinjector['overflow'] = overflow_reinjector['name']
 
