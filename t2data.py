@@ -2340,14 +2340,15 @@ class t2data(object):
             if gen.name == '': return gen.name
             else:
                 if use_block_names:
-                    new_name = '%5s%5s' % (gen.block, gen.name)
+                    name = '%5s%5s' % (gen.block, gen.name)
                 else:
-                    new_name = gen.name
-                if new_name in used_names:
-                    new_name = '%s_%d' % (new_name, used_names[new_name])
-                    used_names[new_name] += 1
+                    name = gen.name
+                if name in used_names:
+                    new_name = '%s_%d' % (name, used_names[name])
+                    used_names[name] += 1
                 else:
-                    used_names[new_name] = 1
+                    new_name = name
+                    used_names[name] = 1
                 return new_name
 
         def separator(P):
