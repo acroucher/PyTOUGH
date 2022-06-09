@@ -2500,7 +2500,7 @@ class t2data(object):
             if gen.name.strip() == '':
                 g['name'] = 'makeup %d' % itmak
             del g['cell']
-            if gen.hg >= 0:
+            if gen.hg is None or gen.hg >= 0:
                 raise Exception('Unscaled TMAK not supported.')
             elif gen.hg == -1: g['scaling'] = 'uniform'
             else: g['scaling'] = 'progressive'
