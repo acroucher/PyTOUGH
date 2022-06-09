@@ -2473,7 +2473,11 @@ class t2data(object):
                         g['enthalpy'] = [list(r) for r in zip(gen.time, gen.enthalpy)]
                 return g
 
-            cell_index = geo.block_name_index[gen.block] - geo.num_atmosphere_blocks
+            if gen.block in geo.block_name_index:
+                cell_index = geo.block_name_index[gen.block] - geo.num_atmosphere_blocks
+                if cell_index < 0: cell_index = None
+            else:
+                cell_index = None
             g = {'name': unique_name(gen), 'cell': cell_index}
 
             if gen.type in mass_component:
@@ -2541,7 +2545,7 @@ class t2data(object):
                 else:
 
                     g = generator_json(gen)
-                    if g['cell'] >= 0 and gen.type != 'TMAK':
+                    if g['cell'] is not None and gen.type != 'TMAK':
                         sources.append(g)
 
                     if gen.type == 'DMAK':
@@ -2573,7 +2577,7 @@ class t2data(object):
                         if reinjection:
                             output_json = reinjector_output_json(g, gen)
                             output_type = reinjector_output_type(gen)
-                            if g['cell'] >= 0:
+                            if g['cell'] is not None:
                                 if gen.type == 'RINJ':
                                     overflow_outputs[output_type].append(output_json)
                                 else:
