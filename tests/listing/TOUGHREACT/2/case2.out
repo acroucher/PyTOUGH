@@ -1,0 +1,877 @@
+ 
+      -------- TOUGHREACT Version 3.32-OMP ------ 
+           Lawrence Berkeley National Laboratory   
+                    February 8, 2017              
+ 
+     ***** OpenMP Parallel Code Settings **** 
+    *** maximum number of threads allotted  =   1
+    *** maximum number of threads available =  12
+ 
+
+---------------------------------------------------------------------------------------------------------------
+ 
+ 
+     -- One or more of the following references are recommended to cite for publications including journal papers, 
+                 conference papers, reports using the TOUGHREACT simulator -- 
+ 
+ 
+     For general approaches and methods:
+     -----------------------------------
+
+          Xu, T., and K. Pruess, Modeling multiphase non-isothermal fluid flow and reactive geochemical transport 
+     in variably saturated fractured rocks: 1. Methodology, American Journal Science, v.301, p.16-33, 2001.
+
+          Xu, T., E.L. Sonnenthal, N. Spycher, and K. Pruess, TOUGHREACT - A simulation program for non-isothermal 
+     multiphase reactive geochemical transport in variably saturated geologic media: Applications to geothermal 
+     injectivity and CO2 geological sequestration, Computers & Geosciences, v.32,  p.145-165, 2006.
+
+          Xu, T., N. Spycher, E.L. Sonnenthal, G. Zhang, L. Zheng, and K. Pruess, TOUGHREACT Version 2.0: 
+     A simulator for subsurface reactive transport under non-isothermal multiphase flow conditions. 
+     Computers & Geosciences, v.37,  p.763-774, 2011.
+ 
+
+     For applications to CO2 geological sequestration:
+     -------------------------------------------------
+
+          Xu, T, J.A. Apps, and K. Pruess, Numerical simulation of CO2 disposal by mineral trapping in deep aquifers, 
+     Applied Geochemistry, v.19, p.917-936, 2004.
+
+          Xu, T, J. A. Apps, and K. Pruess, Mineral sequestration of carbon dioxide in a sandstone-shale system, 
+     Chemical Geochemistry, v.217, p.295-318, 2005.
+
+          Xu, T, J. A. Apps, K. Pruess and and H. YamamotoNumerical modeling of injection and mineral trapping of 
+     CO2 with H2S and SO2 in a sandstone formation, Chemical Geochemistry, v.242, p.319-318, 2007.
+
+          Aradóttir, E.S.P., E.L. Sonnenthal, G. Björnsson,& H. Jónsson, Multidimensional reactive transport  modeling of CO2 mineral sequestration in basalts
+     at the Hellisheidi geothermal field, Iceland, International Journal of Greenhouse Gas Control, v.9, p.24-40, 2012.
+ 
+
+     For applications to nuclear waste geological disposal: 
+     ------------------------------------------------------ 
+
+          Spycher N.F., E.L. Sonnenthal, and J.A. Apps, Fluid flow and reactive transport around potential nuclear 
+     waste emplacement tunnels at Yucca Mountain, Nevada, Journal of Contaminant Hydrology, v.62-63, p.653-673, 2003.
+
+          Dobson, P.F., T.J. Kneafsey, E.L. Sonnenthal, N.F. Spycher, and J.A. Apps, Experimental and numerical  
+     simulation of dissolution and precipitation:  Implications for fracture sealing at Yucca Mountain, Nevada, 
+     Journal of Contaminant Hydrology. v.62-63, p.459-476, 2003. 
+
+          Sonnenthal E., A. Ito, N. Spycher, M. Yui, J. Apps, Y. Sugita, M. Conrad, and S. Kawakami, Approaches to 
+     modeling coupled thermal, hydrological, and chemical processes in the Drift Scale Heater Test at Yucca Mountain, 
+     International Journal of Rock Mechanics and Mining Sciences, v.42, p.698-719, 2005.
+
+          Mukhopadhyay S., E.L. Sonnenthal, and N. Spycher, Modeling coupled thermal-hydrological-chemical processes 
+     in the unsaturated fractured rock of Yucca Mountain, Nevada: Heterogeneity and seepage, Physics and 
+     Chemistry of the Earth, v.31, p.626-633, 2006.
+ 
+
+     For applications to geothermal systems: 
+     --------------------------------------- 
+
+          Xu, T., Y. Ontoy, P. Molling, N. Spycher, M. Parini, and K. Pruess, Reactive transport modeling of injection 
+     well scaling and acidizing at Tiwi Field, Philippines, Geothermics, v.33, p.477-491, 2004.
+
+          Dobson, P.F., S. Salah, N. Spycher, and E.L. Sonnenthal, Simulation of water-rock interaction 
+     in the  Yellowstone geothermal system using TOUGHREACT, Geothermics, v.33, p.493-502, 2004.
+ 
+
+     For applications to vadose zone reactive transport: 
+     --------------------------------------------------- 
+
+          Xu T., E. Sonnenthal, and G.S. Bodvarsson, A reaction-transport model for calcite precipitation and evaluation  
+     of infiltration fluxes in unsaturated fractured rock, Journal of Contaminant Hydrology, v.64, p.113-127, 2003.
+
+          Singleton, M.J., E.L. Sonnenthal, M.E. Conrad, D.J, DePaolo, and G.W. Gee, Multiphase reactive transport 
+     modeling of stable isotope fractionation in unsaturated zone pore water and vapor:  Application to seasonal 
+     infiltration events at the Hanford Site, WA, Vadose Zone Journal, v.3, p.775-785, 2004. 
+
+          Sonnenthal, E., T. Xu, and G. Bodvarsson, Reply to "Commentary: Assessment of past infiltration fluxes 
+     through Yucca Mountain on the basis of the secondary mineral record - is it a viable methodology?" by 
+     Y.V. Dublyansky and S.Z. Smirnov, Journal of Contaminant Hydrology, v.77, p.225-231, 2005.
+ 
+
+     For applications to biogeochemistry: 
+     --------------------------------------- 
+
+          Xu, T., Incorporation of aqueous reaction kinetics and biodegradation into TOUGHREACT: Application 
+     of a multi-region model to hydrobiogeochemical transport of denitrification and sulfate reduction,
+     Vadose Zone Journal, February issue, p.305-315, 2008 
+ 
+ 
+**************************************************************************************************************************
+ 
+ 
+ 
+ 
+
+       @@@@@   @@   @  @   @@@  @  @   @@       @@@  @  @   @  @  @  @      @@   @@@@@  @   @@   @   @     @@@   @  @  @   @
+         @    @  @  @  @  @     @  @  @  @     @     @  @@ @@  @  @  @     @  @    @    @  @  @  @@  @     @  @  @  @  @@  @
+         @    @  @  @  @  @ @@  @@@@    @       @@   @  @ @ @  @  @  @     @@@@    @    @  @  @  @ @ @     @@@   @  @  @ @ @
+         @    @  @  @  @  @  @  @  @   @          @  @  @   @  @  @  @     @  @    @    @  @  @  @  @@     @ @   @  @  @  @@
+         @     @@    @@    @@@  @  @  @@@@     @@@   @  @   @   @@   @@@@  @  @    @    @   @@   @   @     @  @   @@   @   @
+
+
+                    TOUGHREACT V3.32-OMP IS A PROGRAM FOR NONISOTHERMAL MULTIPHASE MULTICOMPONENT REACTIVE TRANSPORT IN PERMEABLE 
+                  MEDIA, DEVELOPED AT LAWRENCE BERKELEY NATIONAL LABORATORY.
+
+                          ********************************************************************************
+                          *******************                                         ********************
+                          *******************   TOUGHREACT V3.32-OMP (Feb 2017)  ********************
+                          *******************          T2CG2 Solver Package           ********************
+                          *******************                                         ********************
+                          ********************************************************************************
+
+        Copyright 2017 by The Regents of the University of California (subject to approval by the U.S. Department of Energy).
+
+ NOTICE: This software was developed under funding from the U.S. Department of Energy and the U.S. Government consequently retains
+ certain rights as follows: the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive,
+ irrevocable, worldwide license in the software to reproduce, prepare derivative works, and perform publicly and display publicly.
+ Beginning five (5) years after the date permission to assert copyright is obtained from the U.S. Department of Energy, and subject
+ to any subsequent five (5) year renewals, the U.S. Government is granted for itself and others acting on its behalf a paid-up,
+ nonexclusive, irrevocable, worldwide license in the software to reproduce, prepare derivative works, distribute copies to the
+ public, perform publicly and display publicly, and to permit others to do so.
+
+
+ PARAMETERS FOR FLEXIBLE DIMENSIONING OF MAJOR ARRAYS (MAIN PROGRAM) ARE AS FOLLOWS
+
+ MNEL = 200000   MNCON = 600000   MNEQ =  4   MNK =  3   MNPH =  3   MNB = 12   MNOGN = 2000   MGTAB = 40000
+ ===================================================================================================================================
+
+ MAXIMUM NUMBER OF VOLUME ELEMENTS (GRID BLOCKS):            MNEL  =  200000
+ MAXIMUM NUMBER OF CONNECTIONS (INTERFACES):                 MNCON =  600000
+ MAXIMUM LENGTH OF PRIMARY VARIABLE ARRAYS:                  MPRIM =  800000
+ MAXIMUM NUMBER OF GENERATION ITEMS (SINKS/SOURCES):         MNOGN =    2000
+ MAXIMUM NUMBER OF TABULAR (TIME-DEPENDENT) GENERATION DATA: MGTAB =   40000
+ LENGTH OF SECONDARY PARAMETER ARRAY:                        MSEC  =47000000
+ MAXIMUM NUMBER OF JACOBIAN MATRIX ELEMENTS:                 MNZ   =22400000
+
+ LARGE LINEAR EQUATION ARRAYS: LENGTH OF IRN IS              LIRN  =22400000
+                               LENGTH OF ICN AND CO IS       LICN  =22400000
+
+ ===================================================================================================================================
+
+ array dimensioning is made according to the needs of the conjugate gradient solvers
+ when using LUBAND, only a smaller-size problem can be accommodated
+ restriction with MA28 is: {number of elements} + 2 * {number of connections} < {MNEL + 2* MNCON}/4
+
+ ===================================================================================================================================
+
+
+ SUMMARY OF DISK FILES
+
+ FILE *VERS*  EXISTS --- OPEN AS AN OLD FILE
+ FILE *MESH*  EXISTS --- OPEN AS AN OLD FILE
+ FILE *INCON* EXISTS --- OPEN AS AN OLD FILE
+ FILE *GENER* EXISTS --- OPEN AS AN OLD FILE
+ FILE *FIXPT* EXISTS --- OPEN AS AN OLD FILE
+ FILE *SAVE*  EXISTS --- OPEN AS AN OLD FILE
+ FILE *LINEQ* EXISTS --- OPEN AS AN OLD FILE
+ FILE *TABLE* EXISTS --- OPEN AS AN OLD FILE
+
+ ===================================================================================================================================
+
+     PROBLEM TITLE:  case 2                                         
+
+
+
+ DOMAIN NO.  1     MATERIAL NAME -- dfalt
+
+ DOMAIN NO.  2     MATERIAL NAME --  sand
+
+ DOMAIN NO.  3     MATERIAL NAME -- atmos
+     
+ WRITE FILE *MESH* FROM INPUT DATA
+
+                        ************************************************************************************
+                        *                       EVALUATE FLOATING POINT ARITHMETIC                         *
+                        ************************************************************************************
+                        *                                                                                  *
+                        * FLOATING POINT PROCESSOR HAS APPROXIMATELY 15 SIGNIFICANT DIGITS                 *
+                        *                                                                                  *
+                        * DEFAULT VALUE OF INCREMENT FACTOR FOR NUMERICAL DERIVATIVES IS DFAC = 0.1490E-07 *
+                        * DEFAULT VALUE FOR DFAC WILL BE USED                                              *
+                        *                                                                                  *
+                        ************************************************************************************
+
+ 
+*        The numbers of connections in the X-, Y- and Z-directions are   4760,      0 and   4800 respectively                    *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+
+ all NCON =   9560 connections read from file *MESH* reference known elements, and have been initialized to the data arrays
+
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   Summary of capabilities for random permeability modification   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ Modification of absolute permeability on a grid block-by-grid block basis will be made when a domain "SEED " is present in data
+ block "ROCKS", as follows.
+                                    k    --->    k' = k*m
+
+ Here, k is the absolute permeability specified for the reservoir domain to which the grid block belongs. Parameter m is a
+ "permeability modifier" which can be internally generated or externally prescribed by the user on a block-by-block basis.
+
+ When permeability modification is in effect, the strength of capillary pressure will, following Leverett (1941), automatically be
+ scaled as   Pcap ---> Pcap' = Pcap/SQRT(m).
+
+ User-supplied permeability modifiers have to be entered as parameter "PMX" in columns 41-50 of an ELEMEnt record.
+ Permeability modification options are selected through parameters in data block "ROCKS".
+
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+ Summary of available permeability modification options
+          (with s - random number between 0 and 1; PMX - user-supplied modifiers in data block "ELEME"):
+      (1) externally supplied:        m = PMX - PER(2)
+      (2) "linear"      (DROK.ne.0):  m = PER(1) * s - PER(2)
+      (3) "logarithmic" (DROK.eq.0):  m = exp(- PER(1) * s) - PER(2)
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+            &&&& if a domain "SEED " is present, permeability modification will be made
+            &&&& if no domain "SEED " is present, no permeability modification will be made
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>  domain = "SEED " is not present, no permeability modification will be made  <<<<<<<<<<<<<<<<<<<<<<<<<<
+ >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+ Data provided in domain "SEED " are used to select the following options.
+
+ DROK   = *** random number seed for internal generation of "linear" permeability modifiers.
+        = 0: (default) no internal generation of "linear" permeability modifiers.
+        > 0: perform "linear" permeability modification; random modifiers are generated internally with DROK as seed.
+
+ POR    = *** random number seed for internal generation of "logarithmic" permeability modifiers,
+        = 0: (default) no internal generation of "logarithmic" permeability modifiers.
+        > 0: perform "logarithmic" permeability modification; random modifiers are generated internally with POR as seed.
+
+            &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            &&&&& note: if both DROK and POR are specified as non-zero, DROK takes precedence                                  &&&&&
+            &&&&&       if both DROK and POR are zero, permeability modifiers as supplied through "ELEME" data will be used    &&&&&
+            &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+ PER(1) = *** scale factor (optional) for internally generated  permeability modifiers.
+        = 0: (defaults to PER(1) = 1): permeability modifiers are generated as random numbers in the interval (0, 1).
+        > 0: permeability modifiers are generated as random numbers in the interval (0, PER(1)).
+
+ PER(2) = *** shift (optional) for internal or external permeability modifiers.
+        = 0: (default) no shift is applied to permeability modifiers.
+        > 0: permeability modifiers are shifted according to m' = m - PER(2). All m' < 0 are set equal to zero.
+
+
+ MESH HAS   4920 ELEMENTS (   4920 ACTIVE) AND   9560 CONNECTIONS (INTERFACES) BETWEEN THEM
+ GENER HAS     0 SINKS/SOURCES
+
+**********************************************************************************************************************************
+*                                                                                                                                *
+*                           M A T R I X   S O L V E R   A N D   R E L E V A N T   I N F O R M A T I O N                          *
+*                                                                                                                                *
+**********************************************************************************************************************************
+
+    The solver is determined from MOP(21)
+
+    The solution method indicator MATSLV =  2
+         MATSLV = 1: SUBROUTINE DSLUCS (DEFAULT)  - Direct solver using LU decomposition 
+         MATSLV = 2: SUBROUTINE DSLUBC - BI-CONJUGATE GRADIENT SOLVER
+                                         Incomplete LU factorization preconditioning
+         MATSLV = 3: SUBROUTINE DSLUCS (DEFAULT) - Lanczos-type Conjugate Gradient Squared solver 
+                                                   Incomplete LU factorization preconditioning
+         MATSLV = 4: SUBROUTINE DSLUGM - Generalized Minimum Residual Conjugate Gradient solver
+                                         Incomplete LU factorization preconditioning
+         MATSLV = 5: SUBROUTINE DLUSTB - STABILIZED BI-CONJUGATE GRADIENT SOLVER 
+                                         Incomplete LU factorization preconditioning
+         MATSLV = 6: SUBROUTINE LUBAND - Direct solver using LU decomposition 
+
+    RITMAX: Maximum # of CG iterations as fraction of the total number of equations           =  1.00000E-01
+         (0.0 < RITMAX <= 1.0,   Default = 0.1)
+    CLOSUR: Convergence criterion for the CG iterations                                       =  1.00000E-06
+         (1.0e-12 <= CLOSUR <= 1.0e-6,  Default = 1.0e-6)
+    NMAXIT: Maximum # of CG iterations - not to exceed the total number of equations NELA*NEQ =  1476
+         (20 < NMAXIT <= NREDM)
+
+
+    The matrix Z-preprocessing system is ZPROCS = Z1
+
+         ZPROCS = Z0: No Z-preprocessing; default for NEQ = 1 and for MATSLV = 6
+         ZPROCS = Z1: Replacement of zeros on the main-diagonal by a small number; 
+                       default for NEQ > 1 and for 0 < MATSLV < 6
+         ZPROCS = Z2: Linear combination of equations in each element to produce non-zero main diagonal entries
+         ZPROCS = Z3: Normalization of equations, followed by Z2
+         ZPROCS = Z4: Same as in OPROCS = O4
+
+
+    The matrix O-preprocessing system is OPROCS = O0
+
+         OPROCS = O0: No O-preprocessing; default for NEQ = 1 and for MATSLV = 6
+         OPROCS = O1: Elimination of lower half of the main-diagonal submatrix with center pivoting
+         OPROCS = O2: O1+Elimination of upper half of the main-diagonal submatrix with center pivoting
+         OPROCS = O3: O2+Normalization - Results in unit main-diagonal submatrices 
+         OPROCS = O4: pre-processing which results in unit main-diagonal submatrices without center pivoting
+
+
+
+ END OF TOUGH2 INPUT JOB --- ELAPSED TIME =   0.3004 SECONDS
+
+
+ ***********************************************************************************************************************************
+ *          ARRAY *MOP* ALLOWS TO GENERATE MORE PRINTOUT IN VARIOUS SUBROUTINES, AND TO MAKE SOME CALCULATIONAL CHOICES.           *
+ ***********************************************************************************************************************************
+
+   MOP(1)  = 1 *** ALLOWS TO GENERATE A SHORT PRINTOUT FOR EACH NEWTON-RAPHSON ITERATION
+           = 0, 1, OR 2: GENERATE 0, 1, OR 2 LINES OF PRINTOUT
+
+            MORE PRINTOUT IS GENERATED FOR MOP(I) > 0 IN THE FOLLOWING SUBROUTINES (THE LARGER MOP IS, THE MORE WILL BE PRINTED).
+
+   MOP(2)  = 0 *** CYCIT       MOP(3) = 0 *** MULTI       MOP(4) = 0 *** QU       MOP(5) = 0 *** EOS       MOP(6) = 0 *** LINEQ    
+   MOP(8)  = 0 *** DISF (T2DM ONLY)
+
+   MOP(7)  = 0 *** IF UNEQUAL ZERO, WILL GENERATE A PRINTOUT OF INPUT DATA
+
+            CALCULATIONAL CHOICES OFFERED BY MOP ARE AS FOLLOWS:
+
+   MOP(9)  = 0 *** CHOOSES FLUID COMPOSITION ON WITHDRAWAL (PRODUCTION).
+           = 0: ACCORDING TO RELATIVE MOBILITIES.
+           = 1: ACCORDING TO COMPOSITION IN PRODUCING ELEMENT.
+
+   MOP(10) = 0 *** CHOOSES INTERPOLATION FORMULA FOR DEPENDENCE OF THERMAL CONDUCTIVITY ON LIQUID SATURATION (SL).
+           = 0: K = KDRY + SQRT(SL)*(KWET-KDRY)
+           = 1: K = KDRY + SL*(KWET-KDRY)
+
+   MOP(11) = 0 *** CHOOSES EVALUATION OF MOBILITY AND ABSOLUTE PERMEABILITY AT INTERFACES.
+           = 0: MOBILITIES ARE UPSTREAM WEIGHTED WITH WUP. (DEFAULT IS WUP = 1.0). PERMEABILITY IS UPSTREAM WEIGHTED.
+           = 1: MOBILITIES ARE AVERAGED BETWEEN ADJACENT ELEMENTS. PERMEABILITY IS UPSTREAM WEIGHTED.
+           = 2: MOBILITIES ARE UPSTREAM WEIGHTED WITH WUP. (DEFAULT IS WUP = 1.0). PERMEABILITY IS HARMONIC WEIGHTED.
+           = 3: MOBILITIES ARE AVERAGED BETWEEN ADJACENT ELEMENTS. PERMEABILITY IS HARMONIC WEIGHTED.
+           = 4: MOBILITY * PERMEABILITY PRODUCT IS HARMONIC WEIGHTED.
+
+   MOP(12) = 1 *** CHOOSES PROCEDURE FOR INTERPOLATING GENERATION RATES FROM A TIME TABLE.
+           = 0: TRIPLE LINEAR INTERPOLATION.
+           = 1: "STEP FUNCTION" OPTION.
+           = 2: "RIGOROUS STEP FUNCTION" OPTION.
+
+   MOP(13) = 0 *** T2DM ONLY.  SPECIFIES ASSIGNMENT OF COMPONENTS OF BOUNDARY VELOCITY AND CONCENTRATION GRADIENT VECTORS.
+                   AFFECTS ONLY THE INTERPOLATED  COMPONENTS.  DIRECT COMPONENTS ARE USED WHERE AVAILABLE.
+           = 0: VELOCITY AND GRADIENT AT BOUNDARY ARE ZERO.
+           = 1: VELOCITY IS ZERO; GRADIENT AT BOUNDARY IS NEAREST-NEIGHBOR.
+           = 2: VELOCITY IS NEAREST NEIGHBOR; GRADIENT AT BOUNDARY IS ZERO.
+           = 3: VELOCITY AND GRADIENT AT BOUNDARY ARE NEAREST-NEIGHBOR.
+
+   MOP(14) = 0 *** SPECIFIES USE OF TEMPERATURE-DEPENDENT ROCK HEAT CAPACITY AND THERMAL CONDUCTIVITY
+           = 0: DO NOT USE TEMPERATURE-DEPENDENT ROCK HEAT CAPACITY AND THERMAL CONDUCTIVITY.
+           = 1: CALCULATE T-DEPENDENT HEAT CAPACITY.
+           = 2: CALCULATE T-DEPENDENT THERMAL CONDUCTIVITY
+           = 3: CALCULATE BOTH T-DEPENDENT Cp & k
+
+   MOP(15) = 0 *** ALLOWS TO SELECT A SEMI-ANALYTICAL HEAT EXCHANGE CALCULATION WITH CONFINING BEDS.
+           = 0: NO SEMI-ANALYTICAL HEAT EXCHANGE
+           > 0: SEMI-ANALYTICAL HEAT EXCHANGE ENGAGED (WHEN A SPECIAL SUBROUTINE MODULE *QLOSS* IS PRESENT)
+
+   MOP(16) = 4 *** PERMITS TO CHOOSE TIME STEP SELECTION OPTION
+           = 0: USE TIME STEPS EXPLICITLY PROVIDED AS INPUT.
+           > 0: INCREASE TIME STEP BY AT LEAST A FACTOR 2, IF CONVERGENCE OCCURS IN .LE. MOP(16) ITERATIONS.
+
+   MOP(17) = 0 *** Wellbore Permeability Model
+           = 0: Wellbore Permeability Model Off
+           = 1: Wellbore Perm Model On (ISOX=5): Mean Wt
+           = 2: Wellbore Perm Model On (ISOX=5): Geom Mean Wt
+
+   MOP(18) = 0 *** ALLOWS TO SELECT HANDLING OF INTERFACE DENSITY.
+           = 0: PERFORM UPSTREAM WEIGHTING FOR INTERFACE DENSITY.
+           > 0: COMPUTE INTERFACE DENSITY AS AVERAGE OF THE TWO GRID BLOCK DENSITIES.
+                HOWEVER, WHEN ONE OF THE TWO PHASE SATURATIONS IS ZERO, DO UPSTREAM WEIGHTING.
+
+   MOP(19) = 0 *** is used in some EOS-modules for selecting different options
+
+   MOP(20) = 0 *** is used in some EOS-modules for selecting different options
+
+   MOP(21) = 2 *** PERMITS TO SELECT LINEAR EQUATION SOLVER
+           = 0: DEFAULTS TO MOP(21) = 3
+           = 1: DEFAULTS TO MOP(21) = 3
+           = 2: SUBROUTINE DSLUBC: BI-CONJUGATE GRADIENT SOLVER; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 3: SUBROUTINE DSLUCS: BI-CONJUGATE GRADIENT SOLVER - LANCZOS TYPE; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 4: SUBROUTINE DSLUGM: GENERALIZED MINIMUM RESIDUAL CONJUGATE GRADIENTS; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 5: SUBROUTINE DLUSTB: Stabilized bi-conjugate gradient solver; PRECONDITIONER: INCOMPLETE LU FACTORIZATION
+           = 6: SUBROUTINE LUBAND: Direct solver using LU decomposition
+
+
+   MOP(22) = 0 *** T2DM ONLY.  SPECIFIES METHOD OF SUMMATION OF DUPLICATE ELEMENTS IN THE JACOBIAN. ***
+           = 0: USE SUMDUP2.
+           = 1: USE SUMDUP.
+           = 2:                                        
+
+   MOP(23) = 0 *** T2DM ONLY.  HANDLES EFFECTS OF NON-CONNECTED NEIGHBOR GRID BLOCKS ON DISPERSIVE FLUX IN  DISF. ***
+           = 0: INCLUDE INFLUENCE OF NEIGHBOR GRID BLOCKS.  (MORE ACCURATE JACOBIAN, SLOWER LINEAR EQUATION SOLUTION).
+           = 1: NEGLECT INFLUENCE OF NEIGHBOR GRID BLOCKS.  (LESS ACCURATE JACOBIAN, FASTER LINEAR EQUATION SOLUTION).
+
+
+   MOP(24) = 0 *** PERMITS TO SELECT HANDLING OF MULTIPHASE DIFFUSIVE FLUXES AT INTERFACES
+           = 0: HARMONIC WEIGHTING OF FULLY-COUPLED EFFECTIVE MULTIPHASE DIFFUSIVITY
+           = 1: SEPARATE HARMONIC WEIGHTING OF GAS AND LIQUID PHASE DIFFUSIVITIES.
+
+ ***********************************************************************************************************************************
+
+ ***********************************************************************************************************************************
+ *           EWASG: EQUATION OF STATE FOR MIXTURES OF WATER/SODIUM CHLORIDE/NCG WITH VAPOR PRESSURE LOWERING CAPABILITY            *
+ ***********************************************************************************************************************************
+
+    OPTIONS SELECTED ARE: (NK,NEQ,NPH,NB) = (3,3,3, 6)
+
+                          NK  =  3   - NUMBER OF FLUID COMPONENTS
+                          NEQ =  3   - NUMBER OF EQUATIONS PER GRID BLOCK
+                          NPH =  3   - NUMBER OF PHASES THAT CAN BE PRESENT
+                          NB  =  6   - NUMBER OF SECONDARY PARAMETERS (OTHER THAN COMPONENT MASS FRACTIONS)
+
+                   For NB = 6, diffusion is "off", for NB = 8, diffusion is "on"
+
+
+    AVAILABLE OPTIONS: (NK,NEQ,NPH,NB)=(3,4,3,6 or 8) -WATER, NaCl, NCG; NON-ISOTHERMAL;      VAR. (P, XS OR SS+10, X3 OR SG+10, T)
+                                       (3,3,3,6 or 8) -WATER, NaCl, NCG; ISOTHERMAL;          VAR. (P, XS OR SS+10, X3 OR SG+10, T)
+                                       (2,3,3,6 or 8) -WATER, NaCl, NO NCG; NON-ISOTHERMAL;   VAR. (P, XS OR SS+10, T)
+                                       (2,2,3,6 or 8) -WATER, NaCl, NO NCG; ISOTHERMAL;       VAR. (P, XS OR SS+10, T)
+
+    Default options are (2,3,2,6) - non-isothermal, diffusion "off"
+
+    THE NK = 2 ("NO NCG") OPTIONS MAY ONLY BE USED FOR PROBLEMS WITH SINGLE-PHASE LIQUID CONDITIONS THROUGHOUT
+
+ ***********************************************************************************************************************************
+
+
+ THE PRIMARY VARIABLES ARE
+  P - PRESSURE          XSM - SALT MASS FRACTION IN LIQUID (XS)  OR  SOLID SATURATION  (SS+10.)
+  X3 - NCG MASS FRACTION  OR  SG+10. - GAS PHASE SATURATION + 10.         T - TEMPERATURE
+
+ ******************************                                        *********************************************************
+ *         COMPONENTS         *                                        *   FLUID PHASE CONDITION        PRIMARY VARIABLES      *
+ ******************************                                        *********************************************************
+ *                            *                                        *                                                       *
+ *       # 1  -  WATER        *                                        *   SINGLE-PHASE GAS           P,     XSM,      X3,   T *
+ *                            *                                        *                                                       *
+ *       # 2  -  NaCl         *                                        *   SINGLE-PHASE LIQUID        P,     XSM,      X3,   T *
+ *                            *                                        *                                                       *
+ *       # 3  -  NCG          *                                        *   TWO-PHASE                  P,     XSM,  SG+10.,   T *
+ *                            *                                        *                                                       *
+ *       # 4  -  HEAT         *                                        *********************************************************
+ *                            *
+ ******************************
+
+ ***********************************************************************************************************************************
+ *                           ARRAY *IE*  ALLOWS TO MAKE CHOICES AMONG DIFFERENT EOS OPTIONS                                        *
+ ***********************************************************************************************************************************
+
+    IE(1)  = 1: *** NUMBER OF ADDITIONAL RECORDS READ IN DATA BLOCK SELEC.
+
+    IE(10) = 0: *** ALLOWS TO TURN VAPOR PRESSURE LOWERING OFF/ON.
+           = 0: VAPOR PRESSURE LOWERING IS OFF.
+           = 1: VAPOR PRESSURE LOWERING IS ON.
+
+    IE(11) = 0: *** ALLOWS CHOICE OF DEPENDENCE OF PERMEABILITY ON ACTIVE FLOW POROSITY.
+           = 0: PERMEABILITY DOES NOT VARY WITH FLOW POROSITY.
+           = 1: PERMEABILITY VARIES AS PHIF**FE(1).
+           = 2: SERIES FRACTURE MODEL.
+           = 3: SERIES TUBE MODEL.
+
+    IE(14) = 0: *** ALLOWS CHOICE OF TREATMENT OF THERMOPHYSICAL PROPERTIES DEPENDENCE ON SALT CONTENT.
+           = 0: FULL DEPENDENCE (DEFAULT).
+           = 1: SUPPRESSION OF VAPOR PRESSURE DEPENDENCE.
+           = 2: SUPPRESSION OF VAPOR PRESSURE AND ENTHALPY DEPENDENCE.
+           = 3: SUPPRESSION OF ALL THERMOPHYSICAL PROPERTIES DEPENDENCE OTHER THAN SALT SOLUBILITY.
+
+    IE(15) = 0: *** ALLOWS CHOICE OF CORRELATION FOR  VAPOR SATURATED BRINE ENTHALPY.
+           = 0: MICHAELIDES (1981).
+           = 1: MILLER (1978).
+
+    IE(16) = 2: *** ALLOWS CHOICE OF TYPE OF NCG.
+           = 1: AIR.
+           = 2: CO2  (DEFAULT).
+           = 3: CH4.
+           = 4: H2.
+           = 5: N2.
+
+ ***********************************************************************************************************************************
+
+ ..... NEGLECT VAPOR PRESSURE LOWERING .....
+
+ ***********************************************************************************************************************************
+
+
+ ********** VOLUME- AND MASS-BALANCES *********************************************************************************************
+
+ ********** [KCYC,ITER] = [      0,  0] *****                                THE TIME IS  0.00000E+00 SECONDS, OR  0.00000E+00 DAYS
+
+
+                          PHASES PRESENT                                        COMPONENT MASS IN PLACE (kg)
+ ********************************************************* ************************************************************************
+ PHASES     *      GAS          LIQUID         SOLID       COMPONENTS *     WATER          SALT             CO2           HEAT
+ ********************************************************* ************************************************************************
+            *                                              PHASES     *
+ VOL. (m^3) * 0.00000000E+00 0.36000000E+27 0.00000000E+00 GAS PHASE  * 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00
+ MASS (kg)  * 0.00000000E+00 0.35897432E+30 0.00000000E+00 LIQUID     * 0.35897432E+30 0.00000000E+00 0.00000000E+00 0.37604715E+35
+ ********************************************************* SOLID SALT * 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00
+                                                           ADSORB-ROCK* 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.50232000E+35
+                                                           TOTAL      * 0.35897432E+30 0.00000000E+00 0.00000000E+00 0.87836715E+35
+                                                           ************************************************************************
+
+ **********************************************************************************************************************************
+
+
+   a40(     1,  1) ST = 1.000000E+00 DT = 1.000000E+00 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+
+ case 2                                         
+
+          OUTPUT DATA AFTER (   1,  1)-2-TIME STEPS                                                    THE TIME IS 0.115741E-04 DAYS
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+  TOTAL TIME     KCYC   ITER  ITERC   KON        DX1M         DX2M         DX3M          MAX. RES.      NER    KER        DELTEX
+ 0.100000E+01      1      1      1     2       0.00000E+00  0.00000E+00  0.00000E+00    0.73212E-07    3955     1       0.10000E+01
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ELEM. IND.    P         T       SG          SL          SS         XNACL       XCO2G       XCO2L        PCAP       k-red.      DL
+              (Pa)    (deg.C)                                                                            (Pa)                (kg/m3)
+
+  ah 2   1 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ai 2   2 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  aj 2   3 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ak 2   4 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   c 3   5 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   d 3   6 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   e 3   7 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   f 3   8 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   i 3   9 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   j 3  10 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  af 3  11 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ag 3  12 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ah 3  13 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ai 3  14 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  aj 3  15 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ak 3  16 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  al 3  17 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  am 3  18 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  an 3  19 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   a 4  20 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   b 4  21 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   c 4  22 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   d 4  23 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   e 4  24 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   f 4  25 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   g 4  26 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   h 4  27 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   i 4  28 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   j 4  29 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   k 4  30 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ae 4  31 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  af 4  32 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ag 4  33 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ah 4  34 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ai 4  35 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  aj 4  36 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  ak 4  37 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  al 4  38 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  am 4  39 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  an 4  40 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  df 4  41 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+  dg 4  42 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   a 5  43 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   b 5  44 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+
+ ELEM. IND.    P         T       SG          SL          SS         XNACL       XCO2G       XCO2L        PCAP       k-red.      DL
+              (Pa)    (deg.C)                                                                            (Pa)                (kg/m3)
+
+   c 5  45 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   d 5  46 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   e 5  47 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   f 5  48 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   g 5  49 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   h 5  50 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   i 5  51 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   j 5  52 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+   k 5  53 0.10130E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.2
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+   a40(     2,  1) ST = 3.000000E+00 DT = 2.000000E+00 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+   a40(     3,  1) ST = 7.000000E+00 DT = 4.000000E+00 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+   a40(     4,  1) ST = 1.500000E+01 DT = 8.000000E+00 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+   a40(     5,  1) ST = 3.100000E+01 DT = 1.600000E+01 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+   a40(     6,  1) ST = 6.300000E+01 DT = 3.200000E+01 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+   a40(     7,  1) ST = 1.270000E+02 DT = 6.400000E+01 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+   a40(     8,  1) ST = 2.550000E+02 DT = 1.280000E+02 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P =   101300. S = 0.000000E+00
+ ...ITERATING... AT [      9,  1] --- DELTEX = 2.560000E+02   MAX. RES. = 1.874228E-05  AT ELEMENT   a40  EQUATION   1
+  do40(     9,  2) ST = 5.110000E+02 DT = 2.560000E+02 DX1=  4.82135E+04 DX2=  0.00000E+00 T =  25.000 P =   149513. S = 0.000000E+00
+ ...ITERATING... AT [     10,  1] --- DELTEX = 5.120000E+02   MAX. RES. = 3.412087E-05  AT ELEMENT  dp40  EQUATION   1
+  do39(    10,  2) ST = 1.023000E+03 DT = 5.120000E+02 DX1=  1.90606E+04 DX2=  0.00000E+00 T =  25.000 P =   124686. S = 0.000000E+00
+ ...ITERATING... AT [     11,  1] --- DELTEX = 1.024000E+03   MAX. RES. = 5.849454E-05  AT ELEMENT  do40  EQUATION   1
+  dh39(    11,  2) ST = 2.047000E+03 DT = 1.024000E+03 DX1=  5.51685E+04 DX2=  0.00000E+00 T =  25.000 P =   179846. S = 0.000000E+00
+ ...ITERATING... AT [     12,  1] --- DELTEX = 2.048000E+03   MAX. RES. = 9.344016E-05  AT ELEMENT  dj40  EQUATION   1
+  dn40(    12,  2) ST = 4.095000E+03 DT = 2.048000E+03 DX1=  1.98250E+05 DX2=  0.00000E+00 T =  25.000 P =   562428. S = 0.000000E+00
+ ...ITERATING... AT [     13,  1] --- DELTEX = 4.096000E+03   MAX. RES. = 1.403055E-04  AT ELEMENT   e40  EQUATION   1
+   o40(    13,  2) ST = 8.191000E+03 DT = 4.096000E+03 DX1=  2.86686E+05 DX2=  0.00000E+00 T =  25.000 P =   849113. S = 0.000000E+00
+ ...ITERATING... AT [     14,  1] --- DELTEX = 8.192000E+03   MAX. RES. = 2.029147E-04  AT ELEMENT  dp40  EQUATION   1
+  cr40(    14,  2) ST = 1.638300E+04 DT = 8.192000E+03 DX1=  4.08229E+05 DX2=  0.00000E+00 T =  25.000 P =  1257344. S = 0.000000E+00
+ ...ITERATING... AT [     15,  1] --- DELTEX = 1.638400E+04   MAX. RES. = 2.889438E-04  AT ELEMENT   a40  EQUATION   1
+  bi40(    15,  2) ST = 3.276700E+04 DT = 1.638400E+04 DX1=  5.78591E+05 DX2=  0.00000E+00 T =  25.000 P =  1835940. S = 0.000000E+00
+ ...ITERATING... AT [     16,  1] --- DELTEX = 3.276800E+04   MAX. RES. = 4.095334E-04  AT ELEMENT   n40  EQUATION   1
+  cr40(    16,  2) ST = 6.553500E+04 DT = 3.276800E+04 DX1=  8.18998E+05 DX2=  0.00000E+00 T =  25.000 P =  2654926. S = 0.000000E+00
+ ...ITERATING... AT [     17,  1] --- DELTEX = 6.553600E+04   MAX. RES. = 5.797261E-04  AT ELEMENT  ay40  EQUATION   1
+  dm40(    17,  2) ST = 1.310710E+05 DT = 6.553600E+04 DX1=  1.15887E+06 DX2=  0.00000E+00 T =  25.000 P =  3813795. S = 0.000000E+00
+ ...ITERATING... AT [     18,  1] --- DELTEX = 1.310720E+05   MAX. RES. = 8.203689E-04  AT ELEMENT  cv40  EQUATION   1
+  aq40(    18,  2) ST = 2.621430E+05 DT = 1.310720E+05 DX1=  1.63915E+06 DX2=  0.00000E+00 T =  25.000 P =  5452945. S = 0.000000E+00
+ ...ITERATING... AT [     19,  1] --- DELTEX = 2.621440E+05   MAX. RES. = 1.160508E-03  AT ELEMENT  ax40  EQUATION   1
+  cz40(    19,  2) ST = 5.242870E+05 DT = 2.621440E+05 DX1=  2.30328E+06 DX2=  0.00000E+00 T =  25.000 P =  7756218. S = 0.000000E+00
+ ...ITERATING... AT [     20,  1] --- DELTEX = 5.242880E+05   MAX. RES. = 1.631000E-03  AT ELEMENT  da40  EQUATION   1
+  ad39(    20,  2) ST = 1.048575E+06 DT = 5.242880E+05 DX1=  3.07751E+06 DX2=  0.00000E+00 T =  25.000 P = 10364091. S = 0.000000E+00
+ ...ITERATING... AT [     21,  1] --- DELTEX = 1.048576E+06   MAX. RES. = 2.185059E-03  AT ELEMENT  ad40  EQUATION   1
+  da39(    21,  2) ST = 2.097151E+06 DT = 1.048576E+06 DX1=  3.51832E+06 DX2=  0.00000E+00 T =  25.000 P = 13882404. S = 0.000000E+00
+ ...ITERATING... AT [     22,  1] --- DELTEX = 2.097152E+06   MAX. RES. = 2.497709E-03  AT ELEMENT  bt40  EQUATION   1
+   d39(    22,  2) ST = 4.194303E+06 DT = 2.097152E+06 DX1=  2.94868E+06 DX2=  0.00000E+00 T =  25.000 P = 16831086. S = 0.000000E+00
+ ...ITERATING... AT [     23,  1] --- DELTEX = 4.194304E+06   MAX. RES. = 2.094766E-03  AT ELEMENT  dl40  EQUATION   1
+   e39(    23,  2) ST = 8.388607E+06 DT = 4.194304E+06 DX1=  1.58165E+06 DX2=  0.00000E+00 T =  25.000 P = 18412735. S = 0.000000E+00
+ ...ITERATING... AT [     24,  1] --- DELTEX = 8.388608E+06   MAX. RES. = 1.125305E-03  AT ELEMENT  cb40  EQUATION   1
+  bd38(    24,  2) ST = 1.677722E+07 DT = 8.388608E+06 DX1=  4.89968E+05 DX2=  0.00000E+00 T =  25.000 P = 18412238. S = 0.000000E+00
+ ...ITERATING... AT [     25,  1] --- DELTEX = 1.475878E+07   MAX. RES. = 3.081921E-04  AT ELEMENT  bm40  EQUATION   1
+  bd37(    25,  2) ST = 3.153600E+07 DT = 1.475878E+07 DX1=  8.13557E+04 DX2=  0.00000E+00 T =  25.000 P = 18001761. S = 0.000000E+00
+
+ ********** VOLUME- AND MASS-BALANCES *********************************************************************************************
+
+ ********** [KCYC,ITER] = [     25,  2] *****                                THE TIME IS  3.15360E+07 SECONDS, OR  3.65000E+02 DAYS
+
+
+                          PHASES PRESENT                                        COMPONENT MASS IN PLACE (kg)
+ ********************************************************* ************************************************************************
+ PHASES     *      GAS          LIQUID         SOLID       COMPONENTS *     WATER          SALT             CO2           HEAT
+ ********************************************************* ************************************************************************
+            *                                              PHASES     *
+ VOL. (m^3) * 0.00000000E+00 0.36000000E+27 0.00000000E+00 GAS PHASE  * 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00
+ MASS (kg)  * 0.00000000E+00 0.35897432E+30 0.00000000E+00 LIQUID     * 0.35897432E+30 0.00000000E+00 0.00000000E+00 0.37604715E+35
+ ********************************************************* SOLID SALT * 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00
+                                                           ADSORB-ROCK* 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.50232000E+35
+                                                           TOTAL      * 0.35897432E+30 0.00000000E+00 0.00000000E+00 0.87836715E+35
+                                                           ************************************************************************
+
+ **********************************************************************************************************************************
+
+
+
+ case 2                                         
+
+          OUTPUT DATA AFTER (  25,  2)-2-TIME STEPS                                                    THE TIME IS 0.365000E+03 DAYS
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+  TOTAL TIME     KCYC   ITER  ITERC   KON        DX1M         DX2M         DX3M          MAX. RES.      NER    KER        DELTEX
+ 0.315360E+08     25      2     42     2       0.82153E+05  0.00000E+00  0.00000E+00    0.16590E-07    3650     1       0.14759E+08
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ELEM. IND.    P         T       SG          SL          SS         XNACL       XCO2G       XCO2L        PCAP       k-red.      DL
+              (Pa)    (deg.C)                                                                            (Pa)                (kg/m3)
+
+  ah 2   1 0.83454E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+  ai 2   2 0.83454E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+  aj 2   3 0.83454E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+  ak 2   4 0.83454E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+   c 3   5 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   d 3   6 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   e 3   7 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   f 3   8 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   i 3   9 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   j 3  10 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  af 3  11 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ag 3  12 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ah 3  13 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ai 3  14 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  aj 3  15 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ak 3  16 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  al 3  17 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  am 3  18 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  an 3  19 0.13235E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   a 4  20 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   b 4  21 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   c 4  22 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   d 4  23 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   e 4  24 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   f 4  25 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   g 4  26 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   h 4  27 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   i 4  28 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   j 4  29 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   k 4  30 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ae 4  31 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  af 4  32 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ag 4  33 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ah 4  34 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ai 4  35 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  aj 4  36 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ak 4  37 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  al 4  38 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  am 4  39 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  an 4  40 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  df 4  41 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  dg 4  42 0.18125E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   a 5  43 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   b 5  44 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+
+ ELEM. IND.    P         T       SG          SL          SS         XNACL       XCO2G       XCO2L        PCAP       k-red.      DL
+              (Pa)    (deg.C)                                                                            (Pa)                (kg/m3)
+
+   c 5  45 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   d 5  46 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   e 5  47 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   f 5  48 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   g 5  49 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   h 5  50 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   i 5  51 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   j 5  52 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   k 5  53 0.23016E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ...ITERATING... AT [     26,  1] --- DELTEX = 2.951757E+07   MAX. RES. = 5.852333E-05  AT ELEMENT  al40  EQUATION   1
+  au38(    26,  2) ST = 6.105357E+07 DT = 2.951757E+07 DX1=  8.14422E+03 DX2=  0.00000E+00 T =  25.000 P = 18502129. S = 0.000000E+00
+  dp40(    27,  1) ST = 6.307200E+07 DT = 2.018430E+06 DX1=  0.00000E+00 DX2=  0.00000E+00 T =  25.000 P = 19486916. S = 0.000000E+00
+
+ ********** VOLUME- AND MASS-BALANCES *********************************************************************************************
+
+ ********** [KCYC,ITER] = [     27,  1] *****                                THE TIME IS  6.30720E+07 SECONDS, OR  7.30000E+02 DAYS
+
+
+                          PHASES PRESENT                                        COMPONENT MASS IN PLACE (kg)
+ ********************************************************* ************************************************************************
+ PHASES     *      GAS          LIQUID         SOLID       COMPONENTS *     WATER          SALT             CO2           HEAT
+ ********************************************************* ************************************************************************
+            *                                              PHASES     *
+ VOL. (m^3) * 0.00000000E+00 0.36000000E+27 0.00000000E+00 GAS PHASE  * 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00
+ MASS (kg)  * 0.00000000E+00 0.35897432E+30 0.00000000E+00 LIQUID     * 0.35897432E+30 0.00000000E+00 0.00000000E+00 0.37604715E+35
+ ********************************************************* SOLID SALT * 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.00000000E+00
+                                                           ADSORB-ROCK* 0.00000000E+00 0.00000000E+00 0.00000000E+00 0.50232000E+35
+                                                           TOTAL      * 0.35897432E+30 0.00000000E+00 0.00000000E+00 0.87836715E+35
+                                                           ************************************************************************
+
+ **********************************************************************************************************************************
+
+
+
+ case 2                                         
+
+          OUTPUT DATA AFTER (  27,  1)-2-TIME STEPS                                                    THE TIME IS 0.730000E+03 DAYS
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+  TOTAL TIME     KCYC   ITER  ITERC   KON        DX1M         DX2M         DX3M          MAX. RES.      NER    KER        DELTEX
+ 0.630720E+08     27      1     45     2       0.00000E+00  0.00000E+00  0.00000E+00    0.19940E-06    4074     1       0.20184E+07
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ 
+ ELEM. IND.    P         T       SG          SL          SS         XNACL       XCO2G       XCO2L        PCAP       k-red.      DL
+              (Pa)    (deg.C)                                                                            (Pa)                (kg/m3)
+
+  ah 2   1 0.83502E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+  ai 2   2 0.83502E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+  aj 2   3 0.83502E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+  ak 2   4 0.83502E+06  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.4
+   c 3   5 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   d 3   6 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   e 3   7 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   f 3   8 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   i 3   9 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   j 3  10 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  af 3  11 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ag 3  12 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ah 3  13 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ai 3  14 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  aj 3  15 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  ak 3  16 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  al 3  17 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  am 3  18 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+  an 3  19 0.13243E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.6
+   a 4  20 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   b 4  21 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   c 4  22 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   d 4  23 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   e 4  24 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   f 4  25 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   g 4  26 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   h 4  27 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   i 4  28 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   j 4  29 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   k 4  30 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ae 4  31 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  af 4  32 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ag 4  33 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ah 4  34 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ai 4  35 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  aj 4  36 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  ak 4  37 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  al 4  38 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  am 4  39 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  an 4  40 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  df 4  41 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+  dg 4  42 0.18136E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.8
+   a 5  43 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   b 5  44 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+
+ ELEM. IND.    P         T       SG          SL          SS         XNACL       XCO2G       XCO2L        PCAP       k-red.      DL
+              (Pa)    (deg.C)                                                                            (Pa)                (kg/m3)
+
+   c 5  45 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   d 5  46 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   e 5  47 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   f 5  48 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   g 5  49 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   h 5  50 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   i 5  51 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   j 5  52 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+   k 5  53 0.23030E+07  25.00 0.00000E+00 0.10000E+01 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00 0.10000E+01  997.9
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  
+
+ WRITE FILE *SAVE* AFTER     36 TIME STEPS  ---  THE TIME IS 1.892000E+08 SECONDS
+
+
+ ***********************************************************************************************************************************
+ *                                                                                                                        *
+ *                                                 SUMMARY OF PROGRAM UNITS USED                                                   *
+ *                                                                                                                        *
+ ***********************************************************************************************************************************
+
+       UNIT    VERSION     DATE                 COMMENTS
+ ___________________________________________________________________________________________________________________________________
+
+      IO       1.0      15 APRIL     1991      OPEN FILES *VERS*, *MESH*, *INCON*, *GENER*, *SAVE*, *LINEQ*, AND *TABLE*          
+      TOUGHREACT V3.32-OMP  08 Feb  2017      MAIN PROGRAM                                                                        
+      INPUT    1.60      12 Apr       2016      READ ALL DATA PROVIDED THROUGH FILE *INPUT*                                       
+      FLOP     2.0      12 FEB       2012      CALCULATE NUMBER OF SIGNIFICANT DIGITS FOR FLOATING POINT ARITHMETIC               
+      RFILE    1.8      30 Nov       2015      INITIALIZE DATA FROM FILES *MESH* OR *MINC*, *GENER*, AND *INCON*                  
+                                               also initializes permeability modifiers and coordinate arrays                      
+                                               and optionally reads tables with flowing wellbore pressures                        
+      PMIN     1.0      26 September 1997      initialize block-by-block permeability modifiers                                   
+      SIN      1.00      1 October   1999      initialize parameters for the solver package, and generate informative printout    
+      CYCIT    2.3     15 December  2015      EXECUTIVE ROUTINE FOR MARCHING IN TIME                                              
+                                                                                                                                  
+      EOS      3.1      13 November   2015      *EWASG* THERMOPHYSICAL PROPERTIES MODULE FOR H2O/NACL/NCG  AIR-CO2-CH4-H2-N2      
+      HALITE   1.0      25 FEBRUARY  1993      EQUILIBRIUM HALITE SOLUBILITY                                                      
+      SATB     1.0      26 MARCH     1992      VAPOR PRESSURE OF BRINE AS FUNCTION OF T, P AND SALT MASS FRACTION                 
+      SAT      1.0 S    17 SEPTEMBER 1990      STEAM TABLE EQUATION: SATURATION PRESSURE AS FUNCTION OF TEMPERATURE (M. OS.)      
+      HENRY    1.0      25 FEBRUARY  1993      HENRYS LAW TO CALCULATE NCG BUBBLING PRESSURE OR DISSOLVED NCG MASS FRACTION       
+      COBRI    1.0       8 November  1999      DENSITY AND ENTHALPY OF LIQUID BRINE AS FUNCTION OF T, P AND SALT MASS FRACTION    
+      COWAT    1.0 S    17 SEPTEMBER 1990      LIQUID WATER DENSITY AND INT. ENERGY VERSUS TEMPERATURE AND PRESSURE (M. OS.)      
+      TCRIT    1.0       5 November  1999      CRITICAL T OF NACL SOLUTIONS AS A FUNCTION OF SALINITY                             
+      VISB     1.1      22 MARCH     1996      VISCOSITY OF BRINE AS FUNCTION OF T, P AND SALT MASS FRACTION                      
+      VISH2O   1.0      22 MARCH     1996      VISCOSITY OF LIQUID WATER OR VAPOR AS FUNCTION OF TEMPERATURE, PRESSURE AND DENSITY
+      SOLUT    1.1      25 MARCH     1996      HEAT OF SOLUTION OF NCG AS FUNCTION OF T AND SALT MASS FRACTION                    
+      NCG      1.1       6 MARCH     1996      SPECIFIC ENTHALPY AND DENSITY OF GASEOUS NCG                                       
+      PCAP     1.1      14 April     2009      CAPILLARY PRESSURE AS FUNCTION OF SATURATION                                       
+      AKREL    1.0      30 MAY       1993      PERMEABILITY REDUCTION FACTOR AS FUNCTION OF POROSITY REDUCTION                    
+      DHAL     1.0      11 MARCH     1996      HALITE DENSITY AS FUNCTION OF T AND P                                              
+      HHAL     1.0       5 November  1999      HALITE SPECIFIC ENTHALPY AS FUNCTION OF T                                          
+                                                                                                                                  
+      BALLA    1.13 !    7 September 2001      PERFORM SUMMARY BALANCES FOR VOLUME, MASS, AND ENERGY                              
+      Get_TOUGH_HT_Variables 2.4   21 December 2015      Extract hydrological and thermal conditions from flow                    
+      TSTEP    1.0      4 MARCH      1991      ADJUST TIME STEPS TO COINCIDE WITH USER-DEFINED TARGET TIMES                       
+      MULTI    1.5      30 November     2015      ASSEMBLE ALL ACCUMULATION AND FLOW TERMS                                        
+                                               includes capabilities for radiative heat transfer and diffusion in all phases      
+                                                  with local equilibrium phase partitioning between gas and liquid                
+                                               allows block-by-block permeability modification                                    
+                                                                                                                                  
+      CONVER   1.0       4 MARCH     1991      UPDATE PRIMARY VARIABLES AFTER CONVERGENCE IS ACHIEVED                             
+      LINEQ    2.00      4 October   1999      Interface for linear equation solvers T2CG2                                        
+                                               Can call a direct solver or a package of conjugate gradient solvers                
+      WRIFI    1.2      30 November   2015      AT THE COMPLETION OF A TOUGH2 RUN, WRITE PRIMARY VARIABLES ON FILE *SAVE*         
+
+
+ ***********************************************************************************************************************************
+
+
+ END OF TOUGHREACT V3.32-OMP SIMULATION --- ELAPSED TIME =      2.866 SEC-- CALCULATION TIME =      2.566 SEC-- DATA INPUT TIME =    0.300 SEC
+

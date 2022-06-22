@@ -305,7 +305,7 @@ class t2listing(object):
             line = self.readline().lower()
             ip = line.find('is a program for')
             if ip >= 0 and self.simulator is None:
-                self.simulator = line[:ip].strip().upper()
+                self.simulator = line[:ip].strip().split()[0].upper()
         if line != '' and self.simulator is None:
             self.skip_to_nonblank()
             line = self.readline()
