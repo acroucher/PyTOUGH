@@ -1106,7 +1106,7 @@ class t2grid(object):
             if minc_rockname is None: minc_rockname = default_minc_rockname
             blkidict = dict([(blk.name, i) for i, blk in enumerate(self.blocklist)])
             iblk = self.num_blocks - 1
-            blockindex = np.zeros((num_levels, len(blocks)), np.int)
+            blockindex = np.zeros((num_levels, len(blocks)), int)
             if incon is not None:
                 template_vars = incon[0].variable
                 newincon = self.incons(template_vars)
