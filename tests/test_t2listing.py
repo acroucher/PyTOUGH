@@ -736,6 +736,23 @@ class t2listingTestCase(unittest.TestCase):
 
         self.listing.close()
 
+    def test_TOUGHREACT_2(self):
+        """TOUGHREACT case 2"""
+
+        self.base = os.path.join('listing', 'TOUGHREACT', '2', 'case2')
+        self.listing = t2listing(self.base + '.out')
+
+        self.assertEqual(self.listing.simulator, 'TOUGHREACT')
+        self.assertEqual(self.listing.num_fulltimes, 3)
+
+        self.table_test(25, ['element'])
+
+        self.table_spot_test(27, 'element', ' ag 3', 'P', 0.13243E+07)
+        self.history_test(('e', '  c 5', 'P'), ((0.100000E+01, 0.315360E+08, 0.630720E+08),
+                                                (0.10130E+06, 0.23016E+07, 0.23030E+07)))
+
+        self.listing.close()
+
 #--------------------------------------------------------------------------------
 # TOUGH3 tests
 

@@ -3685,7 +3685,9 @@ class mulgrid(object):
             nodes = [centrenode if i == 'c' else
                      col.node[col.index_plus(i0, i)] for
                      i in colnodes]
-            name, colnumber = self.new_column_name(colnumber, justfn, chars)
+            name, colnumber = self.new_column_name(colnumber, justfn = justfn,
+                                                   chars = chars,
+                                                   spaces = spaces)
             self.add_column(column(name, nodes, surface = col.surface))
             self.columnlist[-1].num_layers = col.num_layers
             newcolnames.append(name)
@@ -4049,7 +4051,7 @@ class mulgrid(object):
                     self.add_node(node(name, col.centre))
                     centrenodes[col.name] = self.nodelist[-1]
                 for subcol in transition_column[nn][nrefined, irange]:
-                    name, colnumber = self.new_column_name(colnumber, justfn, chars)
+                    name, colnumber = self.new_column_name(colnumber, justfn, chars, spaces)
                     nodes = []
                     for vert in subcol:
                         if isinstance(vert, int): n = col.node[(istart + vert) % nn]
