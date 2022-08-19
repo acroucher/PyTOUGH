@@ -1641,7 +1641,7 @@ class t2dataTestCase(unittest.TestCase):
             dat.add_generator(gen)
             gen = t2generator(name = 'foo 5', block = '  a 5', type = 'DELG')
             dat.add_generator(gen)
-            gen = t2generator(name = 'foo 6', block = '  a 6', type = 'DMAK')
+            gen = t2generator(name = 'foo 6', block = '  a 6', type = 'DMAT')
             dat.add_generator(gen)
             gen = t2generator(name = 'tmk 2', block = '  a 1', type = 'TMAK',
                               gx = 50., ex = 20, hg = -2)

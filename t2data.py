@@ -2560,7 +2560,7 @@ class t2data(object):
                     if g['cell'] is not None and gen.type != 'TMAK':
                         sources.append(g)
 
-                    if gen.type == 'DMAK':
+                    if gen.type in ['DMAK', 'DMAT']:
                         makeup_inputs.append(g['name'])
                     elif gen.type in reinjection_contributors:
                         group_inputs.append(g['name'])
