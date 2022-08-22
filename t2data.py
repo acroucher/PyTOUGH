@@ -2460,7 +2460,7 @@ class t2data(object):
                 g['interpolation'] = interp_type
                 g['averaging'] = averaging_type
                 data_table = [list(r) for r in zip(gen.time, gen.rate)]
-                if gen.type in ['DELG', 'DMAK', 'DELT', 'DELW']:
+                if gen.type in ['DELG', 'DMAK', 'DMAT', 'DELT', 'DELW']:
                     if gen.ltab > 0:
                         g['deliverability']['productivity'] = {'time': data_table}
                     else:
