@@ -2448,7 +2448,6 @@ class t2data(object):
             def injectivity_generator_json(g, gen):
                 """Generator types which inject against a pressure."""
                 g['direction'] = 'injection'
-                g['enthalpy'] = gen.ex
                 g['injectivity'] = {'pressure': gen.hg,
                                     'coefficient': abs(gen.fg)}
                 if gen.gx > 0:
@@ -2525,13 +2524,11 @@ class t2data(object):
         def reinjector_output_json(g, gen):
             """Returns JSON for reinjector output."""
             output = {'out': g['name']}
+            output['enthalpy'] = gen.ex
             if gen.type == 'FINJ':
                 output['rate'] = gen.gx
-                output['enthalpy'] = gen.ex
             elif gen.type in ['PINJ', 'RINJ']:
                 output['proportion'] = abs(gen.hg)
-                output['enthalpy'] = gen.ex
-            # (enthalpy set in source rather than reinjector for IMAK)
             return output
 
         def has_outputs(reinjector):
