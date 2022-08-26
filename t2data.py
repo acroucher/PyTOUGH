@@ -2570,8 +2570,7 @@ class t2data(object):
                     elif gen.type in ['FINJ', 'PINJ', 'RINJ', 'IMAK']:
                         if not reinjection:
                             reinjection = True
-                            if len(makeup_inputs) == 0 and len(group_inputs) == 1 and \
-                               group_inputs[0].startswith('makeup'):
+                            if len(makeup_inputs) == 0 and len(group_inputs) == 1:
                                 group_name = group_inputs[0]
                                 reinjector_input_group = None
                             else:
