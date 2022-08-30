@@ -2157,8 +2157,11 @@ class t2data(object):
              'solver': {'nonlinear': {'tolerance': {'function':
                                           {'absolute': abstol, 'relative': reltol}},
                                       'maximum': {'iterations': maxit}}}}
-        if self.parameter['max_timesteps'] is not None and \
-           self.parameter['max_timesteps'] >= 0:
+        if self.parameter['max_timesteps'] is None:
+            jsondata['time']['step']['maximum']['number'] = 0
+        elif self.parameter['max_timesteps'] < 0:
+            jsondata['time']['step']['maximum']['number'] = None
+        else:
             jsondata['time']['step']['maximum']['number'] = self.parameter['max_timesteps']
         if self.parameter['const_timestep'] < 0. :
             jsondata['time']['step'].update({'size': self.parameter['timestep'],

@@ -774,6 +774,16 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(j['time']['step']['size'], start_timestep)
             json.dumps(j)
 
+            dat.parameter['max_timesteps'] = None
+            j = dat.timestepping_json()
+            self.assertEqual(j['time']['step']['maximum']['number'], 0)
+            json.dumps(j)
+
+            dat.parameter['max_timesteps'] = -1
+            j = dat.timestepping_json()
+            self.assertIsNone(j['time']['step']['maximum']['number'])
+            json.dumps(j)
+
             dat.type = 'AUTOUGH2'
             reduction_autough2 = 0.2
             j = dat.timestepping_json()
