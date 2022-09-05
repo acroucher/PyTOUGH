@@ -2526,7 +2526,8 @@ class t2data(object):
 
         def reinjector_output_json(g, gen):
             """Returns JSON for reinjector output."""
-            output = {'out': g['name']}
+            output = {}
+            if g['cell'] is not None: output = {'out': g['name']}
             output['enthalpy'] = gen.ex
             if gen.type == 'FINJ':
                 output['rate'] = gen.gx
@@ -2587,11 +2588,10 @@ class t2data(object):
                         if reinjection:
                             output_json = reinjector_output_json(g, gen)
                             output_type = reinjector_output_type(gen)
-                            if g['cell'] is not None:
-                                if gen.type == 'RINJ':
-                                    overflow_outputs[output_type].append(output_json)
-                                else:
-                                    reinjector[output_type].append(output_json)
+                            if gen.type == 'RINJ':
+                                overflow_outputs[output_type].append(output_json)
+                            else:
+                                reinjector[output_type].append(output_json)
                             if gen.type in ['FINJ', 'PINJ', 'RINJ'] and gen.fg != 0:
                                 outputs = has_outputs(reinjector)
                                 overflow = has_outputs(overflow_outputs)

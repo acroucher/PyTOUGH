@@ -1584,7 +1584,13 @@ class t2dataTestCase(unittest.TestCase):
             gen = t2generator(name = 'foo 2', block = '  a 2', type = 'DMAK')
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            self.assertFalse('network' in j)
+            self.assertTrue('network' in j)
+            self.assertEqual(len(j['network']['group']), 1)
+            grp = j['network']['group'][-1]
+            self.assertEqual(grp['name'], 'reinjector group 1')
+            self.assertEqual(grp['in'], ['abc 1', 'abc 2'])
+            self.assertFalse('scaling' in grp)
+            self.assertFalse('limiter' in grp)
 
             # add TMAK
             gen = t2generator(block = '  a 1', type = 'TMAK',
@@ -1592,8 +1598,8 @@ class t2dataTestCase(unittest.TestCase):
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
             self.assertEqual(len(j['source']), 4)
-            self.assertEqual(len(j['network']['group']), 1)
-            grp = j['network']['group'][0]
+            self.assertEqual(len(j['network']['group']), 2)
+            grp = j['network']['group'][-1]
             self.assertEqual(grp['name'], 'makeup 1')
             self.assertEqual(grp['in'], ['foo 1', 'foo 2'])
             self.assertEqual(grp['scaling'], 'uniform')
@@ -1610,10 +1616,10 @@ class t2dataTestCase(unittest.TestCase):
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
             self.assertEqual(len(j['source']), 6)
-            self.assertEqual(len(j['network']['group']), 1)
-            self.assertEqual(len(j['network']['reinject']), 1)
-            r = j['network']['reinject'][0]
-            self.assertEqual(r['name'], 'reinjector 1')
+            self.assertEqual(len(j['network']['group']), 2)
+            self.assertEqual(len(j['network']['reinject']), 2)
+            r = j['network']['reinject'][-1]
+            self.assertEqual(r['name'], 'reinjector 2')
             self.assertEqual(r['in'], 'makeup 1')
             self.assertEqual(len(r['water']), 2)
             self.assertEqual(len(r['steam']), 0)
@@ -1632,12 +1638,12 @@ class t2dataTestCase(unittest.TestCase):
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
             self.assertEqual(len(j['source']), 8)
-            self.assertEqual(len(j['network']['group']), 1)
-            self.assertEqual(len(j['network']['reinject']), 2)
-            r = j['network']['reinject'][0]
-            self.assertEqual(r['overflow'], 'reinjector 2')
+            self.assertEqual(len(j['network']['group']), 2)
+            self.assertEqual(len(j['network']['reinject']), 3)
             r = j['network']['reinject'][1]
-            self.assertEqual(r['name'], 'reinjector 2')
+            self.assertEqual(r['overflow'], 'reinjector 3')
+            r = j['network']['reinject'][2]
+            self.assertEqual(r['name'], 'reinjector 3')
             self.assertFalse('in' in r)
             self.assertEqual(len(r['water']), 2)
             self.assertEqual(len(r['steam']), 0)
@@ -1657,8 +1663,8 @@ class t2dataTestCase(unittest.TestCase):
                               gx = 50., ex = 20, hg = -2)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            self.assertEqual(len(j['network']['group']), 2)
-            grp = j['network']['group'][1]
+            self.assertEqual(len(j['network']['group']), 3)
+            grp = j['network']['group'][2]
             self.assertEqual(grp['name'], 'tmk 2')
             self.assertEqual(grp['in'], ['foo 4', 'foo 6'])
             self.assertEqual(grp['scaling'], 'progressive')
@@ -1682,17 +1688,17 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(q['direction'], 'injection')
             self.assertEqual(q['limiter'], {'total': q6})
             self.assertEqual(q['injectivity'], {'pressure': P6, 'coefficient': finj6})
-            self.assertEqual(len(j['network']['group']), 3)
-            grp = j['network']['group'][2]
-            self.assertEqual(grp['name'], 'reinjector group 3')
+            self.assertEqual(len(j['network']['group']), 4)
+            grp = j['network']['group'][3]
+            self.assertEqual(grp['name'], 'reinjector group 4')
             self.assertEqual(grp['in'], ['foo 3', 'foo 5', 'tmk 2'])
             self.assertFalse('scaling' in grp)
             self.assertFalse('limiter' in grp)
             self.assertEqual(len(j['source']), 15)
-            self.assertEqual(len(j['network']['reinject']), 3)
-            r = j['network']['reinject'][2]
-            self.assertEqual(r['name'], 'reinjector 3')
-            self.assertEqual(r['in'], 'reinjector group 3')
+            self.assertEqual(len(j['network']['reinject']), 4)
+            r = j['network']['reinject'][3]
+            self.assertEqual(r['name'], 'reinjector 4')
+            self.assertEqual(r['in'], 'reinjector group 4')
             self.assertEqual(len(r['water']), 1)
             self.assertEqual(len(r['steam']), 2)
             self.assertEqual(r['water'][0], {'out': 'inj 5', 'rate': q5, 'enthalpy': h5})
