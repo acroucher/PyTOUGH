@@ -2526,8 +2526,7 @@ class t2data(object):
 
         def reinjector_output_json(g, gen):
             """Returns JSON for reinjector output."""
-            output = {}
-            if g['cell'] is not None: output = {'out': g['name']}
+            output = {'out': g['name']}
             output['enthalpy'] = gen.ex
             if gen.type == 'FINJ':
                 output['rate'] = gen.gx
@@ -2558,8 +2557,7 @@ class t2data(object):
                 else:
 
                     g = generator_json(gen)
-                    if g['cell'] is not None and gen.type != 'TMAK':
-                        sources.append(g)
+                    if gen.type != 'TMAK': sources.append(g)
 
                     if gen.type in ['DMAK', 'DMAT']:
                         makeup_inputs.append(g['name'])
