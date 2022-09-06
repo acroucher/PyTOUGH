@@ -1597,7 +1597,7 @@ class t2dataTestCase(unittest.TestCase):
                               gx = 100., hg = -1)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            self.assertEqual(len(j['source']), 4)
+            self.assertEqual(len(j['source']), 5)
             self.assertEqual(len(j['network']['group']), 2)
             grp = j['network']['group'][-1]
             self.assertEqual(grp['name'], 'makeup 1')
@@ -1615,7 +1615,7 @@ class t2dataTestCase(unittest.TestCase):
                               ex = h2, hg = f2)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            self.assertEqual(len(j['source']), 6)
+            self.assertEqual(len(j['source']), 7)
             self.assertEqual(len(j['network']['group']), 2)
             self.assertEqual(len(j['network']['reinject']), 2)
             r = j['network']['reinject'][-1]
@@ -1637,7 +1637,7 @@ class t2dataTestCase(unittest.TestCase):
                               ex = h4, hg = f4, fg = 1.)
             dat.add_generator(gen)
             j = dat.generators_json(geo, 'we')
-            self.assertEqual(len(j['source']), 8)
+            self.assertEqual(len(j['source']), 9)
             self.assertEqual(len(j['network']['group']), 2)
             self.assertEqual(len(j['network']['reinject']), 3)
             r = j['network']['reinject'][1]
@@ -1694,7 +1694,7 @@ class t2dataTestCase(unittest.TestCase):
             self.assertEqual(grp['in'], ['foo 3', 'foo 5', 'tmk 2'])
             self.assertFalse('scaling' in grp)
             self.assertFalse('limiter' in grp)
-            self.assertEqual(len(j['source']), 15)
+            self.assertEqual(len(j['source']), 16)
             self.assertEqual(len(j['network']['reinject']), 4)
             r = j['network']['reinject'][3]
             self.assertEqual(r['name'], 'reinjector 4')
