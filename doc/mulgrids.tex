@@ -118,7 +118,7 @@ Non-horizontal (i.e. tilted) geometries can be constructed by setting the \textt
 
 It is possible to rotate the permeability principal directions of a \texttt{mulgrid} object with respect to the coordinate axes- for example, to align permeabilities with a dominant fault direction- by specifying the \texttt{permeability\_angle} property. When a \texttt{t2grid} object is created, e.g. using the \texttt{t2grid} \hyperref[sec:t2grid:fromgeo]{fromgeo()} method, this can change the \texttt{direction} property of each connection.
 
-\subsubsection{Conversion to Layermesh}
+\subsubsection{Conversion to and from Layermesh}
 \index{MULgraph geometry!Layermesh conversion}
 
 A \texttt{mulgrid} geometry may be converted to a Layermesh (\url{https://github.com/acroucher/layermesh}) mesh simply by accessing its \texttt{layermesh} property. Layermesh is a dedicated library for general layer/column meshes. Its mesh objects have capabilities similar to those of a \texttt{mulgrid} object, but it has advantages such as higher efficiency and a simpler interface. The Layermesh library must be installed before this property can be used.
@@ -130,6 +130,7 @@ Example:
   m = geo.layermesh # m is a Layermesh mesh object
 \end{lstlisting}
 
+Conversely, a Layermesh object can be imported into a \texttt{mulgrid} object using the \hyperref[sec:mulgrid:from_layermesh]{from\_layermesh()} method.
 
 \index{MULgraph geometry!properties}
 \begin{center}
@@ -245,6 +246,7 @@ The main methods of a \texttt{mulgrid} object are listed in Table \ref{tb:mulgri
   \hyperref[sec:mulgrid:fit_surface]{\texttt{fit\_surface}} & -- & fits column surface elevations from data\\ 
   \hyperref[sec:mulgrid:from_amesh]{\texttt{from\_amesh}} & (\hyperref[mulgrids]{\texttt{mulgrid}}, dict) & creates Voronoi geometry from AMESH grid\\ 
   \hyperref[sec:mulgrid:from_gmsh]{\texttt{from\_gmsh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & creates geometry from a \texttt{gmsh} grid\\ 
+  \hyperref[sec:mulgrid:from_layermesh]{\texttt{from\_layermesh}} & \hyperref[mulgrids]{\texttt{mulgrid}} & creates geometry from a \texttt{Layermesh} grid\\ 
   \hyperref[sec:mulgrid:layer_containing_elevation]{\texttt{layer\_containing\_elevation}} & layer & layer containing specified vertical elevation\\
   \hyperref[sec:mulgrid:layer_mapping]{\texttt{layer\_mapping}} & dictionary & mapping from the layers of another \texttt{mulgrid} object\\
   \hyperref[sec:mulgrid:layer_name]{\texttt{layer\_name}} & string & layer name of a block name\\ 
@@ -866,6 +868,31 @@ Imports a 2-D \texttt{gmsh} mesh into a geometry object.  \texttt{gmsh} is a gri
   Type of atmosphere.
 \item \textbf{top\_elevation}: float\\
   Elevation of the top surface of the model (default is zero).
+\item \textbf{justify}: string\\
+  Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
+\item \textbf{chars}: string\\
+  Specifies a string of characters to use when forming the character part of block names.  Default is lowercase letters.
+\item \textbf{spaces}: Boolean\\
+  Specify \texttt{False} to disallow spaces in character part of block names. In this case, the first element of the \texttt{chars} parameter functions like a `zero' and replaces spaces.
+\item \textbf{block\_order}: string or \texttt{None}\\
+  Specify \texttt{None} or `layer\_column' for default block ordering by layer and column, starting from the atmosphere. Specify `dmplex' to order blocks by geometrical type (8-node hexahedrons first followed by 6-node wedges) as in PETSc DMPlex meshes.
+\end{itemize}
+
+\begin{snugshade}\subsubsection{\texttt{from\_layermesh(\emph{mesh},  \emph{convention}=0, \emph{atmosphere\_type}=2, \emph{justify}='r', \\\
+      \emph{chars}=ascii\_lowercase, \emph{spaces}=\texttt{True}, \emph{block\_order}=None)}}\end{snugshade}
+\label{sec:mulgrid:from_layermesh}
+\index{MULgraph geometry!creating!Layermesh}
+
+Imports a \texttt{Layermesh} (\url{https://github.com/acroucher/layermesh}) object into a geometry object.
+
+\textbf{Parameters:}
+\begin{itemize}
+\item \textbf{mesh}: \texttt{layermesh}\\
+  Layermesh object to import.
+\item \textbf{convention}: integer\\
+  Naming convention for grid columns and layers.
+\item \textbf{atmosphere\_type}: integer\\
+  Type of atmosphere.
 \item \textbf{justify}: string\\
   Specify `r' for the character part of the block names (first three characters) to be right-justified, `l' for left-justified.
 \item \textbf{chars}: string\\

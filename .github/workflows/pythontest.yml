@@ -19,7 +19,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        pip install --user numpy scipy
+        pip install --user numpy scipy layermesh
         pip install --user .
     - name: Unit tests
       run: |
