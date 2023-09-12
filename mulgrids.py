@@ -3604,9 +3604,8 @@ class mulgrid(object):
 
         m = lm.mesh(cell_type_sort = cell_type_sort)
 
-        start_layer = 0 if self.atmosphere_type == 2 else 1
         elevations = [self.layerlist[0].top] + \
-                     [lay.bottom for lay in self.layerlist[start_layer:]]
+                     [lay.bottom for lay in self.layerlist[1:]]
         m.set_layers(elevations)
 
         node_dict = {}
@@ -4311,3 +4310,33 @@ class mulgrid(object):
 
         return geo, blockmap
 
+    def from_layermesh(self, mesh, convention = 0, atmosphere_type = 2, justify = 'r',
+                       chars = ascii_lowercase, spaces = True, block_order = None):
+        """Creates a mulgrid geometry from a Layermesh mesh."""
+
+        justfn = [str.rjust, str.ljust][justify == 'l']
+        geo = mulgrid(convention = convention, atmos_type = atmosphere_type,
+                      block_order = block_order)
+
+        for n in mesh.node:
+            name = geo.node_name_from_number(n.index + 1, justfn, chars, spaces)
+            newnode = node(name, n.pos)
+            geo.add_node(newnode)
+
+        geo.add_layers([l.thickness for l in mesh.layer], mesh.layer[0].top,
+                       justify, chars, spaces)
+
+        for c in mesh.column:
+            name = geo.column_name_from_number(c.index + 1, justfn, chars, spaces)
+            colnodes = [geo.nodelist[n.index] for n in c.node]
+            newcol = column(name, colnodes, c.centre)
+            geo.add_column(newcol)
+            newcol.surface = c.surface
+            geo.set_column_num_layers(newcol)
+
+        geo.identify_neighbours()
+        geo.check(fix = True, silent = True)
+        geo.setup_block_name_index()
+        geo.setup_block_connection_name_index()
+
+        return geo

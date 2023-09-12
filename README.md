@@ -18,12 +18,13 @@ For more detailed information on PyTOUGH, consult the user guide (PDF format, in
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.5.6, which has:
+The latest stable version is 1.5.7, which has:
 
-* bugfixes and support for GMSH 4.1 format in mulgrid from_gmsh() import
-* ability to export mulgrid geometries to [Layermesh](https://github.com/acroucher/layermesh) objects
-* support for tracers in t2data json() method, for exporting models to [Waiwera](https://waiwera.github.io/)
-* griddata function is now imported from SciPy rather than Matplotlib
+* support for exporting source networks (e.g. reinjection) to Waiwera JSON input
+
+* support for exporting unlimited number of time steps to Waiwera JSON input
+
+* a bugfix for parsing TOUGHREACT-OMP listing files
 
 # Where's the user guide?
 

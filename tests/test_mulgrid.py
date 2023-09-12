@@ -390,6 +390,42 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(35 * len(layers), geo.num_blocks)
         self.assertEqual(len(layers) + 1, geo.num_layers)
 
+    def test_layermesh(self):
+
+        def layermesh_case(geo):
+            lm = geo.layermesh
+            self.assertEqual(geo.num_nodes, lm.num_nodes)
+            self.assertEqual(geo.num_columns, lm.num_columns)
+            self.assertEqual(geo.num_layers - 1, lm.num_layers)
+            self.assertEqual(geo.num_underground_blocks, lm.num_cells)
+
+            geo2 = geo.from_layermesh(lm, atmosphere_type = geo.atmosphere_type)
+            self.assertEqual(geo.num_nodes, geo2.num_nodes)
+            self.assertEqual(geo.num_columns, geo2.num_columns)
+            self.assertEqual(geo.num_layers, geo2.num_layers)
+            self.assertEqual(geo.num_blocks, geo2.num_blocks)
+
+        geo = mulgrid().rectangular([100.]*10, [150.]*8, [10.]*10)
+        for i, col in enumerate(geo.columnlist):
+            col.surface = -40. + i / 80.
+            geo.set_column_num_layers(col)
+        geo.snap_columns_to_nearest_layers()
+        layermesh_case(geo)
+
+        geo = mulgrid().rectangular([100.]*9, [150.]*10, [10.]*11, atmos_type = 0)
+        for i, col in enumerate(geo.columnlist):
+            col.surface = -50. + i / 70.
+            geo.set_column_num_layers(col)
+        geo.snap_columns_to_nearest_layers()
+        layermesh_case(geo)
+
+        geo = mulgrid().rectangular([100.]*8, [120.]*7, [10.]*9, atmos_type = 1)
+        for i, col in enumerate(geo.columnlist):
+            col.surface = -30. + i / 60.
+            geo.set_column_num_layers(col)
+        geo.snap_columns_to_nearest_layers()
+        layermesh_case(geo)
+
     def test_block_order(self):
 
         def get_block_nodes(geo):
