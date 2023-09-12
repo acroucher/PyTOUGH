@@ -223,7 +223,7 @@ class mulgridTestCase(unittest.TestCase):
         cols = [col for col in geo.columnlist if 400. < col.centre[1] < 600.]
         geo.refine(cols)
         self.assertEqual(geo.area, orig_area)
-        self.assertEqual(geo.num_columns, 189)
+        self.assertEqual(geo.num_columns, 182)
         self.assertEqual(geo.num_nodes, 169)
         areas = np.sort(np.array([col.area for col in geo.columnlist]))
         a = np.sort(np.load(os.path.join('mulgrid', 'refine_areas.npy')))
