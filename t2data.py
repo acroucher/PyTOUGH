@@ -2450,6 +2450,7 @@ class t2data(object):
 
             def injectivity_generator_json(g, gen):
                 """Generator types which inject against a pressure."""
+                if gen.type == 'XINJ': g['enthalpy'] = gen.ex
                 g['direction'] = 'injection'
                 g['injectivity'] = {'pressure': gen.hg,
                                     'coefficient': abs(gen.fg)}

@@ -1545,7 +1545,7 @@ class t2dataTestCase(unittest.TestCase):
             g = generator_json(gen)
             self.assertFalse('rate' in g)
             self.assertEqual(g['injectivity'], {'coefficient': inj, 'pressure': P0})
-            self.assertFalse('enthalpy' in g)
+            self.assertFalse('enthalpy' in g) # enthalpy defined in reinjector output
             self.assertEqual(g['direction'], 'injection')
             self.assertEqual(g['limiter'], {'total': qmax})
             json.dumps(g)
@@ -1559,7 +1559,7 @@ class t2dataTestCase(unittest.TestCase):
             g = generator_json(gen)
             self.assertFalse('rate' in g)
             self.assertEqual(g['injectivity'], {'coefficient': inj, 'pressure': P0})
-            self.assertFalse('enthalpy' in g)
+            self.assertEqual(g['enthalpy'], h)
             self.assertEqual(g['direction'], 'injection')
             self.assertFalse('limiter' in g)
             json.dumps(g)
