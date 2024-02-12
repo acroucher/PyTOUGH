@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyTOUGH"
+version = "1.5.7"
+description = "Python scripting library for TOUGH2 simulation"
+readme = "README.md"
+authors = [
+  {name = "Adrian Croucher", email = "a.croucher@auckland.ac.nz"}
+]
+license = {file = "LICENSE"}
+requires-python = ">=2.7"
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "meshio"
+]
+classifiers = [
+  "Programming Language :: Python :: 2",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+  "Operating System :: OS Independent"
+]
+
+[tool.setuptools]
+py-modules = ["fixed_format_file",
+              "geometry",
+              "IAPWS97",
+              "mulgrids",
+              "t2data",
+              "t2grids",
+              "t2incons",
+              "t2listing",
+              "t2thermo"
+             ]
+
+[project.urls]
+repository = "https://github.com/acroucher/PyTOUGH"
+
+
