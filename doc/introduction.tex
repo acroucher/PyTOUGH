@@ -99,19 +99,17 @@ Python can be run either interactively or via scripts.
 \subsubsection{Running Python interactively}
 \label{python_interactive}
 
-The simplest way to run Python interactively is just by typing \texttt{python} at the command line.  (On Windows the directory that Python was installed into may have to be added to your \texttt{PATH} environment variable first.) The command line then becomes an interactive Python environment in which you can type Python commands at the Python command prompt \texttt{>>>}, e.g. in Windows:
+The simplest way to run Python interactively is just by typing \texttt{python} (or possibly \texttt{python3}) at the command line.  (On Windows the directory that Python was installed into may have to be added to your \texttt{PATH} environment variable first.) The command line then becomes an interactive Python environment in which you can type Python commands at the Python command prompt \texttt{>>>}, e.g.:
 
 \begin{verbatim}
-C:\>python
-Python 2.6.4 (r264:75708, Oct 26 2009, 08:23:19) [MSC v.1500 32 bit (Intel)]
-on win32
+bob@superbox:~$ python3
+Python 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> things = [1, 'two', 3.0]
->>> print things[1]
+>>> print(things[1])
 two
 >>> exit()
-
-C:\>
+bob@superbox:~$
 \end{verbatim}
 
 In the interactive Python environment, you can view help on the properties and methods of any Python object by typing \texttt{help(\emph{objectname})}, where \texttt{\emph{objectname}} is the name of an object that has been declared.  This will list the properties and methods of the object and a description of each one.
