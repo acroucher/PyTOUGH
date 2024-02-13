@@ -15,8 +15,7 @@ requires-python = ">=2.7"
 dependencies = [
   "numpy",
   "scipy",
-  "matplotlib",
-  "meshio"
+  "matplotlib"
 ]
 classifiers = [
   "Programming Language :: Python :: 2",
