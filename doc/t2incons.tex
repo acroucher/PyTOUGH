@@ -316,7 +316,7 @@ Adding a new variable to each initial condition can be useful when e.g. changing
 from t2incons import *
 inc = t2incon('model1.save')
 for blk in inc[0:10]:
-    print 'Block %5s: temperature = %5.1f' % (blk.block,blk[1])
+    print('Block %5s: temperature = %5.1f' % (blk.block,blk[1]))
 patm = 101.3e3
 for blk in inc: blk.variable.append(patm)
 inc.write('model2.incon')
