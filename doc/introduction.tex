@@ -129,48 +129,34 @@ It is also possible to run a Python script from within the interactive Python en
 \label{pylibraries}
 \index{Python!libraries}
 
-Python comes with a large number of features already built in, but for specialised tasks, additional \textbf{libraries} of Python software can be imported into Python as you need them.  PyTOUGH itself is a set of such libraries, and it in turn makes use of some other third-party Python libraries.
+Python comes with a large number of features already built in, but for specialised tasks, additional \textbf{libraries} of Python software can be imported into Python as you need them.  PyTOUGH itself is a set of such libraries, and it in turn makes use of some other third-party Python libraries. The most important of these are as follows:
 
-\subsubsection{Numerical Python}
+\subsubsection{Numerical Python (``NumPy'')}
 \index{Python!Numerical Python (numpy)}
 
-The most important of these is Numerical Python (`numpy'), which you will need to have installed on your computer before you can use PyTOUGH at all \footnote{PyTOUGH will run using Numeric, a now-obsolete predecessor of Numerical Python, though the PyTOUGH plotting functions will not work.  In general it is recommended to use Numerical Python if possible.}.  Numerical Python adds a special \texttt{numpy.array} class for fast multi-dimensional arrays, which PyTOUGH makes heavy use of, and a whole range of other features, e.g. linear algebra routines, Fourier transforms and statistics.
+NumPy adds a special \texttt{numpy.array} class for fast multi-dimensional arrays, which PyTOUGH makes heavy use of, and a whole range of other features, e.g. linear algebra routines, Fourier transforms and statistics.
+
+\subsubsection{Scientific Python (``SciPy'')}
+\index{Python!Scientific Python (scipy)}
+
+SciPy (\url{http://www.scipy.org/}) is a library of advanced mathematical functions (e.g. interpolation, calculus, optimisation), needed for some PyTOUGH functionality.
+
+\subsubsection{Matplotlib}
+\index{Python!matplotlib}
+
+Matplotlib (\url{http://matplotlib.sourceforge.net/}) is a library of graphical plotting routines, which can be used for 2-D PyTOUGH visualization tools like layer and slice plots.
 
 \subsubsection{Other libraries}
 
-\index{Python!matplotlib}
-\index{Python!scipy}
+Some parts of PyTOUGH use other Python libraries.  You do not need to install these libraries unless you are using the parts of PyTOUGH that depend on them. If you try to use parts of PyTOUGH that need these libraries, and you don't have them installed, it will tell you so.
+
 \index{Visualization Tool Kit (VTK)}
-
-Some parts of PyTOUGH use other Python libraries.  You do not need these libraries unless you are using the parts of PyTOUGH that depend on them.
-
+\index{meshio}
+Examples:
 \begin{itemize}
-\item \textbf{Scientific Python} (\url{http://www.scipy.org/}), a library of advanced mathematical functions (e.g. interpolation, calculus, optimisation)
-\item \textbf{matplotlib} (\url{http://matplotlib.sourceforge.net/}), a library of graphical plotting routines
 \item \textbf{VTK}, a Python interface to the Visualization Tool Kit (\url{http://www.vtk.org/}), a library for 3D visualisation of data via VTK itself, or software such as ParaView, Mayavi etc.
+\item \textbf{meshio}, a library for 3D mesh handling -- used for exporting PyTOUGH grids to other formats
 \end{itemize}
-
-\subsection{Installing third-party Python libraries}
-
-\subsubsection{Linux}
-
-On Linux you can install third-party Python libraries via your package manager, e.g. on Debian or Debian-based distributions like Ubuntu:
-
-\texttt{apt-get install python-numpy python-scipy python-matplotlib python-vtk}
-
-\subsubsection{MS Windows}
-
-On MS Windows systems, the easiest way to install these libraries is by using the \textbf{pip} tool. This is a Python package management tool which allows the user to install Python packages and also manages dependencies (when one package depends on other packages).
-
-If you have Python version 2.7.9 or a more recent one then you should have pip already available on your system. If not, the best thing is probably to upgrade to a newer version of Python. If that is not possible for some reason, you can install pip separately by following the instructions at \url{https://pip.pypa.io/en/stable/installing/}.
-
-It is recommended to download libraries to use with PyTOUGH (as *.whl files) from Christoph Gohlke's Python package site:
-
-\url{http://www.lfd.uci.edu/\textasciitilde gohlke/pythonlibs/}
-
-Here you can find Windows Python packages for numpy, scipy, matplotlib and VTK (and lots of others as well). Be sure to choose the version of each package appropriate for your version of Python. For example, if you are using 64-bit Python 2.7, then choose *.whl files with names including ``cp27'', and ``amd64''.
-
-Once you have downloaded them, you can install them by opening a command prompt in the download directory and typing \texttt{pip install} followed by the exact name of the *.whl file.
 
 \subsubsection{Importing libraries}
 \index{Python!libraries!importing}
@@ -179,39 +165,67 @@ To use any Python library, you just need to \textbf{import} it first.  For examp
 
 When you import a library, you can also change its name.  For example, PyTOUGH imports Numerical Python using the command \texttt{import numpy as np}, which renames \texttt{numpy} as the abbreviated \texttt{np}.  This means it can, for example, access the Numerical Python \texttt{numpy.array} data type as \texttt{np.array}.  It also means you have access to Numerical Python as \texttt{np} in your own scripts and in the interactive Python environment, without having to import it yourself.
 
-\section{Installing and accessing PyTOUGH}
+\section{Installing PyTOUGH}
 \label{installing}
 \index{PyTOUGH!website}
 \index{PyTOUGH!installing}
 
-The latest version of PyTOUGH can always be downloaded from the PyTOUGH website:
-
-\url{https://github.com/acroucher/PyTOUGH/}
-
-First, make sure you have Python, and the Numerical Python library (see section \ref{pylibraries}) installed.  On Windows, you may have to add the directory where Python has installed (e.g. \texttt{C:\textbackslash Python27} or similar, depending on which version you have) to your PATH environment variable, before you can access Python from the command line.
-
-On the PyTOUGH website, click the `Download ZIP' button at the right of the page:
-
-\url{https://github.com/acroucher/PyTOUGH/archive/master.zip}
-
-to download PyTOUGH as a .zip file.  Unzip this to any directory on your computer.  This will create a directory containing a file called \texttt{setup.py}.
-
-To install PyTOUGH, you will need administrator (`root' on Linux) privileges on your computer.  As administrator, open a command prompt, navigate to this new directory and type:
+From version 1.6.0, the easiest way to install PyTOUGH is via the \texttt{pip} Python package installer:
 
 \begin{verbatim}
-python setup.py install
+pip install PyTOUGH
 \end{verbatim}
 
-You should now be able to import the PyTOUGH libraries into the Python interactive environment or your Python scripts, from any directory on your computer.  For example, you can import the MULgraph geometry library using \texttt{from mulgrids import *} (see chapter \ref{mulgrids}).
+or
+
+\begin{verbatim}
+python -m pip install PyTOUGH
+\end{verbatim}
+
+either of which will install the latest version of PyTOUGH, together with its main dependency libraries (\texttt{numpy}, \texttt{scipy} and \texttt{matplotlib}) if these are not already detected on your system.
+
+You can also install a particular version of PyTOUGH, e.g. to install version 1.6.0:
+
+\begin{verbatim}
+pip install PyTOUGH==1.6.0
+\end{verbatim}
+
+or upgrade your existing version of PyTOUGH:
+
+\begin{verbatim}
+pip install --upgrade PyTOUGH
+\end{verbatim}
+
+There are various ways of configuring the installation of packages with \texttt{pip}, which may be suitable for your particular system -- consult the \texttt{pip} documentation (\url{https://pip.pypa.io}) for details.
+
+After installing, you should be able to import the PyTOUGH libraries into the Python interactive environment or your Python scripts, from any directory on your computer.  For example, you can import the MULgraph geometry library using \texttt{from mulgrids import *} (see chapter \ref{mulgrids}).
+
+To uninstall PyTOUGH:
+
+\begin{verbatim}
+pip uninstall PyTOUGH
+\end{verbatim}
+
+\subsection{Installing the testing branch}
+
+The PyTOUGH code exists in two main ``branches'': the \texttt{master} branch, which contains the latest stable release, and the \texttt{testing} branch, which includes the most recent changes being tested for inclusion in the next stable release.
+
+If you need these most recent changes and can't wait for the next stable release, it is possible to install the \texttt{testing} branch of PyTOUGH using e.g.:
+
+\begin{verbatim}
+pip install https://github.com/acroucher/PyTOUGH/archive/refs/heads/testing.zip
+\end{verbatim}
 
 \section{Testing PyTOUGH}
 \label{unittests}
 \index{PyTOUGH!testing}
 \index{unit tests}
 
-PyTOUGH includes a suite of ``unit tests'' which can be used to verify that it is working correctly. These are located in the \texttt{tests/} directory, which includes a number of Python scripts for testing individual PyTOUGH modules.
+PyTOUGH includes a suite of ``unit tests'' which can be used to verify that it is working correctly. These are located in the \texttt{tests/} directory of the PyTOUGH repository, which includes a number of Python scripts for testing individual PyTOUGH modules.
 
-These unit test modules may be run individually, the same way as any other Python script would be run. If the tests in the script all pass, the last message printed out to the console will read \texttt{OK}. If not, details will be output regarding which tests did not pass.
+First you will the PyTOUGH repository on your machine. This is available from \url{https://github.com/acroucher/PyTOUGH}. Click the \texttt{Code} button which gives various options for downloading the repository, via e.g. zip file or Git clone.
+
+The unit test modules in the \texttt{tests/} directory may be run individually, the same way as any other Python script would be run. If the tests in the script all pass, the last message printed out to the console will read \texttt{OK}. If not, details will be output regarding which tests did not pass.
 
 It is also possible to run the unit tests for all modules by running the following command in the \texttt{tests/} directory:
 
