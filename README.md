@@ -27,15 +27,14 @@ pip install git+https://github.com/acroucher/PyTOUGH.git@testing
 
 # More information:
 
-For more detailed information on PyTOUGH, consult the [user guide](https://github.com/acroucher/PyTOUGH/blob/master/doc/PyTOUGH-guide.pdf) (PDF format) and the PyTOUGH [wiki](https://github.com/acroucher/PyTOUGH/wiki/), which has links to published articles on PyTOUGH.
+For more detailed information on PyTOUGH, consult the [user guide](https://pytough.readthedocs.io) (html, or you can download PDF or Epub versions) and the PyTOUGH [wiki](https://github.com/acroucher/PyTOUGH/wiki/), which has links to published articles on PyTOUGH.
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.5.7, which has:
+The latest stable version is 1.6.0, which has:
 
-* support for exporting source networks (e.g. reinjection) to Waiwera JSON input
+* easy installation via `pip`
 
-* support for exporting unlimited number of time steps to Waiwera JSON input
+* online user guide at [Read the Docs](https://pytough.readthedocs.io)
 
-* a bugfix for parsing TOUGHREACT-OMP listing files
-
+* updated Python packaging using a `pyproject.toml` file
