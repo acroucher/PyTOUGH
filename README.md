@@ -1,4 +1,4 @@
-![Unit tests](https://github.com/acroucher/PyTOUGH/workflows/Unit%20tests/badge.svg)
+![Unit tests](https://github.com/acroucher/PyTOUGH/workflows/Unit%20tests/badge.svg) [![Documentation Status](https://readthedocs.org/projects/PyTOUGH/badge/?version=latest)](https://layermesh.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/PyTOUGH.svg)](https://badge.fury.io/py/PyTOUGH)
 
 # What is PyTOUGH?
 
