@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "PyTOUGH"
-version = "1.5.7"
+version = "1.6.0"
 description = "Python scripting library for TOUGH2 simulation"
 readme = "README.md"
 authors = [
