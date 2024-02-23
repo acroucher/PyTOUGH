@@ -46,7 +46,7 @@ supercritical) is aribitrarily set at :math:`T` = 350 °C. The boundary
 between regions 2 and 3 (dry steam and supercritical) is described by
 the ``b23p`` and ``b23t`` :ref:`functions <region23_boundary>`.
 
-.. image:: iapws_regions.png
+.. image:: iapws_regions.*
    :alt: IAPWS-97 thermodynamics operating range
    :width: 500
    :name: fg:iapws97_range

@@ -1,0 +1,1171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="7.0005169in"
+   height="5.1490002in"
+   viewBox="0 0 0.87506462 0.64362502"
+   preserveAspectRatio="none"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="iapws_regions.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true"
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <metadata
+     id="metadata231">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>SVG drawing</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs229">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 360.22394 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="720.00001 : 360.22394 : 1"
+       inkscape:persp3d-origin="360 : 240.22394 : 1"
+       id="perspective121" />
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend"
+       style="overflow:visible">
+      <path
+         id="path4612"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6)"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     inkscape:window-height="1136"
+     inkscape:window-width="1850"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="1.0944445"
+     inkscape:cx="344.92384"
+     inkscape:cy="205.12689"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:current-layer="svg2"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="in" />
+  <title
+     id="title4">SVG drawing</title>
+  <desc
+     id="desc6">This was produced by version 4.1 of GNU libplot, a free library for exporting 2-D vector graphics.</desc>
+  <rect
+     style="fill:#ffffff;fill-opacity:1;stroke-width:0.00130412"
+     id="rect22104"
+     width="0.87845314"
+     height="0.64577973"
+     x="0.00021377741"
+     y="0.0005065595" />
+  <line
+     id="line12"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.5469414"
+     x2="0.12580754"
+     y1="0.5469414"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line14"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.5469414"
+     x2="0.84947735"
+     y1="0.5469414"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text16"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.071663924"
+     y="0.55756903"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">0</text>
+  <line
+     id="line18"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.52007443"
+     x2="0.12155216"
+     y1="0.52007443"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line20"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.52007443"
+     x2="0.85373271"
+     y1="0.52007443"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line22"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.49335092"
+     x2="0.12155216"
+     y1="0.49335092"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line24"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.49335092"
+     x2="0.85373271"
+     y1="0.49335092"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line26"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.4664892"
+     x2="0.12155216"
+     y1="0.4664892"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line28"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.4664892"
+     x2="0.85373271"
+     y1="0.4664892"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line30"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.43976054"
+     x2="0.12155216"
+     y1="0.43976054"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line32"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.43976054"
+     x2="0.85373271"
+     y1="0.43976054"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line34"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.41289887"
+     x2="0.12580754"
+     y1="0.41289887"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line36"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.41289887"
+     x2="0.84947735"
+     y1="0.41289887"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text38"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.053919192"
+     y="0.42353714"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">25</text>
+  <line
+     id="line40"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.38603717"
+     x2="0.12155216"
+     y1="0.38603717"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line42"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.38603717"
+     x2="0.85373271"
+     y1="0.38603717"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line44"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.35930842"
+     x2="0.12155216"
+     y1="0.35930842"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line46"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.35930842"
+     x2="0.85373271"
+     y1="0.35930842"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line48"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.33244681"
+     x2="0.12155216"
+     y1="0.33244681"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line50"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.33244681"
+     x2="0.85373271"
+     y1="0.33244681"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line52"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.30571803"
+     x2="0.12155216"
+     y1="0.30571803"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line54"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.30571803"
+     x2="0.85373271"
+     y1="0.30571803"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line56"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.27885637"
+     x2="0.12580754"
+     y1="0.27885637"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line58"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.27885637"
+     x2="0.84947735"
+     y1="0.27885637"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text60"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.053919192"
+     y="0.28949457"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">50</text>
+  <line
+     id="line62"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.2519947"
+     x2="0.12155216"
+     y1="0.2519947"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line64"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.2519947"
+     x2="0.85373271"
+     y1="0.2519947"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line66"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.22526601"
+     x2="0.12155216"
+     y1="0.22526601"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line68"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.22526601"
+     x2="0.85373271"
+     y1="0.22526601"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line70"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.19840424"
+     x2="0.12155216"
+     y1="0.19840424"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line72"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.19840424"
+     x2="0.85373271"
+     y1="0.19840424"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line74"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.17167552"
+     x2="0.12155216"
+     y1="0.17167552"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line76"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.17167552"
+     x2="0.85373271"
+     y1="0.17167552"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line78"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.14481388"
+     x2="0.12580754"
+     y1="0.14481388"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line80"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.14481388"
+     x2="0.84947735"
+     y1="0.14481388"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text82"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.053919192"
+     y="0.15545219"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">75</text>
+  <line
+     id="line84"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.11795218"
+     x2="0.12155216"
+     y1="0.11795218"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line86"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.11795218"
+     x2="0.85373271"
+     y1="0.11795218"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line88"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.091223434"
+     x2="0.12155216"
+     y1="0.091223434"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line90"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.091223434"
+     x2="0.85373271"
+     y1="0.091223434"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line92"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.064361744"
+     x2="0.12155216"
+     y1="0.064361744"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line94"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.064361744"
+     x2="0.85373271"
+     y1="0.064361744"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line96"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.037633087"
+     x2="0.12155216"
+     y1="0.037633087"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line98"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.037633087"
+     x2="0.85373271"
+     y1="0.037633087"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line100"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.010771396"
+     x2="0.12580754"
+     y1="0.010771396"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line102"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.010771396"
+     x2="0.84947735"
+     y1="0.010771396"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text104"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.036174595"
+     y="0.021409621"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">100</text>
+  <line
+     id="line106"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.53856897"
+     x2="0.11742985"
+     y1="0.5469414"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line108"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.01914902"
+     x2="0.11742985"
+     y1="0.010771396"
+     x1="0.11742985"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text110"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.10410547"
+     y="0.58948392"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">0</text>
+  <line
+     id="line112"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.16370645"
+     y1="0.5469414"
+     x1="0.16370645"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line114"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.16370645"
+     y1="0.010771396"
+     x1="0.16370645"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line116"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.20998301"
+     y1="0.5469414"
+     x1="0.20998301"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line118"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.20998301"
+     y1="0.010771396"
+     x1="0.20998301"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line120"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.25625959"
+     y1="0.5469414"
+     x1="0.25625959"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line122"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.25625959"
+     y1="0.010771396"
+     x1="0.25625959"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line124"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.53856897"
+     x2="0.30253613"
+     y1="0.5469414"
+     x1="0.30253613"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line126"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.01914902"
+     x2="0.30253613"
+     y1="0.010771396"
+     x1="0.30253613"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text128"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.27147228"
+     y="0.58948392"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">200</text>
+  <line
+     id="line130"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.34881273"
+     y1="0.5469414"
+     x1="0.34881273"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line132"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.34881273"
+     y1="0.010771396"
+     x1="0.34881273"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line134"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.39508927"
+     y1="0.5469414"
+     x1="0.39508927"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line136"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.39508927"
+     y1="0.010771396"
+     x1="0.39508927"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line138"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.44136584"
+     y1="0.5469414"
+     x1="0.44136584"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line140"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.44136584"
+     y1="0.010771396"
+     x1="0.44136584"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line142"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.53856897"
+     x2="0.48764244"
+     y1="0.5469414"
+     x1="0.48764244"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line144"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.01914902"
+     x2="0.48764244"
+     y1="0.010771396"
+     x1="0.48764244"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text146"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.45657867"
+     y="0.58948392"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">400</text>
+  <line
+     id="line148"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.53391898"
+     y1="0.5469414"
+     x1="0.53391898"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line150"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.53391898"
+     y1="0.010771396"
+     x1="0.53391898"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line152"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.58019555"
+     y1="0.5469414"
+     x1="0.58019555"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line154"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.58019555"
+     y1="0.010771396"
+     x1="0.58019555"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line156"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.62647223"
+     y1="0.5469414"
+     x1="0.62647223"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line158"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.62647223"
+     y1="0.010771396"
+     x1="0.62647223"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line160"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.53856897"
+     x2="0.67274868"
+     y1="0.5469414"
+     x1="0.67274868"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line162"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.01914902"
+     x2="0.67274868"
+     y1="0.010771396"
+     x1="0.67274868"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text164"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.64168489"
+     y="0.58948392"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">600</text>
+  <line
+     id="line166"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.71902519"
+     y1="0.5469414"
+     x1="0.71902519"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line168"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.71902519"
+     y1="0.010771396"
+     x1="0.71902519"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line170"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.76530188"
+     y1="0.5469414"
+     x1="0.76530188"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line172"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.76530188"
+     y1="0.010771396"
+     x1="0.76530188"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line174"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.54281634"
+     x2="0.81157851"
+     y1="0.5469414"
+     x1="0.81157851"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line176"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.014893756"
+     x2="0.81157851"
+     y1="0.010771396"
+     x1="0.81157851"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line178"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.53856897"
+     x2="0.85785514"
+     y1="0.5469414"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line180"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00265958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.01914902"
+     x2="0.85785514"
+     y1="0.010771396"
+     x1="0.85785514"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text182"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.82679117"
+     y="0.58948392"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">800</text>
+  <polygon
+     id="polygon184"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2001px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     points="111.2,86 389.6,86 389.6,287.6 111.2,287.6 "
+     transform="matrix(0.00265958,0,0,-0.00265958,-0.17831469,0.77566465)"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text186"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     transform="rotate(-90)"
+     x="-0.39055836"
+     y="0.021685969"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">Pressure (MPa)</text>
+  <text
+     id="text188"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.36569968"
+     y="0.63735628"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">Temperature (°C)</text>
+  <path
+     sodipodi:type="arc"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.00104167;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path2267"
+     sodipodi:cx="0.28083262"
+     sodipodi:cy="0.17196278"
+     sodipodi:rx="0.014262118"
+     sodipodi:ry="0.014262118"
+     d="m 0.27619217,0.15847671 a 0.01426212,0.01426212 0 0 1 0.0181027,0.008777 0.01426212,0.01426212 0 0 1 -0.008685,0.0181472 0.01426212,0.01426212 0 0 1 -0.0181912,-0.008592 0.01426212,0.01426212 0 0 1 0.008499,-0.0182347"
+     sodipodi:start="4.3809869"
+     sodipodi:end="4.3606187"
+     sodipodi:open="true"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     sodipodi:arc-type="arc" />
+  <text
+     id="text190"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.27152619"
+     y="0.18231389"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">1</text>
+  <path
+     sodipodi:type="arc"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.00104167;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path3238"
+     sodipodi:cx="0.51574248"
+     sodipodi:cy="0.17187333"
+     sodipodi:rx="0.014262118"
+     sodipodi:ry="0.014262118"
+     d="m 0.51110203,0.15838726 a 0.01426212,0.01426212 0 0 1 0.0181027,0.008777 0.01426212,0.01426212 0 0 1 -0.008685,0.0181472 0.01426212,0.01426212 0 0 1 -0.0181912,-0.008592 0.01426212,0.01426212 0 0 1 0.008499,-0.0182347"
+     sodipodi:start="4.3809869"
+     sodipodi:end="4.3606187"
+     sodipodi:open="true"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     sodipodi:arc-type="arc" />
+  <text
+     id="text192"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.50748396"
+     y="0.18231389"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">3</text>
+  <path
+     sodipodi:type="arc"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.00104167;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path3240"
+     sodipodi:cx="0.72957736"
+     sodipodi:cy="0.17257717"
+     sodipodi:rx="0.014262118"
+     sodipodi:ry="0.014262118"
+     d="m 0.72493691,0.1590911 a 0.01426212,0.01426212 0 0 1 0.0181027,0.008777 0.01426212,0.01426212 0 0 1 -0.008685,0.0181472 0.01426212,0.01426212 0 0 1 -0.0181912,-0.008592 0.01426212,0.01426212 0 0 1 0.008499,-0.0182347"
+     sodipodi:start="4.3809869"
+     sodipodi:end="4.3606187"
+     sodipodi:open="true"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     sodipodi:arc-type="arc" />
+  <text
+     id="text194"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.72147191"
+     y="0.18231389"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">2</text>
+  <path
+     sodipodi:type="arc"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.00104167;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path3242"
+     sodipodi:cx="0.54401416"
+     sodipodi:cy="0.49420819"
+     sodipodi:rx="0.014262118"
+     sodipodi:ry="0.014262118"
+     d="m 0.5393737,0.48072211 a 0.01426212,0.01426212 0 0 1 0.0181027,0.008777 0.01426212,0.01426212 0 0 1 -0.008685,0.0181472 0.01426212,0.01426212 0 0 1 -0.0181912,-0.008592 0.01426212,0.01426212 0 0 1 0.008499,-0.0182347"
+     sodipodi:start="4.3809869"
+     sodipodi:end="4.3606187"
+     sodipodi:open="true"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     sodipodi:arc-type="arc" />
+  <text
+     id="text196"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.53391904"
+     y="0.50398922"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">4</text>
+  <text
+     id="text198"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.6171636"
+     y="0.34853715"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">Critical</text>
+  <text
+     id="text200"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.6171636"
+     y="0.38045201"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">point</text>
+  <polyline
+     id="polyline216"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2001px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     points="111.2,86 112.5,86 113.85,86 115.15,86 116.45,86 117.75,86 119.1,86 120.4,86 121.7,86 123.05,86 124.35,86 125.65,86 126.95,86 128.3,86 129.6,86.051 130.9,86.051 132.25,86.051 133.55,86.051 134.85,86.051 136.2,86.051 137.5,86.102 138.8,86.102 140.1,86.102 141.45,86.148 142.75,86.148 144.05,86.148 145.4,86.199 146.7,86.199 148,86.25 149.3,86.301 150.65,86.301 151.95,86.352 153.25,86.398 154.6,86.449 155.9,86.5 157.2,86.602 158.5,86.648 159.85,86.699 161.15,86.801 162.45,86.898 163.8,87 165.1,87.102 166.4,87.199 167.7,87.301 169.05,87.449 170.35,87.602 171.65,87.75 173,87.898 174.3,88.102 175.6,88.25 176.9,88.449 178.25,88.699 179.55,88.898 180.85,89.148 182.2,89.398 183.5,89.699 184.8,89.949 186.15,90.25 187.45,90.602 188.75,90.949 190.05,91.301 191.4,91.699 192.7,92.102 194,92.5 195.35,92.949 196.65,93.449 197.95,93.898 199.25,94.449 200.6,95 201.9,95.551 203.2,96.148 204.55,96.801 205.85,97.449 207.15,98.102 208.45,98.852 209.8,99.602 211.1,100.35 212.4,101.2 213.75,102.05 215.05,102.95 216.35,103.85 217.65,104.8 219,105.8 220.3,106.85 221.6,107.95 222.95,109.05 224.25,110.25 225.55,111.45 226.85,112.75 228.2,114.05 229.5,115.4 230.8,116.85 232.15,118.3 233.45,119.85 234.75,121.45 236.1,123.1 237.4,124.85 238.7,126.65 240,128.5 241.35,130.5 "
+     transform="matrix(0.00265958,0,0,-0.00265958,-0.17831469,0.77566465)"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <polyline
+     id="polyline218"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2001px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     points="233,119.3 236.5,121.6 239.95,124.3 243.45,127.4 246.9,130.95 250.4,134.85 253.9,139.2 257.35,143.95 260.85,149.1 264.3,154.7 267.8,160.65 271.3,167.05 274.75,173.85 278.25,181.1 281.7,188.7 285.2,196.75 288.7,205.2 292.15,214.05 295.65,223.35 299.1,233 302.6,243.1 306.1,253.6 309.55,264.55 313.05,275.85 316.5,287.6 "
+     transform="matrix(0.00265958,0,0,-0.00265958,-0.17831469,0.77566465)"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <line
+     id="line220"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00132979;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     y2="0.010771396"
+     x2="0.44136584"
+     y1="0.45837754"
+     x1="0.44136584"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <path
+     id="path222"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.00218086;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 0.46984988,0.42859036 v -3.1917e-4 l -2.659e-5,-3.1914e-4 -5.318e-5,-3.1916e-4 -5.32e-5,-3.1915e-4 -5.318e-5,-2.9255e-4 -7.979e-5,-2.9255e-4 -1.0638e-4,-2.9255e-4 -1.0641e-4,-2.9255e-4 -1.3297e-4,-2.6596e-4 -1.3297e-4,-2.9254e-4 -1.5958e-4,-2.6596e-4 -1.5958e-4,-2.3937e-4 -1.8614e-4,-2.3935e-4 -1.8618e-4,-2.3938e-4 -1.8617e-4,-2.3935e-4 -2.1279e-4,-2.1278e-4 -2.1275e-4,-2.1276e-4 -2.3936e-4,-1.8617e-4 -2.3937e-4,-1.8617e-4 -2.3936e-4,-1.8618e-4 -2.3936e-4,-1.5956e-4 -2.6594e-4,-1.5958e-4 -2.6597e-4,-1.3297e-4 -2.9255e-4,-1.3299e-4 -2.9256e-4,-1.0638e-4 -2.9255e-4,-1.0639e-4 -2.9255e-4,-7.978e-5 -2.9255e-4,-5.32e-5 -3.1916e-4,-7.977e-5 -3.1915e-4,-2.662e-5 -3.1913e-4,-2.659e-5 h -3.1917e-4 c -0.003457,0 -0.006276,0.002819 -0.006276,0.006276 0,0.003457 0.002819,0.006276 0.006276,0.006276 0.003483,0 0.006276,-0.002819 0.006277,-0.006275 z"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     inkscape:connector-curvature="0" />
+  <polygon
+     id="polygon226"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2001px;line-height:125%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     points="111.2,86 389.6,86 389.6,287.6 111.2,287.6 "
+     transform="matrix(0.00265958,0,0,-0.00265958,-0.17831469,0.77566465)"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228" />
+  <text
+     id="text2494"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.23293824"
+     y="0.22642136"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">(Liquid)</text>
+  <text
+     id="text2496"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.4548291"
+     y="0.22642145"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">(Super-</text>
+  <text
+     id="text2498"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.45349091"
+     y="0.25751197"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">critical)</text>
+  <text
+     id="text2502"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.6782217"
+     y="0.2225333"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">(Vapour)</text>
+  <path
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.00319151;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.00957453, 0.00319151;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow2Mend)"
+     d="m 0.60808736,0.36677817 c 0,0 -0.0248499,0.0259518 -0.0578991,0.0415044 -0.0330491,0.0155526 -0.0738948,0.0184568 -0.0738948,0.0184568"
+     id="path4446"
+     sodipodi:nodetypes="csc"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     inkscape:connector-curvature="0" />
+  <path
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0194444px;line-height:125%;font-family:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.00319151;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.00957453, 0.00319151;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow2Mend)"
+     d="m 0.52775936,0.4990322 c 0,0 -0.0344726,0.0108307 -0.0668344,0.0133232 -0.0364178,0.002805 -0.0821427,0.003335 -0.0821427,0.003335"
+     id="path4646"
+     sodipodi:nodetypes="csc"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228"
+     inkscape:connector-curvature="0" />
+  <text
+     id="text2270"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.0297873px;line-height:0%;font-family:Arial;text-align:start;letter-spacing:normal;word-spacing:normal;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.53192;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.433;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     x="0.5719595"
+     y="0.50401622"
+     inkscape:export-filename="D:\Croucher\geothermal\supercritical\documentation\paper\figs\fig01.png"
+     inkscape:export-xdpi="299.90228"
+     inkscape:export-ydpi="299.90228">(Two-phase)</text>
+</svg>
