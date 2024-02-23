@@ -263,6 +263,8 @@ The main methods of a ``t2incon`` object are listed in the
 
 Details of these methods are as follows.
 
+----
+
 .. _sec:t2incon:add_incon:
 
 ``add_incon(incon)``
@@ -274,6 +276,8 @@ Adds a set of initial conditions for a single block.
 
 -  | **incon**: :ref:`t2blockincon <t2blockincons>` 
    | Initial conditions for the block.
+
+----
 
 .. _sec:t2incon:delete_incon:
 
@@ -287,12 +291,16 @@ Deletes a set of initial conditions for a single block.
 -  | **blockname**: string
    | Name of the block at which initial conditions are to be deleted.
 
+----
+
 .. _sec:t2incon:empty:
 
 ``empty()``
 ^^^^^^^^^^^
 
 Deletes initial conditions for all blocks.
+
+----
 
 .. _sec:t2incon:insert_incon:
 
@@ -309,6 +317,8 @@ index.
 
 -  | **incon**: :ref:`t2blockincon <t2blockincons>`
    | Initial conditions for the block.
+
+----
 
 .. _sec:t2incon:read:
 
@@ -327,6 +337,8 @@ Reads initial conditions from file.
      variables, set to the number of primary variables. Otherwise, the
      default ``None`` value can be used, in which case the number of
      primary variables will be detected automatically.
+
+----
 
 .. _sec:t2incon:transfer_from:
 
@@ -355,6 +367,8 @@ between the two grids (which are created if not specified).
 -  | **colmapping**: dictionary
    | Dictionary mapping column names from ``geo`` to ``sourcegeo``.
 
+----
+
 .. _sec:t2incon:write:
 
 ``write(filename, reset=True)``
@@ -370,6 +384,8 @@ Writes initial conditions to file.
 -  | **reset**: Boolean
    | Set to ``False`` if timing information is not to be reset - e.g. if
      restarting a transient simulation.
+
+----
 
 .. _t2blockincons:
 

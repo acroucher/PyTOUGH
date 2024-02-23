@@ -792,7 +792,7 @@ given below.
       |                                                                                   |                              | on disk              |
       |                                                                                   |                              |                      |
       +-----------------------------------------------------------------------------------+------------------------------+----------------------+
-                      
+
 .. _sec:mulgrid:add_column:
 
 ``add_column(col)``
@@ -800,6 +800,8 @@ given below.
 
 Adds a :ref:`column <columnobjects>` object ``col`` to the grid.
 If a column with the same name already exists, no new column is added.
+
+----
 
 .. _sec:mulgrid:add_connection:
 
@@ -810,6 +812,8 @@ Adds a :ref:`connection <connectionobjects>` object ``con`` to
 the grid. If a connection with the same name already exists, no new
 connection is added.
 
+----
+
 .. _sec:mulgrid:add_layer:
 
 ``add_layer(lay)``
@@ -817,6 +821,8 @@ connection is added.
 
 Adds a :ref:`layer <layerobjects>` object ``lay`` to the grid.
 If a layer with the same name already exists, no new layer is added.
+
+----
 
 .. _sec:mulgrid:add_node:
 
@@ -826,6 +832,8 @@ If a layer with the same name already exists, no new layer is added.
 Adds a :ref:`node <nodeobjects>` object ``n`` to the grid. If a
 node with the same name already exists, no new node is added.
 
+----
+
 .. _sec:mulgrid:add_well:
 
 ``add_well(w)``
@@ -833,6 +841,8 @@ node with the same name already exists, no new node is added.
 
 Adds a :ref:`well <wellobjects>` object ``w`` to the grid. If a
 well with the same name already exists, no new well is added.
+
+----
 
 .. _sec:mulgrid:block_contains_point:
 
@@ -852,6 +862,8 @@ point ``pos``.
 -  | **pos**: ``np.array``
    | 3-element array representing the 3D point.
 
+----
+   
 .. _sec:mulgrid:block_centre:
 
 ``block_centre(lay, col)``
@@ -875,6 +887,8 @@ still the layer centre, to give a uniform pressure reference.)
 -  | **col**: :ref:`column <columnobjects>` or string
    | The specified column or column name.
 
+----
+   
 .. _sec:mulgrid:block_mapping:
 
 ``block_mapping(geo, column_mapping=False)``
@@ -896,6 +910,8 @@ Can optionally also return the associated column mapping.
      function will return a tuple containing the block mapping and the
      column mapping). Default value is ``False``.
 
+----
+     
 .. _sec:mulgrid:block_name:
 
 ``block_name(layer_name, column_name, blockmap = {})``
@@ -918,6 +934,8 @@ An optional block name mapping can be applied.
      blocks in the geometry- those not included in the mapping will not
      be altered.
 
+----
+     
 .. _sec:mulgrid:block_name_containing_point:
 
 ``block_name_containing_point(pos, qtree=None, blockmap={})``
@@ -943,6 +961,8 @@ grid (returns ``None`` if the point lies outside the grid).
    | Dictionary mapping the block names in the geometry to another block
      naming system.
 
+----
+     
 .. _sec:mulgrid:block_surface:
 
 ``block_surface(lay, col)``
@@ -959,6 +979,8 @@ the given layer and column.
 -  | **col**: :ref:`column <columnobjects>`
    | The specified column.
 
+----
+   
 .. _sec:mulgrid:block_volume:
 
 ``block_volume(lay, col)``
@@ -975,6 +997,8 @@ column.
 -  | **col**: :ref:`column <columnobjects>`
    | The specified column.
 
+----
+   
 .. _sec:mulgrid:check:
 
 ``check(fix=False,silent=False)``
@@ -997,6 +1021,8 @@ no printout (only really useful if ``fix`` is ``True``).
 -  | **silent**: Boolean
    | Whether to print out feedback or not.
 
+----
+   
 .. _sec:mulgrid:column_boundary_nodes:
 
 ``column_boundary_nodes(columns)``
@@ -1012,6 +1038,8 @@ list is ordered, in a counter-clockwise direction.
 -  | **columns**: list
    | The list of columns for which the boundary is required.
 
+----
+   
 .. _sec:mulgrid:column_bounds:
 
 ``column_bounds(columns)``
@@ -1024,6 +1052,8 @@ Returns a bounding rectangle around a list of columns.
 -  | **columns**: list
    | The list of columns for which the bounds are required.
 
+----
+   
 .. _sec:mulgrid:column_containing_point:
 
 ``column_containing_point(pos, columns=None, guess=None, bounds=None, qtree=None)``
@@ -1069,6 +1099,8 @@ searching.
      :ref:`column_quadtree() <sec:mulgrid:column_quadtree>`
      method.
 
+----
+     
 .. _sec:mulgrid:column_mapping:
 
 ``column_mapping(geo)``
@@ -1084,6 +1116,8 @@ searching.
 -  | **geo**: :ref:`mulgrid <mulgrids>`
    | The ``mulgrid`` object to create a column mapping from.
 
+----
+   
 .. _sec:mulgrid:column_name:
 
 ``column_name(block_name)``
@@ -1097,6 +1131,8 @@ according to the naming convention of the grid.
 -  | **block_name**: string
    | Block name.
 
+----
+   
 .. _sec:mulgrid:column_neighbour_groups:
 
 ``column_neighbour_groups(columns)``
@@ -1110,6 +1146,8 @@ connected together, and returns a list of them.
 -  | **columns**: list or set
    | List or set of columns to group.
 
+----
+   
 .. _sec:mulgrid:column_quadtree:
 
 ``column_quadtree(columns=None)``
@@ -1135,6 +1173,8 @@ The quadtree is an instance of a ``quadtree`` class, defined in the
      necessary to search columns in a defined area. If ``None``, the
      search area is the whole grid (all columns).
 
+----
+     
 .. _sec:mulgrid:column_surface_layer:
 
 ``column_surface_layer(col)``
@@ -1148,6 +1188,8 @@ column.
 -  | **col**: :ref:`column <columnobjects>`
    | The column for which the surface layer is to be found.
 
+----
+   
 .. _sec:mulgrid:column_values:
 
 ``column_values(col, variable, depth = False)``
@@ -1175,6 +1217,8 @@ value of the variable at each block in the column.
    | Set to ``True`` to give depths from surface, instead of elevations,
      as the first returned array.
 
+----
+     
 .. _sec:mulgrid:columns_in_polygon:
 
 ``columns_in_polygon(polygon)``
@@ -1192,6 +1236,8 @@ or rectangle.
      ``np.array``). If the list has only two points, it will be
      interpreted as a rectangle [bottom left, top right].
 
+----
+     
 .. _sec:mulgrid:connects:
 
 ``connects(column1, column2)``
@@ -1205,6 +1251,8 @@ two specified columns.
 -  | **column1, column2**: :ref:`column <columnobjects>` 
    | Two columns in the geometry.
 
+----
+   
 .. _sec:mulgrid:copy_layers_from:
 
 ``copy_layers_from(geo)``
@@ -1218,6 +1266,8 @@ existing layers first).
 -  | **geo**: :ref:`mulgrid <mulgrids>`
    | The geometry to copy layers from.
 
+----
+   
 .. _sec:mulgrid:copy_wells_from:
 
 ``copy_wells_from(geo)``
@@ -1231,6 +1281,8 @@ first).
 -  | **geo**: :ref:`mulgrid <mulgrids>`
    | The geometry to copy wells from.
 
+----
+   
 .. _sec:mulgrid:decompose_columns:
 
 ``decompose_columns(columns = [], mapping = False, chars = ascii_lowercase)``
@@ -1262,6 +1314,8 @@ decompositions.
    | Specifies a string of characters to use when forming new node and
      column names. Default is lowercase letters.
 
+----
+     
 .. _sec:mulgrid:delete_column:
 
 ``delete_column(colname)``
@@ -1273,6 +1327,8 @@ Deletes the column with the specified name from the grid.
 
 -  | **colname**: string
    | Name of the column to be deleted.
+
+----
 
 .. _sec:mulgrid:delete_connection:
 
@@ -1286,6 +1342,8 @@ Deletes the connection between the specified columns from the grid.
 -  | **colnames**: tuple of string
    | Tuple of two column names.
 
+----
+
 .. _sec:mulgrid:delete_layer:
 
 ``delete_layer(layername)``
@@ -1297,6 +1355,8 @@ Deletes the layer with the specified name from the grid.
 
 -  | **layername**: string
    | Name of the layer to be deleted.
+
+----
 
 .. _sec:mulgrid:delete_node:
 
@@ -1310,6 +1370,8 @@ Deletes the node with the specified name from the grid.
 -  | **nodename**: string
    | Name of the node to be deleted.
 
+----
+
 .. _sec:mulgrid:delete_orphans:
 
 ``delete_orphans()``
@@ -1318,12 +1380,16 @@ Deletes the node with the specified name from the grid.
 Deletes any orphaned nodes (those not belonging to any column) from the
 grid.
 
+----
+
 .. _sec:mulgrid:delete_orphan_wells:
 
 ``delete_orphan_wells()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Deletes any orphaned wells (those with wellheads outside the grid).
+
+----
 
 .. _sec:mulgrid:delete_well:
 
@@ -1337,6 +1403,8 @@ Deletes the well with the specified name from the grid.
 -  | **layername**: string
    | Name of the layer to be deleted.
 
+----
+
 .. _sec:mulgrid:empty:
 
 ``empty()``
@@ -1346,6 +1414,8 @@ Deletes the well with the specified name from the grid.
 
 Empties the grid of all its nodes, columns, layers, wells and
 connections. Other properties are unaffected.
+
+----
 
 .. _sec:mulgrid:export_surfer:
 
@@ -1389,6 +1459,8 @@ Six files are written out:
 -  | **left**: float
    | Coordinate value of the left hand side of the layer plot (default
      zero).
+
+----
 
 .. _sec:mulgrid:fit_columns:
 
@@ -1452,6 +1524,8 @@ with fitted values indexed by column names.
    | Set ``True`` to return results as a dictionary of fitted values
      indexed by column names, instead of an array.
 
+----
+
 .. _sec:mulgrid:fit_surface:
 
 ``fit_surface(data, alpha=0.1, beta=0.1, columns=[], min_columns=[], grid_boundary=False, layer_snap=0.0, silent=False)``
@@ -1512,6 +1586,8 @@ thickness.
 
 -  | **silent**: Boolean
    | Set to ``True`` to suppress printing fitting progress.
+
+----
 
 .. _sec:mulgrid:from_amesh:
 
@@ -1591,6 +1667,8 @@ will cause an exception to be raised.
      order blocks by geometrical type (8-node hexahedrons first followed
      by 6-node wedges) as in PETSc DMPlex meshes.
 
+----
+
 .. _sec:mulgrid:from_gmsh:
 
 ``from_gmsh(filename, layers, convention=0, atmosphere_type=2, top_elevation=0, justify = 'r', chars = ascii_lowercase, spaces=True, block_order=None)``
@@ -1641,6 +1719,8 @@ convention and atmosphere type.
      order blocks by geometrical type (8-node hexahedrons first followed
      by 6-node wedges) as in PETSc DMPlex meshes.
 
+----
+
 .. _sec:mulgrid:from_layermesh:
 
 ``from_layermesh(mesh, convention=0, atmosphere_type=2, justify='r',  chars=ascii_lowercase, spaces=True, block_order=None)``
@@ -1681,6 +1761,8 @@ into a geometry object.
      order blocks by geometrical type (8-node hexahedrons first followed
      by 6-node wedges) as in PETSc DMPlex meshes.
 
+----
+
 .. _sec:mulgrid:layer_containing_elevation:
 
 ``layer_containing_elevation(elevation)``
@@ -1694,6 +1776,8 @@ Returns the grid layer containing the specified vertical elevation.
 
 -  | **elevation**: float
    | Vertical elevation.
+
+----
 
 .. _sec:mulgrid:layer_mapping:
 
@@ -1710,6 +1794,8 @@ alter which layer is nearest in a given column.)
 -  | **geo**: :ref:`mulgrid <mulgrids>`
    | The ``mulgrid`` object to create a layer mapping from.
 
+----
+
 .. _sec:mulgrid:layer_name:
 
 ``layer_name(block_name)``
@@ -1722,6 +1808,8 @@ according to the naming convention of the grid.
 
 -  | **block_name**: string
    | Block name.
+
+----
 
 .. _sec:mulgrid:layer_plot:
 
@@ -1990,6 +2078,8 @@ plots the variable ``t`` at elevation -500 m over the grid, with the
 values as Temperature (°C), and with contours drawn from 100°C to
 200°C with a contour interval of 25°C.
 
+----
+
 .. _sec:mulgrid:line_plot:
 
 ``line_plot(start=None, end=None, variable, variable_name=None, unit=None, divisions=100, plt=None, subplot=111, title='', xlabel='distance (m)', coordinate=False)``
@@ -2053,6 +2143,8 @@ divided into (default 100), the plot title and the axis labels.
 plots the variable ``t`` along a line from (0,0,500) to (1000,0,500)
 through the grid, with the values as Temperature (°C).
 
+----
+
 .. _sec:mulgrid:line_values:
 
 ``line_values(start, end, variable, divisions=100, coordinate=False, qtree=None)``
@@ -2091,6 +2183,8 @@ value at the block containing the point.
 -  | **qtree**: ``quadtree``
    | Quadtree object for fast searching of grid columns (can be
      constructed using the ``column_quadtree()`` method).
+
+----
 
 .. _sec:mulgrid:meshio_grid:
 
@@ -2131,6 +2225,8 @@ just a wrapper for this one).
      centre. If set to ``None`` (the default) then the horizontal 2-D
      mesh is returned.
 
+----
+
 .. _sec:mulgrid:minc_array:
 
 ``minc_array(vals, minc_indices, level=0, outside=0.0)``
@@ -2165,6 +2261,8 @@ blocks is specified by the ``minc_indices`` array (returned by the
      part of the grid. If a float value is given, assign that value
      instead. If ``False``, the value zero will be assigned.
 
+----
+
 .. _sec:mulgrid:nodes_in_columns:
 
 ``nodes_in_columns(columns)``
@@ -2178,6 +2276,8 @@ Returns a list of all nodes in a specified list of columns.
 
 -  | **columns**: list (of :ref:`column <columnobjects>`)
    | List of columns in which to find nodes.
+
+----
 
 .. _sec:mulgrid:nodes_in_polygon:
 
@@ -2194,6 +2294,8 @@ Returns a list of all nodes inside the specified polygon or rectangle.
    | List of points defining the polygon (each point is a two-element
      ``np.array``). If the list has only two points, it will be
      interpreted as a rectangle [bottom left, top right].
+
+----
 
 .. _sec:mulgrid:node_nearest_to:
 
@@ -2216,6 +2318,8 @@ many points.
      constructed using the ``node_kdtree`` property of a ``mulgrid``
      object. You will need the ``scipy`` library installed before you
      can use this property.
+
+----
 
 .. _sec:mulgrid:optimize:
 
@@ -2272,6 +2376,8 @@ optimization process.
    | Set ``True`` to use the PEST parameter estimation software to
      perform the optimization.
 
+----
+
 .. _sec:mulgrid:polyline_values:
 
 ``polyline_values(polyline, variable, divisions=100, coordinate=False, qtree=None)``
@@ -2311,6 +2417,8 @@ variable at that point. The value of the variable at any point is the
      constructed using the :ref:`column_quadtree() <sec:mulgrid:column_quadtree>`
      method).
 
+----
+
 .. _sec:mulgrid:read:
 
 ``read(filename)``
@@ -2338,6 +2446,8 @@ into the ``mulgrid`` creation command:
 ::
 
    geo = mulgrid(filename)
+
+----
 
 .. _sec:mulgrid:rectangular:
 
@@ -2415,6 +2525,8 @@ thickness 100 m and 10 layers underneath of thickness 200 m, and with
 origin (0,0,2500) m. The grid will have the default naming convention
 (0) and atmosphere type (2).
 
+----
+
 .. _sec:mulgrid:reduce:
 
 ``reduce(columns)``
@@ -2427,6 +2539,8 @@ Reduces a grid so that it contains only the specified list of columns
 
 -  | **columns**: list
    | List of required columns or column names.
+
+----
 
 .. _sec:mulgrid:refine:
 
@@ -2487,6 +2601,8 @@ they can be modified and made as orthogonal as possible using the
      names. In this case, the first element of the ``chars`` parameter
      functions like a 'zero' and replaces spaces.
 
+----
+
 .. _sec:mulgrid:refine_layers:
 
 ``refine_layers(layers=[], factor=2, chars = ascii_lowercase, spaces=True)``
@@ -2515,6 +2631,8 @@ factor.
      names. In this case, the first element of the ``chars`` parameter
      functions like a 'zero' and replaces spaces.
 
+----
+
 .. _sec:mulgrid:rename_column:
 
 ``rename_column(oldcolname, newcolname)``
@@ -2534,6 +2652,8 @@ block and connection name lists are updated only once.
 -  | **newcolname**: string or list of strings
    | New name(s) of the column(s).
 
+----
+
 .. _sec:mulgrid:rename_layer:
 
 ``rename_layer(oldlayername, newlayername)``
@@ -2552,6 +2672,8 @@ block and connection name lists are updated only once.
 
 -  | **newlayername**: string or list of strings
    | New name(s) of the layer(s).
+
+----
 
 .. _sec:mulgrid:rotate:
 
@@ -2586,6 +2708,8 @@ parameter is ``True``, any wells in the grid are also rotated.
 
 rotates the grid ``geo`` clockwise by 30° about its centre in the
 horizontal plane.
+
+----
 
 .. _sec:mulgrid:slice_plot:
 
@@ -2850,6 +2974,8 @@ drawn at 100°C and 200°C.
 plots the variable ``t`` again, but with a specified discrete colour
 scale with 10 divisions from zero to 250°C.
 
+----
+
 .. _sec:mulgrid:snap_columns_to_layers:
 
 ``snap_columns_to_layers(min_thickness=1.0, columns=[])``
@@ -2875,6 +3001,8 @@ columns.
    | List of columns to process. If empty (the default), process all
      columns.
 
+----
+
 .. _sec:mulgrid:snap_columns_to_nearest_layers:
 
 ``snap_columns_to_nearest_layers(columns=[])``
@@ -2892,6 +3020,8 @@ otherwise over all columns.
      string)
    | List of columns to process. If empty (the default), process all
      columns.
+
+----
 
 .. _sec:mulgrid:split_column:
 
@@ -2919,6 +3049,8 @@ was carried out successfully.
 -  | **chars**: string
    | Specifies a string of characters to use when forming the character
      part of block names. Default is lowercase letters.
+
+----
 
 .. _sec:mulgrid:translate:
 
@@ -2948,6 +3080,8 @@ grid are also translated.
 
 translates the grid ``geo`` by 10 km in the *x* direction and down 1 km
 in the *z* direction.
+
+----
 
 .. _sec:mulgrid:well_values:
 
@@ -3001,6 +3135,8 @@ containing the point.
    | Set ``True`` to artificially extend the well trace to the bottom of
      the model.
 
+----
+
 .. _sec:mulgrid:write:
 
 ``write(filename='')``
@@ -3015,6 +3151,8 @@ Writes a ``mulgrid`` object to a MULgraph geometry file on disk.
 -  | **filename**: string
    | Name of the MULgraph geometry file to be written. If no file name
      is specified, the object's own ``filename`` property is used.
+
+----
 
 .. _sec:mulgrid:write_bna:
 
@@ -3033,6 +3171,8 @@ with Surfer or GIS tools.
      the object's own ``filename`` property is used, with the extension
      changed to \*.bna. If the object's ``filename`` property is not
      set, the default name 'geometry.bna' is used.
+
+----
 
 .. _sec:mulgrid:write_exodusii:
 
@@ -3068,6 +3208,8 @@ does not need the VTK-Python library (though you will need the
 -  | **blockmap**: dictionary
    | Dictionary mapping the block names in the geometry to another block
      naming system.
+
+----
 
 .. _sec:mulgrid:write_mesh:
 
@@ -3117,6 +3259,8 @@ four sides.
      'mesh.exo' then the mesh will be written in ExodusII format). See
      the ``meshio`` documentation for details.
 
+----
+
 .. _sec:mulgrid:write_vtk:
 
 ``write_vtk(filename='', arrays=None, wells=False, blockmap={}, surface_snap=0.1)``
@@ -3154,6 +3298,8 @@ VTK file for the wells in the grid can optionally be written.
    | Tolerance for specifying how close column surface elevations need
      to be before being considered "equal" when constructing surface
      nodes.
+
+----
 
 .. _other_mulgrid_objects:
 
@@ -3285,6 +3431,8 @@ where ``name`` is the column name and ``nodes`` is a list of
 :ref:`in_polygon() <sec:column:in_polygon>` and
 :ref:`is_against() <sec:column:is_against>`, as described below.
 
+----
+
 .. _sec:column:contains_point:
 
 ``contains_point(pos)``
@@ -3299,6 +3447,8 @@ otherwise.
 
 -  | **pos**: ``np.array``
    | Horizontal position of the point.
+
+----
 
 .. _sec:column:in_polygon:
 
@@ -3317,6 +3467,8 @@ rectangle.
      ``np.array``). If the list has only two points, it will be
      interpreted as a rectangle [bottom left, top right].
 
+----
+
 .. _sec:column:is_against:
 
 ``is_against(othercolumn)``
@@ -3329,6 +3481,8 @@ if it shares more than one node with it.
 
 -  | **othercolumn**: ``column``)
    | Any other column in the geometry.
+
+----
 
 .. _layerobjects:
 
@@ -3372,6 +3526,8 @@ specify the vertical position of the layer.
 
 The methods of a ``layer`` object are as follows:
 
+----
+
 ``contains_elevation(z)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -3385,6 +3541,8 @@ and ``False`` otherwise.
 -  | **z**: float
    | Elevation of the point.
 
+----
+
 ``translate(shift)``
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -3394,6 +3552,8 @@ Translates a layer up or down by a specified distance.
 
 -  | **shift**: float
    | Distance to shift the layer (positive for up, negative for down).
+
+----
 
 .. _connectionobjects:
 
@@ -3519,6 +3679,8 @@ Returns the elevation corresponding to the specified downhole ``depth``
 -  | **depth**: float
    | Downhole depth.
 
+----
+
 .. _sec:well:depth_pos:
 
 ``depth_pos(depth)``
@@ -3533,6 +3695,8 @@ bottom). The position is interpolated between the deviation locations.
 -  | **depth**: float
    | Downhole depth of the required point.
 
+----
+
 .. _sec:well:elevation_depth:
 
 ``elevation_depth(elevation)``
@@ -3546,6 +3710,8 @@ bottom).
 
 -  | **elevation**: float
    | Elevation.
+
+----
 
 .. _sec:well:elevation_pos:
 
@@ -3567,6 +3733,8 @@ elevations below the bottom of the well.
    | If ``True``, extrapolated positions will be returned for elevations
      below the bottom of the well (otherwise ``None`` will be returned).
 
+----
+
 .. _sec:well:pos_coordinate:
 
 ``pos_coordinate(index)``
@@ -3580,6 +3748,8 @@ containing the elevations of all well track nodes.
 
 -  | **index**: integer
    | Index required (0, 1 or 2).
+
+----
 
 Other functions: block name conversions
 ---------------------------------------
@@ -3609,6 +3779,8 @@ used (two characters for layer followed by three digits for column).
 -  | **name**: string
    | Block name.
 
+----
+
 ``unfix_blockname(name)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -3620,6 +3792,8 @@ This function reverses the effect of ``fix_blockname()``.
 
 -  | **name**: string
    | Block name.
+
+----
 
 .. _sec:mulgrid:blockmappings:
 

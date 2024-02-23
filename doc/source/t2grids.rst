@@ -273,6 +273,8 @@ method.)
 -  | **a, b**: :ref:`t2grid <t2grids>`
    | The two grids to be added together.
 
+----
+
 .. _sec:t2grid:add_block:
 
 ``add_block(block)``
@@ -285,6 +287,8 @@ exists, it is replaced.
 
 -  | **block**: :ref:`t2block <t2blockobjects>`
    | Block to be added to the grid.
+
+----
 
 .. _sec:t2grid:add_connection:
 
@@ -299,6 +303,8 @@ column names already exists, it is replaced.
 -  | **connection**: :ref:`t2connection <t2connectionobjects>`
    | Connection to be added to the grid.
 
+----
+
 .. _sec:t2grid:add_rocktype:
 
 ``add_rocktype(rock)``
@@ -312,6 +318,8 @@ already exists, it is replaced.
 -  | **rock**: :ref:`rocktype <rocktypeobjects>`
    | Rock type to be added to the grid.
 
+----
+
 .. _sec:t2grid:block_index:
 
 ``block_index(blockname)``
@@ -324,6 +332,8 @@ name.
 
 -  | **blockname**: string
    | Name of the block.
+
+----
 
 .. _sec:t2grid:blockmap:
 
@@ -344,6 +354,8 @@ object to the block names in the grid.
    | Specifies a list of integer indices defining which blocks in the
      grid to map to. If ``None``, all blocks are mapped to.
 
+----
+
 .. _sec:t2grid:calculate_block_centres:
 
 ``calculate_block_centres(geo)``
@@ -356,6 +368,8 @@ specified geometry object ``geo``.
 
 -  | **geo**: :ref:`mulgrid <mulgrids>`
    | Geometry object associated with the grid.
+
+----
 
 .. _sec:t2grid:check:
 
@@ -386,6 +400,8 @@ their neighbours will never share).
 -  | **silent**: Boolean
    | Whether to print out feedback or not.
 
+----
+
 .. _sec:t2grid:clean_rocktypes:
 
 ``clean_rocktypes()``
@@ -395,6 +411,8 @@ their neighbours will never share).
 
 Deletes any rock types from the grid which are not assigned to any
 block.
+
+----
 
 .. _sec:t2grid:connection_index:
 
@@ -408,6 +426,8 @@ connection between a specified pair of block names.
 
 -  | **blocknames**: tuple
    | A pair of block names, each of type string.
+
+----
 
 .. _sec:t2grid:copy_connection_directions:
 
@@ -427,6 +447,8 @@ structure, but may have different layer structures.
    | The source grid from which the connection permeability directions
      are to be copied.
 
+----
+
 .. _sec:t2grid:delete_block:
 
 ``delete_block(blockname)``
@@ -439,6 +461,8 @@ involving the specified block.
 
 -  | **blockname**: string
    | Name of the block to be deleted from the grid.
+
+----
 
 .. _sec:t2grid:delete_connection:
 
@@ -453,6 +477,8 @@ Deletes a connection from the grid.
    | Pair of block names identifying the connection to be deleted from
      the grid.
 
+----
+
 .. _sec:t2grid:delete_rocktype:
 
 ``delete_rocktype(rocktypename)``
@@ -464,6 +490,8 @@ Deletes a rock type from the grid.
 
 -  | **rocktypename**: string
    | Name of the rock type to be deleted from the grid.
+
+----
 
 .. _sec:t2grid:demote_block:
 
@@ -479,6 +507,8 @@ blocks below them also being treated as inactive).
 
 -  | **blockname**: string or list of strings
    | Name(s) of the block(s) to be shifted to the end of the blocklist.
+
+----
 
 .. _sec:t2grid:embed:
 
@@ -501,6 +531,8 @@ to be connected and the connection distances, area etc. between them.
      the connection distances and area. The first block should be the
      host block, the second the connecting block in the subgrid.
 
+----
+
 .. _sec:t2grid:empty:
 
 ``empty()``
@@ -509,6 +541,8 @@ to be connected and the connection distances, area etc. between them.
 .. index:: TOUGH2 grids; emptying
 
 Empties the grid of all its blocks, rock types and connections.
+
+----
 
 .. _sec:t2grid:flux_matrix:
 
@@ -546,6 +580,8 @@ assembling these matrices for each of the blocks into a global matrix.
    | Dictionary mapping the block names in the geometry to the block
      naming system used in the grid.
 
+----
+
 .. _sec:t2grid:fromgeo:
 
 ``fromgeo(geo)``
@@ -560,6 +596,8 @@ previous contents of the grid are first emptied.)
 
 -  | **geo**: :ref:`mulgrid <mulgrids>`
    | The ``mulgrid`` geometry object.
+
+----
 
 .. _sec:t2grid:incons:
 
@@ -579,6 +617,8 @@ each block, in an array.
    | Initial conditions values, either a ``tuple`` of values for one
      block, or an ``np.array`` with each row containing a set of values
      for one block.
+
+----
 
 .. _sec:t2grid:MINC:
 
@@ -689,6 +729,8 @@ medium blocks. The naming of matrix blocks can be controlled using the
      zero, as in MESHMAKER, but in some situations a finite value (e.g.
      :math:`10^{-10}` m) can work better.
 
+----
+
 .. _sec:t2grid:radial:
 
 ``radial(rblocks, zblocks, convention=0, atmos_type=2, origin=[0,0], justify='r', case=None, dimension=2, blockmap={}, chars=ascii_lowercase, spaces=True)``
@@ -768,6 +810,8 @@ method, using its :math:`x` direction for radius (and
 having only one block in the :math:`y` direction - which is not used).
 The :ref:`slice_plot() <sec:mulgrid:slice_plot>` method can
 then be used to plot results.
+
+----
 
 .. _sec:t2grid:rectgeo:
 
@@ -861,6 +905,8 @@ should also be OK.
      order blocks by geometrical type (8-node hexahedrons first followed
      by 6-node wedges) as in PETSc DMPlex meshes.
 
+----
+
 .. _sec:t2grid:rename_blocks:
 
 ``rename_blocks(blockmap = {}, fix_blocknames = True)``
@@ -880,6 +926,8 @@ properties such as connections are also renamed.
    | Set ``True`` (the default) to 'fix' block names in the dictionary,
      using the :ref:`fix_blockname() <sec:mulgrid:fix_blockname>` function.
 
+----
+
 .. _sec:t2grid:rename_rocktype:
 
 ``rename_rocktype(rockname, newrockname)``
@@ -896,6 +944,8 @@ already been used.
 
 -  | **newrockname**: string
    | New name for the rock type.
+
+----
 
 .. _sec:t2grid:reorder:
 
@@ -932,6 +982,8 @@ Reorders the blocks (and optionally connections) in the grid.
      had been created using the :ref:`fromgeo() <sec:t2grid:fromgeo>`
      method.
 
+----
+
 .. _sec:t2grid:rocktype_frequency:
 
 ``rocktype_frequency(rockname)``
@@ -945,6 +997,8 @@ i.e. how many blocks are assigned that rock type.
 -  | **rockname**: string
    | Name of the specified rock type.
 
+----
+
 .. _sec:t2grid:sort_rocktypes:
 
 ``sort_rocktypes()``
@@ -953,6 +1007,8 @@ i.e. how many blocks are assigned that rock type.
 .. index:: TOUGH2 grids; sorting rocktypes
 
 Sorts the rocktype list into alphabetical order by name.
+
+----
 
 .. _sec:t2grid:write_vtk:
 
@@ -990,6 +1046,8 @@ A separate VTK file for the wells in the grid can optionally be written.
    | Tolerance for specifying how close column surface elevations need
      to be before being considered "equal" when constructing surface
      nodes.
+
+----
 
 Other objects (``rocktype``, ``t2block`` and ``t2connection``)
 --------------------------------------------------------------

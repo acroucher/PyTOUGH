@@ -252,6 +252,8 @@ for a ``t2data`` object called ``dat`` would be accessed by
 
 The details of the ``t2data`` properties are as follows.
 
+----
+
 .. _sec:t2data:capillarity:
 
 ``capillarity`` property
@@ -279,6 +281,8 @@ the :ref:`table <tb:capillarity>` below.
       |                |                | function       |                      |
       +----------------+----------------+----------------+----------------------+
 
+----
+
 .. _sec:t2data:diffusion:
 
 ``diffusion`` property
@@ -291,6 +295,8 @@ NK in TOUGH2 terminology), and each element is a list of the diffusion
 coefficients for each component (with length ``multi['num_phases']``, or
 NPH).
 
+----
+
 .. _sec:t2data:echo_extra_precision:
 
 ``echo_extra_precision`` property
@@ -300,6 +306,8 @@ A Boolean property (AUTOUGH2 only) governing whether data written to an
 auxiliary extra-precision file is also echoed to the main data file. If
 ``True``, all extra-precision data sections are echoed to the main file.
 
+----
+
 .. _sec:t2data:end_keyword:
 
 ``end_keyword`` property
@@ -307,6 +315,8 @@ auxiliary extra-precision file is also echoed to the main data file. If
 
 A string property containing the keyword used in the data file to end
 the file. Normally this is 'ENDCY', but 'ENDFI' can also be used.
+
+----
 
 .. _sec:t2data:extra_precision:
 
@@ -336,6 +346,8 @@ file itself, but with a '.pdat' or '.PDAT' extension (depending on the
 case of the main data file name). If no such file exists, then no extra
 precision data will be read.
 
+----
+
 .. _sec:t2data:filename:
 
 ``filename`` property
@@ -343,6 +355,8 @@ precision data will be read.
 
 A string property containing the name of the TOUGH2 data file on disk.
 (This does not correspond to any parameter in the TOUGH2 data file.)
+
+----
 
 .. _sec:t2data:generator:
 
@@ -353,6 +367,8 @@ A dictionary property containing the generators for the simulation,
 accessed by tuples of block name and generator name. Each generator is
 an object of type :ref:`t2generator <t2generatorobjects>`.
 
+----
+
 .. _sec:t2data:generatorlist:
 
 ``generatorlist`` property
@@ -360,6 +376,8 @@ an object of type :ref:`t2generator <t2generatorobjects>`.
 
 A list property containing the generators for the simulation, accessed
 by index.
+
+----
 
 .. _sec:t2data:grid:
 
@@ -372,6 +390,8 @@ A :ref:`t2grid <t2grids>` object representing the simulation grid,
 corresponding to the **ELEME** and **CONNE** input blocks in a TOUGH2
 data file.
 
+----
+
 .. _sec:t2data:history_block:
 
 ``history_block`` property
@@ -382,6 +402,8 @@ required, corresponding to the **FOFT** input block in a TOUGH2 data
 file. If the ``t2data`` object contains grid data, the items in this
 list are :ref:`t2block <t2blockobjects>` objects; otherwise,
 they are block names (i.e. strings).
+
+----
 
 .. _sec:t2data:history_connection:
 
@@ -394,6 +416,8 @@ file. If the ``t2data`` object contains grid data, the items in this
 list are :ref:`t2connection <t2connectionobjects>` objects;
 otherwise, they are tuples of block names (i.e. tuples of strings).
 
+----
+
 .. _sec:t2data:history_generator:
 
 ``history_generator`` property
@@ -404,6 +428,8 @@ for which time history output is required, corresponding to the **GOFT**
 input block in a TOUGH2 data file. If the ``t2data`` object contains
 grid data, the items in this list are :ref:`t2block <t2blockobjects>`
 objects; otherwise, they are block names (i.e. strings).
+
+----
 
 .. _sec:t2data:incon:
 
@@ -429,6 +455,8 @@ To specify these same conditions but with NSEQ = 10 and NADD = 2, set
 Porosity can be specified as ``None`` if default porosity (from the
 rocktype) is to be used.
 
+----
+
 .. _sec:t2data:indom:
 
 ``indom`` property
@@ -439,6 +467,8 @@ simulation, accessed by rocktype name, corresponding to the **INDOM**
 input block in a TOUGH2 data file. The value of each element of the
 dictionary is a list consisting of the specified initial primary
 thermodynamic variables for the rocktype.
+
+----
 
 .. _sec:t2data:lineq:
 
@@ -476,6 +506,8 @@ below.
       |                   |          | (1 or 2)         |                  |
       +-------------------+----------+------------------+------------------+
 
+----
+
 .. _sec:t2data:meshfilename:
 
 ``meshfilename`` property
@@ -494,6 +526,8 @@ TOUGH2_MP).
 If ``meshfilename`` is a tuple of two strings, these are interpreted as
 the names of two binary files containing the mesh data, e.g. the 'MESHA'
 and 'MESHB' files created by TOUGH2_MP.
+
+----
 
 .. _sec:t2data:meshmaker:
 
@@ -625,6 +659,8 @@ property as follows:
       |                  |          | specification    |                     |
       +------------------+----------+------------------+---------------------+
 
+----
+
 .. _sec:t2data:more_options:
 
 ``more_option`` property
@@ -636,6 +672,8 @@ not recognised by AUTOUGH2). Introduced by iTOUGH2, this is an extension
 of the ``parameter.option`` property. It is of length 21 and is
 populated with zeros by default. Like the ``parameter.option`` property,
 values are accessed using 1-based (not zero-based) indices.
+
+----
 
 .. _sec:t2data:multi:
 
@@ -677,6 +715,8 @@ property are given in the :ref:`table <tb:multi>` below.
       |                             |          | parameters       |                     |
       +-----------------------------+----------+------------------+---------------------+
 
+----
+
 .. _sec:t2data:noversion:
 
 ``noversion`` property
@@ -686,12 +726,16 @@ A Boolean property specifying whether to suppress printing of version
 and date information, corresponding to the **NOVER** input block in a
 TOUGH2 data file.
 
+----
+
 .. _sec:t2data:num_generators:
 
 ``num_generators`` property
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A read-only integer property returning the number of generators.
+
+----
 
 .. _sec:t2data:output_times:
 
@@ -731,6 +775,8 @@ file. The individual keys of this property are given in the
       |                        |               | specified      |                |
       |                        |               | times          |                |
       +------------------------+---------------+----------------+----------------+
+
+----
 
 .. _sec:t2data:parameter:
 
@@ -852,6 +898,8 @@ zero\ :sup:`th` element).
       |                         |                | factor         |                |
       +-------------------------+----------------+----------------+----------------+
 
+----
+
 .. _sec:t2data:relative_permeability:
 
 ``relative_permeability`` property
@@ -880,6 +928,8 @@ the :ref:`table <tb:relativepermeability>` below.
       |                |                | function       |                |
       +----------------+----------------+----------------+----------------+
 
+----
+
 .. _sec:t2data:selection:
 
 ``selection`` property
@@ -893,6 +943,8 @@ The dictionary contains two keys: 'integer' and 'float', the first of
 which accesses a list of the integer selection parameters (the first
 line of the **SELEC** block), while the second accesses a list of the
 float selection parameters (the remaining lines of the **SELEC** block).
+
+----
 
 .. _sec:t2data:short_output:
 
@@ -912,6 +964,8 @@ each of these lists contains :ref:`t2block <t2blockobjects>`,
 names.) The 'frequency' key accesses the time step frequency (an
 integer) for which short output is required.
 
+----
+
 .. _sec:t2data:simulator:
 
 ``simulator`` property
@@ -919,6 +973,8 @@ integer) for which short output is required.
 
 A string property specifying the type of simulator, corresponding to the
 **SIMUL** input block in an AUTOUGH2 data file.
+
+----
 
 .. _sec:t2data:solver:
 
@@ -957,6 +1013,8 @@ individual keys of this property are given in the
       |                            |          | type             |                  |
       +----------------------------+----------+------------------+------------------+
 
+----
+
 .. _sec:t2data:start:
 
 ``start`` property
@@ -965,6 +1023,8 @@ individual keys of this property are given in the
 A Boolean property specifying whether the flexible start option is used,
 corresponding to the **START** input block in a TOUGH2 data file.
 
+----
+
 .. _sec:t2data:title:
 
 ``title`` property
@@ -972,6 +1032,8 @@ corresponding to the **START** input block in a TOUGH2 data file.
 
 A string property containing the simulation title, corresponding to the
 **TITLE** input block in a TOUGH2 data file.
+
+----
 
 .. _sec:t2data:type:
 
@@ -1086,6 +1148,8 @@ The main methods of a ``t2data`` object are listed in the
 
 Details of these methods are as follows.
 
+----
+
 .. _sec:t2data:add_generator:
 
 ``add_generator(generator)``
@@ -1097,6 +1161,8 @@ Adds a generator to the data file object.
 
 -  | **generator**: :ref:`t2generator <t2generatorobjects>`
    | Generator to be added to the data file object.
+
+----
 
 .. _sec:t2data:convert_to_AUTOUGH2:
 
@@ -1135,6 +1201,8 @@ contain this information in the SIMUL and MULTI sections.
    | EOS name, used for the trailing part of the AUTOUGH2 SIMUL data
      section (e.g. 'EW', 'EWC', 'EWA', 'EWAV' etc.)
 
+----
+
 .. _sec:t2data:convert_to_TOUGH2:
 
 ``convert_to_TOUGH2(warn=True, MP=False)``
@@ -1163,12 +1231,16 @@ converted to their TOUGH2 equivalents if possible, or otherwise deleted.
      of the parameters differently (e.g. MOP(20)). The ``filename``
      property is also changed to INFILE, as required by TOUGH2_MP.
 
+----
+
 .. _sec:t2data:clear_generators:
 
 ``clear_generators()``
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Deletes all generators from the data file object.
+
+----
 
 .. _sec:t2data:delete_generator:
 
@@ -1184,12 +1256,16 @@ name, if it exists.
    | Tuple of block name and generator name (both strings) of the
      generator to be deleted.
 
+----
+
 .. _sec:t2data:del_orphan_geners:
 
 ``delete_orphan_generators()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Deletes all generators with block names that are not in the grid.
+
+----
 
 .. _sec:t2data:effective_incons:
 
@@ -1222,6 +1298,8 @@ block.
    | Initial conditions object, usually representing the contents of a
      separate initial conditions file.
 
+----
+
 .. _sec:t2data:generator_index:
 
 ``generator_index(blocksourcenames)``
@@ -1235,6 +1313,8 @@ the specified block and generator name.
 -  | **blocksourcenames**: tuple
    | Tuple of block name and generator name (both strings) of the
      generator.
+
+----
 
 .. _sec:t2data:json:
 
@@ -1323,6 +1403,8 @@ object (and associated mesh geometry), suitable for input to the
      meshes may be identified as either 'xy', 'xz', or 'yz' (depending
      on orientation), while 2-D radial meshes are identified as 'rz'.
 
+----
+
 .. _sec:t2data:read:
 
 ``read(filename, meshfilename='')``
@@ -1355,6 +1437,8 @@ Note that it is possible to create a ``t2data`` object and read its
 contents in from disk files in one step, e.g.:
 ``dat = t2data(filename,meshfilename)``.
 
+----
+
 .. _sec:t2data:rename_blocks:
 
 ``rename_blocks(blockmap={}, invert=False, fix_blocknames = True)``
@@ -1384,6 +1468,8 @@ history specifications are similarly renamed.
 -  | **fix_blocknames**: Boolean
    | Set ``True`` (the default) to 'fix' block names in the dictionary,
      using the :ref:`fix_blockname() <sec:mulgrid:fix_blockname>` function.
+
+----
 
 .. _sec:t2data:run:
 
@@ -1443,6 +1529,8 @@ Python script using a system call, e.g.:
      Default is 'base.listing' where the base name of the TOUGH2 data
      file (without file extension) is 'base'.
 
+----
+
 .. _sec:t2data:specific_generation:
 
 ``specific_generation(type='MASS', name='')``
@@ -1460,6 +1548,8 @@ generator type and name.
 -  | **name**: string
    | Regular expression to match generator names (e.g. 'SP...' (or
      '^SP') will match all generators with names beginning with 'SP'.)
+
+----
 
 .. _sec:t2data:transfer_from:
 
@@ -1543,6 +1633,8 @@ to disk, with initial conditions transferred from the file
      model; otherwise, it will attempt to preserve the total generation
      over the model.
 
+----
+
 .. _sec:t2data:total_generation:
 
 ``total_generation(type='MASS', name='')``
@@ -1559,6 +1651,8 @@ block for the specified generator type and name.
 -  | **name**: string
    | Regular expression to match generator names (e.g. 'SP...' (or
      '^SP') will match all generators with names beginning with 'SP'.)
+
+----
 
 .. _sec:t2data:write:
 
@@ -1605,6 +1699,8 @@ auxiliary mesh files.
      main data file (AUTOUGH2 only). If ``None``, the value of the data
      object's ``echo_extra_precision`` property is used. Otherwise, the
      value of this property is overwritten by the value specified here.
+
+----
 
 .. _t2generatorobjects:
 

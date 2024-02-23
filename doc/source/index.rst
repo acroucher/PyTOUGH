@@ -6,9 +6,16 @@
 PyTOUGH user guide
 ==================
 
+.. only:: html
+   
+   Welcome to the PyTOUGH user documentation.
+
+   .. figure:: coverpic.png
+               :align: left
+               :scale: 50%
+
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :hidden:
 
    intro
    mulgrids
@@ -19,8 +26,3 @@ PyTOUGH user guide
    t2thermo
    iapws97
    mulformat
-
-.. only:: html
-
-   * :ref:`genindex`
-   * :ref:`search`

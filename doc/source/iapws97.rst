@@ -126,6 +126,8 @@ The IAPWS-97 formulation provides thermodynamic functions for liquid
 water, dry steam and supercritical fluid. These functions calculate
 secondary parameters from the primary thermodynamic variables.
 
+----
+
 .. _sec:iapws97:cowat:
 
 Liquid water: ``cowat(t,p)``
@@ -143,6 +145,8 @@ a function of temperature ``t`` (°C) and pressure ``p``
 
 -  | **p**: float
    | Pressure (Pa)
+
+----
 
 .. _sec:iapws97:supst:
 
@@ -162,6 +166,8 @@ function of temperature ``t`` (°C) and pressure ``p``
 -  | **p**: float
    | Pressure (Pa)
 
+----
+
 .. _sec:iapws97:super:
 
 Supercritical fluid: ``super(d,t)``
@@ -179,6 +185,8 @@ function of density ``d`` (kg/m\ :math:`^3`) and temperature ``t``
 
 -  | **t**: float
    | Temperature (°C)
+
+----
 
 .. _sec:iapws97:visc:
 
@@ -199,6 +207,8 @@ viscosity near the critical point.
 
 -  | **t**: float
    | Temperature (°C)
+
+----
 
 Region boundaries
 -----------------
@@ -227,6 +237,8 @@ critical temperature.
 -  | **t**: float
    | Temperature (°C)
 
+----
+
 .. _sec:iapws97:tsat:
 
 ``tsat(p)``
@@ -240,6 +252,8 @@ the critical pressure.
 
 -  | **p**: float
    | Pressure (Pa)
+
+----
 
 .. _region23_boundary:
 
@@ -260,6 +274,8 @@ temperature ``t`` (°C).
 -  | **t**: float
    | Temperature (°C)
 
+----
+
 .. _sec:iapws97:b23t:
 
 ``b23t(p)``
@@ -273,6 +289,8 @@ the boundary of the dry steam and supercritical regions (regions 2 and
 
 -  | **p**: float
    | Pressure (Pa)
+
+----
 
 .. _determining-thermodynamic-region-1:
 
@@ -305,11 +323,15 @@ of the IAPWS-97 formulation, the routine will return ``None``.
 -  | **Pressure**: float
    | Pressure (Pa)
 
+----
+
 Plotting functions
 ------------------
 
 The ``IAPWS97`` library contains two functions used for including the
 IAPWS-97 thermodynamic region boundaries on plots.
+
+----
 
 .. _sec:iapws97:pressure_temperature_plot:
 
@@ -324,6 +346,8 @@ pressure-temperature diagram.
 -  | **plt**: ``matplotlib.pyplot`` instance
    | An instance of the ``matplotlib.pyplot`` library, imported in the
      calling script using e.g. ``import matplotlib.pyplot as plt``.
+
+----
 
 .. _sec:iapws97:density_temperature_plot:
 

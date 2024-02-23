@@ -355,6 +355,8 @@ The main methods of a ``t2listing`` object are listed in the
 
 Details of these methods are as follows.
 
+----
+
 .. _sec:t2listing:add_side_recharge:
 
 ``add_side_recharge(geo, dat)``
@@ -375,6 +377,8 @@ same names will be overwritten.
 -  | **dat**: :ref:`t2data <datafiles>`
    | TOUGH2 data object for the side recharge generators to be added to.
 
+----
+
 .. _sec:t2listing:close:
 
 ``close()``
@@ -382,12 +386,16 @@ same names will be overwritten.
 
 Closes the listing file after use.
 
+----
+
 .. _sec:t2listing:first:
 
 ``first()``
 ^^^^^^^^^^^
 
 Navigates to the first set of full results in the listing file.
+
+----
 
 .. _sec:t2listing:get_difference:
 
@@ -406,6 +414,8 @@ of all element table properties between two sets of results.
      is given, the result is the difference between the given index and
      the one before that. If neither are given, the result is the
      difference between the last and penultimate sets of results.
+
+----
 
 .. _sec:t2listing:history:
 
@@ -473,12 +483,16 @@ respectively.
 returns ``T`` as an ``np.array`` of temperature values, and ``t`` as an
 ``np.array`` of Python datetimes, starting at 1 January 1955.
 
+----
+
 .. _sec:t2listing:last:
 
 ``last()``
 ^^^^^^^^^^
 
 Navigates to the last set of full results in the listing file.
+
+----
 
 .. _sec:t2listing:next:
 
@@ -489,6 +503,8 @@ Navigates to the next set of full results in the listing file. Returns
 ``False`` if already at the last set of results (and ``True``
 otherwise).
 
+----
+
 .. _sec:t2listing:prev:
 
 ``prev()``
@@ -497,6 +513,8 @@ otherwise).
 Navigates to the previous set of full results in the listing file.
 Returns ``False`` if already at the first set of results (and ``True``
 otherwise).
+
+----
 
 .. _sec:t2listing:write_vtk:
 
@@ -589,6 +607,8 @@ start time and time unit for the output can optionally be specified.
    | Tolerance for specifying how close column surface elevations need
      to be before being considered "equal" when constructing surface
      nodes.
+
+----
 
 .. _listingtableobjects:
 
@@ -702,6 +722,8 @@ documentation for more details.
 
 ``listingtable`` objects have one method as described below.
 
+----
+
 ``rows_matching(pattern, index=0, match_any=False)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -736,6 +758,8 @@ specified pattern is applied to all keys.
      corresponding patterns. If ``True``, return rows with keys matching
      *any* of the specified patterns - and if a single string pattern is
      given, apply this to all keys.
+
+----
 
 ``t2historyfile`` objects
 -------------------------
@@ -1005,6 +1029,8 @@ The methods of a ``toughreact_tecplot`` object are listed in the
 
 Details of these methods are as follows.
 
+----
+
 .. _sec:toughreact_tecplot:close:
 
 ``close()``
@@ -1012,12 +1038,16 @@ Details of these methods are as follows.
 
 Closes the file after use.
 
+----
+
 .. _sec:toughreact_tecplot:first:
 
 ``first()``
 ^^^^^^^^^^^
 
 Navigates to the first set of results in the Tecplot file.
+
+----
 
 .. _sec:toughreact_tecplot:history:
 
@@ -1037,12 +1067,16 @@ tuple of two ``np.arrays`` is returned, one each for times and values.
      a list of tuples, just the single tuple of times and values for
      that selection is returned.)
 
+----
+
 .. _sec:toughreact_tecplot:last:
 
 ``last()``
 ^^^^^^^^^^
 
 Navigates to the last set of results in the Tecplot file.
+
+----
 
 .. _sec:toughreact_tecplot:next:
 
@@ -1053,6 +1087,8 @@ Navigates to the next set of results in the Tecplot file. Returns
 ``False`` if already at the last set of results (and ``True``
 otherwise).
 
+----
+
 .. _sec:toughreact_tecplot:prev:
 
 ``prev()``
@@ -1061,6 +1097,8 @@ otherwise).
 Navigates to the previous set of results in the Tecplot file. Returns
 ``False`` if already at the first set of results (and ``True``
 otherwise).
+
+----
 
 .. _sec:toughreact_tecplot:write_vtk:
 
@@ -1127,6 +1165,8 @@ specified.
    | Tolerance for specifying how close column surface elevations need
      to be before being considered "equal" when constructing surface
      nodes.
+
+----
 
 Examples
 --------

@@ -77,6 +77,8 @@ water and dry steam. These functions calculate secondary parameters from
 the primary thermodynamic variables. Their names follow the subroutine
 names used in the TOUGH2 code.
 
+----
+
 .. _sec:t2thermo:cowat:
 
 Liquid water: ``cowat(t, p, bounds = False)``
@@ -100,6 +102,8 @@ a function of temperature ``t`` (°C) and pressure ``p``
      are outside the operating range of the routine (as defined by
      thermodynamic region 1 of the IFC-67 specification).
 
+----
+
 .. _sec:t2thermo:supst:
 
 Dry steam: ``supst(t, p, bounds = False)``
@@ -122,6 +126,8 @@ function of temperature ``t`` (°C) and pressure ``p``
    | If ``True``, return ``None`` if the input temperature and pressure
      are outside the operating range of the routine (as defined by
      thermodynamic region 2 of the IFC-67 specification).
+
+----
 
 Viscosity
 ---------
@@ -147,6 +153,8 @@ saturation pressure (Pa).
    | Saturation pressure (Pa), calculated for example using the ``sat``
      function.
 
+----
+
 .. _sec:t2thermo:viss:
 
 Dry steam: ``viss(t,d)``
@@ -163,6 +171,8 @@ as a function of temperature ``t`` (°C) and density
 
 -  | **d**: float
    | Density (kg/m\ :math:`^3`)
+
+----
 
 Saturation line: ``sat(t)`` and ``tsat(p)``
 -------------------------------------------
@@ -186,6 +196,8 @@ critical temperature.
      the operating range of the routine (i.e. less than
      0.01 °C or greater than the critical temperature,
      374.15 °C ).
+
+----
 
 .. _sec:t2thermo:tsat:
 
@@ -213,6 +225,8 @@ function will work.
      operating range of the routine (i.e. less than ``sat(0.01)`` or
      greater than the critical pressure, 22.12 MPa).
 
+----
+
 Other functions
 ---------------
 
@@ -239,6 +253,8 @@ case of two-stage flash.
 -  | **separator_pressure2**: float (or ``None``)
    | Second separator pressure (Pa) for two-stage flash – set to
      ``None`` (the default) for single-stage.
+
+----
 
 Determining thermodynamic region
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -270,6 +286,8 @@ of the IFC-67 formulation, the routine will return ``None``.
 
 -  | **Pressure**: float
    | Pressure (Pa)
+
+----
 
 .. _example-3:
 
