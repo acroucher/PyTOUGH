@@ -3426,10 +3426,29 @@ where ``name`` is the column name and ``nodes`` is a list of
 :ref:`node <nodeobjects>` objects defining the column. The
 ``centre`` and ``surface`` parameters are optional.
 
-``column`` objects have three methods,
-:ref:`contains_point() <sec:column:contains_point>` ,
-:ref:`in_polygon() <sec:column:in_polygon>` and
-:ref:`is_against() <sec:column:is_against>`, as described below.
+The methods of a ``column`` object are listed in the :ref:`table
+<tb:column_methods>` below.
+
+.. container::
+   :name: tb:column_methods
+
+   .. table:: Methods of a ``column`` object
+
+      +------------------------------------------------------+---------------------------+--------------------------+
+      | **Method**                                           | **Type**                  | **Description**          |
+      +======================================================+===========================+==========================+
+      | :ref:`contains_point() <sec:column:contains_point>`  | Boolean                   | if column contains point |
+      |                                                      |                           |                          |
+      |                                                      |                           |                          |
+      +------------------------------------------------------+---------------------------+--------------------------+
+      | :ref:`in_polygon() <sec:column:in_polygon>`          |          Boolean          | if column centre is      |
+      |                                                      |                           | within a given polygon   |
+      |                                                      |                           |                          |
+      +------------------------------------------------------+---------------------------+--------------------------+
+      |     :ref:`is_against() <sec:column:is_against>`      | Boolean                   | if two columns are       |
+      |                                                      |                           | adjacent                 |
+      |                                                      |                           |                          |
+      +------------------------------------------------------+---------------------------+--------------------------+
 
 ----
 
@@ -3524,9 +3543,29 @@ A ``layer`` object ``lay`` can be created for example using the command:
 where ``name`` is the layer name and ``bottom``, ``centre`` and ``top``
 specify the vertical position of the layer.
 
-The methods of a ``layer`` object are as follows:
+The methods of a ``layer`` object are given in the
+:ref:`table <tb:layer_methods>` below.
+
+.. container::
+   :name: tb:layer_methods
+
+   .. table:: Methods of a ``layer`` object
+
+      +------------------------------------------------------------+---------------------------+--------------------------+
+      |**Method**                                                  |**Type**                   |**Description**           |
+      +============================================================+===========================+==========================+
+      |:ref:`contains_elevation() <sec:layer:contains_elevation>`  |Boolean                    |if layer contains         |
+      |                                                            |                           |elevation                 |
+      |                                                            |                           |                          |
+      +------------------------------------------------------------+---------------------------+--------------------------+
+      |:ref:`translate() <sec:layer:translate>`                    |–                          |translate layer up or down|
+      |                                                            |                           |                          |
+      |                                                            |                           |                          |
+      +------------------------------------------------------------+---------------------------+--------------------------+
 
 ----
+
+.. _sec:layer:contains_elevation:
 
 ``contains_elevation(z)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3542,6 +3581,8 @@ and ``False`` otherwise.
    | Elevation of the point.
 
 ----
+
+.. _sec:layer:translate:
 
 ``translate(shift)``
 ^^^^^^^^^^^^^^^^^^^^
