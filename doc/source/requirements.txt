@@ -2,4 +2,4 @@
 
 # Defining the exact version will make sure things don't break
 sphinx==7.2.6
-pydata-sphinx-theme==0.15.2
+furo==2024.1.29
