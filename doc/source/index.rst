@@ -26,3 +26,4 @@ PyTOUGH user guide
    t2thermo
    iapws97
    mulformat
+   commandref

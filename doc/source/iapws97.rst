@@ -58,7 +58,7 @@ The ``IAPWS97`` library can be imported using the command:
       from IAPWS97 import *
 
 The functions available through the ``IAPWS97`` library are listed in
-the `table <tb:iapws97_functions>` below.
+the :ref:`table <tb:iapws97_functions>` below.
 
 .. container::
    :name: tb:iapws97_functions

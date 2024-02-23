@@ -854,10 +854,10 @@ example:
    qh = ct['HeatFlow']
 
 The properties of a ``t2historyfile`` object are given in the
-:ref:`table <tb:historyfile_properties>` below.
+:ref:`table <tb:t2historyfile_properties>` below.
 
 .. container::
-   :name: tb:historyfile_properties
+   :name: tb:t2historyfile_properties
 
    .. table:: Properties of a ``t2historyfile`` object
 
