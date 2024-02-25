@@ -32,7 +32,13 @@ For more detailed information on PyTOUGH, consult the [user guide](https://pytou
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.6.0, which has:
+The latest stable version is 1.6.1, which has:
+
+* updated user guide theming using [Furo](https://github.com/pradyunsg/furo) Sphinx theme
+
+* other user guide enhancements including a new "command reference" page
+
+as well as the changes introduced in version 1.6.0:
 
 * easy installation via `pip`
 
