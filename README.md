@@ -1,4 +1,5 @@
-![Unit tests](https://github.com/acroucher/PyTOUGH/workflows/Unit%20tests/badge.svg) [![Documentation Status](https://readthedocs.org/projects/PyTOUGH/badge/?version=latest)](https://PyTOUGH.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/PyTOUGH.svg)](https://badge.fury.io/py/PyTOUGH)
+![Unit tests](https://github.com/acroucher/PyTOUGH/workflows/Unit%20tests/badge.svg) [![Documentation Status](https://readthedocs.org/projects/PyTOUGH/badge/?version=latest)](https://PyTOUGH.readthedocs.io/en/latest/?badge=latest) [![PyPI version](https://badge.fury.io/py/PyTOUGH.svg)](https://badge.fury.io/py/PyTOUGH) ![PyPI - Downloads](https://img.shields.io/pypi/dm/PyTOUGH)
+
 
 # What is PyTOUGH?
 
