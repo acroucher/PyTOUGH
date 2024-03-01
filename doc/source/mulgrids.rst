@@ -3843,7 +3843,7 @@ Block mappings: handling other block naming conventions
 
 .. index:: MULgraph geometry; block mappings
 
-The MULgraph geometry format names blocks according to one of its three
+The MULgraph geometry format names blocks according to one of its
 :ref:`naming conventions <geometry_format_conventions>`.
 All of these conventions use part of the block name to indicate the layer
 and part of it to indicate the column.

@@ -95,9 +95,10 @@ radial direction.
 Naming conventions and atmosphere types
 ---------------------------------------
 
-The grid block naming convention and atmosphere type used in a MULgraph
-geometry file are both integers which can be given the value 0, 1 or 2.
-The meanings of these values are shown in the tables below.
+The grid block naming convention and atmosphere type used in a
+MULgraph geometry file are both integers and can be given values in
+the range 0 -- 3 and 0 -- 2 respectively.  The meanings of these
+values are shown in the tables below.
 
 Note that the grid nodes (vertices) are also named according to the
 column part of the block naming convention. If naming nodes, columns or
@@ -109,6 +110,14 @@ indicate the layer, and part of it to indicate the column. In PyTOUGH,
 it is also possible to use MULgraph geometry files in conjunction with
 TOUGH2 grids that follow other naming conventions, by means of a
 :ref:`block mapping <sec:mulgrid:blockmappings>` dictionary.
+
+The block naming convention 3 was not supported by the original
+MULgraph geometry file format, and produces block names which do not
+conform to the TOUGH2 block naming requirements (having numbers in the
+last two characters). It can be used to produce grids for other
+simulators such as Waiwera which do not have these requirements. An
+alternative tool for creating such grids is the `Layermesh
+<https://github.com/acroucher/layermesh>`_ library.
 
 .. container::
    :name: tb:mulgrid_conventions
@@ -123,6 +132,9 @@ TOUGH2 grids that follow other naming conventions, by means of a
       | 1          |3 characters for layer followed by 2 digits for column |
       +------------+-------------------------------------------------------+
       | 2          |2 characters for layer followed by 3 digits for column |
+      +------------+-------------------------------------------------------+
+      | 3          |2 characters for layer followed by 3 characters for    |
+      |            |column                                                 |
       +------------+-------------------------------------------------------+
 
 .. container::
