@@ -566,6 +566,7 @@ class mulgrid(object):
         # 0: 3-char column + 2-digit layer
         # 1: 3-char layer + 2-digit column
         # 2: 2-char layer + 3-digit column
+        # 3: 3-char column + 2-char layer
         self._atmosphere_type = atmos_type  # atmosphere type:
         # 0: single atmosphere block
         # 1: one atmosphere block per column
