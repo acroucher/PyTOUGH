@@ -322,8 +322,8 @@ index.
 
 .. _sec:t2incon:read:
 
-``read(filename, num_variables = None)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``read(filename, num_variables = None, check_blocknames = True)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Reads initial conditions from file.
 
@@ -337,6 +337,10 @@ Reads initial conditions from file.
      variables, set to the number of primary variables. Otherwise, the
      default ``None`` value can be used, in which case the number of
      primary variables will be detected automatically.
+
+-  | **check_blocknames**: Boolean
+   | Whether to check if block names in the file are valid TOUGH2 block
+     names (3 characters followed by 2 digits).
 
 ----
 

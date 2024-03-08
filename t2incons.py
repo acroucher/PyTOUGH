@@ -161,7 +161,7 @@ class t2incon(object):
             del self._block[block]
             self._blocklist.remove(incon)
 
-    def read(self, filename, num_variables = None):
+    def read(self, filename, num_variables = None, check_blocknames = True):
         """Reads initial conditions from file."""
         self.empty()
         mode = 'r' if sys.version_info > (3,) else 'rU'
@@ -179,7 +179,8 @@ class t2incon(object):
                     line = padstring(line)
                     [blkname, nseq, nadd, porosity, k1, k2, k3] = \
                         infile.parse_string(line, 'incon1_toughreact')
-                    if valid_blockname(blkname):
+                    valid = valid_blockname(blkname) if check_blocknames else True
+                    if valid:
                         blkname = fix_blockname(blkname)
                         if (k1 is None or k2 is None or k3 is None): permeability = None
                         else:
