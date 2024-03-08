@@ -57,11 +57,12 @@ class t2blockincon(object):
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
     def __init__(self, filename = '',
-                 read_function = fortran_read_function, num_variables = None):
+                 read_function = fortran_read_function, num_variables = None,
+                 check_blocknames = True):
         self.simulator = 'TOUGH2'
         self.read_function = read_function
         self.empty()
-        if filename: self.read(filename, num_variables)
+        if filename: self.read(filename, num_variables, check_blocknames)
 
     def __getitem__(self, key):
         if isinstance(key, (int, slice)): return self._blocklist[key]
