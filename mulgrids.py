@@ -60,7 +60,7 @@ def fix_blockname(name):
 
 def unfix_blockname(name):
     """The inverse of fix_blockname()."""
-    return "%3s%2d" % (name[0:3], int(name[3:5]))
+    return "%3s%2d" % (name[0:3], int(name[3:5])) if name[3:5].isdigit() else name
 
 def fix_block_mapping(blockmap):
     """Fixes block names in specified block mapping."""
