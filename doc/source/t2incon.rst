@@ -215,6 +215,19 @@ variables, no extra parameters need be set, as the data stored in the
 ``t2incon`` object determines the number of primary variables, and they
 will be written out over multiple lines as required.
 
+Checking block names
+^^^^^^^^^^^^^^^^^^^^
+
+By default, when a ``t2incon`` object is read from file, the block
+names are checked to make sure they are valid TOUGH2 block names (3
+characters plus 2 digits). However these checks can be skipped by
+setting the optional ``check_blocknames`` parameter to ``False``. For example:
+
+::
+
+   from t2incons import *
+   inc = t2incon('model.incon', check_blocknames = False)
+
 .. _methods-1:
 
 Methods
