@@ -111,12 +111,12 @@ it is also possible to use MULgraph geometry files in conjunction with
 TOUGH2 grids that follow other naming conventions, by means of a
 :ref:`block mapping <sec:mulgrid:blockmappings>` dictionary.
 
-The block naming convention 3 was not supported by the original
-MULgraph geometry file format, and produces block names which do not
-conform to the TOUGH2 block naming requirements (having numbers in the
-last two characters). It can be used to produce grids for other
-simulators such as Waiwera which do not have these requirements. An
-alternative tool for creating such grids is the `Layermesh
+Block naming convention 3 was not supported by the original MULgraph
+geometry file format, and produces block names which do not conform to
+the TOUGH2 block naming requirements (having numbers in the last two
+characters). It can be used to produce grids for other simulators such
+as Waiwera which do not have these requirements. An alternative tool
+for creating such grids is the `Layermesh
 <https://github.com/acroucher/layermesh>`_ library.
 
 .. container::
@@ -133,8 +133,8 @@ alternative tool for creating such grids is the `Layermesh
       +------------+-------------------------------------------------------+
       | 2          |2 characters for layer followed by 3 digits for column |
       +------------+-------------------------------------------------------+
-      | 3          |2 characters for layer followed by 3 characters for    |
-      |            |column                                                 |
+      | 3          |3 characters for column followed by 2 characters for   |
+      |            |layer                                                  |
       +------------+-------------------------------------------------------+
 
 .. container::
