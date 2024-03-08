@@ -1325,7 +1325,16 @@ the specified block and generator name.
 
 Returns a JSON dictionary representing the contents of the ``t2data``
 object (and associated mesh geometry), suitable for input to the
-`Waiwera <http://waiwera.github.io>`_ simmulator.
+`Waiwera <http://waiwera.github.io>`_ simulator.
+
+Sources in the Waiwera JSON dictionary are given names based on the
+corresponding TOUGH2 generator names. If the TOUGH2 model has no
+duplicate generator names, these are used directly for the source
+names. If there are duplicate generator names, the block names are
+prepended to the generator names to form the source names. If there
+are duplicate generator names within the same block, the source names
+will have "_1", "_2" etc. appended to them as needed to make them
+unique.
 
 **Parameters:**
 
