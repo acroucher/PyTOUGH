@@ -126,7 +126,7 @@ def line_polygon_intersections(polygon, line, bound_line = (True,True),
     crossings = []
     ref = polygon[0]
     l1, l2 = line[0] - ref, line[1] - ref
-    tol = 1.e-12
+    tol = 1.e-9
     ind = {}
     def in_unit(x): return -tol <= x <= 1.0 + tol
     for i, p in enumerate(polygon):
