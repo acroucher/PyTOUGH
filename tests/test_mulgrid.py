@@ -258,6 +258,30 @@ class mulgridTestCase(unittest.TestCase):
         except: err = True
         self.assertFalse(err)
 
+        # track through grid with a corner removed:
+        geo = mulgrid().rectangular([100]*2, [100]*2, [10])
+        geo.translate([1e7, 1e7, 0])
+        geo.delete_column(geo.columnlist[0].name)
+        geo.rotate(30)
+        line = [geo.columnlist[0].centre, geo.columnlist[1].centre]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 2)
+        if len(t) > 1:
+            self.assertEqual(t[0][0].name, geo.columnlist[0].name)
+            self.assertEqual(t[1][0].name, geo.columnlist[1].name)
+
+        # M-grid:
+        geo = mulgrid().rectangular([100]*5, [100]*3, [10])
+        names = [geo.columnlist[i].name for i in [1,3,6,8]]
+        for name in names: geo.delete_column(name)
+        line = [np.array([0, 50]), np.array([500, 50])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 3)
+
+        line = line[::-1]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 3)
+
     def test_grid3d(self):
         """3D grid"""
 
