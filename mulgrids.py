@@ -2043,9 +2043,17 @@ class mulgrid(object):
         def next_corner_column(col, pos, more, cols):
             """If the line has hit a node, determine a new column containing that node,
             not already visited."""
-            node_tol = 1.e-12
+            node_tol = 1.e-3
+            poly = col.polygon
+            bbox = bounds_of_points(poly)
+            d = bbox[1] - bbox[0]
+            def transform(x):
+                return np.array([(xi - bbox[0][i]) / d[i] for i,xi in enumerate(x)])
+            post = transform(pos)
+            polyt = [transform(x) for x in poly]
+            nearnodes = [n for i,n in enumerate(col.node)
+                         if np.linalg.norm(polyt[i] - post) < node_tol]
             nextcol = None
-            nearnodes = [n for n in col.node if np.linalg.norm(n.pos - pos) < node_tol]
             if nearnodes: # hit a node
                 nearnode = nearnodes[0]
                 nearcols = nearnode.column - cols
