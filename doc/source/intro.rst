@@ -454,7 +454,7 @@ using e.g.:
 
 ::
 
-   pip install https://github.com/acroucher/PyTOUGH/archive/refs/heads/testing.zip
+   pip install git+https://github.com/acroucher/PyTOUGH.git@testing
 
 .. _unittests:
 
