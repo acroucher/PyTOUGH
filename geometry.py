@@ -160,6 +160,58 @@ def polyline_polygon_intersections(polygon, polyline):
     from itertools import chain # flatten list of lists
     return list(chain.from_iterable(intersections))
 
+def line_intersects_rectangle(rect, line):
+    # returns True if line intersects axis-aligned rectangle defined
+    # by two corners. Simplified Cohen-Sutherland algorithm, based on
+    # the pylineclip library.
+
+    INSIDE, LEFT, RIGHT, LOWER, UPPER = 0, 1, 2, 4, 8
+
+    xmin, ymin = rect[0]
+    xmax, ymax = rect[1]
+    x1, y1 = line[0]
+    x2, y2 = line[1]
+
+    def clip(xa, ya):
+        p = INSIDE
+        if xa < xmin: p |= LEFT
+        elif xa > xmax: p |= RIGHT
+        if ya < ymin: p |= LOWER
+        elif ya > ymax: p |= UPPER
+        return p
+
+    k1 = clip(x1, y1)
+    k2 = clip(x2, y2)
+
+    while (k1 | k2) != 0:
+
+        if (k1 & k2) != 0: return False
+
+        opt = k1 or k2
+        if opt & UPPER:
+            x = x1 + (x2 - x1) * (ymax - y1) / (y2 - y1)
+            y = ymax
+        elif opt & LOWER:
+            x = x1 + (x2 - x1) * (ymin - y1) / (y2 - y1)
+            y = ymin
+        elif opt & RIGHT:
+            y = y1 + (y2 - y1) * (xmax - x1) / (x2 - x1)
+            x = xmax
+        elif opt & LEFT:
+            y = y1 + (y2 - y1) * (xmin - x1) / (x2 - x1)
+            x = xmin
+        else:
+            raise RuntimeError('Undefined clipping state')
+
+        if opt == k1:
+            x1, y1 = x, y
+            k1 = clip(x1, y1)
+        elif opt == k2:
+            x2, y2 = x, y
+            k2 = clip(x2, y2)
+
+    return True
+
 def simplify_polygon(polygon, tolerance = 1.e-6):
     """Simplifies a polygon by deleting colinear points.  The tolerance
     for detecting colinearity of points can optionally be
