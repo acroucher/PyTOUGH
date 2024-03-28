@@ -1999,125 +1999,43 @@ class mulgrid(object):
         line.
         """
 
-        def furthest_intersection(poly, line):
-            """Returns furthest intersection point between line and poly."""
-            pts, inds = line_polygon_intersections(poly, line,
-                                                   bound_line = (True, False),
-                                                   indices = True)
-            if pts:
-                d = np.array([np.linalg.norm(intpt - line[0]) for intpt in pts])
-                i = np.argmax(d)
-                return pts[i], inds[i]
-            else: return None, None
+        dl = max(norm(line[1] - line[0]), 1)
+        tol = 1e-3
 
-        def find_track_start(line):
-            """Finds starting point for track- an arbitrary point on the line that is inside
-            the grid.  If the start point of the line is inside the grid, that is used;
-            otherwise, a recursive bisection technique is used to find a point."""
-            col, start_type = None, None
-            for endpt, name in zip(line, ['start', 'end']):
-                pos, col, start_type = endpt, self.column_containing_point(endpt), name
-                if col: break
-            if not col: # line ends are both outside the grid:
-                start_type = 'mid'
-                max_levels = 7
+        def track_dist(p):
+            """Non-dimensionalised distance of point along track"""
+            return norm(p - line[0]) / dl
 
-                def find_start(line, level = 0):
-                    midpt = 0.5 * (line[0] + line[1])
-                    col = self.column_containing_point(midpt)
-                    if col: return midpt, col
+        track, dist = [], []
+        start_col, end_col = None, None
+        for col in self.columnlist:
+            bbox = col.bounding_box
+            if line_intersects_rectangle(bbox, line):
+                if start_col is None:
+                    if col.contains_point(line[0]):
+                        start_col = col
+                if end_col is None:
+                    if col.contains_point(line[1]):
+                        end_col = col
+                poly = col.polygon
+                pts = line_polygon_intersections(poly, line)
+                if len(pts) > 0:
+                    din, dout = track_dist(pts[0]), track_dist(pts[-1])
+                    if col == start_col:
+                        pts[0] = line[0]
+                        add_col = True
+                        din = 0
+                    if col == end_col:
+                        pts[-1] = line[1]
+                        add_col = True
                     else:
-                        if level <= max_levels:
-                            line0, line1 = [line[0], midpt], [midpt, line[1]]
-                            pos, col = find_start(line0, level + 1)
-                            if col: return pos, col
-                            else:
-                                pos, col = find_start(line1, level + 1)
-                                if col: return pos, col
-                                else: return None, None
-                        else: return None, None
+                        add_col = abs(dout - din) > tol
+                    if add_col:
+                        track.append(([col, pts[0], pts[-1]]))
+                        dist.append(din)
 
-                pos, col = find_start(line)
-            return pos, col, start_type
-
-        def next_corner_column(col, pos, more, cols):
-            """If the line has hit a node, determine a new column containing that node,
-            not already visited."""
-            node_tol = 1.e-3
-            poly = col.polygon
-            bbox = bounds_of_points(poly)
-            d = bbox[1] - bbox[0]
-            def transform(x):
-                return np.array([(xi - bbox[0][i]) / d[i] for i,xi in enumerate(x)])
-            post = transform(pos)
-            polyt = [transform(x) for x in poly]
-            nearnodes = [n for i,n in enumerate(col.node)
-                         if np.linalg.norm(polyt[i] - post) < node_tol]
-            nextcol = None
-            if nearnodes: # hit a node
-                nearnode = nearnodes[0]
-                nearcols = nearnode.column - cols
-                if nearcols: nextcol = nearcols.pop()
-                else: more = False
-            return nextcol, more
-
-        def next_neighbour_column(col, more, cols):
-            """Determine a new neighbour column not already visited."""
-            nbrs = col.neighbour - cols
-            if nbrs: return nbrs.pop(), more
-            else: return None, False
-
-        def find_track_segment(linesegment, pos, col):
-            """Finds track segment starting from the specified position and column."""
-            track = []
-            cols, more, inpos = set(), True, pos
-            colnbr, nextcol = col.neighbourlist, None
-            lined = np.linalg.norm(linesegment[1] - linesegment[0])
-            while more:
-                cols.add(col)
-                outpos, ind = furthest_intersection(col.polygon, linesegment)
-                if outpos is not None:
-                    d = np.linalg.norm(outpos - linesegment[0])
-                    if d >= lined: # gone past end of line
-                        outpos = linesegment[1]
-                        more = False
-                    if np.linalg.norm(outpos - inpos) > 0.:
-                        track.append(tuple([col, inpos, outpos]))
-                    if more: # find next column
-                        inpos = outpos
-                        nextcol = colnbr[ind]
-                        if nextcol:
-                            if nextcol in cols:
-                                nextcol, more = next_corner_column(col, outpos, more, cols)
-                                if nextcol is None:
-                                    nextcol, more = next_neighbour_column(col, more, cols)
-                                    nbr_base_col = col
-                        else: nextcol, more = next_corner_column(col, outpos, more, cols)
-                else:
-                    nextcol, more = next_neighbour_column(nbr_base_col, more, cols)
-                col = nextcol
-                if col: colnbr = col.neighbourlist
-                else: more = False
-
-            return track
-
-        def reverse_track(track): return [tuple([tk[0], tk[2], tk[1]]) for tk in track][::-1]
-
-        pos, col, start_type = find_track_start(line)
-        if pos is not None and col:
-            if start_type == 'start':
-                track = find_track_segment(line, pos, col)
-            elif start_type == 'end':
-                track = find_track_segment(line[::-1], pos, col)
-                track = reverse_track(track)
-            else:
-                track1 = find_track_segment([pos, line[0]], pos, col)
-                track2 = find_track_segment([pos, line[1]], pos, col)
-                # remove arbitrary starting point from middle of track, and join:
-                midtk = tuple([track1[0][0], track1[0][2], track2[0][2]])
-                track = reverse_track(track1)[:-1] + [midtk] + track2[1:]
-            return track
-        else: return []
+        sortindex = np.argsort(np.array(dist))
+        return [track[i] for i in sortindex]
 
     def layer_plot_wells(self, plt, ax, layer, wells, well_names,
                          hide_wells_outside, wellcolour, welllinewidth, wellname_bottom):

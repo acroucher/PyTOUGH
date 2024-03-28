@@ -277,10 +277,18 @@ class mulgridTestCase(unittest.TestCase):
         line = [np.array([0, 50]), np.array([500, 50])]
         t = geo.column_track(line)
         self.assertEqual(len(t), 3)
+        if (len(t) == 3):
+            self.assertEqual(t[0][0].name, geo.columnlist[0].name)
+            self.assertEqual(t[1][0].name, geo.columnlist[1].name)
+            self.assertEqual(t[2][0].name, geo.columnlist[2].name)
 
         line = line[::-1]
         t = geo.column_track(line)
         self.assertEqual(len(t), 3)
+        if (len(t) == 3):
+            self.assertEqual(t[0][0].name, geo.columnlist[2].name)
+            self.assertEqual(t[1][0].name, geo.columnlist[1].name)
+            self.assertEqual(t[2][0].name, geo.columnlist[0].name)
 
     def test_grid3d(self):
         """3D grid"""
