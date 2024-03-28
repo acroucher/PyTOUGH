@@ -115,13 +115,11 @@ def polygon_centroid(polygon):
         area *= 0.5
         return c / (6. * area) + shift
 
-def line_polygon_intersections(polygon, line, bound_line = (True,True),
-                               indices = False):
+def line_polygon_intersections(polygon, line, bound_line = (True,True)):
     """Returns a list of the intersection points at which a line crosses a
     polygon.  The list is sorted by distance from the start of the
     line.  The parameter bound_line controls whether to limit
-    intersections between the line's start and end points.  If indices
-    is True, also return polygon side indices of intersections.
+    intersections between the line's start and end points.
     """
     crossings = []
     ref = polygon[0]
@@ -144,11 +142,13 @@ def line_polygon_intersections(polygon, line, bound_line = (True,True),
                 ind[c] = i
         except LinAlgError: continue
     crossings = [np.array(c) for c, i in ind.items()]
-    # Sort by distance from start of line:
-    sortindex = np.argsort([norm(c - line[0]) for c in crossings])
-    if indices: return [crossings[i] for i in sortindex], \
-       [ind[tuple(crossings[i])] for i in sortindex]
-    else: return [crossings[i] for i in sortindex]
+    # Remove duplicates and sort by distance from start of line:
+    d = np.array([norm(c - line[0]) for c in crossings])
+    if len(d) > 0: d = d / max(d[-1], 1) # non-dimensionalise
+    d = d.round(decimals = 3)
+    d_unique, i_unique = np.unique(d, return_index = True)
+    sortindex = np.argsort(d_unique)
+    return [crossings[i_unique[i]] for i in sortindex]
 
 def polyline_polygon_intersections(polygon, polyline):
     """Returns a list of intersection points at which a polyline (list of
