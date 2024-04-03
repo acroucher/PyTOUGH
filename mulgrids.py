@@ -2028,15 +2028,10 @@ class mulgrid(object):
                     if len(pts) > 0:
                         if col == start_col:
                             pts = [line[0], pts[-1]]
-                            din = 0
-                            add_col = True
                         elif col == end_col:
                             pts = [pts[0], line[-1]]
-                            din = track_dist(pts[0])
-                            add_col = True
-                        else:
-                            din, dout = track_dist(pts[0]), track_dist(pts[-1])
-                            add_col = abs(dout - din) > tol
+                        din, dout = track_dist(pts[0]), track_dist(pts[-1])
+                        add_col = abs(dout - din) > tol
                 if add_col:
                     track.append((col, pts[0], pts[-1]))
                     dist.append(din)
