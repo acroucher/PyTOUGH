@@ -258,6 +258,84 @@ class mulgridTestCase(unittest.TestCase):
         except: err = True
         self.assertFalse(err)
 
+        # track through grid with a corner removed:
+        geo = mulgrid().rectangular([100]*2, [100]*2, [10])
+        geo.translate([1e7, 1e7, 0])
+        geo.delete_column(geo.columnlist[0].name)
+        geo.rotate(30)
+        line = [geo.columnlist[0].centre, geo.columnlist[1].centre]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 2)
+        if len(t) > 1:
+            self.assertEqual(t[0][0].name, geo.columnlist[0].name)
+            self.assertEqual(t[1][0].name, geo.columnlist[1].name)
+
+        # M-grid:
+        geo = mulgrid().rectangular([100]*5, [100]*3, [10])
+        names = [geo.columnlist[i].name for i in [1,3,6,8]]
+        for name in names: geo.delete_column(name)
+        line = [np.array([0, 50]), np.array([500, 50])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 3)
+        if (len(t) == 3):
+            self.assertEqual(t[0][0].name, geo.columnlist[0].name)
+            self.assertEqual(t[1][0].name, geo.columnlist[1].name)
+            self.assertEqual(t[2][0].name, geo.columnlist[2].name)
+
+        line = line[::-1]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 3)
+        if (len(t) == 3):
+            self.assertEqual(t[0][0].name, geo.columnlist[2].name)
+            self.assertEqual(t[1][0].name, geo.columnlist[1].name)
+            self.assertEqual(t[2][0].name, geo.columnlist[0].name)
+
+        # track within a single column:
+        col = geo.columnlist[-1]
+        p = col.centre
+        d = np.ones(2) * 25
+        line = [p - d, p + d]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 1)
+        if (len(t) == 1):
+            self.assertEqual(t[0][0].name, col.name)
+
+        # track outside grid:
+        line = [np.array([-10, -10]), np.array([600, -200])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 0)
+
+        # track entirely within grid:
+        line = [np.array([380, 270]), np.array([490, 90])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 4)
+        self.assertTrue(np.allclose(t[0][1], line[0]))
+        self.assertTrue(np.allclose(t[-1][2], line[1]))
+        if (len(t) == 4):
+            names = [ti[0].name for ti in t]
+            col_ind = [9, 10, 5, 2]
+            expected_names = [geo.columnlist[i].name for i in col_ind]
+            self.assertEqual(names, expected_names)
+
+        # track leaving grid:
+        line = [np.array([250, 50]), np.array([300, -100])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 1)
+        if (len(t) == 1):
+            self.assertEqual(t[0][0].name, geo.columnlist[1].name)
+            self.assertTrue(np.allclose(t[0][1], line[0]))
+
+        # track entering grid:
+        line = [np.array([270, -50]), np.array([230, 270])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 3)
+        if (len(t) == 3):
+            names = [ti[0].name for ti in t]
+            col_ind = [1, 4, 8]
+            expected_names = [geo.columnlist[i].name for i in col_ind]
+            self.assertEqual(names, expected_names)
+            self.assertTrue(np.allclose(t[-1][2], line[1]))
+
     def test_grid3d(self):
         """3D grid"""
 
