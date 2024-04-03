@@ -2011,31 +2011,39 @@ class mulgrid(object):
         for col in self.columnlist:
             bbox = col.bounding_box
             if line_intersects_rectangle(bbox, line):
+                add_col = False
                 if start_col is None:
                     if col.contains_point(line[0]):
                         start_col = col
                 if end_col is None:
                     if col.contains_point(line[1]):
                         end_col = col
-                poly = col.polygon
-                pts = line_polygon_intersections(poly, line)
-                if len(pts) > 0:
-                    din, dout = track_dist(pts[0]), track_dist(pts[-1])
-                    if col == start_col:
-                        pts[0] = line[0]
-                        add_col = True
-                        din = 0
-                    if col == end_col:
-                        pts[-1] = line[1]
-                        add_col = True
-                    else:
-                        add_col = abs(dout - din) > tol
-                    if add_col:
-                        track.append(([col, pts[0], pts[-1]]))
-                        dist.append(din)
+                if col == start_col == end_col:
+                    pts = line
+                    din = 0
+                    add_col = True
+                else:
+                    poly = col.polygon
+                    pts = line_polygon_intersections(poly, line)
+                    if len(pts) > 0:
+                        if col == start_col:
+                            pts = [line[0], pts[-1]]
+                            din = 0
+                            add_col = True
+                        elif col == end_col:
+                            pts = [pts[0], line[-1]]
+                            din = track_dist(pts[0])
+                            add_col = True
+                        else:
+                            din, dout = track_dist(pts[0]), track_dist(pts[-1])
+                            add_col = abs(dout - din) > tol
+                if add_col:
+                    track.append((col, pts[0], pts[-1]))
+                    dist.append(din)
 
         sortindex = np.argsort(np.array(dist))
-        return [track[i] for i in sortindex]
+        track = [track[i] for i in sortindex]
+        return track
 
     def layer_plot_wells(self, plt, ax, layer, wells, well_names,
                          hide_wells_outside, wellcolour, welllinewidth, wellname_bottom):
