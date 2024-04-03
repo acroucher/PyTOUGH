@@ -2011,7 +2011,6 @@ class mulgrid(object):
         for col in self.columnlist:
             bbox = col.bounding_box
             if line_intersects_rectangle(bbox, line):
-                add_col = False
                 if start_col is None:
                     if col.contains_point(line[0]):
                         start_col = col
@@ -2019,9 +2018,8 @@ class mulgrid(object):
                     if col.contains_point(line[1]):
                         end_col = col
                 if col == start_col == end_col:
-                    pts = line
-                    din = 0
-                    add_col = True
+                    track.append((col, line[0], line[1]))
+                    dist.append(0)
                 else:
                     poly = col.polygon
                     pts = line_polygon_intersections(poly, line)
@@ -2031,10 +2029,9 @@ class mulgrid(object):
                         elif col == end_col:
                             pts = [pts[0], line[-1]]
                         din, dout = track_dist(pts[0]), track_dist(pts[-1])
-                        add_col = abs(dout - din) > tol
-                if add_col:
-                    track.append((col, pts[0], pts[-1]))
-                    dist.append(din)
+                        if abs(dout - din) > tol:
+                            track.append((col, pts[0], pts[-1]))
+                            dist.append(din)
 
         sortindex = np.argsort(np.array(dist))
         track = [track[i] for i in sortindex]
