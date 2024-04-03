@@ -68,6 +68,9 @@ class mulgridTestCase(unittest.TestCase):
         self.assertEqual(blk, blk2)
         blk = 'A 200'
         self.assertEqual(blk, fix_blockname(blk))
+        blk = 'abcde'
+        self.assertEqual(blk, fix_blockname(blk))
+        self.assertEqual(blk, unfix_blockname(blk))
 
     def test_valid_blockname(self):
         """valid_blockname() function"""

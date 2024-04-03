@@ -60,7 +60,7 @@ def fix_blockname(name):
 
 def unfix_blockname(name):
     """The inverse of fix_blockname()."""
-    return "%3s%2d" % (name[0:3], int(name[3:5]))
+    return "%3s%2d" % (name[0:3], int(name[3:5])) if name[3:5].isdigit() else name
 
 def fix_block_mapping(blockmap):
     """Fixes block names in specified block mapping."""
@@ -566,6 +566,7 @@ class mulgrid(object):
         # 0: 3-char column + 2-digit layer
         # 1: 3-char layer + 2-digit column
         # 2: 2-char layer + 3-digit column
+        # 3: 3-char column + 2-char layer
         self._atmosphere_type = atmos_type  # atmosphere type:
         # 0: single atmosphere block
         # 1: one atmosphere block per column
@@ -587,9 +588,9 @@ class mulgrid(object):
     def set_secondary_variables(self):
         """Sets variables dependent on naming convention and atmosphere type"""
         if self.atmosphere_type == 0:
-            self.atmosphere_column_name = ['ATM', ' 0', '  0'][self.convention]
-        self.colname_length = [3, 2, 3][self.convention]
-        self.layername_length = [2, 3, 2][self.convention]
+            self.atmosphere_column_name = ['ATM', ' 0', '  0', 'ATM'][self.convention]
+        self.colname_length = [3, 2, 3, 3][self.convention]
+        self.layername_length = [2, 3, 2, 2][self.convention]
 
     def get_convention(self):
         """Get naming convention"""
@@ -732,7 +733,8 @@ class mulgrid(object):
         conventionstr = [
             '3 characters for column, 2 digits for layer',
             '3 characters for layer, 2 digits for column',
-            '2 characters for layer, 3 digits for column'][self.convention]
+            '2 characters for layer, 3 digits for column',
+            '3 characters for column, 2 characters for layer'][self.convention]
         atmstr = [
             'single atmosphere block',
             'one atmosphere block over each column',
@@ -867,6 +869,7 @@ class mulgrid(object):
         if self.convention == 0: return blockname[0: 3]
         elif self.convention == 1: return blockname[3: 5]
         elif self.convention == 2: return blockname[2: 5]
+        elif self.convention == 3: return blockname[0: 3]
         else: return None
 
     def layer_name(self, blockname):
@@ -874,12 +877,13 @@ class mulgrid(object):
         if self.convention == 0: return blockname[3: 5]
         elif self.convention == 1: return blockname[0: 3]
         elif self.convention == 2: return blockname[0: 2]
+        elif self.convention == 3: return blockname[3: 5]
         else: return None
 
     def node_col_name_from_number(self, num, justfn = str.rjust,
                                   chars = ascii_lowercase, spaces = True):
         """Returns node or column name from number."""
-        if self.convention == 0:
+        if self.convention in [0, 3]:
             name = justfn(int_to_chars(num, chars = chars, spaces = spaces,
                                        length = self.colname_length), self.colname_length)
         else: name = str.rjust(str(num), self.colname_length)
@@ -1441,7 +1445,7 @@ class mulgrid(object):
         """Returns block name from layer and column names, depending on the
         naming convention.  An optional block mapping can be applied.
         """
-        if self.convention == 0: name = colname[0:3] + layername[0:2]
+        if self.convention in [0, 3]: name = colname[0:3] + layername[0:2]
         elif self.convention == 1: name = layername[0:3] + colname[0:2]
         else: name = layername[0:2] + colname[0:3]
         blkname = fix_blockname(name)
@@ -1602,7 +1606,7 @@ class mulgrid(object):
         num = 0
         self.clear_layers()
         z = top_elevation
-        surfacelayername = [' 0', 'atm', 'at'][self.convention]
+        surfacelayername = [' 0', 'atm', 'at', ' 0'][self.convention]
         self.add_layer(layer(surfacelayername, z, z))
         for thickness in thicknesses:
             z -= thickness
@@ -1653,7 +1657,7 @@ class mulgrid(object):
                     ntags = int(items[2])
                     colnodenumbers = [int(item) for item in items[3 + ntags:]]
                     colnodenames = [[self.node_name_from_number(nodeno, justfn, chars, spaces),
-                                     nodeno][convention > 0] for nodeno in colnodenumbers]
+                                     nodeno][convention in [1, 2]] for nodeno in colnodenumbers]
                     colnodes = [grid.node[v] for v in colnodenames]
                     grid.add_column(column(name, colnodes))
 
@@ -1689,7 +1693,7 @@ class mulgrid(object):
                         name = self.column_name_from_number(int(tag), justfn, chars, spaces)
                         colnodenumbers = [int(item) for item in items[1:]]
                         colnodenames = [[self.node_name_from_number(nodeno, justfn, chars, spaces),
-                                         nodeno][convention > 0] for nodeno in colnodenumbers]
+                                         nodeno][convention in [1, 2]] for nodeno in colnodenumbers]
                         colnodes = [grid.node[v] for v in colnodenames]
                         grid.add_column(column(name, colnodes))
                 else:

@@ -57,11 +57,12 @@ class t2blockincon(object):
 class t2incon(object):
     """Class for a set of initial conditions over a TOUGH2 grid."""
     def __init__(self, filename = '',
-                 read_function = fortran_read_function, num_variables = None):
+                 read_function = fortran_read_function, num_variables = None,
+                 check_blocknames = True):
         self.simulator = 'TOUGH2'
         self.read_function = read_function
         self.empty()
-        if filename: self.read(filename, num_variables)
+        if filename: self.read(filename, num_variables, check_blocknames)
 
     def __getitem__(self, key):
         if isinstance(key, (int, slice)): return self._blocklist[key]
@@ -161,7 +162,7 @@ class t2incon(object):
             del self._block[block]
             self._blocklist.remove(incon)
 
-    def read(self, filename, num_variables = None):
+    def read(self, filename, num_variables = None, check_blocknames = True):
         """Reads initial conditions from file."""
         self.empty()
         mode = 'r' if sys.version_info > (3,) else 'rU'
@@ -179,7 +180,8 @@ class t2incon(object):
                     line = padstring(line)
                     [blkname, nseq, nadd, porosity, k1, k2, k3] = \
                         infile.parse_string(line, 'incon1_toughreact')
-                    if valid_blockname(blkname):
+                    valid = valid_blockname(blkname) if check_blocknames else True
+                    if valid:
                         blkname = fix_blockname(blkname)
                         if (k1 is None or k2 is None or k3 is None): permeability = None
                         else:
