@@ -2020,6 +2020,7 @@ class mulgrid(object):
                 if col == start_col == end_col:
                     track.append((col, line[0], line[1]))
                     dist.append(0)
+                    break
                 else:
                     poly = col.polygon
                     pts = line_polygon_intersections(poly, line)
