@@ -32,16 +32,8 @@ For more detailed information on PyTOUGH, consult the [user guide](https://pytou
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.6.1, which has:
+The latest stable version is 1.6.2, which has:
 
-* updated user guide theming using [Furo](https://github.com/pradyunsg/furo) Sphinx theme
+* a new `mulgrid` naming convention 3, with 3 characters for columns and 2 characters for layers
 
-* other user guide enhancements including a new "command reference" page
-
-as well as the changes introduced in version 1.6.0:
-
-* easy installation via `pip`
-
-* online user guide at [Read the Docs](https://pytough.readthedocs.io)
-
-* updated Python packaging using a `pyproject.toml` file
+* the `mulgrid` `column_track()` method has been re-written with a different algorithm, enabling it (and the `slice_plot()` method) to handle non-contiguous slices, e.g. if the slice passes out of the mesh and back in
