@@ -191,6 +191,26 @@ class geometryTestCase(unittest.TestCase):
         d = point_line_distance(a, line)
         self.assertAlmostEqual(sqrt(0.5), d)
 
+    def test_line_intersects_rectangle(self):
+        """line_intersects_rectangle()"""
+        r = [np.array([1., 1.]), np.array([5., 3.])]
+        line = [np.array([0., 0.]), np.array([1., 1.])]
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = r
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = r[::-1]
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = [np.array([1., 1.]), np.array([5., 1.])]
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = [np.array([3., 1.]), np.array([4., 3.])]
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = [np.array([3., 0.]), np.array([4., 6.])]
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = [np.array([2., 2.]), np.array([4., 2.5])]
+        self.assertTrue(line_intersects_rectangle(r, line))
+        line = [np.array([6., 6.]), np.array([8., 0.])]
+        self.assertFalse(line_intersects_rectangle(r, line))
+
     def test_vector_heading(self):
         """vector_heading()"""
         from math import atan
