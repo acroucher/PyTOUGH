@@ -2003,12 +2003,10 @@ class mulgrid(object):
         line.
         """
 
-        dl = max(norm(line[1] - line[0]), 1)
         tol = 1e-3
-
-        def track_dist(p):
-            """Non-dimensionalised distance of point along track"""
-            return norm(p - line[0]) / dl
+        def track_dist(p): return norm(p - line[0])
+        dl = track_dist(line[1])
+        tol_dl = tol * dl
 
         track, dist = [], []
         start_col, end_col = None, None
@@ -2034,7 +2032,7 @@ class mulgrid(object):
                         elif col == end_col:
                             pts = [pts[0], line[-1]]
                         din, dout = track_dist(pts[0]), track_dist(pts[-1])
-                        if abs(dout - din) > tol:
+                        if abs(dout - din) > tol_dl:
                             track.append((col, pts[0], pts[-1]))
                             dist.append(din)
 
