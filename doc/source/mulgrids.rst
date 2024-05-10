@@ -3883,11 +3883,11 @@ follows:
 ::
 
      import pickle
-     pickle.dump(blockmap, file('blockmap.pkl', 'w'))
+     pickle.dump(blockmap, open('blockmap.pkl', 'w'))
 
 It can be loaded back in again like this:
 
 ::
 
-     blockmap = pickle.load(file('blockmap.pkl'))
+     blockmap = pickle.load(open('blockmap.pkl'))
 
