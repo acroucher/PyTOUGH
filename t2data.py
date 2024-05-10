@@ -2412,7 +2412,8 @@ class t2data(object):
 
             def delv_generator_json(g, gen):
                 """DELV generator type."""
-                if gen.ltab > 1:
+                ltab = 0 if gen.ltab is None else gen.ltab
+                if ltab > 1:
                     raise Exception('DELV generator with multiple layers not supported.')
                 else:
                     g['deliverability'] = {'productivity': gen.gx,
@@ -2473,7 +2474,8 @@ class t2data(object):
                 g['averaging'] = averaging_type
                 data_table = [list(r) for r in zip(gen.time, gen.rate)]
                 if gen.type in ['DELG', 'DMAK', 'DMAT', 'DELT', 'DELW']:
-                    if gen.ltab > 0:
+                    ltab = 0 if gen.ltab is None else gen.ltab
+                    if ltab > 0:
                         g['deliverability']['productivity'] = {'time': data_table}
                     else:
                         g['deliverability']['pressure'] = {'enthalpy': data_table}
