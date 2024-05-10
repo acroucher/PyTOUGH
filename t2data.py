@@ -2073,10 +2073,19 @@ class t2data(object):
         c, s = cos(anglerad), sin(anglerad)
         rotation = np.array([[c, s], [-s, c]])
         for blknames in geo.block_connection_name_list:
-            con = self.grid.connection[blknames]
+            if blknames in self.grid.connection:
+                names = blknames
+                con = self.grid.connection[blknames]
+            else:
+                rnames = blknames[::-1]
+                if rnames in self.grid.connection:
+                    names = rnames
+                    con = self.grid.connection[rnames]
+                else:
+                    raise Exception ('Connection not found: ' + str(blknames))
             blkindices = [geo.block_name_index[blkname] -
-                          geo.num_atmosphere_blocks for blkname in blknames]
-            laynames = [geo.layer_name(blkname) for blkname in blknames]
+                          geo.num_atmosphere_blocks for blkname in names]
+            laynames = [geo.layer_name(blkname) for blkname in names]
             if laynames[0] != laynames[1]: # vertical connection
                 underground = all([blkindex >= 0 for blkindex in blkindices])
                 if underground and con.direction != 3:
@@ -2084,7 +2093,7 @@ class t2data(object):
                         "cells": blkindices,
                         "permeability_direction": con.direction})
             else:
-                colnames = [geo.column_name(blkname) for blkname in blknames]
+                colnames = [geo.column_name(blkname) for blkname in names]
                 d = geo.column[colnames[1]].centre - geo.column[colnames[0]].centre
                 d2 = np.dot(rotation, d)
                 expected_direction = np.argmax(abs(d2)) + 1
