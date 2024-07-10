@@ -2672,25 +2672,26 @@ class t2data(object):
                         names.remove(blk.name)
                         interior_blkname = names[0]
                         interior_blk = self.grid.block[interior_blkname]
-                        cell_index = geo.block_name_index[interior_blkname] - geo.num_atmosphere_blocks
-                        if blk.centre is None:
-                            if vertical_connection:
-                                normal = np.array([0., 0., nz])
+                        if 0. < interior_blk.volume < atmos_volume:
+                            cell_index = geo.block_name_index[interior_blkname] - geo.num_atmosphere_blocks
+                            if blk.centre is None:
+                                if vertical_connection:
+                                    normal = np.array([0., 0., nz])
+                                else:
+                                    raise Exception("Can't find normal vector for connection: " +
+                                                    str(conname))
                             else:
-                                raise Exception("Can't find normal vector for connection: " +
-                                                str(conname))
-                        else:
-                            normal = blk.centre - interior_blk.centre
-                        normal /= np.linalg.norm(normal)
-                        if mesh_coords != 'xyz':
-                            if vertical_connection:
-                                if mesh_coords in ['xz', 'yz', 'rz']:
-                                    normal = normal[[0,2]]
-                                elif mesh_coords == 'xy': normal = None
-                            else: normal = normal[[0,1]]
-                        if normal is not None:
-                            bc['faces'].append({"cells": [cell_index],
-                                                "normal": list(normal)})
+                                normal = blk.centre - interior_blk.centre
+                            normal /= np.linalg.norm(normal)
+                            if mesh_coords != 'xyz':
+                                if vertical_connection:
+                                    if mesh_coords in ['xz', 'yz', 'rz']:
+                                        normal = normal[[0,2]]
+                                    elif mesh_coords == 'xy': normal = None
+                                else: normal = normal[[0,1]]
+                            if normal is not None:
+                                bc['faces'].append({"cells": [cell_index],
+                                                    "normal": list(normal)})
                     normals = np.array([spec['normal'] for spec in bc['faces']])
                     if np.isclose(normals, normals[0], rtol = 1.e-8).all():
                         allcells = []
