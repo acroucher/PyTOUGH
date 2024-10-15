@@ -467,9 +467,11 @@ def density_temperature_plot(plt, subplot = 111):
     plt.plot(t, dw, color = 'k', marker = '', linestyle = '-')
     t = np.linspace(350, tcritical, 50)
     p = np.array([sat(tx) for tx in t])
-    def f(dx): return super(dx, tx)[0] - px
-    ds = np.array([fsolve(f, 120. + 25. / 200 * (tx - 350.)) for tx, px in zip(t, p)])
-    dw = np.array([fsolve(f, 560. - 25. / 200 * (tx - 350.)) for tx, px in zip(t, p)])
+    def f(dx, tx, px): return super(dx, tx)[0] - px
+    ds = np.array([fsolve(f, 120. + 25. / 200 * (tx - 350.), (tx, px))
+                   for tx, px in zip(t, p)])
+    dw = np.array([fsolve(f, 560. - 25. / 200 * (tx - 350.), (tx, px))
+                   for tx, px in zip(t, p)])
     plt.plot(t, ds, color = 'k', marker = '', linestyle = '-')
     plt.plot(t, dw, color = 'k', marker = '', linestyle = '-')
 
@@ -495,8 +497,8 @@ def density_temperature_plot(plt, subplot = 111):
     d = np.array([cowat(tx, p)[0] for tx in t])
     plt.plot(t, d, color = 'k', marker = '', linestyle = '--')
     t = np.linspace(350, 800, 100)
-    def g(dx): return super(dx, tx)[0] - p
-    d = np.array([fsolve(g, 1100 - tx) for tx in t])
+    def g(dx, tx, p): return super(dx, tx)[0] - p
+    d = np.array([fsolve(g, 1100 - tx, (tx, p)) for tx in t])
     plt.plot(t, d, color = 'k', marker = '', linestyle = '--')
 
     plt.axis([0, 800, 0, 1100])
