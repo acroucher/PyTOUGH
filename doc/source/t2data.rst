@@ -820,7 +820,7 @@ zero\ :sup:`th` element).
       |                         |                | conditions     |                |
       +-------------------------+----------------+----------------+----------------+
       | ``derivative_increment``| float          | numerical      | DFAC           |
-      |                         |                | derivate       |                |
+      |                         |                | derivative     |                |
       |                         |                | increment      |                |
       |                         |                | factor         |                |
       +-------------------------+----------------+----------------+----------------+
