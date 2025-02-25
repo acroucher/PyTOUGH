@@ -205,17 +205,25 @@ class mulgridTestCase(unittest.TestCase):
 
     def test_fit_surface(self):
         """fit surface"""
+        d = np.load(os.path.join('mulgrid', 'fit_surface_data.npy'))
         tol = 1.e-3
-        geo = mulgrid(os.path.join('mulgrid', 'g2.dat'))
         p = np.array([2.78153e6, 6.26941e6])
         p2 = p + np.ones(2)*5.e3
         r = [p, p2]
+
+        geo = mulgrid(os.path.join('mulgrid', 'g1.dat'))
         cols = geo.columns_in_polygon(r)
-        d = np.load(os.path.join('mulgrid', 'fit_surface_data.npy'))
         geo.fit_surface(d, alpha = 0.1, beta = 0.1, silent = True)
         s = np.array([col.surface for col in cols])
-        r = np.load(os.path.join('mulgrid', 'fit_surface_result.npy'))
-        self.assertTrue(np.allclose(s, r, atol = tol))
+        expected = np.load(os.path.join('mulgrid', 'fit_surface_result_g1.npy'))
+        self.assertTrue(np.allclose(s, expected, atol = tol))
+
+        geo = mulgrid(os.path.join('mulgrid', 'g2.dat'))
+        cols = geo.columns_in_polygon(r)
+        geo.fit_surface(d, alpha = 0.1, beta = 0.1, silent = True)
+        s = np.array([col.surface for col in cols])
+        expected = np.load(os.path.join('mulgrid', 'fit_surface_result_g2.npy'))
+        self.assertTrue(np.allclose(s, expected, atol = tol))
 
     def test_refine(self):
         """refine()"""
