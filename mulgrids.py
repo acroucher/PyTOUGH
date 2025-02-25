@@ -3622,7 +3622,7 @@ class mulgrid(object):
         self.delete_column(column_name)
         return newcolnames
 
-    def triangulate_column(self, column_name, replace = True,
+    def triangulate_column(self, column_name,
                            chars = ascii_lowercase, spaces = True):
         """Replaces specified column with triangulated columns based on a new
         node at its centre, and returns list of new columns created.
