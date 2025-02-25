@@ -32,8 +32,6 @@ For more detailed information on PyTOUGH, consult the [user guide](https://pytou
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.6.3, which has:
+The latest stable version is 1.6.4, which has:
 
-* three bug fixes in the t2data json() method, for improved conversion of TOUGH2 models to Waiwera
-
-* various other minor updates
+* a bug fix in the mulgrid fit_surface() method, which could previously fail for columns with more than four sides
