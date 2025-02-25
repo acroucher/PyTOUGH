@@ -1003,7 +1003,6 @@ class t2grid(object):
         else:
 
             from scipy.optimize import bisect
-            from scipy.misc import derivative
             from numbers import Number
 
             volume_fractions = np.array(volume_fractions, dtype = float64)
@@ -1070,6 +1069,9 @@ class t2grid(object):
             volsum = np.cumsum(volume_fractions[1:]) / vf0
             volsum[-1] = 1. - delta
             xl, xr = 0., volume_fractions[1] / a[0]
+
+            def derivative(f, x, dx):
+                return (f(x + dx) - f(x - dx)) / (2 * dx)
 
             for vs in volsum:
                 xm, xr = invert_proximity(vs, xl, xr)
