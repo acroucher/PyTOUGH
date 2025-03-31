@@ -356,6 +356,16 @@ class mulgridTestCase(unittest.TestCase):
             self.assertTrue(np.allclose(t[0][1], line[0]))
             self.assertTrue(np.allclose(t[-1][2], line[1]))
 
+        # contrasting grid sizes:
+        dx = [1] * 50 + [2] * 25 + [5] * 20 + [10] * 20 + [100] * 6 + [1000] * 2
+        geo = mulgrid().rectangular(dx, [100]*5, [10])
+        line = [np.array([0, 0]), np.array([3000, 0])]
+        t = geo.column_track(line)
+        self.assertEqual(len(t), 123)
+        if (len(t) == 123):
+            self.assertTrue(np.allclose(t[0][1], line[0]))
+            self.assertTrue(np.allclose(t[-1][2], line[1]))
+
     def test_grid3d(self):
         """3D grid"""
 
