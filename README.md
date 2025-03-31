@@ -32,6 +32,6 @@ For more detailed information on PyTOUGH, consult the [user guide](https://pytou
 
 # What's new in PyTOUGH?
 
-The latest stable version is 1.6.4, which has:
+The latest stable version is 1.6.5, which has:
 
-* a bug fix in the mulgrid fit_surface() method, which could previously fail for columns with more than four sides
+* an improvement to the mulgrid column_track() function, to avoid discarding small columns in slice plots for grids with a large range of column sizes
