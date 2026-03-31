@@ -50,6 +50,7 @@ try:
     from collections.abc import Iterable # Python >= 3.3
 except ImportError:
     from collections import Iterable
+import numpy as np
 
 def cowat(t, p, bounds = False):
     """Density d and internal energy u of liquid water as a function of
@@ -273,7 +274,7 @@ def sat(t, bounds = False):
             SC = SC * X1 + a[2]
             SC = SC * X1 + a[1]
             SC = SC * X1
-            PC = exp(SC / (TC * (1.0 + a[6] * X1 + a[7] * X2)) - \
+            PC = np.exp(SC / (TC * (1.0 + a[6] * X1 + a[7] * X2)) - \
                      X1 / (a[8] * X2 + a[9]))
             return PC * 2.212e7
         else: return None
