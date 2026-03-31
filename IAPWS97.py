@@ -465,7 +465,10 @@ def density_temperature_plot(plt, subplot = 111):
     dw = np.array([cowat(tx, px)[0] for tx, px in zip(t, p)])
     plt.plot(t, ds, color = 'k', marker = '', linestyle = '-')
     plt.plot(t, dw, color = 'k', marker = '', linestyle = '-')
-    t = np.linspace(350, tcritical, 50)
+
+    a = np.log10(tcritical - 350)
+    dt = np.concatenate((np.zeros(1), np.logspace(-2, a, 100)))
+    t = tcritical - dt[::-1]
     p = np.array([sat(tx) for tx in t])
     def f(dx, tx, px): return super(dx, tx)[0] - px
     ds = np.array([fsolve(f, 120. + 25. / 200 * (tx - 350.), (tx, px))
