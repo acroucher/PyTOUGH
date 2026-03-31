@@ -287,10 +287,10 @@ def tsat(p, bounds = False):
     else: ok = True
     if ok:
         from scipy.optimize import fsolve
-        def f(t): return sat(t) - p
+        def f(t, p): return sat(t) - p
         from math import log
         t0 = max(4606.0 / (24.02 - log(p)) - 273.15, 5.0) # starting estimate
-        t = fsolve(f, t0)
+        t = fsolve(f, t0, (p))
         # need to check this as some versions of SciPy return an array from fsolve:
         if isinstance(t, Iterable): return t[0]
         else: return t
