@@ -3544,9 +3544,9 @@ class mulgrid(object):
 
         for i, mul_col in enumerate(self.columnlist):
             nodes = [node_dict[mul_node.name] for mul_node in mul_col.node]
-            lm_col = lm.column(node = nodes, index = i)
+            lm_col = lm.column(node = nodes, index = i, layer = m.layer)
             m.add_column(lm_col)
-            lm_col.set_surface(m.layer, mul_col.surface)
+            lm_col.set_surface(mul_col.surface)
 
         m.setup()
         return m
