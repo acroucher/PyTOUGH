@@ -2130,7 +2130,7 @@ class t2data(object):
                     names = rnames
                     con = self.grid.connection[rnames]
                 else:
-                    raise Exception ('Connection not found: ' + str(blknames))
+                    continue
             blkindices = [geo.block_name_index[blkname] -
                           geo.num_atmosphere_blocks for blkname in names]
             laynames = [geo.layer_name(blkname) for blkname in names]
